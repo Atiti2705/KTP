@@ -286,7 +286,7 @@
           </div>
           <div class="doc-card-actions" style="margin-top:var(--sp-3);">
             <button class="btn btn-outline btn-sm" onclick="Toast.show('Preview coming soon!', 'info')">👁 Read</button>
-            <button class="btn btn-primary btn-sm" onclick="Toast.show('Download started!', 'success')">⬇ Download</button>
+            <button class="btn btn-primary btn-sm" onclick="${doc.downloadUrl && doc.downloadUrl !== '#' ? `window.open('${doc.downloadUrl}', '_blank')` : `Toast.show('Download started (Simulated)!', 'success')`}">⬇ Download</button>
           </div>
         </div>
       `).join('');
@@ -311,7 +311,7 @@
           </div>
           <div class="doc-card-actions" style="margin-top:var(--sp-3);">
             <button class="btn btn-outline btn-sm" onclick="Toast.show('Preview coming soon!', 'info')">👁 Read</button>
-            <button class="btn btn-primary btn-sm" onclick="Toast.show('Download started!', 'success')">⬇ Download</button>
+            <button class="btn btn-primary btn-sm" onclick="${sermon.downloadUrl && sermon.downloadUrl !== '#' ? `window.open('${sermon.downloadUrl}', '_blank')` : `Toast.show('Download started (Simulated)!', 'success')`}">⬇ Download</button>
           </div>
         </div>
       `).join('');

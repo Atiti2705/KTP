@@ -158,11 +158,33 @@
             </div>
           </div>
 
-          <div class="form-group" style="margin-bottom: 0;">
+          <div class="form-group">
+            <label class="form-label">Sermon Notes Source</label>
+            <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
+              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
+                <input type="radio" name="sermon-source" value="upload" checked style="width: 16px; height: 16px;">
+                Upload File (Mock)
+              </label>
+              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
+                <input type="radio" name="sermon-source" value="url" style="width: 16px; height: 16px;">
+                External Link (Google Drive / others)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" id="sermon-upload-container">
             <label for="sermon-file" class="form-label">Notes Attachment File (Mock)</label>
             <input type="file" id="sermon-file" class="form-input">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
               Firebase Storage attachment point. PDF download simulation is automated.
+            </small>
+          </div>
+
+          <div class="form-group" id="sermon-url-container" style="display: none; margin-bottom: 0;">
+            <label for="sermon-url" class="form-label">Sermon Notes Link URL</label>
+            <input type="url" id="sermon-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or any file link">
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+              Paste link to Google Drive, Dropbox, or any public PDF/document URL.
             </small>
           </div>
         </div>
@@ -266,7 +288,41 @@
       `).join('');
     }
 
+    function convertDriveUrl(url) {
+      if (!url) return '';
+      const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        return `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
+      }
+      const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (idParamMatch && idParamMatch[1] && url.includes('drive.google.com')) {
+        return `https://drive.google.com/uc?export=view&id=${idParamMatch[1]}`;
+      }
+      return url;
+    }
+
     function setupEvents() {
+      // Toggle source
+      const sermonSourceRadios = document.getElementsByName('sermon-source');
+      const uploadContainer = document.getElementById('sermon-upload-container');
+      const urlContainer = document.getElementById('sermon-url-container');
+      
+      const toggleSermonSource = (source) => {
+        if (source === 'upload') {
+          uploadContainer.style.display = 'block';
+          urlContainer.style.display = 'none';
+          document.getElementById('sermon-url').required = false;
+        } else {
+          uploadContainer.style.display = 'none';
+          urlContainer.style.display = 'block';
+          document.getElementById('sermon-url').required = true;
+        }
+      };
+
+      sermonSourceRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => toggleSermonSource(e.target.value));
+      });
+
       // Search
       document.getElementById('admin-search-input').addEventListener('input', (e) => {
         currentSearch = e.target.value;
@@ -285,6 +341,8 @@
         document.getElementById('sermon-action-type').value = 'add';
         document.getElementById('modal-form-title').textContent = 'Add New Sermon Notes';
         document.getElementById('sermon-date').value = new Date().toISOString().split('T')[0];
+        document.querySelector('input[name="sermon-source"][value="upload"]').checked = true;
+        toggleSermonSource('upload');
         ModalSystem.open('sermon-form-modal');
       });
 
@@ -310,12 +368,20 @@
         const date = document.getElementById('sermon-date').value;
         const featured = document.getElementById('sermon-featured').checked;
 
+        const source = document.querySelector('input[name="sermon-source"]:checked').value;
+        const urlInput = document.getElementById('sermon-url');
+
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
 
         try {
           submitBtn.disabled = true;
           submitBtn.innerHTML = '⌛ Saving...';
+
+          let downloadUrl = '#';
+          if (source === 'url') {
+            downloadUrl = convertDriveUrl(urlInput.value.trim());
+          }
 
           if (actionType === 'add') {
             const newSermon = {
@@ -328,7 +394,7 @@
               fileSize,
               date,
               featured,
-              downloadUrl: '#'
+              downloadUrl
             };
             await AdminData.add('sermons', newSermon);
             AdminToast.show('Sermon notes saved!', 'success');
@@ -344,6 +410,11 @@
               date,
               featured
             };
+            if (source === 'url') {
+              updatedFields.downloadUrl = downloadUrl;
+            } else {
+              updatedFields.downloadUrl = '#';
+            }
             await AdminData.update('sermons', sermonId, updatedFields);
             AdminToast.show('Sermon notes updated!', 'success');
           }
@@ -358,6 +429,9 @@
           submitBtn.innerHTML = originalBtnText;
         }
       });
+
+      // Expose toggle internally for edit modal
+      window._toggleSermonSource = toggleSermonSource;
     }
 
     // Exposed to onclick triggers
@@ -379,6 +453,17 @@
       document.getElementById('sermon-size').value = sermon.fileSize;
       document.getElementById('sermon-date').value = sermon.date;
       document.getElementById('sermon-featured').checked = sermon.featured;
+
+      const isExternal = sermon.downloadUrl && sermon.downloadUrl !== '#';
+      if (isExternal) {
+        document.querySelector('input[name="sermon-source"][value="url"]').checked = true;
+        document.getElementById('sermon-url').value = sermon.downloadUrl;
+        if (window._toggleSermonSource) window._toggleSermonSource('url');
+      } else {
+        document.querySelector('input[name="sermon-source"][value="upload"]').checked = true;
+        document.getElementById('sermon-url').value = '';
+        if (window._toggleSermonSource) window._toggleSermonSource('upload');
+      }
 
       ModalSystem.open('sermon-form-modal');
     };

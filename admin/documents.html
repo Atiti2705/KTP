@@ -142,11 +142,33 @@
             </div>
           </div>
 
-          <div class="form-group" style="margin-bottom: 0;">
+          <div class="form-group">
+            <label class="form-label">Document Source</label>
+            <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
+              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
+                <input type="radio" name="doc-source" value="upload" checked style="width: 16px; height: 16px;">
+                Upload File (Mock)
+              </label>
+              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
+                <input type="radio" name="doc-source" value="url" style="width: 16px; height: 16px;">
+                External Link (Google Drive / others)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" id="doc-upload-container">
             <label for="doc-file" class="form-label">Upload File (Mock)</label>
             <input type="file" id="doc-file" class="form-input">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
               Firebase Storage upload placeholder. File downloads will be simulated in demo mode.
+            </small>
+          </div>
+
+          <div class="form-group" id="doc-url-container" style="display: none; margin-bottom: 0;">
+            <label for="doc-url" class="form-label">Document Link URL</label>
+            <input type="url" id="doc-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or any download link">
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+              Paste link to Google Drive, Dropbox, or any public document URL.
             </small>
           </div>
         </div>
@@ -252,7 +274,41 @@
       `).join('');
     }
 
+    function convertDriveUrl(url) {
+      if (!url) return '';
+      const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        return `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
+      }
+      const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (idParamMatch && idParamMatch[1] && url.includes('drive.google.com')) {
+        return `https://drive.google.com/uc?export=view&id=${idParamMatch[1]}`;
+      }
+      return url;
+    }
+
     function setupEvents() {
+      // Toggle source
+      const docSourceRadios = document.getElementsByName('doc-source');
+      const uploadContainer = document.getElementById('doc-upload-container');
+      const urlContainer = document.getElementById('doc-url-container');
+      
+      const toggleDocSource = (source) => {
+        if (source === 'upload') {
+          uploadContainer.style.display = 'block';
+          urlContainer.style.display = 'none';
+          document.getElementById('doc-url').required = false;
+        } else {
+          uploadContainer.style.display = 'none';
+          urlContainer.style.display = 'block';
+          document.getElementById('doc-url').required = true;
+        }
+      };
+
+      docSourceRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => toggleDocSource(e.target.value));
+      });
+
       // Search
       document.getElementById('admin-search-input').addEventListener('input', (e) => {
         currentSearch = e.target.value;
@@ -271,6 +327,8 @@
         document.getElementById('doc-action-type').value = 'add';
         document.getElementById('modal-form-title').textContent = 'Add New Document';
         document.getElementById('doc-date').value = new Date().toISOString().split('T')[0];
+        document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
+        toggleDocSource('upload');
         ModalSystem.open('doc-form-modal');
       });
 
@@ -294,12 +352,20 @@
         const date = document.getElementById('doc-date').value;
         const featured = document.getElementById('doc-featured').checked;
 
+        const source = document.querySelector('input[name="doc-source"]:checked').value;
+        const urlInput = document.getElementById('doc-url');
+
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
 
         try {
           submitBtn.disabled = true;
           submitBtn.innerHTML = '⌛ Saving...';
+
+          let downloadUrl = '#';
+          if (source === 'url') {
+            downloadUrl = convertDriveUrl(urlInput.value.trim());
+          }
 
           if (actionType === 'add') {
             const newDoc = {
@@ -310,7 +376,7 @@
               fileSize,
               date,
               featured,
-              downloadUrl: '#'
+              downloadUrl
             };
             await AdminData.add('documents', newDoc);
             AdminToast.show('Document added successfully!', 'success');
@@ -324,6 +390,12 @@
               date,
               featured
             };
+            if (source === 'url') {
+              updatedFields.downloadUrl = downloadUrl;
+            } else {
+              // If user switches back to mock upload, reset downloadUrl to '#'
+              updatedFields.downloadUrl = '#';
+            }
             await AdminData.update('documents', docId, updatedFields);
             AdminToast.show('Document updated!', 'success');
           }
@@ -338,6 +410,9 @@
           submitBtn.innerHTML = originalBtnText;
         }
       });
+
+      // Expose toggle internally for edit modal
+      window._toggleDocSource = toggleDocSource;
     }
 
     // Exposed to onclick triggers
@@ -357,6 +432,17 @@
       document.getElementById('doc-size').value = doc.fileSize;
       document.getElementById('doc-date').value = doc.date;
       document.getElementById('doc-featured').checked = doc.featured;
+
+      const isExternal = doc.downloadUrl && doc.downloadUrl !== '#';
+      if (isExternal) {
+        document.querySelector('input[name="doc-source"][value="url"]').checked = true;
+        document.getElementById('doc-url').value = doc.downloadUrl;
+        if (window._toggleDocSource) window._toggleDocSource('url');
+      } else {
+        document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
+        document.getElementById('doc-url').value = '';
+        if (window._toggleDocSource) window._toggleDocSource('upload');
+      }
 
       ModalSystem.open('doc-form-modal');
     };

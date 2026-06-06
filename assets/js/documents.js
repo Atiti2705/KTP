@@ -174,7 +174,11 @@ function renderDocuments() {
     btn.addEventListener('click', () => {
       const doc = Documents.find(d => d.id === btn.dataset.id);
       if (doc) {
-        Toast.show(`Downloading ${doc.title}...`, 'success');
+        if (doc.downloadUrl && doc.downloadUrl !== '#') {
+          window.open(doc.downloadUrl, '_blank');
+        } else {
+          Toast.show(`Downloading ${doc.title} (Simulated)...`, 'success');
+        }
       }
     });
   });
@@ -251,11 +255,21 @@ function openPreviewModal(docId) {
   if (modalType) modalType.textContent = doc.fileType;
   if (modalSize) modalSize.textContent = doc.fileSize;
   if (modalDownload) {
-    modalDownload.href = doc.downloadUrl;
-    modalDownload.onclick = () => {
-      Toast.show(`Downloading ${doc.title}...`, 'success');
-      ModalSystem.close('doc-modal');
-    };
+    modalDownload.href = doc.downloadUrl || '#';
+    if (doc.downloadUrl && doc.downloadUrl !== '#') {
+      modalDownload.target = '_blank';
+      modalDownload.onclick = () => {
+        Toast.show(`Opening ${doc.title}...`, 'success');
+        ModalSystem.close('doc-modal');
+      };
+    } else {
+      modalDownload.removeAttribute('target');
+      modalDownload.onclick = (e) => {
+        e.preventDefault();
+        Toast.show(`Downloading ${doc.title} (Simulated)...`, 'success');
+        ModalSystem.close('doc-modal');
+      };
+    }
   }
 
   ModalSystem.open('doc-modal');

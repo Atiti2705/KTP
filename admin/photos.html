@@ -125,11 +125,33 @@
             </div>
           </div>
 
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="photo-file" class="form-label">Upload Image File (Mock)</label>
+          <div class="form-group">
+            <label class="form-label">Image Source</label>
+            <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
+              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
+                <input type="radio" name="photo-source" value="upload" checked style="width: 16px; height: 16px;">
+                Upload Image File
+              </label>
+              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
+                <input type="radio" name="photo-source" value="url" style="width: 16px; height: 16px;">
+                External Link (Google Drive / others)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" id="photo-upload-container">
+            <label for="photo-file" class="form-label">Upload Image File</label>
             <input type="file" id="photo-file" class="form-input" accept="image/*">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Cloudinary integration endpoint. Will generate placeholder colors during development.
+              Select an image from your device. It will be compressed locally.
+            </small>
+          </div>
+
+          <div class="form-group" id="photo-url-container" style="display: none; margin-bottom: 0;">
+            <label for="photo-url" class="form-label">Image Link URL</label>
+            <input type="url" id="photo-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or direct image link">
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+              Supports Google Drive share links, Dropbox, or any direct image URL.
             </small>
           </div>
         </div>
@@ -238,7 +260,41 @@
       `).join('');
     }
 
+    function convertDriveUrl(url) {
+      if (!url) return '';
+      const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        return `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
+      }
+      const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (idParamMatch && idParamMatch[1] && url.includes('drive.google.com')) {
+        return `https://drive.google.com/uc?export=view&id=${idParamMatch[1]}`;
+      }
+      return url;
+    }
+
     function setupEvents() {
+      // Toggle image source
+      const photoSourceRadios = document.getElementsByName('photo-source');
+      const uploadContainer = document.getElementById('photo-upload-container');
+      const urlContainer = document.getElementById('photo-url-container');
+      
+      const togglePhotoSource = (source) => {
+        if (source === 'upload') {
+          uploadContainer.style.display = 'block';
+          urlContainer.style.display = 'none';
+          document.getElementById('photo-url').required = false;
+        } else {
+          uploadContainer.style.display = 'none';
+          urlContainer.style.display = 'block';
+          document.getElementById('photo-url').required = true;
+        }
+      };
+
+      photoSourceRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => togglePhotoSource(e.target.value));
+      });
+
       // Search
       document.getElementById('admin-search-input').addEventListener('input', (e) => {
         currentSearch = e.target.value;
@@ -257,6 +313,8 @@
         document.getElementById('photo-action-type').value = 'add';
         document.getElementById('modal-form-title').textContent = 'Add New Photo';
         document.getElementById('photo-date').value = new Date().toISOString().split('T')[0];
+        document.querySelector('input[name="photo-source"][value="upload"]').checked = true;
+        togglePhotoSource('upload');
         ModalSystem.open('photo-form-modal');
       });
 
@@ -318,7 +376,10 @@
         const description = document.getElementById('photo-desc').value;
         const date = document.getElementById('photo-date').value;
         const featured = document.getElementById('photo-featured').checked;
+        
+        const source = document.querySelector('input[name="photo-source"]:checked').value;
         const fileInput = document.getElementById('photo-file');
+        const urlInput = document.getElementById('photo-url');
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -328,12 +389,16 @@
           submitBtn.innerHTML = '⌛ Saving...';
 
           let imageUrl = '';
-          if (fileInput && fileInput.files && fileInput.files[0]) {
-            imageUrl = await readAndCompressImage(fileInput.files[0]);
-          } else if (actionType === 'add') {
-            // Generate an SVG placeholder using a random seed based on date
-            const seed = Math.floor(Math.random() * 50);
-            imageUrl = generatePhotoPlaceholder(seed, 800, 600);
+          if (source === 'upload') {
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+              imageUrl = await readAndCompressImage(fileInput.files[0]);
+            } else if (actionType === 'add') {
+              // Generate an SVG placeholder using a random seed based on date
+              const seed = Math.floor(Math.random() * 50);
+              imageUrl = generatePhotoPlaceholder(seed, 800, 600);
+            }
+          } else {
+            imageUrl = convertDriveUrl(urlInput.value.trim());
           }
 
           if (actionType === 'add') {
@@ -356,8 +421,11 @@
               date,
               featured
             };
-            // Only update imageUrl if a new file was uploaded
-            if (imageUrl) {
+            // Update imageUrl if a new file was uploaded OR external URL was set
+            if (source === 'upload' && imageUrl) {
+              updatedFields.imageUrl = imageUrl;
+              updatedFields.downloadUrl = imageUrl;
+            } else if (source === 'url') {
               updatedFields.imageUrl = imageUrl;
               updatedFields.downloadUrl = imageUrl;
             }
@@ -375,6 +443,9 @@
           submitBtn.innerHTML = originalBtnText;
         }
       });
+
+      // Expose toggle internally for edit modal
+      window._togglePhotoSource = togglePhotoSource;
     }
 
     // Exposed to onclick triggers
@@ -392,6 +463,17 @@
       document.getElementById('photo-desc').value = photo.description;
       document.getElementById('photo-date').value = photo.date;
       document.getElementById('photo-featured').checked = photo.featured;
+
+      const isExternal = photo.imageUrl && !photo.imageUrl.startsWith('data:');
+      if (isExternal) {
+        document.querySelector('input[name="photo-source"][value="url"]').checked = true;
+        document.getElementById('photo-url').value = photo.imageUrl;
+        if (window._togglePhotoSource) window._togglePhotoSource('url');
+      } else {
+        document.querySelector('input[name="photo-source"][value="upload"]').checked = true;
+        document.getElementById('photo-url').value = '';
+        if (window._togglePhotoSource) window._togglePhotoSource('upload');
+      }
 
       ModalSystem.open('photo-form-modal');
     };

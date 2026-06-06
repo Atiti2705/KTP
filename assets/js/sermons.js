@@ -175,7 +175,11 @@ function renderSermons() {
     btn.addEventListener('click', () => {
       const sermon = Sermons.find(s => s.id === btn.dataset.id);
       if (sermon) {
-        Toast.show(`Downloading ${sermon.title}...`, 'success');
+        if (sermon.downloadUrl && sermon.downloadUrl !== '#') {
+          window.open(sermon.downloadUrl, '_blank');
+        } else {
+          Toast.show(`Downloading ${sermon.title} (Simulated)...`, 'success');
+        }
       }
     });
   });
@@ -272,11 +276,21 @@ function openPreviewModal(sermonId) {
   if (modalDate) modalDate.textContent = formatDateLong(sermon.date);
   if (modalType) modalType.textContent = sermon.fileType;
   if (modalDownload) {
-    modalDownload.href = sermon.downloadUrl;
-    modalDownload.onclick = () => {
-      Toast.show(`Downloading notes: ${sermon.title}...`, 'success');
-      ModalSystem.close('sermon-modal');
-    };
+    modalDownload.href = sermon.downloadUrl || '#';
+    if (sermon.downloadUrl && sermon.downloadUrl !== '#') {
+      modalDownload.target = '_blank';
+      modalDownload.onclick = () => {
+        Toast.show(`Opening ${sermon.title}...`, 'success');
+        ModalSystem.close('sermon-modal');
+      };
+    } else {
+      modalDownload.removeAttribute('target');
+      modalDownload.onclick = (e) => {
+        e.preventDefault();
+        Toast.show(`Downloading notes: ${sermon.title} (Simulated)...`, 'success');
+        ModalSystem.close('sermon-modal');
+      };
+    }
   }
 
   ModalSystem.open('sermon-modal');
