@@ -240,25 +240,11 @@ function setupLightbox() {
   if (document.getElementById('photo-modal')) return;
 
   const modalMarkup = `
-    <div class="modal-backdrop lightbox-modal" id="photo-modal">
-      <div class="modal">
-        <div class="modal-header" style="border: none; padding-bottom: 0;">
-          <h3>Photo Details</h3>
-          <button class="modal-close" id="close-photo-modal" aria-label="Close modal">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: var(--sp-4);">
-          <div style="text-align: center; background: #000; border-radius: var(--radius-lg); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 250px;">
-            <img src="" alt="" class="lightbox-image" id="modal-image" style="max-width: 100%; max-height: 70vh; object-fit: contain;">
-          </div>
-          <div class="lightbox-info" style="margin-top: var(--sp-4);">
-            <h4 id="modal-title" style="font-size: var(--fs-lg); margin-bottom: var(--sp-2);"></h4>
-            <p id="modal-desc" style="color: var(--color-text-secondary); font-size: var(--fs-sm); margin-bottom: var(--sp-4);"></p>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span id="modal-meta" style="font-size: var(--fs-xs); color: var(--color-text-tertiary);"></span>
-              <a href="#" class="btn btn-primary btn-sm" id="modal-download" download>⬇ Download Image</a>
-            </div>
-          </div>
-        </div>
+    <div class="modal-backdrop lightbox-modal" id="photo-modal" style="background: rgba(0,0,0,0.92);">
+      <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 16px;">
+        <button id="close-photo-modal" aria-label="Close" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); transition: background 0.2s;">&times;</button>
+        <a id="modal-download" href="#" download style="position: absolute; bottom: 24px; right: 24px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); text-decoration: none; transition: background 0.2s;" title="Download">⬇</a>
+        <img src="" alt="" id="modal-image" style="max-width: 95%; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
       </div>
     </div>
   `;
@@ -272,6 +258,34 @@ function setupLightbox() {
     closeBtn.addEventListener('click', () => {
       ModalSystem.close('photo-modal');
     });
+    closeBtn.addEventListener('mouseenter', () => closeBtn.style.background = 'rgba(255,255,255,0.3)');
+    closeBtn.addEventListener('mouseleave', () => closeBtn.style.background = 'rgba(255,255,255,0.15)');
+  }
+
+  const dlBtn = document.getElementById('modal-download');
+  if (dlBtn) {
+    dlBtn.addEventListener('mouseenter', () => dlBtn.style.background = 'rgba(255,255,255,0.3)');
+    dlBtn.addEventListener('mouseleave', () => dlBtn.style.background = 'rgba(255,255,255,0.15)');
+    dlBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const url = dlBtn.href;
+      const filename = dlBtn.getAttribute('download') || 'photo.jpg';
+      try {
+        const response = await fetch(url, { mode: 'cors' });
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      } catch {
+        // Fallback: open in new tab
+        window.open(url, '_blank');
+      }
+    });
   }
 }
 
@@ -280,18 +294,12 @@ function openPhotoModal(photoId) {
   if (!photo) return;
 
   const modalImage = document.getElementById('modal-image');
-  const modalTitle = document.getElementById('modal-title');
-  const modalDesc = document.getElementById('modal-desc');
-  const modalMeta = document.getElementById('modal-meta');
   const modalDownload = document.getElementById('modal-download');
 
   if (modalImage) modalImage.src = photo.imageUrl;
-  if (modalTitle) modalTitle.textContent = photo.title;
-  if (modalDesc) modalDesc.textContent = photo.description;
-  if (modalMeta) modalMeta.textContent = `📅 ${formatDateLong(photo.date)} • Category: ${photo.category}`;
   if (modalDownload) {
     modalDownload.href = photo.imageUrl;
-    modalDownload.download = `${photo.title}.svg`;
+    modalDownload.setAttribute('download', `${photo.title}.jpg`);
   }
 
   ModalSystem.open('photo-modal');
