@@ -155,13 +155,34 @@ function renderGallery() {
     
     if (isFolder) {
       return `
-        <div class="masonry-item gallery-item reveal" data-id="${photo.id}" style="grid-column: 1 / -1; width: 100%; padding: 0; display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-4);">
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 var(--sp-2);">
-            <h4 style="margin: 0; font-size: var(--fs-lg);">${photo.title}</h4>
-            <span class="badge badge-primary">📁 ${photo.category} Folder</span>
+        <div class="masonry-item gallery-item reveal" data-id="${photo.id}" style="grid-column: 1 / -1; width: 100%; padding: var(--sp-4); background: var(--color-surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border: 1px solid var(--color-border); display: flex; flex-direction: column; gap: var(--sp-3); margin-bottom: var(--sp-5); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: var(--sp-2); border-bottom: 1px solid var(--color-border-light);">
+            <div style="display: flex; gap: var(--sp-3); align-items: center;">
+              <div style="width: 48px; height: 48px; border-radius: var(--radius-md); background: rgba(var(--color-primary-rgb), 0.1); color: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                📁
+              </div>
+              <div>
+                <h4 style="margin: 0 0 4px 0; font-size: var(--fs-lg); color: var(--color-text); font-weight: var(--fw-bold);">${photo.title}</h4>
+                <p style="margin: 0; font-size: var(--fs-sm); color: var(--color-text-secondary); display: flex; gap: var(--sp-2); align-items: center;">
+                  <span>📅 ${formatDate(photo.date)}</span>
+                  <span>•</span>
+                  <span class="badge badge-primary" style="padding: 2px 6px; font-size: 10px;">${photo.category}</span>
+                </p>
+              </div>
+            </div>
+            <a href="${photo.imageUrl.replace('embeddedfolderview', 'folderview')}" target="_blank" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 8px; border-radius: var(--radius-full);">
+              <span>Open in Drive</span>
+              <span>↗️</span>
+            </a>
           </div>
-          <iframe src="${photo.imageUrl}" width="100%" height="500px" frameborder="0" style="border-radius: var(--radius-lg); border: 1px solid var(--color-border-light); background: var(--color-surface-hover);"></iframe>
-          <p style="margin: 0; padding: 0 var(--sp-2); font-size: var(--fs-sm); color: var(--color-text-secondary);">📅 ${formatDate(photo.date)}</p>
+
+          <div style="position: relative; width: 100%; padding-top: 56.25%; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--color-border-light); background: var(--color-bg);">
+            <iframe src="${photo.imageUrl}" frameborder="0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+          </div>
+          
+          ${photo.description ? `<p style="margin: 0; font-size: var(--fs-md); color: var(--color-text-secondary); line-height: 1.5; padding: var(--sp-1) var(--sp-2); border-left: 3px solid var(--color-primary); background: var(--color-surface-hover); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;">${photo.description}</p>` : ''}
+          
         </div>
       `;
     }
