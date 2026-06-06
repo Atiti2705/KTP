@@ -152,9 +152,43 @@
   display: flex;
   gap: var(--sp-4);
   overflow-x: auto;
-  padding: var(--sp-2) 0;
+  padding: var(--sp-2) 0 var(--sp-4) 0;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.carousel-nav-buttons {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.carousel-btn {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.carousel-btn:hover {
+  background: var(--brand-sky);
+  color: #fff;
+  border-color: var(--brand-sky);
+}
+
+@media (max-width: 767px) {
+  .desktop-only {
+    display: none !important;
+  }
 }
 
 .announcement-card {

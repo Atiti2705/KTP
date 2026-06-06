@@ -63,12 +63,20 @@
     <!-- ====== ANNOUNCEMENTS SECTION ====== -->
     <section class="section announcements-section" id="announcements">
       <div class="container">
-        <div class="section-header reveal">
-          <h2>📢 Announcements</h2>
-          <p>Stay updated with the latest news and announcements from KṬP Saikhamakawn.</p>
+        <div class="section-header reveal" style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <h2>📢 Announcements</h2>
+            <p>Stay updated with the latest news and announcements from KṬP Saikhamakawn.</p>
+          </div>
+          <div class="carousel-nav-buttons desktop-only">
+            <button class="carousel-btn prev-btn" id="announcements-prev" aria-label="Previous">&larr;</button>
+            <button class="carousel-btn next-btn" id="announcements-next" aria-label="Next">&rarr;</button>
+          </div>
         </div>
-        <div class="announcements-scroll no-scrollbar stagger-children" id="announcements-list">
-          <!-- Populated by JS -->
+        <div class="carousel-container" style="position: relative;">
+          <div class="announcements-scroll no-scrollbar stagger-children" id="announcements-list">
+            <!-- Populated by JS -->
+          </div>
         </div>
       </div>
     </section>
@@ -128,10 +136,10 @@
   <script src="assets/js/theme.js"></script>
   <script src="assets/js/data.js"></script>
   <script src="assets/js/auth.js"></script>
-  <script src="assets/js/db-service.js?v=6"></script>
-  <script src="assets/js/components.js?v=6"></script>
-  <script src="assets/js/search.js?v=6"></script>
-  <script src="assets/js/app.js?v=6"></script>
+  <script src="assets/js/db-service.js?v=7"></script>
+  <script src="assets/js/components.js?v=7"></script>
+  <script src="assets/js/search.js?v=7"></script>
+  <script src="assets/js/app.js?v=7"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // Render static header and footer immediately for fast visual load
@@ -233,6 +241,18 @@
         </${tag}>
         `;
       }).join('');
+
+      // Setup Carousel Scrolling
+      const prevBtn = document.getElementById('announcements-prev');
+      const nextBtn = document.getElementById('announcements-next');
+      if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+          container.scrollBy({ left: -340, behavior: 'smooth' });
+        });
+        nextBtn.addEventListener('click', () => {
+          container.scrollBy({ left: 340, behavior: 'smooth' });
+        });
+      }
     }
 
     function renderFeaturedPhotos() {
