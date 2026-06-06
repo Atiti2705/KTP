@@ -720,13 +720,14 @@
 
 /* Masonry Grid */
 .masonry-grid {
-  columns: 1;
-  column-gap: var(--sp-4);
+  columns: 3;
+  column-gap: var(--sp-2);
 }
 
 @media (min-width: 640px) {
   .masonry-grid {
-    columns: 2;
+    columns: 3;
+    column-gap: var(--sp-4);
   }
 }
 
