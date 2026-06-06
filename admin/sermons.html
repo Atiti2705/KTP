@@ -444,7 +444,14 @@
 
           let downloadUrl = '#';
           if (source === 'url') {
-            downloadUrl = convertDriveUrl(urlInput.value.trim(), 'file');
+            const urlVal = urlInput.value.trim();
+            if (urlVal.includes('/folders/') || urlVal.includes('/drive/folders/')) {
+              AdminToast.show('⚠️ This is a Google Drive folder link. Please paste the link of an individual audio/notes file instead.', 'error');
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalBtnText;
+              return;
+            }
+            downloadUrl = convertDriveUrl(urlVal, 'file');
           }
 
           if (actionType === 'add') {

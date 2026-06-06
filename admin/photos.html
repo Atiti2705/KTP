@@ -460,7 +460,14 @@
               imageUrl = generatePhotoPlaceholder(seed, 800, 600);
             }
           } else {
-            imageUrl = convertDriveUrl(urlInput.value.trim());
+            const urlVal = urlInput.value.trim();
+            if (urlVal.includes('/folders/') || urlVal.includes('/drive/folders/')) {
+              AdminToast.show('⚠️ This is a Google Drive folder link. Please paste the link of an individual image file instead.', 'error');
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalBtnText;
+              return;
+            }
+            imageUrl = convertDriveUrl(urlVal);
           }
 
           if (actionType === 'add') {
