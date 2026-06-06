@@ -29,7 +29,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const data = await DbService.get('photos');
     if (data && Array.isArray(data)) {
       Photos.length = 0;
-      Photos.push(...data);
+      Photos.push(...data.map(p => {
+        if (p.imageUrl) p.imageUrl = convertDriveUrl(p.imageUrl);
+        if (p.downloadUrl) p.downloadUrl = convertDriveUrl(p.downloadUrl);
+        return p;
+      }));
     }
   } catch (error) {
     console.error("Error loading photos database:", error);

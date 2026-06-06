@@ -29,7 +29,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const data = await DbService.get('documents');
     if (data && Array.isArray(data)) {
       Documents.length = 0;
-      Documents.push(...data);
+      Documents.push(...data.map(d => {
+        if (d.downloadUrl) d.downloadUrl = convertDriveUrl(d.downloadUrl, 'file');
+        return d;
+      }));
     }
   } catch (error) {
     console.error("Error loading documents database:", error);

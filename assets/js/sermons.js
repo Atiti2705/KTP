@@ -29,7 +29,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const data = await DbService.get('sermons');
     if (data && Array.isArray(data)) {
       Sermons.length = 0;
-      Sermons.push(...data);
+      Sermons.push(...data.map(s => {
+        if (s.downloadUrl) s.downloadUrl = convertDriveUrl(s.downloadUrl, 'file');
+        return s;
+      }));
     }
   } catch (error) {
     console.error("Error loading sermons database:", error);

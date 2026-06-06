@@ -305,7 +305,7 @@
       tbody.innerHTML = filtered.map(photo => `
         <tr>
           <td>
-            <img src="${photo.imageUrl}" alt="${photo.title}" style="width: 50px; height: 38px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+            <img src="${convertDriveUrl(photo.imageUrl)}" alt="${photo.title}" style="width: 50px; height: 38px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
           </td>
           <td style="font-weight: var(--fw-semibold);">${photo.title}</td>
           <td><span class="badge badge-primary">${photo.category}</span></td>
@@ -321,18 +321,6 @@
       `).join('');
     }
 
-    function convertDriveUrl(url) {
-      if (!url) return '';
-      const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-      if (fileIdMatch && fileIdMatch[1]) {
-        return `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
-      }
-      const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-      if (idParamMatch && idParamMatch[1] && url.includes('drive.google.com')) {
-        return `https://drive.google.com/uc?export=view&id=${idParamMatch[1]}`;
-      }
-      return url;
-    }
 
     function setupEvents() {
       // Category editor toggle

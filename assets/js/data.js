@@ -786,3 +786,32 @@ function formatDateLong(dateStr) {
   }
 })();
 
+// Helper to convert Google Drive URLs to working direct links
+function convertDriveUrl(url, type = 'image') {
+  if (!url) return '';
+  let fileId = '';
+  
+  // Pattern 1: /file/d/FILE_ID/...
+  const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileIdMatch && fileIdMatch[1]) {
+    fileId = fileIdMatch[1];
+  } else {
+    // Pattern 2: id=FILE_ID
+    const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (idParamMatch && idParamMatch[1] && (url.includes('drive.google.com') || url.includes('docs.google.com'))) {
+      fileId = idParamMatch[1];
+    }
+  }
+  
+  if (fileId) {
+    if (type === 'image') {
+      return `https://lh3.googleusercontent.com/d/${fileId}`;
+    } else {
+      // For docs/sermons/PDFs/audio, standard web preview is best for viewing/downloading.
+      return `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
+    }
+  }
+  return url;
+}
+
+
