@@ -110,9 +110,20 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
             <div class="form-group">
               <label for="sermon-topic" class="form-label">Topic / Category</label>
-              <select id="sermon-topic" class="form-input form-select" required>
-                <!-- Populated via JS -->
-              </select>
+              <div class="category-field-row">
+                <select id="sermon-topic" class="form-input form-select" required style="flex:1;">
+                  <!-- Populated via JS -->
+                </select>
+                <button type="button" class="btn-edit-cats" id="btn-toggle-cat-editor">✏️ Edit</button>
+              </div>
+              <div class="category-editor" id="sermon-cat-editor">
+                <span class="category-editor-label">Add, remove, or rename categories:</span>
+                <div class="category-chips-editor" id="sermon-cat-chips"></div>
+                <div class="cat-add-row">
+                  <input type="text" id="sermon-new-cat-input" placeholder="New category name…">
+                  <button type="button" id="btn-add-new-cat">➕ Add</button>
+                </div>
+              </div>
             </div>
 
             <div class="form-group">
@@ -237,7 +248,7 @@
       if (!filterSelect || !formSelect) return;
 
       filterSelect.innerHTML = '<option value="All">All Topics</option>';
-      formSelect.innerHTML = '<option value="All" disabled>Select topic...</option>';
+      formSelect.innerHTML = '<option value="" disabled selected>Select topic...</option>';
 
       SermonCategories.forEach(cat => {
         if (cat !== 'All') {
@@ -245,14 +256,54 @@
           opt1.value = cat;
           opt1.textContent = cat;
           filterSelect.appendChild(opt1);
-        }
 
-        const opt2 = document.createElement('option');
-        opt2.value = cat === 'All' ? 'Sunday Sermon' : cat;
-        opt2.textContent = cat === 'All' ? 'Select topic...' : cat;
-        if (cat === 'All') opt2.disabled = true;
-        formSelect.appendChild(opt2);
+          const opt2 = document.createElement('option');
+          opt2.value = cat;
+          opt2.textContent = cat;
+          formSelect.appendChild(opt2);
+        }
       });
+
+      renderCatEditorChips();
+    }
+
+    /* --- Inline Category Editor --- */
+    function renderCatEditorChips() {
+      const container = document.getElementById('sermon-cat-chips');
+      if (!container) return;
+      const cats = SermonCategories.filter(c => c !== 'All');
+      container.innerHTML = cats.map(cat => `
+        <span class="cat-chip">
+          ${cat}
+          <button type="button" class="cat-remove" data-cat="${cat}" title="Remove '${cat}'">&times;</button>
+        </span>
+      `).join('');
+      container.querySelectorAll('.cat-remove').forEach(btn => {
+        btn.addEventListener('click', () => removeCategoryAndSave(btn.dataset.cat));
+      });
+    }
+
+    function removeCategoryAndSave(catName) {
+      const idx = SermonCategories.indexOf(catName);
+      if (idx > -1) {
+        SermonCategories.splice(idx, 1);
+        saveCategorySettings();
+        populateCategoryDropdowns();
+      }
+    }
+
+    function addCategoryAndSave(catName) {
+      const name = catName.trim();
+      if (!name || SermonCategories.includes(name)) return;
+      SermonCategories.push(name);
+      saveCategorySettings();
+      populateCategoryDropdowns();
+    }
+
+    function saveCategorySettings() {
+      const settings = AdminData.get('settings') || {};
+      settings.sermonCategories = SermonCategories.filter(c => c !== 'All');
+      AdminData.save('settings', settings);
     }
 
     function renderSermonsTable() {
@@ -313,6 +364,19 @@
     }
 
     function setupEvents() {
+      // Category editor toggle
+      document.getElementById('btn-toggle-cat-editor').addEventListener('click', () => {
+        document.getElementById('sermon-cat-editor').classList.toggle('open');
+      });
+      document.getElementById('btn-add-new-cat').addEventListener('click', () => {
+        const input = document.getElementById('sermon-new-cat-input');
+        addCategoryAndSave(input.value);
+        input.value = '';
+      });
+      document.getElementById('sermon-new-cat-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-new-cat').click(); }
+      });
+
       // Toggle source
       const sermonSourceRadios = document.getElementsByName('sermon-source');
       const uploadContainer = document.getElementById('sermon-upload-container');
