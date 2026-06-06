@@ -179,7 +179,7 @@
       const heroLogo = document.querySelector('.hero-logo');
 
       if (heroTitle && ChurchInfo.name) {
-        const highlightName = ChurchInfo.name.replace(/K?P\s*|KTP\s*/i, '');
+        const highlightName = ChurchInfo.name.replace(/^(K[ṬT]P|KTP)\s*/i, '');
         heroTitle.innerHTML = `KṬP <span class="highlight">${highlightName}</span>`;
       }
       if (heroDesc && ChurchInfo.description) {
