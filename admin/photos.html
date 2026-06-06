@@ -187,6 +187,13 @@
       // Toast notification system helper
       if (typeof Toast !== 'undefined') Toast.init();
 
+      // Load settings to fetch customized category list synchronously from localStorage cache
+      const settings = AdminData.get('settings');
+      if (settings && settings.photoCategories && Array.isArray(settings.photoCategories)) {
+        PhotoCategories.length = 0;
+        PhotoCategories.push('All', ...settings.photoCategories.filter(c => c !== 'All'));
+      }
+
       populateCategoryDropdowns();
       renderPhotosTable();
       setupEvents();
@@ -195,9 +202,11 @@
     function populateCategoryDropdowns() {
       const filterSelect = document.getElementById('admin-filter-category');
       const formSelect = document.getElementById('photo-category');
+      if (!filterSelect || !formSelect) return;
 
-      // Populate filter dropdown
-      // Skip 'All' because it is already hardcoded
+      filterSelect.innerHTML = '<option value="All">All Categories</option>';
+      formSelect.innerHTML = '<option value="All" disabled>Select category...</option>';
+
       PhotoCategories.forEach(cat => {
         if (cat !== 'All') {
           const opt1 = document.createElement('option');

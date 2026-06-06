@@ -11,6 +11,16 @@ let currentPage = 1;
 const itemsPerPage = 8;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const settings = await DbService.get('settings');
+    if (settings && settings.sermonCategories && Array.isArray(settings.sermonCategories)) {
+      SermonCategories.length = 0;
+      SermonCategories.push('All', ...settings.sermonCategories.filter(c => c !== 'All'));
+    }
+  } catch (err) {
+    console.error("Error loading custom SermonCategories:", err);
+  }
+
   renderCategoryChips();
   setupSearchAndSort();
   setupPreviewModal();

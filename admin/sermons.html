@@ -219,6 +219,13 @@
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof Toast !== 'undefined') Toast.init();
 
+      // Load settings to fetch customized category list synchronously from localStorage cache
+      const settings = AdminData.get('settings');
+      if (settings && settings.sermonCategories && Array.isArray(settings.sermonCategories)) {
+        SermonCategories.length = 0;
+        SermonCategories.push('All', ...settings.sermonCategories.filter(c => c !== 'All'));
+      }
+
       populateCategoryDropdowns();
       renderSermonsTable();
       setupEvents();
@@ -227,6 +234,10 @@
     function populateCategoryDropdowns() {
       const filterSelect = document.getElementById('admin-filter-category');
       const formSelect = document.getElementById('sermon-topic');
+      if (!filterSelect || !formSelect) return;
+
+      filterSelect.innerHTML = '<option value="All">All Topics</option>';
+      formSelect.innerHTML = '<option value="All" disabled>Select topic...</option>';
 
       SermonCategories.forEach(cat => {
         if (cat !== 'All') {

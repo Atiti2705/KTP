@@ -262,6 +262,23 @@ const AdminData = {
 
   refreshPageTable() {
     try {
+      const settings = this.get('settings');
+      if (settings) {
+        if (settings.photoCategories && typeof PhotoCategories !== 'undefined') {
+          PhotoCategories.length = 0;
+          PhotoCategories.push('All', ...settings.photoCategories.filter(c => c !== 'All'));
+        }
+        if (settings.documentCategories && typeof DocumentCategories !== 'undefined') {
+          DocumentCategories.length = 0;
+          DocumentCategories.push('All', ...settings.documentCategories.filter(c => c !== 'All'));
+        }
+        if (settings.sermonCategories && typeof SermonCategories !== 'undefined') {
+          SermonCategories.length = 0;
+          SermonCategories.push('All', ...settings.sermonCategories.filter(c => c !== 'All'));
+        }
+      }
+
+      if (typeof populateCategoryDropdowns === 'function') populateCategoryDropdowns();
       if (typeof renderAnnouncementsTable === 'function') renderAnnouncementsTable();
       if (typeof renderPhotosTable === 'function') renderPhotosTable();
       if (typeof renderDocsTable === 'function') renderDocsTable();

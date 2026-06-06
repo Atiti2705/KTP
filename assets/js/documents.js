@@ -11,6 +11,16 @@ let currentPage = 1;
 const itemsPerPage = 8;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const settings = await DbService.get('settings');
+    if (settings && settings.documentCategories && Array.isArray(settings.documentCategories)) {
+      DocumentCategories.length = 0;
+      DocumentCategories.push('All', ...settings.documentCategories.filter(c => c !== 'All'));
+    }
+  } catch (err) {
+    console.error("Error loading custom DocumentCategories:", err);
+  }
+
   renderCategoryChips();
   setupSearchAndSort();
   setupPreviewModal();

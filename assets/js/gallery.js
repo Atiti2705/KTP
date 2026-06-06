@@ -11,6 +11,16 @@ let currentPage = 1;
 const itemsPerPage = 12;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const settings = await DbService.get('settings');
+    if (settings && settings.photoCategories && Array.isArray(settings.photoCategories)) {
+      PhotoCategories.length = 0;
+      PhotoCategories.push('All', ...settings.photoCategories.filter(c => c !== 'All'));
+    }
+  } catch (err) {
+    console.error("Error loading custom PhotoCategories:", err);
+  }
+
   renderCategoryChips();
   setupSearchAndSort();
   setupLightbox();

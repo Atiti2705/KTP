@@ -165,6 +165,43 @@
           </div>
         </div>
 
+        <!-- Categories Customization Card -->
+        <div class="data-table-wrapper" style="padding: var(--sp-6);">
+          <h2
+            style="font-size: var(--fs-lg); margin-bottom: var(--sp-4); font-weight: var(--fw-semibold); border-bottom: 1px solid var(--color-border-light); padding-bottom: var(--sp-2);">
+            🗂️ Categories Management
+          </h2>
+          <p style="font-size: var(--fs-sm); color: var(--color-text-secondary); margin-bottom: var(--sp-4);">
+            Customize the category options that show up in your site sections. Separate category names with commas.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="settings-photo-categories" class="form-label">Photo Gallery Categories</label>
+              <input type="text" id="settings-photo-categories" class="form-input" required placeholder="e.g. Worship, Fellowship, Events, Youth">
+              <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+                Enter comma-separated values. "All" is automatically included on public pages.
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="settings-doc-categories" class="form-label">Mipui Aw Document Categories</label>
+              <input type="text" id="settings-doc-categories" class="form-input" required placeholder="e.g. Mipui Aw, Reports, Forms, Templates">
+              <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+                Enter comma-separated values.
+              </small>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="settings-sermon-categories" class="form-label">Sermon Outline / Topic Categories</label>
+              <input type="text" id="settings-sermon-categories" class="form-input" required placeholder="e.g. Sunday Sermon, Bible Study, Special Service">
+              <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+                Enter comma-separated values.
+              </small>
+            </div>
+          </div>
+        </div>
+
         <!-- Submit Button Panel -->
         <div style="display: flex; justify-content: flex-end; margin-bottom: var(--sp-6);">
           <button type="submit" class="btn btn-primary btn-lg" style="box-shadow: var(--shadow-md);">
@@ -224,6 +261,15 @@
       document.getElementById('fb-handle').value = social.facebook.handle;
       document.getElementById('yt-url').value = social.youtube.url;
       document.getElementById('yt-handle').value = social.youtube.handle;
+
+      // Populate Categories
+      const photoCats = settings.photoCategories || PhotoCategories.filter(c => c !== 'All');
+      const docCats = settings.documentCategories || DocumentCategories.filter(c => c !== 'All');
+      const sermonCats = settings.sermonCategories || SermonCategories.filter(c => c !== 'All');
+
+      document.getElementById('settings-photo-categories').value = photoCats.join(', ');
+      document.getElementById('settings-doc-categories').value = docCats.join(', ');
+      document.getElementById('settings-sermon-categories').value = sermonCats.join(', ');
     }
 
     function setupEvents() {
@@ -232,6 +278,19 @@
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
+
+        const photoCats = document.getElementById('settings-photo-categories').value
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        const docCats = document.getElementById('settings-doc-categories').value
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        const sermonCats = document.getElementById('settings-sermon-categories').value
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
 
         // Package settings object
         const updatedSettings = {
@@ -261,7 +320,10 @@
               handle: document.getElementById('yt-handle').value,
               label: 'YouTube'
             }
-          }
+          },
+          photoCategories: photoCats,
+          documentCategories: docCats,
+          sermonCategories: sermonCats
         };
 
         try {
