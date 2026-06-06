@@ -8,7 +8,7 @@ let currentCategory = 'All';
 let searchQuery = '';
 let currentSort = 'newest';
 let currentPage = 1;
-const itemsPerPage = 12;
+const itemsPerPage = 36;
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
