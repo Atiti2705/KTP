@@ -213,7 +213,13 @@
         
         let imageHtml = '';
         if (ann.imageUrl) {
-          imageHtml = `<img src="${ann.imageUrl}" alt="${ann.title}" style="width: 100%; height: 180px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: var(--sp-3);">`;
+          // Format Drive links defensively just in case they were saved in the old format
+          let formattedUrl = ann.imageUrl;
+          const match = formattedUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) {
+            formattedUrl = `https://lh3.googleusercontent.com/d/${match[1]}`;
+          }
+          imageHtml = `<img src="${formattedUrl}" alt="${ann.title}" style="width: 100%; height: 180px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: var(--sp-3);">`;
         }
 
         return `
