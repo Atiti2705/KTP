@@ -194,10 +194,6 @@ function renderGallery() {
           <h4 class="gallery-overlay-title">${photo.title}</h4>
           <p class="gallery-overlay-meta">📅 ${formatDate(photo.date)} • ${photo.category}</p>
         </div>
-        <div class="gallery-overlay-actions">
-          <button class="gallery-action-btn view-btn" data-id="${photo.id}" aria-label="View larger image">🔍</button>
-          <a href="${photo.imageUrl}" download="${photo.title}.jpg" class="gallery-action-btn download-btn" data-id="${photo.id}" aria-label="Download image">⬇️</a>
-        </div>
       </div>
     `;
   }).join('');
@@ -219,8 +215,6 @@ function renderGallery() {
   // Attach event handlers for opening modal when clicking on gallery items or the zoom button
   grid.querySelectorAll('.gallery-item').forEach(item => {
     item.addEventListener('click', (e) => {
-      // Don't open modal if download button is clicked
-      if (e.target.closest('.download-btn')) return;
       const photoId = item.dataset.id;
       openPhotoModal(photoId);
     });
