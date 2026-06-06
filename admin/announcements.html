@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Announcements — KṬP Saikhamakawn</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+
+<body>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside id="admin-sidebar"></aside>
+
+    <!-- Main Content Panel -->
+    <main class="admin-main">
+
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+          <div>
+            <h1 class="admin-page-title">Announcements & Notices Manager</h1>
+            <p class="admin-page-desc">Create or edit notices appearing on the homepage billboard</p>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="btn-add-ann">➕ Add Notice</button>
+        </div>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="data-table-wrapper" style="margin-bottom: var(--sp-4); padding: var(--sp-4);">
+        <div
+          style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
+          <div class="search-container" style="max-width: 350px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="admin-search-input" class="search-input"
+              placeholder="Search notices by title or content...">
+          </div>
+          <div>
+            <select id="admin-filter-priority" class="filter-select"
+              style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
+              <option value="All">All Priorities</option>
+              <option value="high">High Priority</option>
+              <option value="normal">Normal Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="data-table-wrapper">
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Notice Title</th>
+                <th>Priority</th>
+                <th>Display Date</th>
+                <th>Featured</th>
+                <th>Content Snippet</th>
+                <th style="width: 120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ann-table-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Edit/Add Modal -->
+  <div class="modal-backdrop" id="ann-form-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-form-title">Add New Notice</h3>
+        <button class="modal-close" id="close-ann-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="ann-crud-form">
+        <input type="hidden" id="ann-action-type" value="add">
+        <input type="hidden" id="ann-edit-id" value="">
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="ann-title" class="form-label">Notice Title</label>
+            <input type="text" id="ann-title" class="form-input" required
+              placeholder="e.g. Sunday Worship Schedule Update">
+          </div>
+
+          <div class="form-group">
+            <label for="ann-content" class="form-label">Notice Details / Content</label>
+            <textarea id="ann-content" class="form-input form-textarea" required
+              placeholder="Write full details of the notice..." style="min-height: 140px;"></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="ann-priority" class="form-label">Priority</label>
+              <select id="ann-priority" class="form-input form-select" required>
+                <option value="normal">Normal</option>
+                <option value="high">High (Red Alert)</option>
+                <option value="low">Low (General Info)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="ann-date" class="form-label">Display Date</label>
+              <input type="date" id="ann-date" class="form-input" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label
+              style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm); padding: var(--sp-2) 0;">
+              <input type="checkbox" id="ann-featured" style="width: 16px; height: 16px;">
+              Highlight on Homepage Billboard (Featured)
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Notice</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- App Configuration & Services -->
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/db-service.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/admin.js"></script>
+
+  <script>
+    let currentSearch = '';
+    let currentPriorityFilter = 'All';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof Toast !== 'undefined') Toast.init();
+
+      renderAnnouncementsTable();
+      setupEvents();
+    });
+
+    function renderAnnouncementsTable() {
+      const tbody = document.getElementById('ann-table-body');
+      if (!tbody) return;
+
+      const announcements = AdminData.get('announcements');
+
+      let filtered = announcements;
+      if (currentSearch.trim()) {
+        const q = currentSearch.toLowerCase();
+        filtered = filtered.filter(a => a.title.toLowerCase().includes(q) || a.content.toLowerCase().includes(q));
+      }
+      if (currentPriorityFilter !== 'All') {
+        filtered = filtered.filter(a => a.priority === currentPriorityFilter);
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+              No announcements found.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(ann => {
+        let pBadge = '';
+        if (ann.priority === 'high') pBadge = '<span class="badge badge-red" style="font-weight:bold;">High</span>';
+        else if (ann.priority === 'low') pBadge = '<span class="badge" style="background:var(--color-bg-hover);color:var(--color-text-secondary);">Low</span>';
+        else pBadge = '<span class="badge badge-primary">Normal</span>';
+
+        const contentSnippet = ann.content.length > 50 ? `${ann.content.substring(0, 50)}...` : ann.content;
+
+        return `
+          <tr>
+            <td style="font-weight: var(--fw-semibold);">${ann.title}</td>
+            <td>${pBadge}</td>
+            <td>📅 ${formatDate(ann.date)}</td>
+            <td>${ann.featured ? '⭐ Yes' : 'No'}</td>
+            <td style="color:var(--color-text-secondary); max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${contentSnippet}</td>
+            <td>
+              <div class="table-actions">
+                <button class="btn btn-outline btn-sm" onclick="openEditModal('${ann.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Notice">✏️</button>
+                <button class="btn btn-outline btn-sm" onclick="confirmDeleteAnn('${ann.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Notice">❌</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function setupEvents() {
+      // Search
+      document.getElementById('admin-search-input').addEventListener('input', (e) => {
+        currentSearch = e.target.value;
+        renderAnnouncementsTable();
+      });
+
+      // Priority filter dropdown
+      document.getElementById('admin-filter-priority').addEventListener('change', (e) => {
+        currentPriorityFilter = e.target.value;
+        renderAnnouncementsTable();
+      });
+
+      // Show Add Modal
+      document.getElementById('btn-add-ann').addEventListener('click', () => {
+        document.getElementById('ann-crud-form').reset();
+        document.getElementById('ann-action-type').value = 'add';
+        document.getElementById('modal-form-title').textContent = 'Add New Notice';
+        document.getElementById('ann-date').value = new Date().toISOString().split('T')[0];
+        ModalSystem.open('ann-form-modal');
+      });
+
+      // Close modal actions
+      const closeModal = () => ModalSystem.close('ann-form-modal');
+      document.getElementById('close-ann-modal').addEventListener('click', closeModal);
+      document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+
+      // Form Submit (Save/Update)
+      document.getElementById('ann-crud-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const actionType = document.getElementById('ann-action-type').value;
+        const annId = document.getElementById('ann-edit-id').value;
+
+        const title = document.getElementById('ann-title').value;
+        const content = document.getElementById('ann-content').value;
+        const priority = document.getElementById('ann-priority').value;
+        const date = document.getElementById('ann-date').value;
+        const featured = document.getElementById('ann-featured').checked;
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        try {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⌛ Saving...';
+
+          if (actionType === 'add') {
+            const newAnn = {
+              title,
+              content,
+              priority,
+              date,
+              featured
+            };
+            await AdminData.add('announcements', newAnn);
+            AdminToast.show('Notice posted successfully!', 'success');
+          } else {
+            const updatedFields = {
+              title,
+              content,
+              priority,
+              date,
+              featured
+            };
+            await AdminData.update('announcements', annId, updatedFields);
+            AdminToast.show('Notice updated successfully!', 'success');
+          }
+
+          closeModal();
+          renderAnnouncementsTable();
+        } catch (err) {
+          console.error("Error saving notice:", err);
+          AdminToast.show('Error saving notice: ' + (err.message || 'Permission denied'), 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
+    }
+
+    // Exposed to onclick triggers
+    window.openEditModal = function (id) {
+      const announcements = AdminData.get('announcements');
+      const ann = announcements.find(a => a.id === id);
+      if (!ann) return;
+
+      document.getElementById('ann-action-type').value = 'edit';
+      document.getElementById('ann-edit-id').value = id;
+      document.getElementById('modal-form-title').textContent = 'Edit Notice Details';
+
+      document.getElementById('ann-title').value = ann.title;
+      document.getElementById('ann-content').value = ann.content;
+      document.getElementById('ann-priority').value = ann.priority;
+      document.getElementById('ann-date').value = ann.date;
+      document.getElementById('ann-featured').checked = ann.featured;
+
+      ModalSystem.open('ann-form-modal');
+    };
+
+    window.confirmDeleteAnn = async function (id) {
+      const announcements = AdminData.get('announcements');
+      const ann = announcements.find(a => a.id === id);
+      if (!ann) return;
+
+      if (confirm(`Are you sure you want to delete the notice "${ann.title}"?`)) {
+        try {
+          await AdminData.delete('announcements', id);
+          AdminToast.show('Notice deleted.', 'info');
+          renderAnnouncementsTable();
+        } catch (err) {
+          console.error("Error deleting notice:", err);
+          AdminToast.show('Error deleting notice: ' + (err.message || 'Permission denied'), 'error');
+        }
+      }
+    };
+  </script>
+</body>
+
+</html>

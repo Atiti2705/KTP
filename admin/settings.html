@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Settings — KṬP Saikhamakawn</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+
+<body>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside id="admin-sidebar"></aside>
+
+    <!-- Main Content Panel -->
+    <main class="admin-main">
+
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+          <div>
+            <h1 class="admin-page-title">Website Settings</h1>
+            <p class="admin-page-desc">Configure church details, branding information, and social coordinates</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Form -->
+      <form id="settings-form" style="display: flex; flex-direction: column; gap: var(--sp-6);">
+
+        <!-- Church Information Card -->
+        <div class="data-table-wrapper" style="padding: var(--sp-6);">
+          <h2
+            style="font-size: var(--fs-lg); margin-bottom: var(--sp-4); font-weight: var(--fw-semibold); border-bottom: 1px solid var(--color-border-light); padding-bottom: var(--sp-2);">
+            ⛪ Church Information
+          </h2>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="church-name" class="form-label">Church/Youth Group Name</label>
+              <input type="text" id="church-name" class="form-input" required placeholder="e.g. KṬP Saikhamakawn">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: var(--sp-4); margin-top: var(--sp-2);">
+            <div class="form-group">
+              <label for="church-fullname" class="form-label font-heading">Full Legal Name</label>
+              <input type="text" id="church-fullname" class="form-input" required
+                placeholder="e.g. Kristian Ṭhalai Pawl Saikhamakawn">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: var(--sp-4); margin-top: var(--sp-2);">
+            <div class="form-group">
+              <label for="church-tagline" class="form-label">Tagline / Theme Verse</label>
+              <input type="text" id="church-tagline" class="form-input" required
+                placeholder="e.g. Rawngbawl Tura Chhandam">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: var(--sp-4); margin-top: var(--sp-2);">
+            <div class="form-group">
+              <label for="church-desc" class="form-label">Branding/About Summary Description</label>
+              <textarea id="church-desc" class="form-input form-textarea" style="min-height: 80px;" required
+                placeholder="A short description of the church branch..."></textarea>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--sp-4); margin-top: var(--sp-2);">
+            <div class="form-group">
+              <label for="church-established" class="form-label">Established Year</label>
+              <input type="number" id="church-established" class="form-input" required placeholder="e.g. 1954">
+            </div>
+
+            <div class="form-group">
+              <label for="church-phone" class="form-label">Contact Phone</label>
+              <input type="text" id="church-phone" class="form-input" required placeholder="+91 XXXXX XXXXX">
+            </div>
+
+            <div class="form-group">
+              <label for="church-email" class="form-label">Contact Email</label>
+              <input type="email" id="church-email" class="form-input" required
+                placeholder="ktp.saikhamakawn@gmail.com">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: var(--sp-4); margin-top: var(--sp-2);">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="church-address" class="form-label">Physical Location Address</label>
+              <input type="text" id="church-address" class="form-input" required placeholder="Saikhamakawn, Mizoram">
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Media Coordinates Card -->
+        <div class="data-table-wrapper" style="padding: var(--sp-6);">
+          <h2
+            style="font-size: var(--fs-lg); margin-bottom: var(--sp-4); font-weight: var(--fw-semibold); border-bottom: 1px solid var(--color-border-light); padding-bottom: var(--sp-2);">
+            🌐 Social Handles & Coordinates
+          </h2>
+
+          <!-- Instagram -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-bottom: var(--sp-4);">
+            <div class="form-group">
+              <label for="insta-url" class="form-label">Instagram Link URL</label>
+              <input type="url" id="insta-url" class="form-input" placeholder="https://instagram.com/handle">
+            </div>
+            <div class="form-group">
+              <label for="insta-handle" class="form-label">Instagram Handle Text</label>
+              <input type="text" id="insta-handle" class="form-input" placeholder="@handle">
+            </div>
+          </div>
+
+          <!-- Facebook -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-bottom: var(--sp-4);">
+            <div class="form-group">
+              <label for="fb-url" class="form-label">Facebook Profile URL</label>
+              <input type="url" id="fb-url" class="form-input" placeholder="https://facebook.com/handle">
+            </div>
+            <div class="form-group">
+              <label for="fb-handle" class="form-label">Facebook Handle Text</label>
+              <input type="text" id="fb-handle" class="form-input" placeholder="KṬP Saikhamakawn">
+            </div>
+          </div>
+
+          <!-- YouTube -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-bottom: 0;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="yt-url" class="form-label">YouTube Channel Link URL</label>
+              <input type="url" id="yt-url" class="form-input" placeholder="https://youtube.com/@handle">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="yt-handle" class="form-label">YouTube Channel Name Text</label>
+              <input type="text" id="yt-handle" class="form-input" placeholder="@handle">
+            </div>
+          </div>
+        </div>
+
+        <!-- Integration & AdSense Card -->
+        <div class="data-table-wrapper" style="padding: var(--sp-6);">
+          <h2
+            style="font-size: var(--fs-lg); margin-bottom: var(--sp-4); font-weight: var(--fw-semibold); border-bottom: 1px solid var(--color-border-light); padding-bottom: var(--sp-2);">
+            💰 Monetization & Integrations (Google AdSense)
+          </h2>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-bottom: 0;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="adsense-client" class="form-label">Google AdSense Publisher ID (Client ID)</label>
+              <input type="text" class="form-input" id="adsense-client" placeholder="e.g. ca-pub-XXXXXXXXXXXXXXXX"
+                value="ca-pub-1234567890123456">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="adsense-slot" class="form-label">Ad Unit Slot ID</label>
+              <input type="text" class="form-input" id="adsense-slot" placeholder="e.g. 1234567890" value="9876543210">
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button Panel -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: var(--sp-6);">
+          <button type="submit" class="btn btn-primary btn-lg" style="box-shadow: var(--shadow-md);">
+            💾 Save Web Settings
+          </button>
+        </div>
+
+      </form>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- App Configuration & Services -->
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/db-service.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/admin.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof Toast !== 'undefined') Toast.init();
+
+      loadSettingsData();
+      setupEvents();
+    });
+
+    function loadSettingsData() {
+      // Get settings from local storage or fall back to defaults
+      const settings = AdminData.get('settings');
+
+      const church = settings.churchInfo || ChurchInfo;
+      const social = settings.socialMedia || SocialMedia;
+
+      // Populate Church info
+      document.getElementById('church-name').value = church.name;
+      document.getElementById('church-fullname').value = church.fullName || `${church.name} ${church.tagline}`;
+      document.getElementById('church-tagline').value = church.tagline;
+      document.getElementById('church-desc').value = church.description;
+      document.getElementById('church-established').value = church.established;
+      document.getElementById('church-phone').value = church.phone;
+      document.getElementById('church-email').value = church.email;
+      document.getElementById('church-address').value = church.address;
+
+      // Populate Social media
+      document.getElementById('insta-url').value = social.instagram.url;
+      document.getElementById('insta-handle').value = social.instagram.handle;
+      document.getElementById('fb-url').value = social.facebook.url;
+      document.getElementById('fb-handle').value = social.facebook.handle;
+      document.getElementById('yt-url').value = social.youtube.url;
+      document.getElementById('yt-handle').value = social.youtube.handle;
+    }
+
+    function setupEvents() {
+      document.getElementById('settings-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        // Package settings object
+        const updatedSettings = {
+          churchInfo: {
+            name: document.getElementById('church-name').value,
+            fullName: document.getElementById('church-fullname').value,
+            tagline: document.getElementById('church-tagline').value,
+            description: document.getElementById('church-desc').value,
+            established: parseInt(document.getElementById('church-established').value),
+            phone: document.getElementById('church-phone').value,
+            email: document.getElementById('church-email').value,
+            address: document.getElementById('church-address').value
+          },
+          socialMedia: {
+            instagram: {
+              url: document.getElementById('insta-url').value,
+              handle: document.getElementById('insta-handle').value,
+              label: 'Instagram'
+            },
+            facebook: {
+              url: document.getElementById('fb-url').value,
+              handle: document.getElementById('fb-handle').value,
+              label: 'Facebook'
+            },
+            youtube: {
+              url: document.getElementById('yt-url').value,
+              handle: document.getElementById('yt-handle').value,
+              label: 'YouTube'
+            }
+          }
+        };
+
+        try {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⌛ Saving...';
+
+          // Save settings to LocalStorage and Firestore
+          await AdminData.save('settings', updatedSettings);
+
+          AdminToast.show('Web settings updated successfully!', 'success');
+        } catch (err) {
+          console.error("Error saving settings:", err);
+          AdminToast.show('Error saving settings: ' + (err.message || 'Permission denied'), 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

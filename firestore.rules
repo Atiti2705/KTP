@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Allow anyone to view public collections (Notice board, Gallery, Sermons, etc.)
+    match /announcements/{doc} { allow read: if true; }
+    match /photos/{doc} { allow read: if true; }
+    match /documents/{doc} { allow read: if true; }
+    match /sermons/{doc} { allow read: if true; }
+    match /settings/{doc} { allow read: if true; }
+
+    // 2. Allow general authenticated users to write/edit their profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 3. Allow KTP Saikhamakawn administrators to write/update all collections
+    match /{document=**} {
+      allow read, write: if request.auth != null && 
+        (request.auth.token.email.matches('.*@ktpsaikhamakawn\\.org$') || 
+         request.auth.token.email == 'papuiarenthlei365@gmail.com');
+    }
+  }
+}

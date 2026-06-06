@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mipui Aw — KṬP Saikhamakawn</title>
+  <meta name="description" content="Access and download church newsletters, announcements, meeting minutes, annual reports, and other publications of KṬP Saikhamakawn.">
+  <meta name="keywords" content="Mipui Aw, KTP Saikhamakawn newsletter, Mizo church documents, minutes">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Mipui Aw — KṬP Saikhamakawn">
+  <meta property="og:description" content="Access and download church newsletters and publications.">
+  <meta property="og:image" content="assets/images/logo.png">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="apple-touch-icon" href="assets/images/logo.png">
+
+  <!-- Preconnect for Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header" id="site-header"></header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Page Header -->
+    <section class="page-title-section mizo-pattern-subtle">
+      <div class="container">
+        <h1 class="reveal">📄 Mipui Aw (Publications)</h1>
+        <p class="reveal-delay-1">Official reports, newsletters, meeting minutes, and registration forms of KṬP Saikhamakawn.</p>
+      </div>
+    </section>
+
+    <!-- Search & Filter Controls -->
+    <section class="section-sm">
+      <div class="container">
+        <div style="display: flex; flex-direction: column; gap: var(--sp-4); margin-bottom: var(--sp-6);">
+          
+          <!-- Search input and Sort Selection -->
+          <div style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
+            <div class="search-container">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="doc-search" class="search-input" placeholder="Search documents by title or description...">
+              <span class="search-clear" id="search-clear-btn" role="button" aria-label="Clear search">&times;</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: var(--sp-2);">
+              <label for="doc-sort" style="font-size: var(--fs-xs); color: var(--color-text-secondary); font-weight: var(--fw-medium);">Sort:</label>
+              <select id="doc-sort" class="filter-select">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="a-z">Alphabetical (A-Z)</option>
+                <option value="z-a">Alphabetical (Z-A)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Category Chips -->
+          <div>
+            <p style="font-size: var(--fs-xs); color: var(--color-text-tertiary); font-weight: var(--fw-semibold); margin-bottom: var(--sp-2); text-transform: uppercase; letter-spacing: 0.5px;">Categories</p>
+            <div class="filter-bar no-scrollbar" id="category-chips" style="overflow-x: auto; padding-bottom: var(--sp-1);">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Results count/info -->
+          <div class="results-info">
+            <span class="results-count" id="doc-count">Loading documents...</span>
+          </div>
+
+        </div>
+
+        <!-- Documents List (1-column on mobile, 2-column or 3-column styled as a stack) -->
+        <div class="content-grid" id="documents-list" style="grid-template-columns: 1fr;">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Pagination Container -->
+        <div class="pagination" id="pagination-container">
+          <!-- Populated by JS -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- AdSense Placeholder -->
+    <section class="section-sm">
+      <div class="container">
+        <div class="footer-adsense" style="margin: 0 auto; max-width: 728px;">
+          Reserved for Google AdSense — Responsive Ad Unit
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <!-- Scripts -->
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- App Configuration & Services -->
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/db-service.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script src="assets/js/documents.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHeader('mipui-aw');
+      renderFooter();
+    });
+  </script>
+</body>
+</html>

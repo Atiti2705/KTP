@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Photos — KṬP Saikhamakawn</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+
+<body>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside id="admin-sidebar"></aside>
+
+    <!-- Main Content Panel -->
+    <main class="admin-main">
+
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+          <div>
+            <h1 class="admin-page-title">Photos Gallery Manager</h1>
+            <p class="admin-page-desc">Create, edit, or delete gallery photos</p>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="btn-add-photo">➕ Add Photo</button>
+        </div>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="data-table-wrapper" style="margin-bottom: var(--sp-4); padding: var(--sp-4);">
+        <div
+          style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
+          <div class="search-container" style="max-width: 350px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="admin-search-input" class="search-input" placeholder="Search photos by title...">
+          </div>
+          <div>
+            <select id="admin-filter-category" class="filter-select"
+              style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
+              <option value="All">All Categories</option>
+              <!-- Populated via JS -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="data-table-wrapper">
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 80px;">Preview</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Featured</th>
+                <th style="width: 120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="photos-table-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Edit/Add Modal -->
+  <div class="modal-backdrop" id="photo-form-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-form-title">Add New Photo</h3>
+        <button class="modal-close" id="close-photo-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="photo-crud-form">
+        <input type="hidden" id="photo-action-type" value="add">
+        <input type="hidden" id="photo-edit-id" value="">
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="photo-title" class="form-label">Photo Title</label>
+            <input type="text" id="photo-title" class="form-input" required placeholder="e.g. Youth Camp 2026 Worship">
+          </div>
+
+          <div class="form-group">
+            <label for="photo-category" class="form-label">Category</label>
+            <select id="photo-category" class="form-input form-select" required>
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="photo-desc" class="form-label">Description</label>
+            <textarea id="photo-desc" class="form-input form-textarea" required
+              placeholder="Describe what is happening in the photo..."></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="photo-date" class="form-label">Date Taken</label>
+              <input type="date" id="photo-date" class="form-input" required>
+            </div>
+
+            <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
+              <span class="form-label">Options</span>
+              <label
+                style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm);">
+                <input type="checkbox" id="photo-featured" style="width: 16px; height: 16px;">
+                Show on Homepage (Featured)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="photo-file" class="form-label">Upload Image File (Mock)</label>
+            <input type="file" id="photo-file" class="form-input" accept="image/*">
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+              Cloudinary integration endpoint. Will generate placeholder colors during development.
+            </small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Photo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- App Configuration & Services -->
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/db-service.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/admin.js"></script>
+
+  <script>
+    let currentSearch = '';
+    let currentCategoryFilter = 'All';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Toast notification system helper
+      if (typeof Toast !== 'undefined') Toast.init();
+
+      populateCategoryDropdowns();
+      renderPhotosTable();
+      setupEvents();
+    });
+
+    function populateCategoryDropdowns() {
+      const filterSelect = document.getElementById('admin-filter-category');
+      const formSelect = document.getElementById('photo-category');
+
+      // Populate filter dropdown
+      // Skip 'All' because it is already hardcoded
+      PhotoCategories.forEach(cat => {
+        if (cat !== 'All') {
+          const opt1 = document.createElement('option');
+          opt1.value = cat;
+          opt1.textContent = cat;
+          filterSelect.appendChild(opt1);
+        }
+
+        const opt2 = document.createElement('option');
+        opt2.value = cat === 'All' ? 'Worship' : cat; // Form cannot have 'All' category
+        opt2.textContent = cat === 'All' ? 'Select category...' : cat;
+        if (cat === 'All') opt2.disabled = true;
+        formSelect.appendChild(opt2);
+      });
+    }
+
+    function renderPhotosTable() {
+      const tbody = document.getElementById('photos-table-body');
+      if (!tbody) return;
+
+      const photos = AdminData.get('photos');
+
+      // Filter photos by search & category dropdown
+      let filtered = photos;
+      if (currentSearch.trim()) {
+        const q = currentSearch.toLowerCase();
+        filtered = filtered.filter(p => p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
+      }
+      if (currentCategoryFilter !== 'All') {
+        filtered = filtered.filter(p => p.category === currentCategoryFilter);
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+              No photos found matching filters.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(photo => `
+        <tr>
+          <td>
+            <img src="${photo.imageUrl}" alt="${photo.title}" style="width: 50px; height: 38px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+          </td>
+          <td style="font-weight: var(--fw-semibold);">${photo.title}</td>
+          <td><span class="badge badge-primary">${photo.category}</span></td>
+          <td>📅 ${formatDate(photo.date)}</td>
+          <td>${photo.featured ? '⭐ Yes' : 'No'}</td>
+          <td>
+            <div class="table-actions">
+              <button class="btn btn-outline btn-sm" onclick="openEditModal('${photo.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Photo">✏️</button>
+              <button class="btn btn-outline btn-sm" onclick="confirmDeletePhoto('${photo.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Photo">❌</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function setupEvents() {
+      // Search
+      document.getElementById('admin-search-input').addEventListener('input', (e) => {
+        currentSearch = e.target.value;
+        renderPhotosTable();
+      });
+
+      // Category filter dropdown
+      document.getElementById('admin-filter-category').addEventListener('change', (e) => {
+        currentCategoryFilter = e.target.value;
+        renderPhotosTable();
+      });
+
+      // Show Add Modal
+      document.getElementById('btn-add-photo').addEventListener('click', () => {
+        document.getElementById('photo-crud-form').reset();
+        document.getElementById('photo-action-type').value = 'add';
+        document.getElementById('modal-form-title').textContent = 'Add New Photo';
+        document.getElementById('photo-date').value = new Date().toISOString().split('T')[0];
+        ModalSystem.open('photo-form-modal');
+      });
+
+      // Image helper to read file as data URL and compress it via canvas
+      function readAndCompressImage(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              let width = img.width;
+              let height = img.height;
+              const max_size = 1024; // Max dimension
+
+              if (width > height) {
+                if (width > max_size) {
+                  height *= max_size / width;
+                  width = max_size;
+                }
+              } else {
+                if (height > max_size) {
+                  width *= max_size / height;
+                  height = max_size;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+
+              // Compress to JPEG (0.7 quality)
+              const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+              resolve(dataUrl);
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // Close modal actions
+      const closeModal = () => ModalSystem.close('photo-form-modal');
+      document.getElementById('close-photo-modal').addEventListener('click', closeModal);
+      document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+
+      // Form Submit (Save/Update)
+      document.getElementById('photo-crud-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const actionType = document.getElementById('photo-action-type').value;
+        const photoId = document.getElementById('photo-edit-id').value;
+
+        const title = document.getElementById('photo-title').value;
+        const category = document.getElementById('photo-category').value;
+        const description = document.getElementById('photo-desc').value;
+        const date = document.getElementById('photo-date').value;
+        const featured = document.getElementById('photo-featured').checked;
+        const fileInput = document.getElementById('photo-file');
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        try {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⌛ Saving...';
+
+          let imageUrl = '';
+          if (fileInput && fileInput.files && fileInput.files[0]) {
+            imageUrl = await readAndCompressImage(fileInput.files[0]);
+          } else if (actionType === 'add') {
+            // Generate an SVG placeholder using a random seed based on date
+            const seed = Math.floor(Math.random() * 50);
+            imageUrl = generatePhotoPlaceholder(seed, 800, 600);
+          }
+
+          if (actionType === 'add') {
+            const newPhoto = {
+              title,
+              category,
+              description,
+              date,
+              featured,
+              imageUrl,
+              downloadUrl: imageUrl
+            };
+            await AdminData.add('photos', newPhoto);
+            AdminToast.show('Photo added successfully!', 'success');
+          } else {
+            const updatedFields = {
+              title,
+              category,
+              description,
+              date,
+              featured
+            };
+            // Only update imageUrl if a new file was uploaded
+            if (imageUrl) {
+              updatedFields.imageUrl = imageUrl;
+              updatedFields.downloadUrl = imageUrl;
+            }
+            await AdminData.update('photos', photoId, updatedFields);
+            AdminToast.show('Photo details updated!', 'success');
+          }
+
+          closeModal();
+          renderPhotosTable();
+        } catch (err) {
+          console.error("Error saving photo:", err);
+          AdminToast.show('Error saving photo: ' + (err.message || 'Permission denied'), 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
+    }
+
+    // Exposed to onclick triggers
+    window.openEditModal = function (id) {
+      const photos = AdminData.get('photos');
+      const photo = photos.find(p => p.id === id);
+      if (!photo) return;
+
+      document.getElementById('photo-action-type').value = 'edit';
+      document.getElementById('photo-edit-id').value = id;
+      document.getElementById('modal-form-title').textContent = 'Edit Photo Details';
+
+      document.getElementById('photo-title').value = photo.title;
+      document.getElementById('photo-category').value = photo.category;
+      document.getElementById('photo-desc').value = photo.description;
+      document.getElementById('photo-date').value = photo.date;
+      document.getElementById('photo-featured').checked = photo.featured;
+
+      ModalSystem.open('photo-form-modal');
+    };
+
+    window.confirmDeletePhoto = async function (id) {
+      const photos = AdminData.get('photos');
+      const photo = photos.find(p => p.id === id);
+      if (!photo) return;
+
+      if (confirm(`Are you sure you want to delete the photo "${photo.title}"?`)) {
+        try {
+          await AdminData.delete('photos', id);
+          AdminToast.show('Photo deleted.', 'info');
+          renderPhotosTable();
+        } catch (err) {
+          console.error("Error deleting photo:", err);
+          AdminToast.show('Error deleting photo: ' + (err.message || 'Permission denied'), 'error');
+        }
+      }
+    };
+  </script>
+</body>
+
+</html>

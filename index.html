@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KṬP Saikhamakawn — Kristian Ṭhalai Pawl</title>
+  <meta name="description" content="KṬP Saikhamakawn — Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam. Established 1954. A modern church community in Saikhamakawn, Mizoram.">
+  <meta name="keywords" content="KTP, Kristian Thalai Pawl, Saikhamakawn, Mizoram, church, Christian, Mizo">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="KṬP Saikhamakawn — Kristian Ṭhalai Pawl">
+  <meta property="og:description" content="Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam. Established 1954.">
+  <meta property="og:image" content="assets/images/logo.png">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="apple-touch-icon" href="assets/images/logo.png">
+
+  <!-- Preconnect for Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header" id="site-header"></header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+      <div class="hero-bg-decoration"></div>
+      <div class="hero-content reveal">
+        <img src="assets/images/logo.png" alt="KṬP Saikhamakawn Logo" class="hero-logo" width="200" height="150">
+        <h1 class="hero-title">KṬP <span class="highlight">Saikhamakawn</span></h1>
+        <p class="hero-subtitle">Rawngbawl Tura Chhandam</p>
+        <p class="hero-description">Kristian Ṭhalai Pawl (KṬP) Saikhamakawn — serving our community through faith, fellowship, and service since 1954.</p>
+        <div class="hero-actions">
+          <a href="#featured" class="btn btn-primary">Featured Content</a>
+          <a href="#social-media" class="btn btn-outline">Connect With Us</a>
+        </div>
+      </div>
+      <div class="hero-scroll-indicator">
+        <span>Scroll Down</span>
+        <div class="hero-scroll-arrow"></div>
+      </div>
+    </section>
+
+    <!-- ====== ANNOUNCEMENTS SECTION ====== -->
+    <section class="section announcements-section" id="announcements">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>📢 Announcements</h2>
+          <p>Stay updated with the latest news and announcements from KṬP Saikhamakawn.</p>
+        </div>
+        <div class="announcements-scroll no-scrollbar stagger-children" id="announcements-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== QUICK ACCESS SECTION ====== -->
+    <section class="section" id="quick-access">
+      <div class="container">
+        <div class="quick-access-grid stagger-children">
+          <a href="photos.html" class="quick-card">
+            <div class="quick-card-icon">📸</div>
+            <h3 class="quick-card-title">Photos</h3>
+            <p class="quick-card-desc">View latest church photos and event galleries.</p>
+            <div class="quick-card-arrow">→</div>
+          </a>
+          <a href="mipui-aw.html" class="quick-card">
+            <div class="quick-card-icon">📄</div>
+            <h3 class="quick-card-title">Mipui Aw</h3>
+            <p class="quick-card-desc">Read and download our newsletters and reports.</p>
+            <div class="quick-card-arrow">→</div>
+          </a>
+          <a href="sermons.html" class="quick-card">
+            <div class="quick-card-icon">📖</div>
+            <h3 class="quick-card-title">Sermons</h3>
+            <p class="quick-card-desc">Browse sermon notes and spiritual messages.</p>
+            <div class="quick-card-arrow">→</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== FEATURED SECTION ====== -->
+    <section class="section" id="featured">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>⭐ Featured Content</h2>
+          <p>Explore our featured photos, documents, and sermons.</p>
+        </div>
+
+        <!-- Featured Photos -->
+        <div class="reveal" style="margin-bottom: var(--sp-8);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4);">
+            <h3 style="font-size:var(--fs-xl);">📸 Featured Photos</h3>
+            <a href="photos.html" class="btn btn-ghost btn-sm">View All →</a>
+          </div>
+          <div class="featured-scroll no-scrollbar" id="featured-photos">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Featured Documents -->
+        <div class="reveal" style="margin-bottom: var(--sp-8);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4);">
+            <h3 style="font-size:var(--fs-xl);">📄 Featured Documents</h3>
+            <a href="mipui-aw.html" class="btn btn-ghost btn-sm">View All →</a>
+          </div>
+          <div class="featured-scroll no-scrollbar" id="featured-docs">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Featured Sermons -->
+        <div class="reveal">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4);">
+            <h3 style="font-size:var(--fs-xl);">📖 Featured Sermons</h3>
+            <a href="sermons.html" class="btn btn-ghost btn-sm">View All →</a>
+          </div>
+          <div class="featured-scroll no-scrollbar" id="featured-sermons">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SOCIAL MEDIA ====== -->
+    <section class="section social-section" id="social-media">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>🌐 Connect With Us</h2>
+          <p>Follow KṬP Saikhamakawn on social media to stay connected.</p>
+        </div>
+        <div class="social-grid stagger-children" id="social-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <!-- Scripts -->
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- App Configuration & Services -->
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/db-service.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Load dynamic databases before rendering home page
+      try {
+        const annData = await DbService.get('announcements');
+        if (annData && Array.isArray(annData)) {
+          Announcements.length = 0;
+          Announcements.push(...annData);
+        }
+        const photoData = await DbService.get('photos');
+        if (photoData && Array.isArray(photoData)) {
+          Photos.length = 0;
+          Photos.push(...photoData);
+        }
+        const docData = await DbService.get('documents');
+        if (docData && Array.isArray(docData)) {
+          Documents.length = 0;
+          Documents.push(...docData);
+        }
+        const sermonData = await DbService.get('sermons');
+        if (sermonData && Array.isArray(sermonData)) {
+          Sermons.length = 0;
+          Sermons.push(...sermonData);
+        }
+
+        const settings = await DbService.get('settings');
+        if (settings) {
+          if (settings.churchInfo) Object.assign(ChurchInfo, settings.churchInfo);
+          if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
+        }
+      } catch (err) {
+        console.error("Error loading home page database...", err);
+      }
+
+      renderHeader('home');
+      renderFooter();
+      renderHomepage();
+    });
+
+    function renderHomepage() {
+      // Dynamic Hero update
+      const heroTitle = document.querySelector('.hero-title');
+      const heroDesc = document.querySelector('.hero-description');
+      const heroLogo = document.querySelector('.hero-logo');
+      
+      if (heroTitle && ChurchInfo.name) {
+        const highlightName = ChurchInfo.name.replace(/K?P\s*|KTP\s*/i, '');
+        heroTitle.innerHTML = `KṬP <span class="highlight">${highlightName}</span>`;
+      }
+      if (heroDesc && ChurchInfo.description) {
+        heroDesc.textContent = `${ChurchInfo.tagline} — ${ChurchInfo.description}`;
+      }
+      if (heroLogo && ChurchInfo.name) {
+        heroLogo.alt = `${ChurchInfo.name} Logo`;
+      }
+
+      renderAnnouncements();
+      renderFeaturedPhotos();
+      renderFeaturedDocs();
+      renderFeaturedSermons();
+      renderSocialGrid();
+    }
+
+    function renderAnnouncements() {
+      const container = document.getElementById('announcements-list');
+      if (!container) return;
+      
+      const sorted = [...Announcements].sort((a, b) => new Date(b.date) - new Date(a.date));
+      container.innerHTML = sorted.map(ann => `
+        <div class="announcement-card reveal">
+          <div class="announcement-date">📌 ${formatDate(ann.date)}</div>
+          <h3 class="announcement-title">${ann.title}</h3>
+          <p class="announcement-text">${ann.content}</p>
+          ${ann.featured ? '<span class="badge badge-featured" style="margin-top:var(--sp-3); background:var(--brand-gold); color:var(--color-bg);">⭐ Featured</span>' : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderFeaturedPhotos() {
+      const container = document.getElementById('featured-photos');
+      if (!container) return;
+      
+      const featured = Photos.filter(p => p.featured).slice(0, 6);
+      container.innerHTML = featured.map(photo => `
+        <a href="photos.html" class="featured-card reveal">
+          <img src="${photo.imageUrl}" alt="${photo.title}" class="featured-card-image" loading="lazy">
+          <div class="featured-card-overlay">
+            <span class="badge badge-primary" style="padding: 2px 8px;">${photo.category}</span>
+          </div>
+          <div class="featured-card-body">
+            <h4 class="featured-card-title">${photo.title}</h4>
+            <span class="featured-card-meta">📅 ${formatDate(photo.date)}</span>
+          </div>
+        </a>
+      `).join('');
+    }
+
+    function renderFeaturedDocs() {
+      const container = document.getElementById('featured-docs');
+      if (!container) return;
+      
+      const featured = Documents.filter(d => d.featured).slice(0, 4);
+      container.innerHTML = featured.map(doc => `
+        <div class="doc-card reveal">
+          <div class="file-icon file-icon-${doc.fileType.toLowerCase()}">${doc.fileType}</div>
+          <div class="doc-card-content">
+            <h3 class="doc-card-title">${doc.title}</h3>
+            <p class="doc-card-desc" style="-webkit-line-clamp: 2;">${doc.description}</p>
+            <div class="doc-card-meta">
+              <span>📅 ${formatDate(doc.date)}</span>
+              <span>📁 ${doc.fileSize}</span>
+            </div>
+          </div>
+          <div class="doc-card-actions" style="margin-top:var(--sp-3);">
+            <button class="btn btn-outline btn-sm" onclick="Toast.show('Preview coming soon!', 'info')">👁 Read</button>
+            <button class="btn btn-primary btn-sm" onclick="Toast.show('Download started!', 'success')">⬇ Download</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderFeaturedSermons() {
+      const container = document.getElementById('featured-sermons');
+      if (!container) return;
+      
+      const featured = Sermons.filter(s => s.featured).slice(0, 4);
+      container.innerHTML = featured.map(sermon => `
+        <div class="doc-card reveal">
+          <div class="file-icon file-icon-${sermon.fileType.toLowerCase()}">${sermon.fileType}</div>
+          <div class="doc-card-content">
+            <h3 class="doc-card-title">${sermon.title}</h3>
+            <p class="doc-card-desc" style="-webkit-line-clamp: 2;">${sermon.description}</p>
+            <div class="doc-card-meta">
+              <span>🎙️ ${sermon.speaker}</span>
+              <span>📖 ${sermon.scripture}</span>
+              <span>📅 ${formatDate(sermon.date)}</span>
+            </div>
+          </div>
+          <div class="doc-card-actions" style="margin-top:var(--sp-3);">
+            <button class="btn btn-outline btn-sm" onclick="Toast.show('Preview coming soon!', 'info')">👁 Read</button>
+            <button class="btn btn-primary btn-sm" onclick="Toast.show('Download started!', 'success')">⬇ Download</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderSocialGrid() {
+      const container = document.getElementById('social-grid');
+      if (!container) return;
+      
+      container.innerHTML = `
+        <a href="${SocialMedia.instagram.url}" target="_blank" rel="noopener" class="social-card instagram" id="social-instagram">
+          <div class="social-card-icon">📷</div>
+          <span class="social-card-name">${SocialMedia.instagram.label}</span>
+          <span class="social-card-handle">${SocialMedia.instagram.handle}</span>
+        </a>
+        <a href="${SocialMedia.facebook.url}" target="_blank" rel="noopener" class="social-card facebook" id="social-facebook">
+          <div class="social-card-icon">📘</div>
+          <span class="social-card-name">${SocialMedia.facebook.label}</span>
+          <span class="social-card-handle">${SocialMedia.facebook.handle}</span>
+        </a>
+        <a href="${SocialMedia.youtube.url}" target="_blank" rel="noopener" class="social-card youtube" id="social-youtube">
+          <div class="social-card-icon">▶️</div>
+          <span class="social-card-name">${SocialMedia.youtube.label}</span>
+          <span class="social-card-handle">${SocialMedia.youtube.handle}</span>
+        </a>
+      `;
+    }
+  </script>
+</body>
+</html>

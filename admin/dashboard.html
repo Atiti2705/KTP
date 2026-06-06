@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — KṬP Saikhamakawn</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside id="admin-sidebar"></aside>
+
+    <!-- Main Content Panel -->
+    <main class="admin-main">
+      
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+          <div>
+            <h1 class="admin-page-title">Dashboard Overview</h1>
+            <p class="admin-page-desc">Overview of content and activities at KṬP Saikhamakawn</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <!-- Photos Stat -->
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-label">Photos Gallery</span>
+            <div class="stat-card-icon photos">📸</div>
+          </div>
+          <div class="stat-value" id="count-photos">0</div>
+          <a href="photos.html" style="font-size: var(--fs-xs); color: var(--brand-sky); text-decoration: none; font-weight: var(--fw-medium);">Manage Photos →</a>
+        </div>
+
+        <!-- Documents Stat -->
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-label">Mipui Aw Docs</span>
+            <div class="stat-card-icon docs">📄</div>
+          </div>
+          <div class="stat-value" id="count-docs">0</div>
+          <a href="documents.html" style="font-size: var(--fs-xs); color: var(--brand-gold-dark); text-decoration: none; font-weight: var(--fw-medium);">Manage Documents →</a>
+        </div>
+
+        <!-- Sermons Stat -->
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-label">Sermons & Studies</span>
+            <div class="stat-card-icon sermons">📖</div>
+          </div>
+          <div class="stat-value" id="count-sermons">0</div>
+          <a href="sermons.html" style="font-size: var(--fs-xs); color: var(--brand-red); text-decoration: none; font-weight: var(--fw-medium);">Manage Sermons →</a>
+        </div>
+
+        <!-- Announcements Stat -->
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-label">Announcements</span>
+            <div class="stat-card-icon announcements">📢</div>
+          </div>
+          <div class="stat-value" id="count-announcements">0</div>
+          <a href="announcements.html" style="font-size: var(--fs-xs); color: var(--color-success); text-decoration: none; font-weight: var(--fw-medium);">Manage Notices →</a>
+        </div>
+      </div>
+
+      <!-- Recent Activity Section -->
+      <div class="data-table-wrapper" style="margin-top: var(--sp-6);">
+        <div class="data-table-header" style="border-bottom: 1px solid var(--color-border-light);">
+          <h2 style="font-size: var(--fs-lg); font-weight: var(--fw-semibold);">🔔 Recent Content Updates</h2>
+          <span style="font-size: var(--fs-xs); color: var(--color-text-secondary);">Latest additions to the portal</span>
+        </div>
+        
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Item Type</th>
+                <th>Title</th>
+                <th>Category/Speaker</th>
+                <th>Date Added</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recent-activity-list">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- App Configuration & Services -->
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/db-service.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDashboardStats();
+    });
+
+    function loadDashboardStats() {
+      // 1. Read lists from LocalStorage
+      const photos = AdminData.get('photos');
+      const docs = AdminData.get('documents');
+      const sermons = AdminData.get('sermons');
+      const announcements = AdminData.get('announcements');
+
+      // 2. Set stats values
+      document.getElementById('count-photos').textContent = photos.length;
+      document.getElementById('count-docs').textContent = docs.length;
+      document.getElementById('count-sermons').textContent = sermons.length;
+      document.getElementById('count-announcements').textContent = announcements.length;
+
+      // 3. Assemble recent activities
+      const allActivities = [
+        ...photos.map(p => ({ ...p, type: 'Photo', displayCategory: p.category, manageUrl: 'photos.html' })),
+        ...docs.map(d => ({ ...d, type: 'Document', displayCategory: d.category, manageUrl: 'documents.html' })),
+        ...sermons.map(s => ({ ...s, type: 'Sermon', displayCategory: s.speaker, manageUrl: 'sermons.html' })),
+        ...announcements.map(a => ({ ...a, type: 'Announcement', displayCategory: a.priority.toUpperCase(), manageUrl: 'announcements.html' }))
+      ];
+
+      // Sort by date newest first
+      allActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      // Get top 6
+      const topRecent = allActivities.slice(0, 6);
+      const container = document.getElementById('recent-activity-list');
+
+      if (topRecent.length === 0) {
+        container.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+              No updates yet. Check back later!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      container.innerHTML = topRecent.map(act => {
+        let typeBadge = '';
+        if (act.type === 'Photo') typeBadge = '<span class="badge badge-primary">📸 Photo</span>';
+        else if (act.type === 'Document') typeBadge = '<span class="badge badge-gold">📄 Document</span>';
+        else if (act.type === 'Sermon') typeBadge = '<span class="badge badge-red">📖 Sermon</span>';
+        else typeBadge = '<span class="badge" style="background:#22c55e;color:#fff;">📢 Announcement</span>';
+
+        return `
+          <tr>
+            <td>${typeBadge}</td>
+            <td style="font-weight: var(--fw-medium); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              ${act.title}
+            </td>
+            <td><span style="font-size: var(--fs-xs); color: var(--color-text-secondary);">${act.displayCategory}</span></td>
+            <td>📅 ${formatDate(act.date)}</td>
+            <td>
+              <a href="${act.manageUrl}" class="btn btn-outline btn-sm" style="padding: 4px 8px;">✏️ Manage</a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Sermons — KṬP Saikhamakawn</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+
+<body>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside id="admin-sidebar"></aside>
+
+    <!-- Main Content Panel -->
+    <main class="admin-main">
+
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+          <div>
+            <h1 class="admin-page-title">Sermons & Studies Manager</h1>
+            <p class="admin-page-desc">Create, edit, or delete sermon outlines and notes</p>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="btn-add-sermon">➕ Add Sermon</button>
+        </div>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="data-table-wrapper" style="margin-bottom: var(--sp-4); padding: var(--sp-4);">
+        <div
+          style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
+          <div class="search-container" style="max-width: 350px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="admin-search-input" class="search-input"
+              placeholder="Search sermons by title or speaker...">
+          </div>
+          <div>
+            <select id="admin-filter-category" class="filter-select"
+              style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
+              <option value="All">All Topics</option>
+              <!-- Populated via JS -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="data-table-wrapper">
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Speaker</th>
+                <th>Topic</th>
+                <th>Scripture</th>
+                <th>Date</th>
+                <th>Featured</th>
+                <th style="width: 120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sermons-table-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Edit/Add Modal -->
+  <div class="modal-backdrop" id="sermon-form-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-form-title">Add New Sermon Notes</h3>
+        <button class="modal-close" id="close-sermon-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="sermon-crud-form">
+        <input type="hidden" id="sermon-action-type" value="add">
+        <input type="hidden" id="sermon-edit-id" value="">
+
+        <div class="modal-body">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="sermon-title" class="form-label">Sermon Title</label>
+              <input type="text" id="sermon-title" class="form-input" required
+                placeholder="e.g. Living a Life of Worship">
+            </div>
+
+            <div class="form-group">
+              <label for="sermon-speaker" class="form-label">Speaker</label>
+              <input type="text" id="sermon-speaker" class="form-input" required
+                placeholder="e.g. Pastor R. Lalthanmawia">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="sermon-topic" class="form-label">Topic / Category</label>
+              <select id="sermon-topic" class="form-input form-select" required>
+                <!-- Populated via JS -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="sermon-scripture" class="form-label">Scripture Reading</label>
+              <input type="text" id="sermon-scripture" class="form-input" required placeholder="e.g. Romans 12:1-2">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="sermon-desc" class="form-label">Sermon Outline / Description</label>
+            <textarea id="sermon-desc" class="form-input form-textarea" required
+              placeholder="Enter primary scripture points, notes, and takeaway messages..."></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="sermon-type" class="form-label">Document Format</label>
+              <select id="sermon-type" class="form-input form-select" required>
+                <option value="PDF">PDF File</option>
+                <option value="DOCX">Word File (DOCX)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="sermon-size" class="form-label">Estimated File Size</label>
+              <input type="text" id="sermon-size" class="form-input" required placeholder="e.g. 1.2 MB" value="1.0 MB">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="sermon-date" class="form-label">Delivery Date</label>
+              <input type="date" id="sermon-date" class="form-input" required>
+            </div>
+
+            <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
+              <span class="form-label">Options</span>
+              <label
+                style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm);">
+                <input type="checkbox" id="sermon-featured" style="width: 16px; height: 16px;">
+                Feature on Homepage
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="sermon-file" class="form-label">Notes Attachment File (Mock)</label>
+            <input type="file" id="sermon-file" class="form-input">
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+              Firebase Storage attachment point. PDF download simulation is automated.
+            </small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Sermon</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- App Configuration & Services -->
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/db-service.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/admin.js"></script>
+
+  <script>
+    let currentSearch = '';
+    let currentCategoryFilter = 'All';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof Toast !== 'undefined') Toast.init();
+
+      populateCategoryDropdowns();
+      renderSermonsTable();
+      setupEvents();
+    });
+
+    function populateCategoryDropdowns() {
+      const filterSelect = document.getElementById('admin-filter-category');
+      const formSelect = document.getElementById('sermon-topic');
+
+      SermonCategories.forEach(cat => {
+        if (cat !== 'All') {
+          const opt1 = document.createElement('option');
+          opt1.value = cat;
+          opt1.textContent = cat;
+          filterSelect.appendChild(opt1);
+        }
+
+        const opt2 = document.createElement('option');
+        opt2.value = cat === 'All' ? 'Sunday Sermon' : cat;
+        opt2.textContent = cat === 'All' ? 'Select topic...' : cat;
+        if (cat === 'All') opt2.disabled = true;
+        formSelect.appendChild(opt2);
+      });
+    }
+
+    function renderSermonsTable() {
+      const tbody = document.getElementById('sermons-table-body');
+      if (!tbody) return;
+
+      const sermons = AdminData.get('sermons');
+
+      let filtered = sermons;
+      if (currentSearch.trim()) {
+        const q = currentSearch.toLowerCase();
+        filtered = filtered.filter(s => s.title.toLowerCase().includes(q) || s.speaker.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
+      }
+      if (currentCategoryFilter !== 'All') {
+        filtered = filtered.filter(s => s.topic === currentCategoryFilter);
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+              No sermons found matching filters.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(sermon => `
+        <tr>
+          <td style="font-weight: var(--fw-semibold);">${sermon.title}</td>
+          <td>🎙️ ${sermon.speaker}</td>
+          <td><span class="badge badge-gold">${sermon.topic}</span></td>
+          <td style="font-family: monospace; font-size:12px;">${sermon.scripture}</td>
+          <td>📅 ${formatDate(sermon.date)}</td>
+          <td>${sermon.featured ? '⭐ Yes' : 'No'}</td>
+          <td>
+            <div class="table-actions">
+              <button class="btn btn-outline btn-sm" onclick="openEditModal('${sermon.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Sermon">✏️</button>
+              <button class="btn btn-outline btn-sm" onclick="confirmDeleteSermon('${sermon.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Sermon">❌</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function setupEvents() {
+      // Search
+      document.getElementById('admin-search-input').addEventListener('input', (e) => {
+        currentSearch = e.target.value;
+        renderSermonsTable();
+      });
+
+      // Category filter dropdown
+      document.getElementById('admin-filter-category').addEventListener('change', (e) => {
+        currentCategoryFilter = e.target.value;
+        renderSermonsTable();
+      });
+
+      // Show Add Modal
+      document.getElementById('btn-add-sermon').addEventListener('click', () => {
+        document.getElementById('sermon-crud-form').reset();
+        document.getElementById('sermon-action-type').value = 'add';
+        document.getElementById('modal-form-title').textContent = 'Add New Sermon Notes';
+        document.getElementById('sermon-date').value = new Date().toISOString().split('T')[0];
+        ModalSystem.open('sermon-form-modal');
+      });
+
+      // Close modal actions
+      const closeModal = () => ModalSystem.close('sermon-form-modal');
+      document.getElementById('close-sermon-modal').addEventListener('click', closeModal);
+      document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+
+      // Form Submit (Save/Update)
+      document.getElementById('sermon-crud-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const actionType = document.getElementById('sermon-action-type').value;
+        const sermonId = document.getElementById('sermon-edit-id').value;
+
+        const title = document.getElementById('sermon-title').value;
+        const speaker = document.getElementById('sermon-speaker').value;
+        const topic = document.getElementById('sermon-topic').value;
+        const scripture = document.getElementById('sermon-scripture').value;
+        const description = document.getElementById('sermon-desc').value;
+        const fileType = document.getElementById('sermon-type').value;
+        const fileSize = document.getElementById('sermon-size').value;
+        const date = document.getElementById('sermon-date').value;
+        const featured = document.getElementById('sermon-featured').checked;
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        try {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⌛ Saving...';
+
+          if (actionType === 'add') {
+            const newSermon = {
+              title,
+              speaker,
+              topic,
+              scripture,
+              description,
+              fileType,
+              fileSize,
+              date,
+              featured,
+              downloadUrl: '#'
+            };
+            await AdminData.add('sermons', newSermon);
+            AdminToast.show('Sermon notes saved!', 'success');
+          } else {
+            const updatedFields = {
+              title,
+              speaker,
+              topic,
+              scripture,
+              description,
+              fileType,
+              fileSize,
+              date,
+              featured
+            };
+            await AdminData.update('sermons', sermonId, updatedFields);
+            AdminToast.show('Sermon notes updated!', 'success');
+          }
+
+          closeModal();
+          renderSermonsTable();
+        } catch (err) {
+          console.error("Error saving sermon:", err);
+          AdminToast.show('Error saving sermon: ' + (err.message || 'Permission denied'), 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
+    }
+
+    // Exposed to onclick triggers
+    window.openEditModal = function (id) {
+      const sermons = AdminData.get('sermons');
+      const sermon = sermons.find(s => s.id === id);
+      if (!sermon) return;
+
+      document.getElementById('sermon-action-type').value = 'edit';
+      document.getElementById('sermon-edit-id').value = id;
+      document.getElementById('modal-form-title').textContent = 'Edit Sermon Notes';
+
+      document.getElementById('sermon-title').value = sermon.title;
+      document.getElementById('sermon-speaker').value = sermon.speaker;
+      document.getElementById('sermon-topic').value = sermon.topic;
+      document.getElementById('sermon-scripture').value = sermon.scripture;
+      document.getElementById('sermon-desc').value = sermon.description;
+      document.getElementById('sermon-type').value = sermon.fileType;
+      document.getElementById('sermon-size').value = sermon.fileSize;
+      document.getElementById('sermon-date').value = sermon.date;
+      document.getElementById('sermon-featured').checked = sermon.featured;
+
+      ModalSystem.open('sermon-form-modal');
+    };
+
+    window.confirmDeleteSermon = async function (id) {
+      const sermons = AdminData.get('sermons');
+      const sermon = sermons.find(s => s.id === id);
+      if (!sermon) return;
+
+      if (confirm(`Are you sure you want to delete the sermon notes for "${sermon.title}"?`)) {
+        try {
+          await AdminData.delete('sermons', id);
+          AdminToast.show('Sermon deleted.', 'info');
+          renderSermonsTable();
+        } catch (err) {
+          console.error("Error deleting sermon:", err);
+          AdminToast.show('Error deleting sermon: ' + (err.message || 'Permission denied'), 'error');
+        }
+      }
+    };
+  </script>
+</body>
+
+</html>
