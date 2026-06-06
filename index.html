@@ -134,7 +134,11 @@
   <script src="assets/js/app.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      // Load dynamic databases before rendering home page
+      // Render static header and footer immediately for fast visual load
+      renderHeader('home');
+      renderFooter();
+
+      // Load dynamic databases before rendering home page content
       try {
         const annData = await DbService.get('announcements');
         if (annData && Array.isArray(annData)) {
@@ -161,13 +165,15 @@
         if (settings) {
           if (settings.churchInfo) Object.assign(ChurchInfo, settings.churchInfo);
           if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
+          
+          // Re-render header/footer if settings were fetched from DB
+          renderHeader('home');
+          renderFooter();
         }
       } catch (err) {
         console.error("Error loading home page database...", err);
       }
 
-      renderHeader('home');
-      renderFooter();
       renderHomepage();
     });
 
