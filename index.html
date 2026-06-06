@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KṬP Saikhamakawn — Kristian Ṭhalai Pawl</title>
-  <meta name="description" content="KṬP Saikhamakawn — Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam. Established 1954. A modern church community in Saikhamakawn, Mizoram.">
+  <meta name="description"
+    content="KṬP Saikhamakawn — Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam. Established 1954. A modern church community in Saikhamakawn, Mizoram.">
   <meta name="keywords" content="KTP, Kristian Thalai Pawl, Saikhamakawn, Mizoram, church, Christian, Mizo">
-  
+
   <!-- Open Graph -->
   <meta property="og:title" content="KṬP Saikhamakawn — Kristian Ṭhalai Pawl">
   <meta property="og:description" content="Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam. Established 1954.">
@@ -30,13 +32,14 @@
   <link rel="stylesheet" href="assets/css/layout.css">
   <link rel="stylesheet" href="assets/css/pages.css">
 </head>
+
 <body>
   <!-- Header -->
   <header class="site-header" id="site-header"></header>
 
   <!-- Main Content -->
   <main class="main-content">
-    
+
     <!-- Hero Section -->
     <section class="hero" id="home">
       <div class="hero-bg-decoration"></div>
@@ -44,7 +47,8 @@
         <img src="assets/images/logo.png" alt="KṬP Saikhamakawn Logo" class="hero-logo" width="200" height="150">
         <h1 class="hero-title">KṬP <span class="highlight">Saikhamakawn</span></h1>
         <p class="hero-subtitle">Rawngbawl Tura Chhandam</p>
-        <p class="hero-description">Kristian Ṭhalai Pawl (KṬP) Saikhamakawn — serving our community through faith, fellowship, and service since 1954.</p>
+        <p class="hero-description">Kristian Ṭhalai Pawl (KṬP) Saikhamakawn — serving our community through faith,
+          fellowship, and service since 1954.</p>
         <div class="hero-actions">
           <a href="#featured" class="btn btn-primary">Featured Content</a>
           <a href="#social-media" class="btn btn-outline">Connect With Us</a>
@@ -95,48 +99,6 @@
       </div>
     </section>
 
-    <!-- ====== FEATURED SECTION ====== -->
-    <section class="section" id="featured">
-      <div class="container">
-        <div class="section-header reveal">
-          <h2>⭐ Featured Content</h2>
-          <p>Explore our featured photos, documents, and sermons.</p>
-        </div>
-
-        <!-- Featured Photos -->
-        <div class="reveal" style="margin-bottom: var(--sp-8);">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4);">
-            <h3 style="font-size:var(--fs-xl);">📸 Featured Photos</h3>
-            <a href="photos.html" class="btn btn-ghost btn-sm">View All →</a>
-          </div>
-          <div class="featured-scroll no-scrollbar" id="featured-photos">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-
-        <!-- Featured Documents -->
-        <div class="reveal" style="margin-bottom: var(--sp-8);">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4);">
-            <h3 style="font-size:var(--fs-xl);">📄 Featured Documents</h3>
-            <a href="mipui-aw.html" class="btn btn-ghost btn-sm">View All →</a>
-          </div>
-          <div class="featured-scroll no-scrollbar" id="featured-docs">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-
-        <!-- Featured Sermons -->
-        <div class="reveal">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4);">
-            <h3 style="font-size:var(--fs-xl);">📖 Featured Sermons</h3>
-            <a href="sermons.html" class="btn btn-ghost btn-sm">View All →</a>
-          </div>
-          <div class="featured-scroll no-scrollbar" id="featured-sermons">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- ====== SOCIAL MEDIA ====== -->
     <section class="section social-section" id="social-media">
@@ -215,7 +177,7 @@
       const heroTitle = document.querySelector('.hero-title');
       const heroDesc = document.querySelector('.hero-description');
       const heroLogo = document.querySelector('.hero-logo');
-      
+
       if (heroTitle && ChurchInfo.name) {
         const highlightName = ChurchInfo.name.replace(/^(K[ṬT]P|KTP)\s*/i, '');
         heroTitle.innerHTML = `KṬP <span class="highlight">${highlightName}</span>`;
@@ -237,7 +199,7 @@
     function renderAnnouncements() {
       const container = document.getElementById('announcements-list');
       if (!container) return;
-      
+
       const sorted = [...Announcements].sort((a, b) => new Date(b.date) - new Date(a.date));
       container.innerHTML = sorted.map(ann => `
         <div class="announcement-card reveal">
@@ -252,7 +214,7 @@
     function renderFeaturedPhotos() {
       const container = document.getElementById('featured-photos');
       if (!container) return;
-      
+
       const featured = Photos.filter(p => p.featured).slice(0, 6);
       container.innerHTML = featured.map(photo => `
         <a href="photos.html" class="featured-card reveal">
@@ -271,7 +233,7 @@
     function renderFeaturedDocs() {
       const container = document.getElementById('featured-docs');
       if (!container) return;
-      
+
       const featured = Documents.filter(d => d.featured).slice(0, 4);
       container.innerHTML = featured.map(doc => `
         <div class="doc-card reveal">
@@ -295,7 +257,7 @@
     function renderFeaturedSermons() {
       const container = document.getElementById('featured-sermons');
       if (!container) return;
-      
+
       const featured = Sermons.filter(s => s.featured).slice(0, 4);
       container.innerHTML = featured.map(sermon => `
         <div class="doc-card reveal">
@@ -320,7 +282,7 @@
     function renderSocialGrid() {
       const container = document.getElementById('social-grid');
       if (!container) return;
-      
+
       container.innerHTML = `
         <a href="${SocialMedia.instagram.url}" target="_blank" rel="noopener" class="social-card instagram" id="social-instagram">
           <div class="social-card-icon">📷</div>
@@ -341,4 +303,5 @@
     }
   </script>
 </body>
+
 </html>

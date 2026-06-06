@@ -14,21 +14,19 @@
   justify-content: center;
   text-align: center;
   overflow: hidden;
-  background: linear-gradient(135deg, 
-    rgba(135, 206, 235, 0.1) 0%, 
-    var(--color-bg) 30%, 
-    var(--color-bg) 70%, 
-    rgba(255, 215, 0, 0.08) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(135, 206, 235, 0.1) 0%,
+      var(--color-bg) 30%,
+      var(--color-bg) 70%,
+      rgba(255, 215, 0, 0.08) 100%);
 }
 
 [data-theme="dark"] .hero {
-  background: linear-gradient(135deg, 
-    rgba(135, 206, 235, 0.05) 0%, 
-    var(--color-bg) 30%, 
-    var(--color-bg) 70%, 
-    rgba(255, 215, 0, 0.04) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(135, 206, 235, 0.05) 0%,
+      var(--color-bg) 30%,
+      var(--color-bg) 70%,
+      rgba(255, 215, 0, 0.04) 100%);
 }
 
 .hero-bg-decoration {
@@ -633,14 +631,14 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.featured-scroll > * {
+.featured-scroll>* {
   flex: 0 0 85%;
   max-width: 350px;
   scroll-snap-align: start;
 }
 
 @media (min-width: 768px) {
-  .featured-scroll > * {
+  .featured-scroll>* {
     flex: 0 0 300px;
   }
 }
