@@ -268,7 +268,17 @@
         const priority = document.getElementById('ann-priority').value;
         const date = document.getElementById('ann-date').value;
         const featured = document.getElementById('ann-featured').checked;
-        const imageUrl = document.getElementById('ann-image').value;
+        function formatDriveImageLink(url) {
+          if (!url) return '';
+          const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) {
+            return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+          }
+          return url;
+        }
+
+        const rawImageUrl = document.getElementById('ann-image').value;
+        const imageUrl = formatDriveImageLink(rawImageUrl);
         const linkUrl = document.getElementById('ann-link').value;
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
