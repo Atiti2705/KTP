@@ -122,6 +122,18 @@
             </div>
           </div>
 
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="ann-image" class="form-label">Image URL (Optional)</label>
+              <input type="url" id="ann-image" class="form-input" placeholder="https://example.com/image.jpg">
+            </div>
+
+            <div class="form-group">
+              <label for="ann-link" class="form-label">External Link (Optional)</label>
+              <input type="url" id="ann-link" class="form-input" placeholder="https://example.com/more-info">
+            </div>
+          </div>
+
           <div class="form-group" style="margin-bottom: 0;">
             <label
               style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm); padding: var(--sp-2) 0;">
@@ -256,6 +268,8 @@
         const priority = document.getElementById('ann-priority').value;
         const date = document.getElementById('ann-date').value;
         const featured = document.getElementById('ann-featured').checked;
+        const imageUrl = document.getElementById('ann-image').value;
+        const linkUrl = document.getElementById('ann-link').value;
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -270,7 +284,9 @@
               content,
               priority,
               date,
-              featured
+              featured,
+              imageUrl,
+              linkUrl
             };
             await AdminData.add('announcements', newAnn);
             AdminToast.show('Notice posted successfully!', 'success');
@@ -280,7 +296,9 @@
               content,
               priority,
               date,
-              featured
+              featured,
+              imageUrl,
+              linkUrl
             };
             await AdminData.update('announcements', annId, updatedFields);
             AdminToast.show('Notice updated successfully!', 'success');
@@ -312,7 +330,9 @@
       document.getElementById('ann-content').value = ann.content;
       document.getElementById('ann-priority').value = ann.priority;
       document.getElementById('ann-date').value = ann.date;
-      document.getElementById('ann-featured').checked = ann.featured;
+      document.getElementById('ann-featured').checked = ann.featured || false;
+      document.getElementById('ann-image').value = ann.imageUrl || '';
+      document.getElementById('ann-link').value = ann.linkUrl || '';
 
       ModalSystem.open('ann-form-modal');
     };

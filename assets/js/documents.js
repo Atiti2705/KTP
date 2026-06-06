@@ -147,7 +147,12 @@ function renderDocuments() {
   }
 
   listContainer.innerHTML = paginationData.items.map(doc => `
-    <div class="doc-card reveal">
+    <div class="doc-card reveal" style="position: relative;">
+      <!-- Selection Checkbox -->
+      <label class="item-select-label" style="position: absolute; top: var(--sp-2); left: var(--sp-2); z-index: 5; background: rgba(0,0,0,0.05); border-radius: var(--radius-sm); padding: 4px; display: flex; cursor: pointer;" onclick="event.stopPropagation();">
+        <input type="checkbox" class="item-checkbox" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${doc.fileType.toLowerCase()}" style="width: 18px; height: 18px; cursor: pointer;">
+      </label>
+      
       <div class="file-icon file-icon-${doc.fileType.toLowerCase()}">${doc.fileType}</div>
       <div class="doc-card-content">
         <h3 class="doc-card-title">${doc.title}</h3>
@@ -282,8 +287,127 @@ function openPreviewModal(docId) {
         Toast.show(`Downloading ${doc.title} (Simulated)...`, 'success');
         ModalSystem.close('doc-modal');
       };
+      iframe.src = doc.fileUrl;
     }
   }
 
-  ModalSystem.open('doc-modal');
+  ModalSystem.open('preview-modal');
 }
+
+// BULK DOWNLOAD LOGIC
+// ========================
+let selectedDocs = new Set();
+
+function setupBulkDownload() {
+  const selectAllCb = document.getElementById('select-all-cb');
+  const btnDownload = document.getElementById('btn-bulk-download');
+  const countSpan = document.getElementById('selected-count');
+  
+  if (!selectAllCb || !btnDownload) return;
+
+  // Handle individual checkbox clicks (using event delegation on list)
+  const listContainer = document.getElementById('documents-list');
+  if (listContainer) {
+    listContainer.addEventListener('change', (e) => {
+      if (e.target.classList.contains('item-checkbox')) {
+        const url = e.target.dataset.url;
+        const name = e.target.dataset.name;
+        if (!url) {
+          Toast.show('Cannot bulk download this file type (URL missing).', 'error');
+          e.target.checked = false;
+          return;
+        }
+
+        if (e.target.checked) {
+          selectedDocs.add(JSON.stringify({url, name}));
+        } else {
+          selectedDocs.delete(JSON.stringify({url, name}));
+        }
+        updateBulkUI();
+      }
+    });
+  }
+
+  // Handle Select All
+  selectAllCb.addEventListener('change', (e) => {
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+    checkboxes.forEach(cb => {
+      const url = cb.dataset.url;
+      const name = cb.dataset.name;
+      if (!url) return; // Skip items without direct URLs
+
+      cb.checked = e.target.checked;
+      if (e.target.checked) {
+        selectedDocs.add(JSON.stringify({url, name}));
+      } else {
+        selectedDocs.delete(JSON.stringify({url, name}));
+      }
+    });
+    updateBulkUI();
+  });
+
+  // Handle Download Button
+  btnDownload.addEventListener('click', async () => {
+    if (selectedDocs.size === 0) return;
+    
+    const originalText = btnDownload.innerHTML;
+    btnDownload.innerHTML = '⏳ Zipping...';
+    btnDownload.disabled = true;
+    
+    try {
+      const zip = new JSZip();
+      const files = Array.from(selectedDocs).map(item => JSON.parse(item));
+      
+      const promises = files.map(async (file, index) => {
+        try {
+          const response = await fetch(file.url, { mode: 'cors' });
+          if (!response.ok) throw new Error('Network response was not ok');
+          const blob = await response.blob();
+          
+          // Ensure unique filenames
+          const ext = file.name.split('.').pop();
+          const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || `doc_${index}`;
+          const finalName = `${baseName}_${index}.${ext}`;
+          
+          zip.file(finalName, blob);
+        } catch (err) {
+          console.error("Failed to fetch document for zip:", file.url, err);
+        }
+      });
+      
+      await Promise.all(promises);
+      
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, 'KTP_Documents.zip');
+      
+    } catch (err) {
+      console.error("Error creating zip:", err);
+      alert("Failed to create zip file. Please try downloading files individually.");
+    } finally {
+      btnDownload.innerHTML = originalText;
+      btnDownload.disabled = false;
+      
+      // Clear selection
+      selectedDocs.clear();
+      document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false);
+      if (selectAllCb) selectAllCb.checked = false;
+      updateBulkUI();
+    }
+  });
+
+  function updateBulkUI() {
+    countSpan.textContent = selectedDocs.size;
+    if (selectedDocs.size > 0) {
+      btnDownload.disabled = false;
+      btnDownload.style.opacity = '1';
+    } else {
+      btnDownload.disabled = true;
+      btnDownload.style.opacity = '0.5';
+    }
+  }
+}
+
+// Initialize bulk download when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(setupBulkDownload, 500); // Wait for initial render
+});

@@ -188,7 +188,12 @@ function renderGallery() {
     }
 
     return `
-      <div class="masonry-item gallery-item reveal" data-id="${photo.id}">
+      <div class="masonry-item gallery-item reveal" data-id="${photo.id}" style="position: relative;">
+        <!-- Selection Checkbox -->
+        <label class="item-select-label" style="position: absolute; top: var(--sp-2); left: var(--sp-2); z-index: 5; background: rgba(0,0,0,0.5); border-radius: var(--radius-sm); padding: 4px; display: flex; cursor: pointer; backdrop-filter: blur(4px);" onclick="event.stopPropagation();">
+          <input type="checkbox" class="item-checkbox" data-url="${photo.imageUrl}" data-name="${photo.title || 'photo'}.jpg" style="width: 18px; height: 18px; cursor: pointer;">
+        </label>
+        
         <img src="${photo.imageUrl}" alt="${photo.title}" class="gallery-image" loading="lazy">
         <div class="gallery-overlay">
           <h4 class="gallery-overlay-title">${photo.title}</h4>
@@ -304,3 +309,114 @@ function openPhotoModal(photoId) {
 
   ModalSystem.open('photo-modal');
 }
+
+// BULK DOWNLOAD LOGIC
+// ========================
+let selectedPhotos = new Set();
+
+function setupBulkDownload() {
+  const selectAllCb = document.getElementById('select-all-cb');
+  const btnDownload = document.getElementById('btn-bulk-download');
+  const countSpan = document.getElementById('selected-count');
+  
+  if (!selectAllCb || !btnDownload) return;
+
+  // Handle individual checkbox clicks (using event delegation on grid)
+  const grid = document.getElementById('gallery-grid');
+  if (grid) {
+    grid.addEventListener('change', (e) => {
+      if (e.target.classList.contains('item-checkbox')) {
+        const url = e.target.dataset.url;
+        const name = e.target.dataset.name;
+        if (e.target.checked) {
+          selectedPhotos.add(JSON.stringify({url, name}));
+        } else {
+          selectedPhotos.delete(JSON.stringify({url, name}));
+        }
+        updateBulkUI();
+      }
+    });
+  }
+
+  // Handle Select All
+  selectAllCb.addEventListener('change', (e) => {
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+    checkboxes.forEach(cb => {
+      cb.checked = e.target.checked;
+      const url = cb.dataset.url;
+      const name = cb.dataset.name;
+      if (e.target.checked) {
+        selectedPhotos.add(JSON.stringify({url, name}));
+      } else {
+        selectedPhotos.delete(JSON.stringify({url, name}));
+      }
+    });
+    updateBulkUI();
+  });
+
+  // Handle Download Button
+  btnDownload.addEventListener('click', async () => {
+    if (selectedPhotos.size === 0) return;
+    
+    const originalText = btnDownload.innerHTML;
+    btnDownload.innerHTML = '⏳ Zipping...';
+    btnDownload.disabled = true;
+    
+    try {
+      const zip = new JSZip();
+      const files = Array.from(selectedPhotos).map(item => JSON.parse(item));
+      
+      const promises = files.map(async (file, index) => {
+        try {
+          const response = await fetch(file.url, { mode: 'cors' });
+          if (!response.ok) throw new Error('Network response was not ok');
+          const blob = await response.blob();
+          
+          // Ensure unique filenames
+          const ext = file.name.split('.').pop() || 'jpg';
+          const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || `photo_${index}`;
+          const finalName = `${baseName}_${index}.${ext}`;
+          
+          zip.file(finalName, blob);
+        } catch (err) {
+          console.error("Failed to fetch image for zip:", file.url, err);
+        }
+      });
+      
+      await Promise.all(promises);
+      
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, 'KTP_Photos.zip');
+      
+    } catch (err) {
+      console.error("Error creating zip:", err);
+      alert("Failed to create zip file. Please try downloading files individually.");
+    } finally {
+      btnDownload.innerHTML = originalText;
+      btnDownload.disabled = false;
+      
+      // Clear selection
+      selectedPhotos.clear();
+      document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false);
+      if (selectAllCb) selectAllCb.checked = false;
+      updateBulkUI();
+    }
+  });
+
+  function updateBulkUI() {
+    countSpan.textContent = selectedPhotos.size;
+    if (selectedPhotos.size > 0) {
+      btnDownload.disabled = false;
+      btnDownload.style.opacity = '1';
+    } else {
+      btnDownload.disabled = true;
+      btnDownload.style.opacity = '0.5';
+    }
+  }
+}
+
+// Initialize bulk download when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(setupBulkDownload, 500); // Wait for initial render
+});
+
