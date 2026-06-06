@@ -770,6 +770,19 @@ function formatDateLong(dateStr) {
     if (storedSettings.socialMedia) {
       Object.assign(SocialMedia, storedSettings.socialMedia);
     }
+    // Sync custom categories
+    if (storedSettings.photoCategories && Array.isArray(storedSettings.photoCategories)) {
+      PhotoCategories.length = 0;
+      PhotoCategories.push('All', ...storedSettings.photoCategories.filter(c => c !== 'All'));
+    }
+    if (storedSettings.documentCategories && Array.isArray(storedSettings.documentCategories)) {
+      DocumentCategories.length = 0;
+      DocumentCategories.push('All', ...storedSettings.documentCategories.filter(c => c !== 'All'));
+    }
+    if (storedSettings.sermonCategories && Array.isArray(storedSettings.sermonCategories)) {
+      SermonCategories.length = 0;
+      SermonCategories.push('All', ...storedSettings.sermonCategories.filter(c => c !== 'All'));
+    }
   }
 })();
 
