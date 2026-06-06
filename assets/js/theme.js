@@ -9,7 +9,12 @@ const ThemeManager = {
   THEMES: ['light', 'dark', 'system'],
 
   init() {
-    const saved = localStorage.getItem(this.STORAGE_KEY) || 'system';
+    // Force existing users to dark theme for the modern update
+    if (!localStorage.getItem('ktp-theme-v2-dark')) {
+      localStorage.setItem(this.STORAGE_KEY, 'dark');
+      localStorage.setItem('ktp-theme-v2-dark', 'true');
+    }
+    const saved = localStorage.getItem(this.STORAGE_KEY) || 'dark';
     this.applyTheme(saved);
     this.watchSystemTheme();
     this.setupToggle();

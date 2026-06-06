@@ -104,9 +104,9 @@
 }
 
 /* ========================
-   LIGHT THEME (Default)
+   LIGHT THEME
    ======================== */
-[data-theme="light"], :root {
+[data-theme="light"] {
   --color-bg: #f8fafc;
   --color-bg-alt: #ffffff;
   --color-bg-card: #ffffff;
@@ -150,9 +150,9 @@
 }
 
 /* ========================
-   DARK THEME
+   DARK THEME (Default)
    ======================== */
-[data-theme="dark"] {
+[data-theme="dark"], :root {
   --color-bg: #0f172a;
   --color-bg-alt: #1e293b;
   --color-bg-card: #1e293b;
