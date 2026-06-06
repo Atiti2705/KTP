@@ -772,3 +772,51 @@
   color: var(--brand-sky);
   border-bottom-color: var(--brand-sky);
 }
+
+/* =========================================
+   Selection UI (Drive-Style)
+   ========================================= */
+.selectable-item {
+  position: relative;
+  user-select: none; /* Prevent text selection during shift-click/long-press */
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+/* Selected State */
+.selectable-item.selected {
+  border-color: var(--brand-sky) !important;
+  background-color: rgba(56, 189, 248, 0.05) !important;
+  box-shadow: 0 0 0 2px var(--brand-sky) !important;
+  transform: scale(0.98);
+}
+
+.selectable-item.selected::after {
+  content: '✓';
+  position: absolute;
+  top: var(--sp-2);
+  left: var(--sp-2);
+  width: 24px;
+  height: 24px;
+  background-color: var(--brand-sky);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Hide manual checkboxes (we use JS logic now) */
+.item-select-label {
+  display: none !important;
+}

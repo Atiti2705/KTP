@@ -614,3 +614,186 @@ function renderFooter() {
     </div>
   `;
 }
+
+/* ========================================
+   Selection Manager (Drive-Style)
+   ======================================== */
+class SelectionManager {
+  constructor(listContainerId, itemSelector, onSelectionChange, previewCallback) {
+    this.container = document.getElementById(listContainerId);
+    this.itemSelector = itemSelector;
+    this.onSelectionChange = onSelectionChange;
+    this.previewCallback = previewCallback;
+    
+    this.selectedItems = new Set();
+    this.selectionMode = false;
+    this.longPressTimer = null;
+    this.lastSelectedIndex = -1;
+
+    if (this.container) {
+      this.initEvents();
+    }
+  }
+
+  initEvents() {
+    // Handle pointerdown for long press (mobile)
+    this.container.addEventListener('pointerdown', (e) => {
+      const item = e.target.closest(this.itemSelector);
+      if (!item) return;
+
+      if (e.pointerType === 'touch') {
+        this.longPressTimer = setTimeout(() => {
+          this.handleLongPress(item);
+        }, 500); // 500ms long press
+      }
+    });
+
+    this.container.addEventListener('pointerup', () => clearTimeout(this.longPressTimer));
+    this.container.addEventListener('pointercancel', () => clearTimeout(this.longPressTimer));
+    this.container.addEventListener('pointermove', () => clearTimeout(this.longPressTimer));
+
+    // Handle contextmenu (prevent default on long press)
+    this.container.addEventListener('contextmenu', (e) => {
+      const item = e.target.closest(this.itemSelector);
+      if (item && e.pointerType === 'touch') {
+        e.preventDefault();
+      }
+    });
+
+    // Handle clicks
+    this.container.addEventListener('click', (e) => {
+      const item = e.target.closest(this.itemSelector);
+      if (!item) return;
+
+      e.preventDefault();
+
+      // Don't trigger click if we just triggered long press
+      if (item.hasAttribute('data-just-longpressed')) {
+        item.removeAttribute('data-just-longpressed');
+        return;
+      }
+
+      this.handleClick(e, item);
+    });
+
+    // Handle double clicks (desktop)
+    this.container.addEventListener('dblclick', (e) => {
+      const item = e.target.closest(this.itemSelector);
+      if (!item) return;
+      
+      e.preventDefault();
+      // Clear selection and preview
+      this.clearSelection();
+      if (this.previewCallback) {
+        this.previewCallback(item.dataset.id);
+      }
+    });
+  }
+
+  handleLongPress(item) {
+    item.setAttribute('data-just-longpressed', 'true');
+    this.selectionMode = true;
+    this.toggleSelection(item);
+    
+    // Vibrate for feedback if supported
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+
+  handleClick(e, item) {
+    const isTouch = e.pointerType === 'touch' || e.pointerType === ''; // '' sometimes happens on mobile tap
+    const items = Array.from(this.container.querySelectorAll(this.itemSelector));
+    const index = items.indexOf(item);
+
+    if (this.selectionMode && isTouch) {
+      // In selection mode on mobile, single tap toggles selection
+      this.toggleSelection(item);
+      return;
+    }
+
+    if (isTouch) {
+      // Not in selection mode on mobile, single tap opens preview
+      if (this.previewCallback) {
+        this.previewCallback(item.dataset.id);
+      }
+      return;
+    }
+
+    // --- Desktop Logic ---
+    const id = item.dataset.id;
+    
+    if (e.shiftKey && this.lastSelectedIndex !== -1) {
+      // Shift-click range selection
+      const start = Math.min(this.lastSelectedIndex, index);
+      const end = Math.max(this.lastSelectedIndex, index);
+      
+      for (let i = start; i <= end; i++) {
+        const currentItem = items[i];
+        if (currentItem) {
+          this.addToSelection(currentItem);
+        }
+      }
+    } else if (e.ctrlKey || e.metaKey) {
+      // Ctrl/Cmd click toggle
+      this.toggleSelection(item);
+      this.lastSelectedIndex = index;
+    } else {
+      // Plain click: clear and select just this one
+      this.clearSelection();
+      this.addToSelection(item);
+      this.lastSelectedIndex = index;
+    }
+  }
+
+  toggleSelection(item) {
+    const data = JSON.stringify({ url: item.dataset.url, name: item.dataset.name });
+    
+    if (this.selectedItems.has(data)) {
+      this.selectedItems.delete(data);
+      item.classList.remove('selected');
+    } else {
+      if (item.dataset.url) {
+        this.selectedItems.add(data);
+        item.classList.add('selected');
+      } else {
+        if(typeof Toast !== 'undefined') Toast.show('Cannot select this file type (URL missing).', 'error');
+      }
+    }
+
+    if (this.selectedItems.size === 0) {
+      this.selectionMode = false;
+    }
+
+    this.notifyChange();
+  }
+
+  addToSelection(item) {
+    if (!item.dataset.url) return;
+    const data = JSON.stringify({ url: item.dataset.url, name: item.dataset.name });
+    this.selectedItems.add(data);
+    item.classList.add('selected');
+    this.notifyChange();
+  }
+
+  clearSelection() {
+    this.selectedItems.clear();
+    this.container.querySelectorAll(this.itemSelector).forEach(el => el.classList.remove('selected'));
+    this.selectionMode = false;
+    this.lastSelectedIndex = -1;
+    this.notifyChange();
+  }
+
+  selectAll() {
+    this.container.querySelectorAll(this.itemSelector).forEach(item => {
+      this.addToSelection(item);
+    });
+    this.selectionMode = true;
+  }
+
+  notifyChange() {
+    if (this.onSelectionChange) {
+      this.onSelectionChange(this.selectedItems);
+    }
+  }
+}
+
+window.SelectionManager = SelectionManager;

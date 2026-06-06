@@ -147,11 +147,7 @@ function renderDocuments() {
   }
 
   listContainer.innerHTML = paginationData.items.map(doc => `
-    <div class="doc-card reveal" style="position: relative;">
-      <!-- Selection Checkbox -->
-      <label class="item-select-label" style="position: absolute; top: var(--sp-2); left: var(--sp-2); z-index: 5; background: rgba(0,0,0,0.05); border-radius: var(--radius-sm); padding: 4px; display: flex; cursor: pointer;" onclick="event.stopPropagation();">
-        <input type="checkbox" class="item-checkbox" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${doc.fileType.toLowerCase()}" style="width: 18px; height: 18px; cursor: pointer;">
-      </label>
+    <div class="doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${doc.fileType.toLowerCase()}" style="position: relative;">
       
       <div class="file-icon file-icon-${doc.fileType.toLowerCase()}">${doc.fileType}</div>
       <div class="doc-card-content">
@@ -164,8 +160,7 @@ function renderDocuments() {
         </div>
       </div>
       <div class="doc-card-actions">
-        <button class="btn btn-outline btn-sm preview-btn" data-id="${doc.id}">👁️ Preview</button>
-        <button class="btn btn-primary btn-sm download-btn" data-id="${doc.id}">⬇️ Download</button>
+        <!-- Buttons removed for cleaner UI; double-click/tap now handles preview -->
       </div>
     </div>
   `).join('');
@@ -179,26 +174,6 @@ function renderDocuments() {
     renderDocuments();
     // Scroll smoothly to top of results
     document.getElementById('documents-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-
-  // Attach click handlers
-  listContainer.querySelectorAll('.preview-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      openPreviewModal(btn.dataset.id);
-    });
-  });
-
-  listContainer.querySelectorAll('.download-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const doc = Documents.find(d => d.id === btn.dataset.id);
-      if (doc) {
-        if (doc.downloadUrl && doc.downloadUrl !== '#') {
-          window.open(doc.downloadUrl, '_blank');
-        } else {
-          Toast.show(`Downloading ${doc.title} (Simulated)...`, 'success');
-        }
-      }
-    });
   });
 }
 
@@ -287,16 +262,15 @@ function openPreviewModal(docId) {
         Toast.show(`Downloading ${doc.title} (Simulated)...`, 'success');
         ModalSystem.close('doc-modal');
       };
-      iframe.src = doc.fileUrl;
     }
   }
 
-  ModalSystem.open('preview-modal');
+  ModalSystem.open('doc-modal');
 }
 
 // BULK DOWNLOAD LOGIC
 // ========================
-let selectedDocs = new Set();
+let docSelectionManager = null;
 
 function setupBulkDownload() {
   const selectAllCb = document.getElementById('select-all-cb');
@@ -305,49 +279,39 @@ function setupBulkDownload() {
   
   if (!selectAllCb || !btnDownload) return;
 
-  // Handle individual checkbox clicks (using event delegation on list)
-  const listContainer = document.getElementById('documents-list');
-  if (listContainer) {
-    listContainer.addEventListener('change', (e) => {
-      if (e.target.classList.contains('item-checkbox')) {
-        const url = e.target.dataset.url;
-        const name = e.target.dataset.name;
-        if (!url) {
-          Toast.show('Cannot bulk download this file type (URL missing).', 'error');
-          e.target.checked = false;
-          return;
-        }
-
-        if (e.target.checked) {
-          selectedDocs.add(JSON.stringify({url, name}));
-        } else {
-          selectedDocs.delete(JSON.stringify({url, name}));
-        }
-        updateBulkUI();
+  docSelectionManager = new SelectionManager(
+    'documents-list',
+    '.selectable-item',
+    (selectedItems) => {
+      countSpan.textContent = selectedItems.size;
+      if (selectedItems.size > 0) {
+        btnDownload.disabled = false;
+        btnDownload.style.opacity = '1';
+      } else {
+        btnDownload.disabled = true;
+        btnDownload.style.opacity = '0.5';
       }
-    });
-  }
+      
+      const totalItems = document.querySelectorAll('#documents-list .selectable-item[data-url]:not([data-url=""])').length;
+      selectAllCb.checked = (selectedItems.size > 0 && selectedItems.size === totalItems && totalItems > 0);
+    },
+    (id) => {
+      openPreviewModal(id);
+    }
+  );
 
   // Handle Select All
   selectAllCb.addEventListener('change', (e) => {
-    const checkboxes = document.querySelectorAll('.item-checkbox');
-    checkboxes.forEach(cb => {
-      const url = cb.dataset.url;
-      const name = cb.dataset.name;
-      if (!url) return; // Skip items without direct URLs
-
-      cb.checked = e.target.checked;
-      if (e.target.checked) {
-        selectedDocs.add(JSON.stringify({url, name}));
-      } else {
-        selectedDocs.delete(JSON.stringify({url, name}));
-      }
-    });
-    updateBulkUI();
+    if (e.target.checked) {
+      docSelectionManager.selectAll();
+    } else {
+      docSelectionManager.clearSelection();
+    }
   });
 
   // Handle Download Button
   btnDownload.addEventListener('click', async () => {
+    const selectedDocs = docSelectionManager.selectedItems;
     if (selectedDocs.size === 0) return;
     
     const originalText = btnDownload.innerHTML;
@@ -364,21 +328,20 @@ function setupBulkDownload() {
           if (!response.ok) throw new Error('Network response was not ok');
           const blob = await response.blob();
           
-          // Ensure unique filenames
-          const ext = file.name.split('.').pop();
-          const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || `doc_${index}`;
-          const finalName = `${baseName}_${index}.${ext}`;
+          let finalName = file.name;
+          if (!finalName.includes('.')) finalName += '.pdf';
+          finalName = `${index}_${finalName}`; // prevent duplicates
           
           zip.file(finalName, blob);
         } catch (err) {
-          console.error("Failed to fetch document for zip:", file.url, err);
+          console.error("Failed to fetch file for zip:", file.url, err);
         }
       });
       
       await Promise.all(promises);
       
       const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, 'KTP_Documents.zip');
+      saveAs(content, 'KTP_Mipui_Aw.zip');
       
     } catch (err) {
       console.error("Error creating zip:", err);
@@ -387,24 +350,10 @@ function setupBulkDownload() {
       btnDownload.innerHTML = originalText;
       btnDownload.disabled = false;
       
-      // Clear selection
-      selectedDocs.clear();
-      document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false);
-      if (selectAllCb) selectAllCb.checked = false;
-      updateBulkUI();
+      docSelectionManager.clearSelection();
+      selectAllCb.checked = false;
     }
   });
-
-  function updateBulkUI() {
-    countSpan.textContent = selectedDocs.size;
-    if (selectedDocs.size > 0) {
-      btnDownload.disabled = false;
-      btnDownload.style.opacity = '1';
-    } else {
-      btnDownload.disabled = true;
-      btnDownload.style.opacity = '0.5';
-    }
-  }
 }
 
 // Initialize bulk download when DOM is ready

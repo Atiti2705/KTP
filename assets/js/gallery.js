@@ -188,12 +188,7 @@ function renderGallery() {
     }
 
     return `
-      <div class="masonry-item gallery-item reveal" data-id="${photo.id}" style="position: relative;">
-        <!-- Selection Checkbox -->
-        <label class="item-select-label" style="position: absolute; top: var(--sp-2); left: var(--sp-2); z-index: 5; background: rgba(0,0,0,0.5); border-radius: var(--radius-sm); padding: 4px; display: flex; cursor: pointer; backdrop-filter: blur(4px);" onclick="event.stopPropagation();">
-          <input type="checkbox" class="item-checkbox" data-url="${photo.imageUrl}" data-name="${photo.title || 'photo'}.jpg" style="width: 18px; height: 18px; cursor: pointer;">
-        </label>
-        
+      <div class="masonry-item gallery-item reveal selectable-item" data-id="${photo.id}" data-url="${photo.imageUrl}" data-name="${photo.title || 'photo'}.jpg" style="position: relative;">
         <img src="${photo.imageUrl}" alt="${photo.title}" class="gallery-image" loading="lazy">
         <div class="gallery-overlay">
           <h4 class="gallery-overlay-title">${photo.title}</h4>
@@ -216,14 +211,7 @@ function renderGallery() {
       loadMoreBtn.style.display = 'none';
     }
   }
-
-  // Attach event handlers for opening modal when clicking on gallery items or the zoom button
-  grid.querySelectorAll('.gallery-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-      const photoId = item.dataset.id;
-      openPhotoModal(photoId);
-    });
-  });
+  // Manual click handlers removed; SelectionManager now handles click/dblclick interactions for selection and preview.
 }
 
 // Setup "Load More" button event handler
@@ -312,7 +300,7 @@ function openPhotoModal(photoId) {
 
 // BULK DOWNLOAD LOGIC
 // ========================
-let selectedPhotos = new Set();
+let gallerySelectionManager = null;
 
 function setupBulkDownload() {
   const selectAllCb = document.getElementById('select-all-cb');
@@ -321,41 +309,43 @@ function setupBulkDownload() {
   
   if (!selectAllCb || !btnDownload) return;
 
-  // Handle individual checkbox clicks (using event delegation on grid)
-  const grid = document.getElementById('gallery-grid');
-  if (grid) {
-    grid.addEventListener('change', (e) => {
-      if (e.target.classList.contains('item-checkbox')) {
-        const url = e.target.dataset.url;
-        const name = e.target.dataset.name;
-        if (e.target.checked) {
-          selectedPhotos.add(JSON.stringify({url, name}));
-        } else {
-          selectedPhotos.delete(JSON.stringify({url, name}));
-        }
-        updateBulkUI();
+  // Initialize SelectionManager
+  gallerySelectionManager = new SelectionManager(
+    'gallery-grid',
+    '.selectable-item',
+    (selectedItems) => {
+      // Callback when selection changes
+      countSpan.textContent = selectedItems.size;
+      if (selectedItems.size > 0) {
+        btnDownload.disabled = false;
+        btnDownload.style.opacity = '1';
+      } else {
+        btnDownload.disabled = true;
+        btnDownload.style.opacity = '0.5';
       }
-    });
-  }
+      
+      // Update "Select All" checkbox state
+      const totalItems = document.querySelectorAll('#gallery-grid .selectable-item').length;
+      selectAllCb.checked = (selectedItems.size > 0 && selectedItems.size === totalItems);
+    },
+    (id) => {
+      // Callback for double click / single tap (preview)
+      openPhotoModal(id);
+    }
+  );
 
   // Handle Select All
   selectAllCb.addEventListener('change', (e) => {
-    const checkboxes = document.querySelectorAll('.item-checkbox');
-    checkboxes.forEach(cb => {
-      cb.checked = e.target.checked;
-      const url = cb.dataset.url;
-      const name = cb.dataset.name;
-      if (e.target.checked) {
-        selectedPhotos.add(JSON.stringify({url, name}));
-      } else {
-        selectedPhotos.delete(JSON.stringify({url, name}));
-      }
-    });
-    updateBulkUI();
+    if (e.target.checked) {
+      gallerySelectionManager.selectAll();
+    } else {
+      gallerySelectionManager.clearSelection();
+    }
   });
 
   // Handle Download Button
   btnDownload.addEventListener('click', async () => {
+    const selectedPhotos = gallerySelectionManager.selectedItems;
     if (selectedPhotos.size === 0) return;
     
     const originalText = btnDownload.innerHTML;
@@ -396,23 +386,10 @@ function setupBulkDownload() {
       btnDownload.disabled = false;
       
       // Clear selection
-      selectedPhotos.clear();
-      document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false);
-      if (selectAllCb) selectAllCb.checked = false;
-      updateBulkUI();
+      gallerySelectionManager.clearSelection();
+      selectAllCb.checked = false;
     }
   });
-
-  function updateBulkUI() {
-    countSpan.textContent = selectedPhotos.size;
-    if (selectedPhotos.size > 0) {
-      btnDownload.disabled = false;
-      btnDownload.style.opacity = '1';
-    } else {
-      btnDownload.disabled = true;
-      btnDownload.style.opacity = '0.5';
-    }
-  }
 }
 
 // Initialize bulk download when DOM is ready
