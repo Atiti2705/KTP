@@ -257,14 +257,46 @@
       if (!container) return;
       const cats = DocumentCategories.filter(c => c !== 'All');
       container.innerHTML = cats.map(cat => `
-        <span class="cat-chip">
+        <span class="cat-chip" style="display:inline-flex; align-items:center; gap:4px;">
           ${cat}
+          <button type="button" class="cat-rename" data-cat="${cat}" title="Rename '${cat}'" style="background:none;border:none;cursor:pointer;font-size:12px;">✏️</button>
           <button type="button" class="cat-remove" data-cat="${cat}" title="Remove '${cat}'">&times;</button>
         </span>
       `).join('');
       container.querySelectorAll('.cat-remove').forEach(btn => {
         btn.addEventListener('click', () => removeCategoryAndSave(btn.dataset.cat));
       });
+      container.querySelectorAll('.cat-rename').forEach(btn => {
+        btn.addEventListener('click', () => renameCategoryAndSave(btn.dataset.cat));
+      });
+    }
+
+    async function renameCategoryAndSave(oldName) {
+      const newName = prompt(`Rename category '${oldName}' to:`, oldName);
+      if (!newName || newName.trim() === '' || newName === oldName) return;
+      
+      const trimmedName = newName.trim();
+      const idx = DocumentCategories.indexOf(oldName);
+      if (idx > -1) {
+        if (DocumentCategories.includes(trimmedName)) {
+          alert(`Category '${trimmedName}' already exists.`);
+          return;
+        }
+        
+        DocumentCategories[idx] = trimmedName;
+        saveCategorySettings();
+        populateCategoryDropdowns();
+        
+        const docs = AdminData.get('documents');
+        for (const doc of docs) {
+          if (doc.category === oldName) {
+            doc.category = trimmedName;
+            await AdminData.update('documents', doc.id, { category: trimmedName });
+          }
+        }
+        
+        renderDocsTable();
+      }
     }
 
     function removeCategoryAndSave(catName) {

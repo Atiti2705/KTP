@@ -749,7 +749,10 @@ function formatDateLong(dateStr) {
   // 3. Mutate static objects/arrays in-place
   if (storedPhotos) {
     Photos.length = 0;
-    Photos.push(...storedPhotos);
+    Photos.push(...storedPhotos.map(p => ({
+      ...p,
+      imageUrl: p.imageUrl ? convertDriveUrl(p.imageUrl) : ''
+    })));
   }
   if (storedDocs) {
     Documents.length = 0;
@@ -790,7 +793,11 @@ function formatDateLong(dateStr) {
 function convertDriveUrl(url, type = 'image') {
   if (!url) return '';
   let fileId = '';
-  
+  // If already an embedded folder, do not convert
+  if (url.includes('embeddedfolderview')) {
+    return url;
+  }
+
   // Pattern 1: /file/d/FILE_ID/...
   const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (fileIdMatch && fileIdMatch[1]) {
@@ -802,7 +809,12 @@ function convertDriveUrl(url, type = 'image') {
       fileId = idParamMatch[1];
     }
   }
-  
+  // Pattern 3: Folders
+  const folderIdMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+  if (folderIdMatch && folderIdMatch[1]) {
+    return `https://drive.google.com/embeddedfolderview?id=${folderIdMatch[1]}#grid`;
+  }
+
   if (fileId) {
     if (type === 'image') {
       return `https://lh3.googleusercontent.com/d/${fileId}`;

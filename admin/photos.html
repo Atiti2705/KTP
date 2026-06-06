@@ -241,8 +241,9 @@
       if (!container) return;
       const cats = PhotoCategories.filter(c => c !== 'All');
       container.innerHTML = cats.map(cat => `
-        <span class="cat-chip">
+        <span class="cat-chip" style="display:inline-flex; align-items:center; gap:4px;">
           ${cat}
+          <button type="button" class="cat-rename" data-cat="${cat}" title="Rename '${cat}'" style="background:none;border:none;cursor:pointer;font-size:12px;">✏️</button>
           <button type="button" class="cat-remove" data-cat="${cat}" title="Remove '${cat}'">&times;</button>
         </span>
       `).join('');
@@ -250,6 +251,37 @@
       container.querySelectorAll('.cat-remove').forEach(btn => {
         btn.addEventListener('click', () => removeCategoryAndSave(btn.dataset.cat));
       });
+      container.querySelectorAll('.cat-rename').forEach(btn => {
+        btn.addEventListener('click', () => renameCategoryAndSave(btn.dataset.cat));
+      });
+    }
+
+    async function renameCategoryAndSave(oldName) {
+      const newName = prompt(`Rename category '${oldName}' to:`, oldName);
+      if (!newName || newName.trim() === '' || newName === oldName) return;
+      
+      const trimmedName = newName.trim();
+      const idx = PhotoCategories.indexOf(oldName);
+      if (idx > -1) {
+        if (PhotoCategories.includes(trimmedName)) {
+          alert(`Category '${trimmedName}' already exists.`);
+          return;
+        }
+        
+        PhotoCategories[idx] = trimmedName;
+        saveCategorySettings();
+        populateCategoryDropdowns();
+        
+        const photos = AdminData.get('photos');
+        for (const photo of photos) {
+          if (photo.category === oldName) {
+            photo.category = trimmedName;
+            await AdminData.update('photos', photo.id, { category: trimmedName });
+          }
+        }
+        
+        renderPhotosTable();
+      }
     }
 
     function removeCategoryAndSave(catName) {
@@ -302,10 +334,17 @@
         return;
       }
 
-      tbody.innerHTML = filtered.map(photo => `
+      tbody.innerHTML = filtered.map(photo => {
+        const url = convertDriveUrl(photo.imageUrl);
+        const isFolder = url && url.includes('embeddedfolderview');
+        const mediaTag = isFolder 
+          ? `<div style="width: 50px; height: 38px; display: flex; align-items: center; justify-content: center; background: var(--color-surface-hover); border-radius: var(--radius-md); border: 1px solid var(--color-border); font-size: 16px;" title="Google Drive Folder">📁</div>`
+          : `<img src="${url}" alt="${photo.title}" style="width: 50px; height: 38px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-border);">`;
+        
+        return `
         <tr>
           <td>
-            <img src="${convertDriveUrl(photo.imageUrl)}" alt="${photo.title}" style="width: 50px; height: 38px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+            ${mediaTag}
           </td>
           <td style="font-weight: var(--fw-semibold);">${photo.title}</td>
           <td><span class="badge badge-primary">${photo.category}</span></td>
@@ -318,7 +357,8 @@
             </div>
           </td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
     }
 
 
@@ -461,12 +501,7 @@
             }
           } else {
             const urlVal = urlInput.value.trim();
-            if (urlVal.includes('/folders/') || urlVal.includes('/drive/folders/')) {
-              AdminToast.show('⚠️ This is a Google Drive folder link. Please paste the link of an individual image file instead.', 'error');
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = originalBtnText;
-              return;
-            }
+            // Remove folder validation check as folders are now supported
             imageUrl = convertDriveUrl(urlVal);
           }
 

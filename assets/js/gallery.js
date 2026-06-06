@@ -150,19 +150,36 @@ function renderGallery() {
     return;
   }
 
-  const itemsHtml = paginationData.items.map(photo => `
-    <div class="masonry-item gallery-item reveal" data-id="${photo.id}">
-      <img src="${photo.imageUrl}" alt="${photo.title}" class="gallery-image" loading="lazy">
-      <div class="gallery-overlay">
-        <h4 class="gallery-overlay-title">${photo.title}</h4>
-        <p class="gallery-overlay-meta">📅 ${formatDate(photo.date)} • ${photo.category}</p>
+  const itemsHtml = paginationData.items.map(photo => {
+    const isFolder = photo.imageUrl && photo.imageUrl.includes('embeddedfolderview');
+    
+    if (isFolder) {
+      return `
+        <div class="masonry-item gallery-item reveal" data-id="${photo.id}" style="grid-column: 1 / -1; width: 100%; padding: 0; display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-4);">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 var(--sp-2);">
+            <h4 style="margin: 0; font-size: var(--fs-lg);">${photo.title}</h4>
+            <span class="badge badge-primary">📁 ${photo.category} Folder</span>
+          </div>
+          <iframe src="${photo.imageUrl}" width="100%" height="500px" frameborder="0" style="border-radius: var(--radius-lg); border: 1px solid var(--color-border-light); background: var(--color-surface-hover);"></iframe>
+          <p style="margin: 0; padding: 0 var(--sp-2); font-size: var(--fs-sm); color: var(--color-text-secondary);">📅 ${formatDate(photo.date)}</p>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="masonry-item gallery-item reveal" data-id="${photo.id}">
+        <img src="${photo.imageUrl}" alt="${photo.title}" class="gallery-image" loading="lazy">
+        <div class="gallery-overlay">
+          <h4 class="gallery-overlay-title">${photo.title}</h4>
+          <p class="gallery-overlay-meta">📅 ${formatDate(photo.date)} • ${photo.category}</p>
+        </div>
+        <div class="gallery-overlay-actions">
+          <button class="gallery-action-btn view-btn" data-id="${photo.id}" aria-label="View larger image">🔍</button>
+          <a href="${photo.imageUrl}" download="${photo.title}.jpg" class="gallery-action-btn download-btn" data-id="${photo.id}" aria-label="Download image">⬇️</a>
+        </div>
       </div>
-      <div class="gallery-overlay-actions">
-        <button class="gallery-action-btn view-btn" data-id="${photo.id}" aria-label="View larger image">🔍</button>
-        <a href="${photo.imageUrl}" download="${photo.title}.svg" class="gallery-action-btn download-btn" data-id="${photo.id}" aria-label="Download image">⬇️</a>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   grid.innerHTML = itemsHtml;
 
