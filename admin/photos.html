@@ -490,33 +490,74 @@
           submitBtn.disabled = true;
           submitBtn.innerHTML = '⌛ Saving...';
 
-          let imageUrl = '';
+          let imageUrlsToSave = [];
+          let isFolderImport = false;
+
           if (source === 'upload') {
             if (fileInput && fileInput.files && fileInput.files[0]) {
-              imageUrl = await readAndCompressImage(fileInput.files[0]);
+              imageUrlsToSave.push(await readAndCompressImage(fileInput.files[0]));
             } else if (actionType === 'add') {
               // Generate an SVG placeholder using a random seed based on date
               const seed = Math.floor(Math.random() * 50);
-              imageUrl = generatePhotoPlaceholder(seed, 800, 600);
+              imageUrlsToSave.push(generatePhotoPlaceholder(seed, 800, 600));
             }
           } else {
             const urlVal = urlInput.value.trim();
-            // Remove folder validation check as folders are now supported
-            imageUrl = convertDriveUrl(urlVal);
+            const folderIdMatch = urlVal.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+            
+            if (folderIdMatch && folderIdMatch[1] && actionType === 'add') {
+              // Extract all photos from Google Drive folder via API
+              isFolderImport = true;
+              submitBtn.innerHTML = '⌛ Importing Folder...';
+              const folderId = folderIdMatch[1];
+              
+              if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
+                throw new Error("Google Drive API key is missing in firebase-config.js!");
+              }
+
+              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&fields=files(id,name)&key=${googleDriveApiKey}`;
+              
+              const res = await fetch(apiEndpoint);
+              if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                console.error("Drive API Error:", errData);
+                throw new Error("Failed to fetch folder. Is the API key correct and the folder shared as 'Anyone with the link'?");
+              }
+              const data = await res.json();
+              if (data.files && data.files.length > 0) {
+                data.files.forEach(file => {
+                  imageUrlsToSave.push(`https://lh3.googleusercontent.com/d/${file.id}`);
+                });
+              } else {
+                throw new Error("No images found in this Google Drive folder!");
+              }
+            } else {
+              // It's a standard URL, or we are editing an existing entry
+              imageUrlsToSave.push(convertDriveUrl(urlVal));
+            }
           }
 
           if (actionType === 'add') {
-            const newPhoto = {
-              title,
-              category,
-              description,
-              date,
-              featured,
-              imageUrl,
-              downloadUrl: imageUrl
-            };
-            await AdminData.add('photos', newPhoto);
-            AdminToast.show('Photo added successfully!', 'success');
+            // Loop through and add all
+            for (let i = 0; i < imageUrlsToSave.length; i++) {
+              const imgUrl = imageUrlsToSave[i];
+              const suffix = isFolderImport && imageUrlsToSave.length > 1 ? ` (${i+1})` : '';
+              const newPhoto = {
+                title: title + suffix,
+                category,
+                description,
+                date,
+                featured,
+                imageUrl: imgUrl,
+                downloadUrl: imgUrl
+              };
+              await AdminData.add('photos', newPhoto);
+            }
+            if (isFolderImport) {
+              AdminToast.show(`Successfully imported ${imageUrlsToSave.length} photos from folder!`, 'success');
+            } else {
+              AdminToast.show('Photo added successfully!', 'success');
+            }
           } else {
             const updatedFields = {
               title,
@@ -525,13 +566,9 @@
               date,
               featured
             };
-            // Update imageUrl if a new file was uploaded OR external URL was set
-            if (source === 'upload' && imageUrl) {
-              updatedFields.imageUrl = imageUrl;
-              updatedFields.downloadUrl = imageUrl;
-            } else if (source === 'url') {
-              updatedFields.imageUrl = imageUrl;
-              updatedFields.downloadUrl = imageUrl;
+            if (imageUrlsToSave.length > 0 && imageUrlsToSave[0]) {
+              updatedFields.imageUrl = imageUrlsToSave[0];
+              updatedFields.downloadUrl = imageUrlsToSave[0];
             }
             await AdminData.update('photos', photoId, updatedFields);
             AdminToast.show('Photo details updated!', 'success');

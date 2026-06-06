@@ -12,6 +12,9 @@ const firebaseConfig = {
   measurementId: "G-JB6DGBKJX3"
 };
 
+// Google Drive API Key for folder imports
+const googleDriveApiKey = "AIzaSyAXV2QBWS3K8YUR7eFtE1jN07jCJohJvCo";
+
 let db = null;
 let auth = null;
 let firebaseApp = null;
