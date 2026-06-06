@@ -136,10 +136,10 @@
   <script src="assets/js/theme.js"></script>
   <script src="assets/js/data.js"></script>
   <script src="assets/js/auth.js"></script>
-  <script src="assets/js/db-service.js?v=8"></script>
-  <script src="assets/js/components.js?v=8"></script>
-  <script src="assets/js/search.js?v=8"></script>
-  <script src="assets/js/app.js?v=8"></script>
+  <script src="assets/js/db-service.js?v=9"></script>
+  <script src="assets/js/components.js?v=9"></script>
+  <script src="assets/js/search.js?v=9"></script>
+  <script src="assets/js/app.js?v=9"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // Render static header and footer immediately for fast visual load
@@ -219,25 +219,25 @@
         const href = ann.linkUrl ? `href="${ann.linkUrl}" target="_blank" rel="noopener"` : '';
         const clickableStyle = ann.linkUrl ? 'cursor: pointer; text-decoration: none; color: inherit; display: block; transition: transform 0.2s; box-shadow: var(--card-shadow);' : '';
         
-        let imageHtml = '';
+        let formattedUrl = '';
         if (ann.imageUrl) {
-          // Format Drive links defensively just in case they were saved in the old format
-          let formattedUrl = ann.imageUrl;
+          formattedUrl = ann.imageUrl;
           const match = formattedUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
           if (match && match[1]) {
             formattedUrl = `https://lh3.googleusercontent.com/d/${match[1]}`;
           }
-          imageHtml = `<img src="${formattedUrl}" alt="${ann.title}" style="width: 100%; height: 140px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: var(--sp-3);">`;
         }
 
+        const bgStyle = formattedUrl ? `background-image: url('${formattedUrl}'); background-size: cover; background-position: center;` : 'background: linear-gradient(135deg, var(--brand-sky), var(--brand-blue));';
+
         return `
-        <${tag} ${href} class="announcement-card reveal" style="${clickableStyle}">
-          ${imageHtml}
-          <div class="announcement-date">📌 ${formatDate(ann.date)}</div>
-          <h3 class="announcement-title" style="margin-top: var(--sp-2);">${ann.title}</h3>
-          <p class="announcement-text">${ann.content}</p>
-          ${ann.featured ? '<span class="badge badge-featured" style="margin-top:var(--sp-3); background:var(--brand-gold); color:var(--color-bg);">⭐ Featured</span>' : ''}
-          ${ann.linkUrl ? '<div style="margin-top:var(--sp-3); color:var(--brand-sky); font-weight:var(--fw-medium); font-size:var(--fs-sm);">Read more →</div>' : ''}
+        <${tag} ${href} class="announcement-card reveal poster-card" style="${clickableStyle} ${bgStyle}">
+          <div class="poster-overlay">
+            <div class="announcement-date" style="color: rgba(255,255,255,0.8);">📌 ${formatDate(ann.date)}</div>
+            <h3 class="announcement-title" style="color: #fff; margin-top: var(--sp-1); text-shadow: 0 1px 3px rgba(0,0,0,0.5);">${ann.title}</h3>
+            <p class="announcement-text" style="color: rgba(255,255,255,0.9); -webkit-line-clamp: 2; margin-top: var(--sp-1);">${ann.content}</p>
+            ${ann.featured ? '<span class="badge badge-featured" style="margin-top:var(--sp-2); background:var(--brand-gold); color:var(--color-bg); font-size: 0.7rem;">⭐ Featured</span>' : ''}
+          </div>
         </${tag}>
         `;
       }).join('');
