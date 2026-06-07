@@ -32,7 +32,8 @@
             <p class="admin-page-desc">Create, edit, or delete gallery photos</p>
           </div>
         </div>
-        <div>
+        <div style="display: flex; gap: var(--sp-3); align-items: center;">
+          <button class="btn btn-outline" id="btn-bulk-delete" style="color: var(--brand-red); border-color: var(--brand-red); display: none;">🗑️ Delete Selected</button>
           <button class="btn btn-primary" id="btn-add-photo">➕ Add Photo</button>
         </div>
       </div>
@@ -61,6 +62,7 @@
           <table>
             <thead>
               <tr>
+                <th style="width: 40px; text-align: center;"><input type="checkbox" id="select-all-checkbox" style="cursor: pointer; width: 16px; height: 16px;"></th>
                 <th style="width: 80px;">Preview</th>
                 <th>Title</th>
                 <th>Category</th>
@@ -343,6 +345,9 @@
         
         return `
         <tr>
+          <td style="text-align: center;">
+            <input type="checkbox" class="row-checkbox" value="${photo.id}" style="cursor: pointer; width: 16px; height: 16px;">
+          </td>
           <td>
             ${mediaTag}
           </td>
@@ -359,6 +364,15 @@
         </tr>
       `;
       }).join('');
+
+      // Attach event listeners to new row checkboxes
+      document.querySelectorAll('.row-checkbox').forEach(cb => {
+        cb.addEventListener('change', updateBulkDeleteUI);
+      });
+      // Reset select-all state when table re-renders
+      const selectAllCb = document.getElementById('select-all-checkbox');
+      if (selectAllCb) selectAllCb.checked = false;
+      updateBulkDeleteUI();
     }
 
 
@@ -408,6 +422,48 @@
         currentCategoryFilter = e.target.value;
         renderPhotosTable();
       });
+
+      // Bulk Delete Selection Logic
+      const selectAllCb = document.getElementById('select-all-checkbox');
+      const bulkDeleteBtn = document.getElementById('btn-bulk-delete');
+
+      if (selectAllCb) {
+        selectAllCb.addEventListener('change', (e) => {
+          const isChecked = e.target.checked;
+          document.querySelectorAll('.row-checkbox').forEach(cb => {
+            cb.checked = isChecked;
+          });
+          updateBulkDeleteUI();
+        });
+      }
+
+      if (bulkDeleteBtn) {
+        bulkDeleteBtn.addEventListener('click', async () => {
+          const selectedCbs = document.querySelectorAll('.row-checkbox:checked');
+          if (selectedCbs.length === 0) return;
+
+          if (confirm(`Are you sure you want to delete the ${selectedCbs.length} selected photo(s)? This cannot be undone.`)) {
+            try {
+              bulkDeleteBtn.disabled = true;
+              bulkDeleteBtn.innerHTML = '⌛ Deleting...';
+              
+              for (const cb of selectedCbs) {
+                await AdminData.delete('photos', cb.value);
+              }
+              
+              AdminToast.show(`Successfully deleted ${selectedCbs.length} photo(s).`, 'success');
+              renderPhotosTable();
+            } catch (err) {
+              console.error("Error deleting photos:", err);
+              AdminToast.show('Error during bulk deletion: ' + (err.message || 'Permission denied'), 'error');
+            } finally {
+              bulkDeleteBtn.disabled = false;
+              bulkDeleteBtn.innerHTML = '🗑️ Delete Selected';
+              updateBulkDeleteUI();
+            }
+          }
+        });
+      }
 
       // Show Add Modal
       document.getElementById('btn-add-photo').addEventListener('click', () => {
@@ -587,6 +643,23 @@
 
       // Expose toggle internally for edit modal
       window._togglePhotoSource = togglePhotoSource;
+    }
+
+    function updateBulkDeleteUI() {
+      const selectedCount = document.querySelectorAll('.row-checkbox:checked').length;
+      const totalCount = document.querySelectorAll('.row-checkbox').length;
+      const bulkDeleteBtn = document.getElementById('btn-bulk-delete');
+      const selectAllCb = document.getElementById('select-all-checkbox');
+
+      if (bulkDeleteBtn) {
+        bulkDeleteBtn.style.display = selectedCount > 0 ? 'inline-block' : 'none';
+        bulkDeleteBtn.textContent = `🗑️ Delete Selected (${selectedCount})`;
+      }
+
+      if (selectAllCb && totalCount > 0) {
+        selectAllCb.checked = selectedCount === totalCount;
+        selectAllCb.indeterminate = selectedCount > 0 && selectedCount < totalCount;
+      }
     }
 
     // Exposed to onclick triggers
