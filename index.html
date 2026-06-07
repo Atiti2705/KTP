@@ -45,11 +45,11 @@
       <div class="hero-bg-decoration"></div>
       <div class="hero-content reveal">
         <img src="assets/images/logo.png" alt="KṬP Saikhamakawn Logo" class="hero-logo" width="200" height="150">
-        <h1 class="hero-title">KṬP <span class="highlight">Saikhamakawn</span></h1>
-        <p class="hero-subtitle">Rawngbawl Tura Chhandam</p>
-        <p class="hero-description">Kristian Ṭhalai Pawl (KṬP) Saikhamakawn — serving our community through faith,
-          fellowship, and service since 1954.</p>
-        <div class="hero-actions">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text);">Chibai</h2>
+        <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Kristian Ṭhalai Pawl</h1>
+        <p class="hero-subtitle" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Saikhamakawn Branch</p>
+        <p class="hero-description" style="font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Rawngbawl Tura Chhandam — serving our community through faith, fellowship, and service since 1954.</p>
+        <div class="hero-actions" style="margin-top: 2rem;">
           <a href="photos.html" class="btn btn-primary">Photos</a>
           <a href="#social-media" class="btn btn-outline">Connect With Us</a>
         </div>
@@ -189,13 +189,6 @@
       const heroDesc = document.querySelector('.hero-description');
       const heroLogo = document.querySelector('.hero-logo');
 
-      if (heroTitle && ChurchInfo.name) {
-        const highlightName = ChurchInfo.name.replace(/^(K[ṬT]P|KTP)\s*/i, '');
-        heroTitle.innerHTML = `KṬP <span class="highlight">${highlightName}</span>`;
-      }
-      if (heroDesc && ChurchInfo.description) {
-        heroDesc.textContent = `${ChurchInfo.tagline} — ${ChurchInfo.description}`;
-      }
       if (heroLogo && ChurchInfo.name) {
         heroLogo.alt = `${ChurchInfo.name} Logo`;
       }
