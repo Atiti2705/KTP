@@ -494,6 +494,12 @@
   padding: 0 var(--sp-4) var(--sp-4);
 }
 
+@media (max-width: 767px) {
+  .lightbox-nav-btn {
+    display: none !important;
+  }
+}
+
 /* ========================
    TOAST NOTIFICATIONS
    ======================== */
