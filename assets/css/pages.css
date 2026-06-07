@@ -280,7 +280,7 @@
 
 .quick-card {
   position: relative;
-  padding: var(--sp-8) var(--sp-5);
+  padding: var(--sp-6) var(--sp-5);
   text-align: center;
   background: var(--color-bg-card);
   border-radius: var(--radius-2xl);
@@ -298,14 +298,14 @@
 }
 
 .quick-card-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto var(--sp-4);
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--sp-3);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-xl);
-  font-size: 2rem;
+  border-radius: var(--radius-lg);
+  font-size: 1.5rem;
   transition: transform var(--transition-base);
 }
 
@@ -315,19 +315,22 @@
 
 .quick-card:nth-child(1) .quick-card-icon {
   background: rgba(135, 206, 235, 0.12);
+  color: var(--brand-sky);
 }
 
 .quick-card:nth-child(2) .quick-card-icon {
   background: rgba(255, 215, 0, 0.12);
+  color: var(--brand-gold-dark);
 }
 
 .quick-card:nth-child(3) .quick-card-icon {
   background: rgba(220, 20, 60, 0.1);
+  color: var(--brand-red);
 }
 
 .quick-card-title {
   font-family: var(--font-heading);
-  font-size: var(--fs-xl);
+  font-size: var(--fs-lg);
   font-weight: var(--fw-semibold);
   color: var(--color-text);
   margin-bottom: var(--sp-2);
