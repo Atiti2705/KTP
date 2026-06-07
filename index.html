@@ -44,13 +44,7 @@
     <section class="hero" id="home">
       <div class="hero-bg-decoration"></div>
       <div class="hero-content reveal">
-        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text); min-height: 2.4rem;">
-          <span id="typewriter-welcome" style="border-right: 0.1em solid currentColor; padding-right: 2px;"></span>
-        </h2>
-        <style>
-          @keyframes blink-cursor { 50% { border-color: transparent; } }
-          #typewriter-welcome { animation: blink-cursor 0.75s step-end infinite; }
-        </style>
+        <h2 style="font-family: 'Poppins', sans-serif; font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text);">Chibai</h2>
         <img src="assets/images/logo.png" alt="KṬP Saikhamakawn Logo" class="hero-logo" width="200" height="150">
         <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Kristian Ṭhalai Pawl</h1>
         <p class="hero-subtitle" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Saikhamakawn Branch</p>
@@ -199,21 +193,7 @@
         heroLogo.alt = `${ChurchInfo.name} Logo`;
       }
 
-      const welcomeEl = document.getElementById('typewriter-welcome');
-      if (welcomeEl && !welcomeEl.dataset.typed) {
-        welcomeEl.dataset.typed = "true";
-        const text = "Chibai";
-        welcomeEl.textContent = "";
-        let i = 0;
-        const typeWriter = () => {
-          if (i < text.length) {
-            welcomeEl.textContent += text.charAt(i);
-            i++;
-            setTimeout(typeWriter, 60);
-          }
-        };
-        setTimeout(typeWriter, 150);
-      }
+      // No animation for Chibai text
 
       renderAnnouncements();
       renderFeaturedPhotos();
