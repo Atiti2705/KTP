@@ -9,6 +9,8 @@ let searchQuery = '';
 let currentSort = 'newest';
 let currentPage = 1;
 const itemsPerPage = 36;
+let currentLightboxPhotos = [];
+let currentLightboxIndex = 0;
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -125,6 +127,9 @@ function renderGallery() {
     categoryField: 'category'
   });
 
+  // Save for lightbox navigation (exclude folders)
+  currentLightboxPhotos = filtered.filter(p => !(p.imageUrl && p.imageUrl.includes('embeddedfolderview')));
+
   // 2. Paginate/Load More items
   const paginationData = SearchEngine.loadMore(filtered, currentPage, itemsPerPage);
 
@@ -225,15 +230,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // LIGHTBOX / ZOOM MODAL
 // ========================
 function setupLightbox() {
-  // We will dynamic inject the lightbox modal markup into the body if it doesn't exist
   if (document.getElementById('photo-modal')) return;
 
   const modalMarkup = `
-    <div class="modal-backdrop lightbox-modal" id="photo-modal" style="background: rgba(0,0,0,0.92);">
+    <div class="modal-backdrop lightbox-modal" id="photo-modal" style="background: rgba(0,0,0,0.92); user-select: none;">
       <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 16px;">
         <button id="close-photo-modal" aria-label="Back" style="position: absolute; top: 16px; left: 16px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); transition: background 0.2s;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
         <a id="modal-download" href="#" download style="position: absolute; bottom: 24px; right: 24px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); text-decoration: none; transition: background 0.2s;" title="Download">⬇</a>
-        <img src="" alt="" id="modal-image" style="max-width: 95%; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+        <button id="modal-prev" aria-label="Previous" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❮</button>
+        <button id="modal-next" aria-label="Next" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❯</button>
+        <img src="" alt="" id="modal-image" style="max-width: 95%; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); pointer-events: none;">
       </div>
     </div>
   `;
@@ -242,20 +248,25 @@ function setupLightbox() {
   div.innerHTML = modalMarkup;
   document.body.appendChild(div.firstElementChild);
 
+  const modal = document.getElementById('photo-modal');
+
+  // Close Button
   const closeBtn = document.getElementById('close-photo-modal');
   if (closeBtn) {
-    closeBtn.addEventListener('click', () => {
-      ModalSystem.close('photo-modal');
-    });
-    closeBtn.addEventListener('mouseenter', () => closeBtn.style.background = 'rgba(255,255,255,0.3)');
-    closeBtn.addEventListener('mouseleave', () => closeBtn.style.background = 'rgba(255,255,255,0.15)');
+    closeBtn.addEventListener('click', () => ModalSystem.close('photo-modal'));
   }
 
+  // Navigation Buttons
+  const prevBtn = document.getElementById('modal-prev');
+  const nextBtn = document.getElementById('modal-next');
+  if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(-1); });
+  if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(1); });
+
+  // Download Button
   const dlBtn = document.getElementById('modal-download');
   if (dlBtn) {
-    dlBtn.addEventListener('mouseenter', () => dlBtn.style.background = 'rgba(255,255,255,0.3)');
-    dlBtn.addEventListener('mouseleave', () => dlBtn.style.background = 'rgba(255,255,255,0.15)');
     dlBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
       e.preventDefault();
       const url = dlBtn.href;
       const filename = dlBtn.getAttribute('download') || 'photo.jpg';
@@ -271,26 +282,74 @@ function setupLightbox() {
         document.body.removeChild(a);
         URL.revokeObjectURL(blobUrl);
       } catch {
-        // Fallback: open in new tab
         window.open(url, '_blank');
       }
     });
   }
+
+  // Keyboard Navigation
+  document.addEventListener('keydown', (e) => {
+    if (modal && modal.style.display !== 'none' && modal.style.display !== '') {
+      if (e.key === 'ArrowLeft') navigateLightbox(-1);
+      if (e.key === 'ArrowRight') navigateLightbox(1);
+      if (e.key === 'Escape') ModalSystem.close('photo-modal');
+    }
+  });
+
+  // Swipe Navigation
+  let touchStartX = 0;
+  let touchEndX = 0;
+  modal.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+  });
+  modal.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    const minSwipeDistance = 50;
+    if (touchEndX < touchStartX - minSwipeDistance) navigateLightbox(1); // Swipe left -> next
+    if (touchEndX > touchStartX + minSwipeDistance) navigateLightbox(-1); // Swipe right -> prev
+  });
 }
 
-function openPhotoModal(photoId) {
-  const photo = Photos.find(p => p.id === photoId);
+function navigateLightbox(direction) {
+  if (currentLightboxPhotos.length === 0) return;
+  currentLightboxIndex += direction;
+  if (currentLightboxIndex < 0) currentLightboxIndex = currentLightboxPhotos.length - 1;
+  if (currentLightboxIndex >= currentLightboxPhotos.length) currentLightboxIndex = 0;
+  updateLightboxContent();
+}
+
+function updateLightboxContent() {
+  const photo = currentLightboxPhotos[currentLightboxIndex];
   if (!photo) return;
 
   const modalImage = document.getElementById('modal-image');
   const modalDownload = document.getElementById('modal-download');
 
-  if (modalImage) modalImage.src = photo.imageUrl;
+  if (modalImage) {
+    modalImage.style.opacity = '0';
+    setTimeout(() => {
+      modalImage.src = photo.imageUrl;
+      modalImage.onload = () => modalImage.style.opacity = '1';
+    }, 150);
+    modalImage.style.transition = 'opacity 0.2s';
+  }
   if (modalDownload) {
     modalDownload.href = photo.imageUrl;
-    modalDownload.setAttribute('download', `${photo.title}.jpg`);
+    modalDownload.setAttribute('download', `${photo.title || 'photo'}.jpg`);
   }
+}
 
+function openPhotoModal(photoId) {
+  if (currentLightboxPhotos.length === 0) {
+    currentLightboxPhotos = Photos.filter(p => !(p.imageUrl && p.imageUrl.includes('embeddedfolderview')));
+  }
+  
+  currentLightboxIndex = currentLightboxPhotos.findIndex(p => p.id === photoId);
+  if (currentLightboxIndex === -1) {
+    currentLightboxIndex = 0;
+  }
+  
+  updateLightboxContent();
   ModalSystem.open('photo-modal');
 }
 
