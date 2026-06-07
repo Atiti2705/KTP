@@ -130,7 +130,7 @@
   gap: var(--sp-2);
   color: var(--color-text-tertiary);
   font-size: var(--fs-xs);
-  animation: float 2s ease-in-out infinite;
+  animation: float-centered 2s ease-in-out infinite;
 }
 
 .hero-scroll-arrow {
