@@ -461,6 +461,9 @@ const ModalSystem = {
     modal.classList.add('active');
     document.body.classList.add('modal-open');
     
+    // Push history state to intercept mobile swipe-back
+    history.pushState({ modalId: id }, '', `#${id}`);
+    
     // Close on backdrop click
     modal.addEventListener('click', (e) => {
       if (e.target === modal) this.close(id);
@@ -476,13 +479,26 @@ const ModalSystem = {
     document.addEventListener('keydown', escHandler);
   },
 
-  close(id) {
+  close(id, fromHistory = false) {
     const modal = document.getElementById(id);
     if (!modal) return;
     modal.classList.remove('active');
     document.body.classList.remove('modal-open');
+    
+    // If not triggered by a popstate event, pop the history stack
+    if (!fromHistory && history.state && history.state.modalId === id) {
+      history.back();
+    }
   }
 };
+
+// Handle native back button / swipe back
+window.addEventListener('popstate', (e) => {
+  const activeModals = document.querySelectorAll('.modal-backdrop.active, .modal.active');
+  activeModals.forEach(modal => {
+    ModalSystem.close(modal.id, true);
+  });
+});
 
 // ========================
 // TOAST NOTIFICATIONS
