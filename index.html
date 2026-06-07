@@ -44,7 +44,7 @@
     <section class="hero" id="home">
       <div class="hero-bg-decoration"></div>
       <div class="hero-content reveal">
-        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text);">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text); min-height: 2.4rem;">
           <span id="typewriter-welcome" style="border-right: 0.1em solid currentColor; padding-right: 2px;"></span>
         </h2>
         <style>
@@ -209,10 +209,10 @@
           if (i < text.length) {
             welcomeEl.textContent += text.charAt(i);
             i++;
-            setTimeout(typeWriter, 120);
+            setTimeout(typeWriter, 60);
           }
         };
-        setTimeout(typeWriter, 400);
+        setTimeout(typeWriter, 150);
       }
 
       renderAnnouncements();
