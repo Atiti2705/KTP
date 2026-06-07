@@ -460,7 +460,9 @@
   box-shadow: var(--card-shadow);
   text-decoration: none;
   transition: all var(--transition-base);
-  min-width: 140px;
+  flex: 1;
+  min-width: 240px;
+  max-width: 320px;
 }
 
 .social-card:hover {
