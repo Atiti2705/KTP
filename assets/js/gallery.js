@@ -190,10 +190,6 @@ function renderGallery() {
     return `
       <div class="masonry-item gallery-item reveal selectable-item" data-id="${photo.id}" data-url="${photo.imageUrl}" data-name="${photo.title || 'photo'}.jpg" style="position: relative;">
         <img src="${photo.imageUrl}" alt="${photo.title}" class="gallery-image" loading="lazy">
-        <div class="gallery-overlay">
-          <h4 class="gallery-overlay-title">${photo.title}</h4>
-          <p class="gallery-overlay-meta">📅 ${formatDate(photo.date)} • ${photo.category}</p>
-        </div>
       </div>
     `;
   }).join('');
