@@ -530,33 +530,80 @@
           submitBtn.disabled = true;
           submitBtn.innerHTML = '⌛ Saving...';
 
-          let downloadUrl = '#';
+          let isFolderImport = false;
+          let sermonsToSave = [];
+
           if (source === 'url') {
             const urlVal = urlInput.value.trim();
-            if (urlVal.includes('/folders/') || urlVal.includes('/drive/folders/')) {
-              AdminToast.show('⚠️ This is a Google Drive folder link. Please paste the link of an individual audio/notes file instead.', 'error');
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = originalBtnText;
-              return;
+            const folderIdMatch = urlVal.match(/(?:\/folders\/|\/drive\/folders\/)([a-zA-Z0-9_-]+)/);
+
+            if (folderIdMatch && folderIdMatch[1] && actionType === 'add') {
+              isFolderImport = true;
+              submitBtn.innerHTML = '⌛ Importing Folder...';
+              const folderId = folderIdMatch[1];
+              
+              if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
+                throw new Error("Google Drive API key is missing in firebase-config.js!");
+              }
+
+              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType!='application/vnd.google-apps.folder'&fields=files(id,name,size,mimeType)&key=${googleDriveApiKey}`;
+              
+              const res = await fetch(apiEndpoint);
+              if (!res.ok) {
+                throw new Error("Failed to fetch folder from Google Drive. Ensure the folder is public ('Anyone with the link').");
+              }
+              const data = await res.json();
+              if (data.files && data.files.length > 0) {
+                data.files.forEach(file => {
+                  let fType = 'PDF';
+                  if (file.mimeType.includes('wordprocessingml') || file.mimeType.includes('msword')) fType = 'DOCX';
+                  
+                  let fSizeStr = 'Unknown';
+                  if (file.size) {
+                    const mb = parseInt(file.size) / (1024 * 1024);
+                    fSizeStr = mb >= 1 ? `${mb.toFixed(1)} MB` : `${(parseInt(file.size) / 1024).toFixed(0)} KB`;
+                  }
+                  
+                  let cleanTitle = file.name.replace(/\.[^/.]+$/, "");
+                  
+                  sermonsToSave.push({
+                    title: cleanTitle,
+                    speaker,
+                    topic,
+                    scripture,
+                    description,
+                    fileType: fType,
+                    fileSize: fSizeStr,
+                    date,
+                    featured,
+                    downloadUrl: convertDriveUrl(`https://drive.google.com/file/d/${file.id}/view`, 'file')
+                  });
+                });
+              } else {
+                throw new Error("No files found in this Google Drive folder!");
+              }
+            } else {
+              sermonsToSave.push({
+                title, speaker, topic, scripture, description, fileType, fileSize, date, featured,
+                downloadUrl: convertDriveUrl(urlVal, 'file')
+              });
             }
-            downloadUrl = convertDriveUrl(urlVal, 'file');
+          } else {
+            sermonsToSave.push({
+              title, speaker, topic, scripture, description, fileType, fileSize, date, featured,
+              downloadUrl: '#'
+            });
           }
 
           if (actionType === 'add') {
-            const newSermon = {
-              title,
-              speaker,
-              topic,
-              scripture,
-              description,
-              fileType,
-              fileSize,
-              date,
-              featured,
-              downloadUrl
-            };
-            await AdminData.add('sermons', newSermon);
-            AdminToast.show('Sermon notes saved!', 'success');
+            for (const srmObj of sermonsToSave) {
+              await AdminData.add('sermons', srmObj);
+            }
+            if (isFolderImport) {
+              AdminToast.show(`Successfully imported ${sermonsToSave.length} sermons from folder!`, 'success');
+            } else {
+              AdminToast.show('Sermon notes saved!', 'success');
+            }
           } else {
             const updatedFields = {
               title,
@@ -570,7 +617,7 @@
               featured
             };
             if (source === 'url') {
-              updatedFields.downloadUrl = downloadUrl;
+              updatedFields.downloadUrl = sermonsToSave[0].downloadUrl;
             } else {
               updatedFields.downloadUrl = '#';
             }
