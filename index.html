@@ -222,7 +222,23 @@
           }
         }
 
-        const bgStyle = formattedUrl ? `background-image: url('${formattedUrl}'); background-size: cover; background-position: center;` : 'background: linear-gradient(135deg, var(--brand-sky), var(--brand-blue));';
+        if (formattedUrl) {
+          return `
+          <${tag} ${href} class="announcement-card reveal" style="${clickableStyle} display: flex; flex-direction: column; background: var(--color-bg-card); overflow: hidden;">
+            <div style="height: 220px; position: relative; overflow: hidden; border-bottom: 1px solid var(--color-border-light); background: #000;">
+              <div style="position: absolute; inset: -20px; background-image: url('${formattedUrl}'); background-size: cover; background-position: center; filter: blur(15px); opacity: 0.5;"></div>
+              <div style="position: absolute; inset: 0; background-image: url('${formattedUrl}'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+            </div>
+            <div style="padding: var(--sp-4); flex: 1; display: flex; flex-direction: column; justify-content: center;">
+              <div class="announcement-date" style="color: var(--brand-sky); font-size: var(--fs-xs); margin-bottom: var(--sp-1);">📌 ${formatDate(ann.date)}</div>
+              <h3 class="announcement-title" style="font-size: var(--fs-md); margin-bottom: var(--sp-2); color: var(--color-text); line-height: 1.3;">${ann.title}</h3>
+              <p class="announcement-text" style="color: var(--color-text-secondary); font-size: var(--fs-sm); -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0;">${ann.content}</p>
+            </div>
+          </${tag}>
+          `;
+        }
+
+        const bgStyle = `background: linear-gradient(135deg, var(--brand-sky), var(--brand-blue));`;
 
         return `
         <${tag} ${href} class="announcement-card reveal poster-card" style="${clickableStyle} ${bgStyle}">
