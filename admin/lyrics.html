@@ -97,7 +97,7 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="lyric-title" class="form-label">Lyric Title</label>
-            <input type="text" id="lyric-title" class="form-input" required placeholder="e.g. Hla Lyrics - July 2026">
+            <input type="text" id="lyric-title" class="form-input" placeholder="e.g. Hla Lyrics (Optional for folders)">
           </div>
 
           <div style="display: none;">
@@ -532,7 +532,7 @@
         const actionType = document.getElementById('lyric-action-type').value;
         const docId = document.getElementById('lyric-edit-id').value;
 
-        const title = document.getElementById('lyric-title').value;
+        const title = document.getElementById('lyric-title').value || 'Untitled Lyric';
         const category = document.getElementById('lyric-category').value;
         const description = document.getElementById('lyric-desc').value;
         const fileType = document.getElementById('lyric-type').value;
