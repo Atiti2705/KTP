@@ -119,6 +119,12 @@
           </div>
 
           <div class="form-group">
+            <label for="doc-subcategory" class="form-label">Sub Category (Optional)</label>
+            <input type="text" id="doc-subcategory" class="form-input" placeholder="e.g. May">
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Useful for grouping within a category (e.g. months inside a year).</small>
+          </div>
+
+          <div class="form-group">
             <label for="doc-desc" class="form-label">Description / Summary</label>
             <textarea id="doc-desc" class="form-input form-textarea" required
               placeholder="Provide a brief summary of what this document contains..."></textarea>
@@ -364,7 +370,12 @@
             <div class="file-icon file-icon-${doc.fileType.toLowerCase()}" style="width: 40px; height: 40px; font-size: 10px;">${doc.fileType}</div>
           </td>
           <td style="font-weight: var(--fw-semibold);">${doc.title}</td>
-          <td><span class="badge badge-gold">${doc.category}</span></td>
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+              <span class="badge badge-gold">${doc.category}</span>
+              ${doc.subcategory ? `<span class="badge" style="background: var(--color-bg-hover); font-size: 10px;">${doc.subcategory}</span>` : ''}
+            </div>
+          </td>
           <td>📅 ${formatDate(doc.date)}</td>
           <td>${doc.fileSize}</td>
           <td>${doc.featured ? '⭐ Yes' : 'No'}</td>
@@ -532,6 +543,7 @@
 
         const title = document.getElementById('doc-title').value;
         const category = document.getElementById('doc-category').value;
+        const subcategory = document.getElementById('doc-subcategory').value.trim();
         const description = document.getElementById('doc-desc').value;
         const fileType = document.getElementById('doc-type').value;
         const fileSize = document.getElementById('doc-size').value;
@@ -587,6 +599,7 @@
                   docsToSave.push({
                     title: cleanTitle,
                     category,
+                    subcategory,
                     description,
                     fileType: fType,
                     fileSize: fSizeStr,
@@ -600,13 +613,13 @@
               }
             } else {
               docsToSave.push({
-                title, category, description, fileType, fileSize, date, featured,
+                title, category, subcategory, description, fileType, fileSize, date, featured,
                 downloadUrl: convertDriveUrl(urlVal, 'file')
               });
             }
           } else {
             docsToSave.push({
-              title, category, description, fileType, fileSize, date, featured,
+              title, category, subcategory, description, fileType, fileSize, date, featured,
               downloadUrl: '#'
             });
           }
@@ -624,6 +637,7 @@
             const updatedFields = {
               title,
               category,
+              subcategory,
               description,
               fileType,
               fileSize,
@@ -683,6 +697,7 @@
 
       document.getElementById('doc-title').value = doc.title;
       document.getElementById('doc-category').value = doc.category;
+      document.getElementById('doc-subcategory').value = doc.subcategory || '';
       document.getElementById('doc-desc').value = doc.description;
       document.getElementById('doc-type').value = doc.fileType;
       document.getElementById('doc-size').value = doc.fileSize;

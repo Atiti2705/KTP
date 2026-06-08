@@ -5,6 +5,7 @@
    ============================================ */
 
 let currentCategory = 'All';
+let currentSubCategory = 'All';
 let searchQuery = '';
 let currentSort = 'manual';
 let currentPage = 1;
@@ -60,7 +61,55 @@ function renderCategoryChips() {
       container.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentCategory = btn.dataset.category;
+      currentSubCategory = 'All'; // Reset subcategory when category changes
       currentPage = 1; // Reset to page 1 on filter change
+      renderSubCategoryChips();
+      renderDocuments();
+    });
+  });
+  renderSubCategoryChips();
+}
+
+// ========================
+// RENDER SUB CATEGORY CHIPS
+// ========================
+function renderSubCategoryChips() {
+  const container = document.getElementById('subcategory-chips');
+  if (!container) return;
+
+  const docsInCat = currentCategory === 'All' 
+    ? Documents 
+    : Documents.filter(d => d.category === currentCategory);
+    
+  const subcats = new Set();
+  docsInCat.forEach(d => {
+    if (d.subcategory && d.subcategory.trim() !== '') {
+      subcats.add(d.subcategory.trim());
+    }
+  });
+
+  const uniqueSubCats = Array.from(subcats).sort();
+
+  if (uniqueSubCats.length === 0) {
+    container.style.display = 'none';
+    currentSubCategory = 'All';
+    return;
+  }
+
+  container.style.display = 'flex';
+  
+  container.innerHTML = ['All', ...uniqueSubCats].map(subcat => `
+    <button class="filter-chip ${subcat === currentSubCategory ? 'active' : ''}" data-subcategory="${subcat}">
+      ${subcat}
+    </button>
+  `).join('');
+
+  container.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentSubCategory = btn.dataset.subcategory;
+      currentPage = 1;
       renderDocuments();
     });
   });
@@ -115,13 +164,17 @@ function renderDocuments() {
   if (!listContainer) return;
 
   // 1. Get filtered items
-  const filtered = SearchEngine.filter(Documents, {
+  let filtered = SearchEngine.filter(Documents, {
     query: searchQuery,
     category: currentCategory,
     sort: currentSort,
     searchFields: ['title', 'description', 'category'],
     categoryField: 'category'
   });
+
+  if (currentSubCategory !== 'All') {
+    filtered = filtered.filter(d => d.subcategory === currentSubCategory);
+  }
 
   // 2. Paginate items
   const paginationData = SearchEngine.paginate(filtered, currentPage, itemsPerPage);
