@@ -616,11 +616,12 @@
                       tryFolderImport = false;
                     }
                   } else {
-                    tryFolderImport = false;
+                    const errorText = await checkRes.text();
+                    throw new Error(`Google Drive API error (${checkRes.status}): ${errorText}`);
                   }
                 } catch (err) {
-                  console.warn("Folder check failed:", err);
-                  if (err.message.includes("No files found")) {
+                  console.error("Folder check failed:", err);
+                  if (err.message.includes("No files found") || err.message.includes("Google Drive API error")) {
                     throw err; 
                   }
                   tryFolderImport = false;
