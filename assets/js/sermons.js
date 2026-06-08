@@ -185,39 +185,21 @@ function setupPreviewModal() {
   if (document.getElementById('sermon-modal')) return;
 
   const modalMarkup = `
-    <div class="modal-backdrop" id="sermon-modal">
-      <div class="modal">
-        <div class="modal-header">
-          <h3 id="modal-sermon-title">Sermon Notes</h3>
-          <button class="modal-close" id="close-sermon-modal" aria-label="Close modal">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-4); flex-wrap: wrap; gap: var(--sp-2);">
-            <div>
-              <span style="color: var(--color-text-secondary); font-size: var(--fs-xs);">SPEAKER</span>
-              <h4 id="modal-sermon-speaker" style="font-size: var(--fs-md); font-weight: var(--fw-semibold); color: var(--color-text);"></h4>
-            </div>
-            <span class="badge badge-gold" id="modal-sermon-topic" style="align-self: center;"></span>
-          </div>
-
-          <div style="padding: var(--sp-4); background: rgba(220, 20, 60, 0.05); border-radius: var(--radius-lg); border: 1px dashed rgba(220, 20, 60, 0.2); margin-bottom: var(--sp-4);">
-            <p style="font-weight: var(--fw-semibold); margin-bottom: var(--sp-1); font-size: var(--fs-xs); text-transform: uppercase; color: var(--brand-red);">Scripture Reading</p>
-            <p id="modal-sermon-scripture" style="font-family: var(--font-heading); font-weight: var(--fw-bold); font-size: var(--fs-md); color: var(--color-text);"></p>
-          </div>
-
-          <div style="padding: var(--sp-4); background: var(--color-bg-alt); border-radius: var(--radius-lg); border: 1px solid var(--color-border); margin-bottom: var(--sp-4);">
-            <p style="font-weight: var(--fw-semibold); margin-bottom: var(--sp-2); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-text-secondary);">Summary & Main Points</p>
-            <p id="modal-sermon-desc" style="color: var(--color-text-secondary); font-size: var(--fs-sm); line-height: var(--lh-relaxed); white-space: pre-line;"></p>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-xs); color: var(--color-text-tertiary); padding: var(--sp-1);">
-            <span>📅 Published: <strong id="modal-sermon-date"></strong></span>
-            <span>📁 Format: <strong id="modal-sermon-type"></strong></span>
+    <div class="modal-backdrop lightbox-modal" id="sermon-modal" style="background: rgba(0,0,0,0.95); padding: 0;">
+      <div style="position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(0,0,0,0.5); z-index: 10;">
+          <h3 id="modal-sermon-title" style="color: white; margin: 0; font-size: 1.2rem; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Sermon Notes</h3>
+          <div style="display: flex; gap: 16px; align-items: center;">
+             <a href="#" id="modal-sermon-download" download style="color: white; text-decoration: none; display: flex; align-items: center; gap: 8px;" title="Download">
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+             </a>
+             <button id="close-sermon-modal" aria-label="Close" style="background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+             </button>
           </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-outline" id="btn-close-sermon-footer">Close</button>
-          <a href="#" class="btn btn-primary" id="modal-sermon-download" download>⬇ Download Sermon Notes</a>
+        <div style="flex: 1; position: relative; width: 100%; height: 100%; background: #fff;">
+          <iframe id="modal-sermon-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
       </div>
     </div>
@@ -228,12 +210,13 @@ function setupPreviewModal() {
   document.body.appendChild(div.firstElementChild);
 
   const closeBtn = document.getElementById('close-sermon-modal');
-  const closeFooterBtn = document.getElementById('btn-close-sermon-footer');
-
-  const closeAction = () => ModalSystem.close('sermon-modal');
+  const closeAction = () => {
+    const iframe = document.getElementById('modal-sermon-iframe');
+    if (iframe) iframe.src = '';
+    ModalSystem.close('sermon-modal');
+  };
 
   if (closeBtn) closeBtn.addEventListener('click', closeAction);
-  if (closeFooterBtn) closeFooterBtn.addEventListener('click', closeAction);
 }
 
 function openPreviewModal(sermonId) {
@@ -241,47 +224,48 @@ function openPreviewModal(sermonId) {
   if (!sermon) return;
 
   const modalTitle = document.getElementById('modal-sermon-title');
-  const modalSpeaker = document.getElementById('modal-sermon-speaker');
-  const modalTopic = document.getElementById('modal-sermon-topic');
-  const modalScripture = document.getElementById('modal-sermon-scripture');
-  const modalDesc = document.getElementById('modal-sermon-desc');
-  const modalDate = document.getElementById('modal-sermon-date');
-  const modalType = document.getElementById('modal-sermon-type');
   const modalDownload = document.getElementById('modal-sermon-download');
+  const modalIframe = document.getElementById('modal-sermon-iframe');
 
   if (modalTitle) modalTitle.textContent = sermon.title;
-  if (modalSpeaker) modalSpeaker.textContent = sermon.speaker;
-  if (modalTopic) modalTopic.textContent = sermon.topic;
-  if (modalScripture) modalScripture.textContent = sermon.scripture;
-  if (modalDesc) {
-    modalDesc.innerHTML = `
-      1. Introduction to the scripture text.
-      2. Key theological takeaway: God's truth is eternal and unchanging.
-      3. Practical application for Christian life today:
-         - Cultivate daily devotion and study.
-         - Show compassion and love in all interactions.
-         - Rely on the Holy Spirit's guidance.
-      
-      Summary:
-      ${sermon.description}
-    `;
+
+  let fileId = '';
+  const downloadUrl = sermon.downloadUrl || sermon.fileUrl;
+  
+  if (downloadUrl && downloadUrl !== '#') {
+    const fileIdMatch = downloadUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (fileIdMatch && fileIdMatch[1]) {
+      fileId = fileIdMatch[1];
+    } else {
+      const idMatch = downloadUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (idMatch && idMatch[1]) fileId = idMatch[1];
+    }
   }
-  if (modalDate) modalDate.textContent = formatDateLong(sermon.date);
-  if (modalType) modalType.textContent = sermon.fileType;
+
+  if (modalIframe) {
+    if (fileId) {
+      modalIframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
+    } else if (downloadUrl && downloadUrl !== '#') {
+      modalIframe.src = downloadUrl;
+    } else {
+      modalIframe.src = 'about:blank';
+    }
+  }
+
   if (modalDownload) {
-    modalDownload.href = sermon.downloadUrl || '#';
-    if (sermon.downloadUrl && sermon.downloadUrl !== '#') {
-      modalDownload.target = '_blank';
+    if (downloadUrl && downloadUrl !== '#') {
+      modalDownload.style.display = 'flex';
+      modalDownload.href = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : downloadUrl;
       modalDownload.onclick = () => {
-        Toast.show(`Opening ${sermon.title}...`, 'success');
-        ModalSystem.close('sermon-modal');
+        Toast.show(`Downloading ${sermon.title}...`, 'success');
       };
     } else {
+      modalDownload.style.display = 'flex';
+      modalDownload.href = '#';
       modalDownload.removeAttribute('target');
       modalDownload.onclick = (e) => {
         e.preventDefault();
         Toast.show(`Downloading notes: ${sermon.title} (Simulated)...`, 'success');
-        ModalSystem.close('sermon-modal');
       };
     }
   }
