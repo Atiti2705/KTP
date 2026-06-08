@@ -182,11 +182,11 @@ function renderLyrics() {
   }
 
   listContainer.innerHTML = paginationData.items.map(doc => `
-    <div class="doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${(doc.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center;">
+    <div class="doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${(doc.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center; padding: 10px 14px; min-height: auto; gap: 12px; display: flex;">
       
-      <div class="file-icon" style="font-size: 1.5rem; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky);">🎵</div>
-      <div class="doc-card-content">
-        <h3 class="doc-card-title" style="margin-bottom: 0;">${doc.title}</h3>
+      <div class="file-icon" style="font-size: 1.1rem; width: 34px; height: 34px; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky); display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">🎵</div>
+      <div class="doc-card-content" style="flex: 1; min-width: 0;">
+        <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${doc.title}</h3>
       </div>
     </div>
   `).join('');
