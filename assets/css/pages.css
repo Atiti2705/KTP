@@ -710,7 +710,7 @@
 }/* Modern Alphabet Filter */
 .alphabet-filter-container {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   padding: 6px;
   padding-bottom: 8px;
   background: rgba(255, 255, 255, 0.02);
@@ -736,8 +736,8 @@
 }
 .alphabet-modern-chip {
   flex: 0 0 auto;
-  padding: 8px 16px;
-  font-size: 0.9rem;
+  padding: 6px 12px;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-text-secondary);
   background: transparent;
@@ -748,7 +748,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 48px;
+  min-width: 36px;
 }
 .alphabet-modern-chip:hover {
   background: rgba(255, 255, 255, 0.06);
