@@ -112,19 +112,20 @@ function renderLyrics() {
   // 1. Filter by Alphabet
   if (currentAlphabet !== 'All') {
     filtered = filtered.filter(lyric => {
-      const title = (lyric.title || '').trim().toUpperCase();
+      // Strip any leading numbers, spaces, or punctuation so "1. Pathian Hla" becomes "PATHIAN HLA"
+      const cleanTitle = (lyric.title || '').trim().toUpperCase().replace(/^[^A-ZṬ]+/, '');
       if (currentAlphabet === 'AW') {
-        return title.startsWith('AW');
+        return cleanTitle.startsWith('AW');
       } else if (currentAlphabet === 'A') {
-        return title.startsWith('A') && !title.startsWith('AW');
+        return cleanTitle.startsWith('A') && !cleanTitle.startsWith('AW');
       } else if (currentAlphabet === 'CH') {
-        return title.startsWith('CH');
+        return cleanTitle.startsWith('CH');
       } else if (currentAlphabet === 'NG') {
-        return title.startsWith('NG');
+        return cleanTitle.startsWith('NG');
       } else if (currentAlphabet === 'N') {
-        return title.startsWith('N') && !title.startsWith('NG');
+        return cleanTitle.startsWith('N') && !cleanTitle.startsWith('NG');
       } else {
-        return title.startsWith(currentAlphabet);
+        return cleanTitle.startsWith(currentAlphabet);
       }
     });
   }
