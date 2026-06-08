@@ -141,7 +141,7 @@ function renderLyrics() {
   // 3. Sort
   const mizoSortStr = (str) => {
     if (!str) return '';
-    return str.toUpperCase()
+    return String(str).toUpperCase()
       .replace(/AW/g, 'A~')
       .replace(/CH/g, 'C~')
       .replace(/NG/g, 'G~')
