@@ -555,52 +555,80 @@
 
           if (source === 'url') {
             const urlVal = urlInput.value.trim();
-            const folderIdMatch = urlVal.match(/(?:\/folders\/|\/drive\/folders\/)([a-zA-Z0-9_-]+)/);
+            const idMatch = urlVal.match(/(?:folders\/|d\/|id=)([a-zA-Z0-9_-]{25,})/);
 
-            if (folderIdMatch && folderIdMatch[1] && actionType === 'add') {
-              isFolderImport = true;
-              submitBtn.innerHTML = '⌛ Importing Folder...';
-              const folderId = folderIdMatch[1];
+            let tryFolderImport = false;
+            let folderId = null;
+
+            if (idMatch && idMatch[1] && actionType === 'add') {
+              folderId = idMatch[1];
+              tryFolderImport = true;
+            }
+
+            if (tryFolderImport) {
+              submitBtn.innerHTML = '⌛ Checking Link...';
               
               if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
-                throw new Error("Google Drive API key is missing in firebase-config.js!");
-              }
-
-              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType!='application/vnd.google-apps.folder'&pageSize=1000&fields=files(id,name,size,mimeType)&key=${googleDriveApiKey}`;
-              
-              const res = await fetch(apiEndpoint);
-              if (!res.ok) {
-                throw new Error("Failed to fetch folder from Google Drive. Ensure the folder is public ('Anyone with the link').");
-              }
-              const data = await res.json();
-              if (data.files && data.files.length > 0) {
-                data.files.forEach(file => {
-                  let fType = 'PDF';
-                  if (file.mimeType.includes('wordprocessingml') || file.mimeType.includes('msword')) fType = 'DOCX';
-                  
-                  let fSizeStr = 'Unknown';
-                  if (file.size) {
-                    const mb = parseInt(file.size) / (1024 * 1024);
-                    fSizeStr = mb >= 1 ? `${mb.toFixed(1)} MB` : `${(parseInt(file.size) / 1024).toFixed(0)} KB`;
-                  }
-                  
-                  let cleanTitle = file.name.replace(/\.[^/.]+$/, "");
-                  
-                  docsToSave.push({
-                    title: cleanTitle,
-                    category,
-                    description,
-                    fileType: fType,
-                    fileSize: fSizeStr,
-                    date,
-                    featured,
-                    downloadUrl: convertDriveUrl(`https://drive.google.com/file/d/${file.id}/view`, 'file')
-                  });
-                });
+                tryFolderImport = false;
               } else {
-                throw new Error("No files found in this Google Drive folder!");
+                try {
+                  const checkRes = await fetch(`https://www.googleapis.com/drive/v3/files/${folderId}?fields=mimeType&key=${googleDriveApiKey}`);
+                  if (checkRes.ok) {
+                    const checkData = await checkRes.json();
+                    if (checkData.mimeType === 'application/vnd.google-apps.folder') {
+                      isFolderImport = true;
+                      submitBtn.innerHTML = '⌛ Importing Folder...';
+                      
+                      const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType!='application/vnd.google-apps.folder'&pageSize=1000&fields=files(id,name,size,mimeType)&key=${googleDriveApiKey}`;
+                      
+                      const res = await fetch(apiEndpoint);
+                      if (!res.ok) throw new Error("Failed to fetch folder from Google Drive. Ensure the folder is public.");
+                      
+                      const data = await res.json();
+                      if (data.files && data.files.length > 0) {
+                        data.files.forEach(file => {
+                          let fType = 'PDF';
+                          if (file.mimeType.includes('wordprocessingml') || file.mimeType.includes('msword')) fType = 'DOCX';
+                          
+                          let fSizeStr = 'Unknown';
+                          if (file.size) {
+                            const mb = parseInt(file.size) / (1024 * 1024);
+                            fSizeStr = mb >= 1 ? `${mb.toFixed(1)} MB` : `${(parseInt(file.size) / 1024).toFixed(0)} KB`;
+                          }
+                          
+                          let cleanTitle = file.name.replace(/\.[^/.]+$/, "");
+                          
+                          docsToSave.push({
+                            title: cleanTitle,
+                            category,
+                            description,
+                            fileType: fType,
+                            fileSize: fSizeStr,
+                            date,
+                            featured,
+                            downloadUrl: convertDriveUrl(`https://drive.google.com/file/d/${file.id}/view`, 'file')
+                          });
+                        });
+                      } else {
+                        throw new Error("No files found in this Google Drive folder!");
+                      }
+                    } else {
+                      tryFolderImport = false;
+                    }
+                  } else {
+                    tryFolderImport = false;
+                  }
+                } catch (err) {
+                  console.warn("Folder check failed:", err);
+                  if (err.message.includes("No files found")) {
+                    throw err; 
+                  }
+                  tryFolderImport = false;
+                }
               }
-            } else {
+            }
+
+            if (!isFolderImport) {
               docsToSave.push({
                 title, category, description, fileType, fileSize, date, featured,
                 downloadUrl: convertDriveUrl(urlVal, 'file')
