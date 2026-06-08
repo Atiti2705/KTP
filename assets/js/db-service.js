@@ -27,10 +27,10 @@ const DbService = {
   async get(collection) {
     if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
       try {
-        // Query Firestore with a 2-second timeout fallback
+        // Query Firestore with a 10-second timeout fallback for mobile networks
         const snapshot = await this._withTimeout(
           FirebaseConfig.db.collection(collection).get(),
-          2000,
+          10000,
           `Firestore read timeout for ${collection}`
         );
         const items = [];
@@ -130,14 +130,17 @@ const DbService = {
       else if (collection === 'documents') localStorage.setItem(key, JSON.stringify(Documents));
       else if (collection === 'sermons') localStorage.setItem(key, JSON.stringify(Sermons));
       else if (collection === 'announcements') localStorage.setItem(key, JSON.stringify(Announcements));
+      else if (collection === 'lyrics') localStorage.setItem(key, JSON.stringify([]));
       else if (collection === 'settings') {
         localStorage.setItem(key, JSON.stringify({
           churchInfo: ChurchInfo,
           socialMedia: SocialMedia
         }));
+      } else {
+        localStorage.setItem(key, JSON.stringify([]));
       }
     }
-    return JSON.parse(localStorage.getItem(key));
+    return JSON.parse(localStorage.getItem(key)) || [];
   },
 
   addLocal(collection, item) {
