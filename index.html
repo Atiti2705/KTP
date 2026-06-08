@@ -24,13 +24,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=18">
-  <link rel="stylesheet" href="assets/css/base.css?v=18">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=18">
-  <link rel="stylesheet" href="assets/css/animations.css?v=18">
-  <link rel="stylesheet" href="assets/css/components.css?v=18">
-  <link rel="stylesheet" href="assets/css/layout.css?v=18">
-  <link rel="stylesheet" href="assets/css/pages.css?v=18">
+  <link rel="stylesheet" href="assets/css/variables.css?v=17">
+  <link rel="stylesheet" href="assets/css/base.css?v=17">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=17">
+  <link rel="stylesheet" href="assets/css/animations.css?v=17">
+  <link rel="stylesheet" href="assets/css/components.css?v=17">
+  <link rel="stylesheet" href="assets/css/layout.css?v=17">
+  <link rel="stylesheet" href="assets/css/pages.css?v=17">
 </head>
 
 <body>
@@ -126,19 +126,19 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=17"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=17"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=17"></script>
 
   <!-- App Configuration & Services -->
-  <script src="assets/js/firebase-config.js"></script>
-  <script src="assets/js/theme.js"></script>
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/auth.js"></script>
-  <script src="assets/js/db-service.js?v=16"></script>
-  <script src="assets/js/components.js?v=16"></script>
-  <script src="assets/js/search.js?v=16"></script>
-  <script src="assets/js/app.js?v=16"></script>
+  <script src="assets/js/firebase-config.js?v=17"></script>
+  <script src="assets/js/theme.js?v=17"></script>
+  <script src="assets/js/data.js?v=17"></script>
+  <script src="assets/js/auth.js?v=17"></script>
+  <script src="assets/js/db-service.js?v=17"></script>
+  <script src="assets/js/components.js?v=17"></script>
+  <script src="assets/js/search.js?v=17"></script>
+  <script src="assets/js/app.js?v=17"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // Render static header and footer immediately for fast visual load
@@ -207,7 +207,12 @@
       const container = document.getElementById('announcements-list');
       if (!container) return;
 
-      const sorted = [...Announcements].sort((a, b) => new Date(b.date) - new Date(a.date));
+      const sorted = [...Announcements].sort((a, b) => {
+        const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
+        const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
+        if (aIdx === bIdx) return new Date(b.date) - new Date(a.date);
+        return aIdx - bIdx;
+      });
       container.innerHTML = sorted.map(ann => {
         const tag = ann.linkUrl ? 'a' : 'div';
         const href = ann.linkUrl ? `href="${ann.linkUrl}" target="_blank" rel="noopener"` : '';

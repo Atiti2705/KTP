@@ -8,10 +8,10 @@
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/variables.css">
-  <link rel="stylesheet" href="../assets/css/base.css">
-  <link rel="stylesheet" href="../assets/css/components.css">
-  <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=17">
+  <link rel="stylesheet" href="../assets/css/base.css?v=17">
+  <link rel="stylesheet" href="../assets/css/components.css?v=17">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=17">
 </head>
 
 <body>
@@ -64,6 +64,7 @@
             <thead>
               <tr>
                 <th style="width: 40px; text-align: center;"><input type="checkbox" id="select-all-checkbox" style="cursor: pointer; width: 16px; height: 16px;"></th>
+                <th style="width: 40px; text-align: center;" title="Drag to reorder">↕️</th>
                 <th>Title</th>
                 <th>Speaker</th>
                 <th>Topic</th>
@@ -210,20 +211,22 @@
   </div>
 
   <!-- Scripts -->
+  <!-- SortableJS for drag-and-drop -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=17"></script>
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=17"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=17"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=17"></script>
 
   <!-- App Configuration & Services -->
-  <script src="../assets/js/firebase-config.js"></script>
-  <script src="../assets/js/theme.js"></script>
-  <script src="../assets/js/data.js"></script>
-  <script src="../assets/js/auth.js"></script>
-  <script src="../assets/js/db-service.js"></script>
-  <script src="../assets/js/components.js"></script>
-  <script src="../assets/js/search.js"></script>
-  <script src="../assets/js/admin.js"></script>
+  <script src="../assets/js/firebase-config.js?v=17"></script>
+  <script src="../assets/js/theme.js?v=17"></script>
+  <script src="../assets/js/data.js?v=17"></script>
+  <script src="../assets/js/auth.js?v=17"></script>
+  <script src="../assets/js/db-service.js?v=17"></script>
+  <script src="../assets/js/components.js?v=17"></script>
+  <script src="../assets/js/search.js?v=17"></script>
+  <script src="../assets/js/admin.js?v=17"></script>
 
   <script>
     let currentSearch = '';
@@ -242,6 +245,7 @@
       populateCategoryDropdowns();
       renderSermonsTable();
       setupEvents();
+      initSortable();
     });
 
     function populateCategoryDropdowns() {
@@ -367,10 +371,11 @@
       }
 
       tbody.innerHTML = filtered.map(sermon => `
-        <tr>
+        <tr data-id="${sermon.id}">
           <td style="text-align: center;">
             <input type="checkbox" class="row-checkbox" value="${sermon.id}" style="cursor: pointer; width: 16px; height: 16px;">
           </td>
+          <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
           <td style="font-weight: var(--fw-semibold);">${sermon.title}</td>
           <td>🎙️ ${sermon.speaker}</td>
           <td><span class="badge badge-gold">${sermon.topic}</span></td>
@@ -396,7 +401,36 @@
       updateBulkDeleteUI();
     }
 
+    function initSortable() {
+      const tbody = document.getElementById('sermons-table-body');
+      if (typeof Sortable === 'undefined' || !tbody) return;
 
+      new Sortable(tbody, {
+        animation: 150,
+        handle: '.drag-handle',
+        onEnd: async function () {
+          // If a search or filter is active, don't allow sorting 
+          // (it would mess up global ordering unexpectedly)
+          if (currentSearch.trim() || currentCategoryFilter !== 'All') {
+            AdminToast.show('Cannot reorder items while search or filter is active. Please clear filters first.', 'error');
+            renderSermonsTable(); // Reset table
+            return;
+          }
+
+          const rows = tbody.querySelectorAll('tr[data-id]');
+          const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
+          
+          try {
+            await AdminData.reorder('sermons', newOrderIds);
+            AdminToast.show('Sermons reordered successfully!', 'success');
+          } catch (e) {
+            console.error(e);
+            AdminToast.show('Failed to save new order.', 'error');
+            renderSermonsTable(); // Revert
+          }
+        }
+      });
+    }
 
     function setupEvents() {
       // Category editor toggle

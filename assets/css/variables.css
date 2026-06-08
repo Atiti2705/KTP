@@ -23,10 +23,10 @@
   --font-body: 'Inter', sans-serif;
 
   /* Font Sizes — Mobile First (rem) */
-  --fs-xs: 0.75rem;     /* 12px */
-  --fs-sm: 0.8125rem;   /* 13px */
-  --fs-base: 0.9375rem; /* 15px */
-  --fs-md: 1rem;        /* 16px */
+  --fs-xs: 0.8125rem;   /* 13px */
+  --fs-sm: 0.875rem;    /* 14px */
+  --fs-base: 1rem;      /* 16px */
+  --fs-md: 1.0625rem;   /* 17px */
   --fs-lg: 1.125rem;    /* 18px */
   --fs-xl: 1.25rem;     /* 20px */
   --fs-2xl: 1.5rem;     /* 24px */
@@ -106,7 +106,7 @@
 /* ========================
    LIGHT THEME
    ======================== */
-[data-theme="light"] {
+[data-theme="light"], :root[data-theme="light"] {
   --color-bg: #f8fafc;
   --color-bg-alt: #ffffff;
   --color-bg-card: #ffffff;
@@ -116,8 +116,8 @@
   --color-bg-overlay: rgba(0, 0, 0, 0.5);
 
   --color-text: #1e293b;
-  --color-text-secondary: #64748b;
-  --color-text-tertiary: #94a3b8;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #64748b;
   --color-text-inverse: #ffffff;
   --color-text-link: var(--brand-sky-dark);
 
@@ -152,7 +152,7 @@
 /* ========================
    DARK THEME (Default)
    ======================== */
-[data-theme="dark"], :root {
+[data-theme="dark"], :root[data-theme="dark"], :root {
   --color-bg: #0f172a;
   --color-bg-alt: #1e293b;
   --color-bg-card: #1e293b;
@@ -162,8 +162,8 @@
   --color-bg-overlay: rgba(0, 0, 0, 0.7);
 
   --color-text: #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-text-tertiary: #64748b;
+  --color-text-secondary: #cbd5e1;
+  --color-text-tertiary: #94a3b8;
   --color-text-inverse: #0f172a;
   --color-text-link: var(--brand-sky-light);
 

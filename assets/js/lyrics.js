@@ -1,56 +1,49 @@
 /* ============================================
-   KṬP Saikhamakawn — Mipui Aw (Documents) Logic
-   Handles filtering, sorting, pagination,
-   and details preview modal.
+   KṬP Saikhamakawn — Hla Lyrics Logic
+   Handles filtering by Mizo Alphabet, searching,
+   sorting, pagination, and details preview.
    ============================================ */
 
-let currentCategory = 'All';
+const mizoAlphabets = ['All', 'A', 'AW', 'B', 'CH', 'D', 'E', 'F', 'G', 'NG', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'Ṭ', 'U', 'V', 'Z'];
+
+let currentAlphabet = 'All';
 let searchQuery = '';
 let currentSort = 'manual';
 let currentPage = 1;
-const itemsPerPage = 8;
+const itemsPerPage = 12;
+const Lyrics = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    const settings = await DbService.get('settings');
-    if (settings && settings.documentCategories && Array.isArray(settings.documentCategories)) {
-      DocumentCategories.length = 0;
-      DocumentCategories.push('All', ...settings.documentCategories.filter(c => c !== 'All'));
-    }
-  } catch (err) {
-    console.error("Error loading custom DocumentCategories:", err);
-  }
-
-  renderCategoryChips();
+  renderAlphabetChips();
   setupSearchAndSort();
   setupPreviewModal();
 
   try {
-    const data = await DbService.get('documents');
+    const data = await DbService.get('lyrics');
     if (data && Array.isArray(data)) {
-      Documents.length = 0;
-      Documents.push(...data.map(d => {
+      Lyrics.length = 0;
+      Lyrics.push(...data.map(d => {
         if (d.downloadUrl) d.downloadUrl = convertDriveUrl(d.downloadUrl, 'file');
         return d;
       }));
     }
   } catch (error) {
-    console.error("Error loading documents database:", error);
+    console.error("Error loading lyrics database:", error);
   }
 
-  renderDocuments();
+  renderLyrics();
 });
 
 // ========================
-// RENDER CATEGORY CHIPS
+// RENDER ALPHABET CHIPS
 // ========================
-function renderCategoryChips() {
-  const container = document.getElementById('category-chips');
+function renderAlphabetChips() {
+  const container = document.getElementById('alphabet-chips');
   if (!container) return;
 
-  container.innerHTML = DocumentCategories.map(cat => `
-    <button class="filter-chip ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
-      ${cat}
+  container.innerHTML = mizoAlphabets.map(alpha => `
+    <button class="filter-chip ${alpha === currentAlphabet ? 'active' : ''}" data-alpha="${alpha}">
+      ${alpha}
     </button>
   `).join('');
 
@@ -59,9 +52,9 @@ function renderCategoryChips() {
     btn.addEventListener('click', () => {
       container.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      currentCategory = btn.dataset.category;
+      currentAlphabet = btn.dataset.alpha;
       currentPage = 1; // Reset to page 1 on filter change
-      renderDocuments();
+      renderLyrics();
     });
   });
 }
@@ -71,7 +64,7 @@ function renderCategoryChips() {
 // ========================
 function setupSearchAndSort() {
   const searchInput = document.getElementById('doc-search');
-  const sortSelect = document.getElementById('doc-sort');
+  const sortSelect = document.getElementById('lyric-sort');
   const clearBtn = document.getElementById('search-clear-btn');
 
   if (searchInput) {
@@ -81,7 +74,7 @@ function setupSearchAndSort() {
       timeout = setTimeout(() => {
         searchQuery = e.target.value;
         currentPage = 1;
-        renderDocuments();
+        renderLyrics();
       }, 300);
     });
   }
@@ -91,7 +84,7 @@ function setupSearchAndSort() {
       searchInput.value = '';
       searchQuery = '';
       currentPage = 1;
-      renderDocuments();
+      renderLyrics();
     });
   }
 
@@ -99,31 +92,64 @@ function setupSearchAndSort() {
     sortSelect.addEventListener('change', (e) => {
       currentSort = e.target.value;
       currentPage = 1;
-      renderDocuments();
+      renderLyrics();
     });
   }
 }
 
 // ========================
-// RENDER DOCUMENTS LIST
+// RENDER LYRICS LIST
 // ========================
-function renderDocuments() {
-  const listContainer = document.getElementById('documents-list');
+function renderLyrics() {
+  const listContainer = document.getElementById('lyrics-list');
   const paginationContainer = document.getElementById('pagination-container');
   const countContainer = document.getElementById('doc-count');
 
   if (!listContainer) return;
 
-  // 1. Get filtered items
-  const filtered = SearchEngine.filter(Documents, {
-    query: searchQuery,
-    category: currentCategory,
-    sort: currentSort,
-    searchFields: ['title', 'description', 'category'],
-    categoryField: 'category'
-  });
+  let filtered = [...Lyrics];
 
-  // 2. Paginate items
+  // 1. Filter by Alphabet
+  if (currentAlphabet !== 'All') {
+    filtered = filtered.filter(lyric => {
+      const title = (lyric.title || '').trim().toUpperCase();
+      if (currentAlphabet === 'AW') {
+        return title.startsWith('AW');
+      } else if (currentAlphabet === 'A') {
+        return title.startsWith('A') && !title.startsWith('AW');
+      } else if (currentAlphabet === 'CH') {
+        return title.startsWith('CH');
+      } else if (currentAlphabet === 'NG') {
+        return title.startsWith('NG');
+      } else if (currentAlphabet === 'N') {
+        return title.startsWith('N') && !title.startsWith('NG');
+      } else {
+        return title.startsWith(currentAlphabet);
+      }
+    });
+  }
+
+  // 2. Filter by Search Query
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(lyric => 
+      (lyric.title || '').toLowerCase().includes(q) || 
+      (lyric.description || '').toLowerCase().includes(q)
+    );
+  }
+
+  // 3. Sort
+  if (currentSort === 'a-z') {
+    filtered.sort((a,b) => (a.title||'').localeCompare(b.title||''));
+  } else if (currentSort === 'z-a') {
+    filtered.sort((a,b) => (b.title||'').localeCompare(a.title||''));
+  } else if (currentSort === 'newest') {
+    filtered.sort((a,b) => new Date(b.date||0) - new Date(a.date||0));
+  } else if (currentSort === 'oldest') {
+    filtered.sort((a,b) => new Date(a.date||0) - new Date(b.date||0));
+  }
+
+  // 4. Paginate items
   const paginationData = SearchEngine.paginate(filtered, currentPage, itemsPerPage);
 
   // Update results count
@@ -133,13 +159,13 @@ function renderDocuments() {
     perPage: itemsPerPage
   });
 
-  // 3. Render items
+  // 5. Render items
   if (paginationData.items.length === 0) {
     listContainer.innerHTML = `
       <div class="empty-state" style="grid-column: 1 / -1; width: 100%;">
-        <div class="empty-state-icon">📄</div>
-        <h3>No Documents Found</h3>
-        <p>Try adjusting your search or category filters.</p>
+        <div class="empty-state-icon">🎵</div>
+        <h3>No Lyrics Found</h3>
+        <p>Try adjusting your search or alphabet filter.</p>
       </div>
     `;
     if (paginationContainer) paginationContainer.innerHTML = '';
@@ -147,20 +173,11 @@ function renderDocuments() {
   }
 
   listContainer.innerHTML = paginationData.items.map(doc => `
-    <div class="doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${doc.fileType.toLowerCase()}" style="position: relative;">
+    <div class="doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${(doc.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center;">
       
-      <div class="file-icon file-icon-${doc.fileType.toLowerCase()}">${doc.fileType}</div>
+      <div class="file-icon" style="font-size: 1.5rem; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky);">🎵</div>
       <div class="doc-card-content">
-        <h3 class="doc-card-title">${doc.title}</h3>
-        <p class="doc-card-desc">${doc.description}</p>
-        <div class="doc-card-meta">
-          <span>📅 ${formatDate(doc.date)}</span>
-          <span>📁 ${doc.fileSize}</span>
-          <span class="badge badge-primary" style="padding: 2px 8px;">${doc.category}</span>
-        </div>
-      </div>
-      <div class="doc-card-actions">
-        <!-- Buttons removed for cleaner UI; double-click/tap now handles preview -->
+        <h3 class="doc-card-title" style="margin-bottom: 0;">${doc.title}</h3>
       </div>
     </div>
   `).join('');
@@ -171,9 +188,9 @@ function renderDocuments() {
   // Render pagination buttons
   SearchEngine.renderPagination(paginationContainer, paginationData, (newPage) => {
     currentPage = newPage;
-    renderDocuments();
+    renderLyrics();
     // Scroll smoothly to top of results
-    document.getElementById('documents-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('lyrics-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
 
@@ -187,7 +204,7 @@ function setupPreviewModal() {
     <div class="modal-backdrop" id="doc-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3 id="modal-doc-title">Document Details</h3>
+          <h3 id="modal-doc-title">Lyric Details</h3>
           <button class="modal-close" id="close-doc-modal" aria-label="Close modal">&times;</button>
         </div>
         <div class="modal-body">
@@ -232,7 +249,7 @@ function setupPreviewModal() {
 }
 
 function openPreviewModal(docId) {
-  const doc = Documents.find(d => d.id === docId);
+  const doc = Lyrics.find(d => d.id === docId);
   if (!doc) return;
 
   const modalTitle = document.getElementById('modal-doc-title');
@@ -243,10 +260,10 @@ function openPreviewModal(docId) {
   const modalDownload = document.getElementById('modal-doc-download');
 
   if (modalTitle) modalTitle.textContent = doc.title;
-  if (modalDesc) modalDesc.textContent = doc.description;
+  if (modalDesc) modalDesc.textContent = doc.description || 'Hla Lyrics';
   if (modalDate) modalDate.textContent = formatDateLong(doc.date);
-  if (modalType) modalType.textContent = doc.fileType;
-  if (modalSize) modalSize.textContent = doc.fileSize;
+  if (modalType) modalType.textContent = doc.fileType || 'PDF';
+  if (modalSize) modalSize.textContent = doc.fileSize || 'Unknown';
   if (modalDownload) {
     modalDownload.href = doc.downloadUrl || '#';
     if (doc.downloadUrl && doc.downloadUrl !== '#') {
@@ -270,7 +287,7 @@ function openPreviewModal(docId) {
 
 // BULK DOWNLOAD LOGIC
 // ========================
-let docSelectionManager = null;
+let lyricSelectionManager = null;
 
 function setupBulkDownload() {
   const selectAllCb = document.getElementById('select-all-cb');
@@ -279,8 +296,8 @@ function setupBulkDownload() {
   
   if (!selectAllCb || !btnDownload) return;
 
-  docSelectionManager = new SelectionManager(
-    'documents-list',
+  lyricSelectionManager = new SelectionManager(
+    'lyrics-list',
     '.selectable-item',
     (selectedItems) => {
       countSpan.textContent = selectedItems.size;
@@ -292,7 +309,7 @@ function setupBulkDownload() {
         btnDownload.style.opacity = '0.5';
       }
       
-      const totalItems = document.querySelectorAll('#documents-list .selectable-item[data-url]:not([data-url=""])').length;
+      const totalItems = document.querySelectorAll('#lyrics-list .selectable-item[data-url]:not([data-url=""])').length;
       selectAllCb.checked = (selectedItems.size > 0 && selectedItems.size === totalItems && totalItems > 0);
     },
     (id) => {
@@ -303,15 +320,15 @@ function setupBulkDownload() {
   // Handle Select All
   selectAllCb.addEventListener('change', (e) => {
     if (e.target.checked) {
-      docSelectionManager.selectAll();
+      lyricSelectionManager.selectAll();
     } else {
-      docSelectionManager.clearSelection();
+      lyricSelectionManager.clearSelection();
     }
   });
 
   // Handle Download Button
   btnDownload.addEventListener('click', async () => {
-    const selectedDocs = docSelectionManager.selectedItems;
+    const selectedDocs = lyricSelectionManager.selectedItems;
     if (selectedDocs.size === 0) return;
     
     const originalText = btnDownload.innerHTML;
@@ -341,7 +358,7 @@ function setupBulkDownload() {
       await Promise.all(promises);
       
       const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, 'KTP_Mipui_Aw.zip');
+      saveAs(content, 'KTP_Hla_Lyrics.zip');
       
     } catch (err) {
       console.error("Error creating zip:", err);
@@ -350,7 +367,7 @@ function setupBulkDownload() {
       btnDownload.innerHTML = originalText;
       btnDownload.disabled = false;
       
-      docSelectionManager.clearSelection();
+      lyricSelectionManager.clearSelection();
       selectAllCb.checked = false;
     }
   });

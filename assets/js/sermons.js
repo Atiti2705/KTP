@@ -6,7 +6,7 @@
 
 let currentCategory = 'All';
 let searchQuery = '';
-let currentSort = 'newest';
+let currentSort = 'manual';
 let currentPage = 1;
 const itemsPerPage = 8;
 

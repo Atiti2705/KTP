@@ -108,6 +108,10 @@ const AdminData = {
     if (!localStorage.getItem('db_announcements')) {
       localStorage.setItem('db_announcements', JSON.stringify(Announcements));
     }
+    // Lyrics
+    if (!localStorage.getItem('db_lyrics')) {
+      localStorage.setItem('db_lyrics', JSON.stringify([]));
+    }
     // Settings (Church info & Social links)
     if (!localStorage.getItem('db_settings')) {
       localStorage.setItem('db_settings', JSON.stringify({
@@ -231,6 +235,46 @@ const AdminData = {
     const filtered = list.filter(item => item.id !== id);
     this.save(collection, filtered);
     return true;
+  },
+
+  async reorder(collection, newOrderIds) {
+    const list = this.get(collection);
+    // Create a map for quick lookup
+    const idMap = new Map();
+    list.forEach(item => idMap.set(item.id, item));
+
+    // Rebuild the array in the new order
+    const reorderedList = [];
+    newOrderIds.forEach((id, index) => {
+      if (idMap.has(id)) {
+        const item = idMap.get(id);
+        item.orderIndex = index;
+        reorderedList.push(item);
+        idMap.delete(id);
+      }
+    });
+
+    // Append any items that were missed (e.g. not in the table during reorder)
+    idMap.forEach(item => {
+      item.orderIndex = reorderedList.length;
+      reorderedList.push(item);
+    });
+
+    this.save(collection, reorderedList);
+
+    // Sync to Firestore if configured
+    if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
+      try {
+        const batch = FirebaseConfig.db.batch();
+        reorderedList.forEach(item => {
+          const ref = FirebaseConfig.db.collection(collection).doc(item.id);
+          batch.update(ref, { orderIndex: item.orderIndex });
+        });
+        await batch.commit();
+      } catch (err) {
+        console.error("Firestore sync reorder error:", err);
+      }
+    }
   },
 
   // Sync background Firestore collections
@@ -393,8 +437,9 @@ function renderSidebar() {
       currentPath.endsWith('photos.html') ? 'photos' :
         currentPath.endsWith('documents.html') ? 'documents' :
           currentPath.endsWith('sermons.html') ? 'sermons' :
-            currentPath.endsWith('announcements.html') ? 'announcements' :
-              currentPath.endsWith('settings.html') ? 'settings' : '';
+            currentPath.endsWith('lyrics.html') ? 'lyrics' :
+              currentPath.endsWith('announcements.html') ? 'announcements' :
+                currentPath.endsWith('settings.html') ? 'settings' : '';
 
   const user = JSON.parse(localStorage.getItem('ktp_admin_user') || '{"name":"Admin","role":"User"}');
 
@@ -420,6 +465,9 @@ function renderSidebar() {
       </a>
       <a href="sermons.html" class="sidebar-link ${activePage === 'sermons' ? 'active' : ''}">
         <span class="link-icon">📖</span> Sermons & Study
+      </a>
+      <a href="lyrics.html" class="sidebar-link ${activePage === 'lyrics' ? 'active' : ''}">
+        <span class="link-icon">🎵</span> Hla Lyrics
       </a>
       <a href="announcements.html" class="sidebar-link ${activePage === 'announcements' ? 'active' : ''}">
         <span class="link-icon">📢</span> Announcements

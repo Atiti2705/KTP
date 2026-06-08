@@ -37,6 +37,14 @@ const DbService = {
         snapshot.forEach(doc => {
           items.push({ id: doc.id, ...doc.data() });
         });
+
+        // Ensure returned items are ordered by orderIndex (fallback to newest date)
+        items.sort((a, b) => {
+          const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
+          const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
+          if (aIdx === bIdx) return new Date(b.date || 0) - new Date(a.date || 0);
+          return aIdx - bIdx;
+        });
         
         // Dynamic settings mapping
         if (collection === 'settings' && items.length > 0) {
@@ -161,5 +169,55 @@ const DbService = {
     const filtered = list.filter(item => item.id !== id);
     localStorage.setItem(`db_${collection}`, JSON.stringify(filtered));
     return true;
+  },
+
+  /**
+   * Fetch files from a Google Drive folder URL
+   * Requires googleDriveApiKey to be set in firebase-config.js
+   */
+  async fetchFromDriveFolder(folderUrl) {
+    if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
+      throw new Error('Google Drive API Key is not configured.');
+    }
+
+    // Extract folder ID from URL
+    let folderId = '';
+    const idMatch = folderUrl.match(/[\/?&]id=([^&#]+)/);
+    const foldersMatch = folderUrl.match(/\/folders\/([^\/?&#]+)/);
+    if (idMatch && idMatch[1]) folderId = idMatch[1];
+    else if (foldersMatch && foldersMatch[1]) folderId = foldersMatch[1];
+    else folderId = folderUrl.trim(); // Assume it might just be the ID
+
+    if (!folderId) {
+      throw new Error('Invalid Google Drive folder URL.');
+    }
+
+    try {
+      const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&fields=files(id,name)&key=${googleDriveApiKey}`;
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+         throw new Error(`Google Drive API error: ${response.statusText}`);
+      }
+      const data = await response.json();
+      
+      // Process files
+      const files = (data.files || []).map(file => {
+        // Strip .pdf from name
+        const cleanName = file.name.replace(/\.pdf$/i, '').trim();
+        // Generate direct view/download URL
+        const downloadUrl = `https://drive.google.com/file/d/${file.id}/view?usp=sharing`;
+        
+        return {
+          title: cleanName,
+          downloadUrl: downloadUrl,
+          date: new Date().toISOString().split('T')[0]
+        };
+      });
+      
+      return files;
+    } catch (error) {
+      console.error('Error fetching from Drive folder:', error);
+      throw error;
+    }
   }
 };

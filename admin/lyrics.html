@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Photos — KṬP Saikhamakawn</title>
+  <title>Manage Publications — KṬP Saikhamakawn</title>
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
@@ -28,13 +28,14 @@
         <div class="admin-topbar-left">
           <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
           <div>
-            <h1 class="admin-page-title">Photos Gallery Manager</h1>
-            <p class="admin-page-desc">Create, edit, or delete gallery photos</p>
+            <h1 class="admin-page-title">Hla Lyrics Publications Manager</h1>
+            <p class="admin-page-desc">Add, edit, or delete newsletters, templates, and reports</p>
           </div>
         </div>
         <div style="display: flex; gap: var(--sp-3); align-items: center;">
           <button class="btn btn-outline" id="btn-bulk-delete" style="color: var(--brand-red); border-color: var(--brand-red); display: none;">🗑️ Delete Selected</button>
-          <button class="btn btn-primary" id="btn-add-photo">➕ Add Photo</button>
+          <button class="btn btn-outline" id="btn-import-folder">📁 Import from Drive Folder</button>
+          <button class="btn btn-primary" id="btn-add-doc">➕ Add Lyric</button>
         </div>
       </div>
 
@@ -44,7 +45,7 @@
           style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
           <div class="search-container" style="max-width: 350px;">
             <span class="search-icon">🔍</span>
-            <input type="text" id="admin-search-input" class="search-input" placeholder="Search photos by title...">
+            <input type="text" id="admin-search-input" class="search-input" placeholder="Search lyrics by title...">
           </div>
           <div>
             <select id="admin-filter-category" class="filter-select"
@@ -64,15 +65,16 @@
               <tr>
                 <th style="width: 40px; text-align: center;"><input type="checkbox" id="select-all-checkbox" style="cursor: pointer; width: 16px; height: 16px;"></th>
                 <th style="width: 40px; text-align: center;" title="Drag to reorder">↕️</th>
-                <th style="width: 80px;">Preview</th>
+                <th style="width: 60px;">Type</th>
                 <th>Title</th>
                 <th>Category</th>
                 <th>Date</th>
+                <th>Size</th>
                 <th>Featured</th>
                 <th style="width: 120px;">Actions</th>
               </tr>
             </thead>
-            <tbody id="photos-table-body">
+            <tbody id="docs-table-body">
               <!-- Rendered via JS -->
             </tbody>
           </table>
@@ -83,95 +85,111 @@
   </div>
 
   <!-- Edit/Add Modal -->
-  <div class="modal-backdrop" id="photo-form-modal">
+  <div class="modal-backdrop" id="lyric-form-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="modal-form-title">Add New Photo</h3>
-        <button class="modal-close" id="close-photo-modal" aria-label="Close modal">&times;</button>
+        <h3 id="modal-form-title">Add New Lyric</h3>
+        <button class="modal-close" id="close-lyric-modal" aria-label="Close modal">&times;</button>
       </div>
-      <form id="photo-crud-form">
-        <input type="hidden" id="photo-action-type" value="add">
-        <input type="hidden" id="photo-edit-id" value="">
+      <form id="lyric-crud-form">
+        <input type="hidden" id="lyric-action-type" value="add">
+        <input type="hidden" id="lyric-edit-id" value="">
 
         <div class="modal-body">
           <div class="form-group">
-            <label for="photo-title" class="form-label">Photo Title</label>
-            <input type="text" id="photo-title" class="form-input" required placeholder="e.g. Youth Camp 2026 Worship">
+            <label for="lyric-title" class="form-label">Lyric Title</label>
+            <input type="text" id="lyric-title" class="form-input" required placeholder="e.g. Hla Lyrics - July 2026">
           </div>
 
           <div class="form-group">
-            <label for="photo-category" class="form-label">Category</label>
+            <label for="lyric-category" class="form-label">Category</label>
             <div class="category-field-row">
-              <select id="photo-category" class="form-input form-select" required style="flex:1;">
+              <select id="lyric-category" class="form-input form-select" required style="flex:1;">
                 <!-- Populated via JS -->
               </select>
               <button type="button" class="btn-edit-cats" id="btn-toggle-cat-editor">✏️ Edit</button>
             </div>
-            <div class="category-editor" id="photo-cat-editor">
+            <div class="category-editor" id="lyric-cat-editor">
               <span class="category-editor-label">Add, remove, or rename categories:</span>
-              <div class="category-chips-editor" id="photo-cat-chips"></div>
+              <div class="category-chips-editor" id="lyric-cat-chips"></div>
               <div class="cat-add-row">
-                <input type="text" id="photo-new-cat-input" placeholder="New category name…">
+                <input type="text" id="lyric-new-cat-input" placeholder="New category name…">
                 <button type="button" id="btn-add-new-cat">➕ Add</button>
               </div>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="photo-desc" class="form-label">Description</label>
-            <textarea id="photo-desc" class="form-input form-textarea" required
-              placeholder="Describe what is happening in the photo..."></textarea>
+            <label for="lyric-desc" class="form-label">Description / Summary</label>
+            <textarea id="lyric-desc" class="form-input form-textarea" required
+              placeholder="Provide a brief summary of what this Lyric contains..."></textarea>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
             <div class="form-group">
-              <label for="photo-date" class="form-label">Date Taken</label>
-              <input type="date" id="photo-date" class="form-input" required>
+              <label for="lyric-type" class="form-label">File Extension</label>
+              <select id="lyric-type" class="form-input form-select" required>
+                <option value="PDF">PDF Lyric</option>
+                <option value="DOC">Word Lyric (DOC)</option>
+                <option value="DOCX">Word Lyric (DOCX)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="lyric-size" class="form-label">File Size</label>
+              <input type="text" id="lyric-size" class="form-input" required placeholder="e.g. 1.8 MB" value="1.2 MB">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="lyric-date" class="form-label">Published Date</label>
+              <input type="date" id="lyric-date" class="form-input" required>
             </div>
 
             <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
               <span class="form-label">Options</span>
               <label
                 style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="checkbox" id="photo-featured" style="width: 16px; height: 16px;">
-                Show on Homepage (Featured)
+                <input type="checkbox" id="lyric-featured" style="width: 16px; height: 16px;">
+                Pin as Featured
               </label>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Image Source</label>
+            <label class="form-label">Lyric Source</label>
             <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
               <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="photo-source" value="upload" checked style="width: 16px; height: 16px;">
-                Upload Image File
+                <input type="radio" name="lyric-source" value="upload" checked style="width: 16px; height: 16px;">
+                Upload File (Mock)
               </label>
               <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="photo-source" value="url" style="width: 16px; height: 16px;">
+                <input type="radio" name="lyric-source" value="url" style="width: 16px; height: 16px;">
                 External Link (Google Drive / others)
               </label>
             </div>
           </div>
 
-          <div class="form-group" id="photo-upload-container">
-            <label for="photo-file" class="form-label">Upload Image File</label>
-            <input type="file" id="photo-file" class="form-input" accept="image/*">
+          <div class="form-group" id="lyric-upload-container">
+            <label for="lyric-file" class="form-label">Upload File (Mock)</label>
+            <input type="file" id="lyric-file" class="form-input">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Select an image from your device. It will be compressed locally.
+              Firebase Storage upload placeholder. File downloads will be simulated in demo mode.
             </small>
           </div>
 
-          <div class="form-group" id="photo-url-container" style="display: none; margin-bottom: 0;">
-            <label for="photo-url" class="form-label">Image Link URL</label>
-            <input type="url" id="photo-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or direct image link">
+          <div class="form-group" id="lyric-url-container" style="display: none; margin-bottom: 0;">
+            <label for="lyric-url" class="form-label">Lyric Link URL</label>
+            <input type="url" id="lyric-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or any download link">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Supports Google Drive share links, Dropbox, or any direct image URL.
+              Paste link to Google Drive, Dropbox, or any public Lyric URL.
             </small>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">💾 Save Photo</button>
+          <button type="submit" class="btn btn-primary">💾 Save Lyric</button>
         </div>
       </form>
     </div>
@@ -200,31 +218,30 @@
     let currentCategoryFilter = 'All';
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Toast notification system helper
       if (typeof Toast !== 'undefined') Toast.init();
 
       // Load settings to fetch customized category list synchronously from localStorage cache
       const settings = AdminData.get('settings');
-      if (settings && settings.photoCategories && Array.isArray(settings.photoCategories)) {
-        PhotoCategories.length = 0;
-        PhotoCategories.push('All', ...settings.photoCategories.filter(c => c !== 'All'));
+      if (settings && settings.LyricCategories && Array.isArray(settings.LyricCategories)) {
+        LyricCategories.length = 0;
+        LyricCategories.push('All', ...settings.LyricCategories.filter(c => c !== 'All'));
       }
 
       populateCategoryDropdowns();
-      renderPhotosTable();
+      renderDocsTable();
       setupEvents();
       initSortable();
     });
 
     function populateCategoryDropdowns() {
       const filterSelect = document.getElementById('admin-filter-category');
-      const formSelect = document.getElementById('photo-category');
+      const formSelect = document.getElementById('lyric-category');
       if (!filterSelect || !formSelect) return;
 
       filterSelect.innerHTML = '<option value="All">All Categories</option>';
       formSelect.innerHTML = '<option value="" disabled selected>Select category...</option>';
 
-      PhotoCategories.forEach(cat => {
+      LyricCategories.forEach(cat => {
         if (cat !== 'All') {
           const opt1 = document.createElement('option');
           opt1.value = cat;
@@ -243,9 +260,9 @@
 
     /* --- Inline Category Editor --- */
     function renderCatEditorChips() {
-      const container = document.getElementById('photo-cat-chips');
+      const container = document.getElementById('lyric-cat-chips');
       if (!container) return;
-      const cats = PhotoCategories.filter(c => c !== 'All');
+      const cats = LyricCategories.filter(c => c !== 'All');
       container.innerHTML = cats.map(cat => `
         <span class="cat-chip" style="display:inline-flex; align-items:center; gap:4px;">
           ${cat}
@@ -253,7 +270,6 @@
           <button type="button" class="cat-remove" data-cat="${cat}" title="Remove '${cat}'">&times;</button>
         </span>
       `).join('');
-
       container.querySelectorAll('.cat-remove').forEach(btn => {
         btn.addEventListener('click', () => removeCategoryAndSave(btn.dataset.cat));
       });
@@ -267,33 +283,33 @@
       if (!newName || newName.trim() === '' || newName === oldName) return;
       
       const trimmedName = newName.trim();
-      const idx = PhotoCategories.indexOf(oldName);
+      const idx = LyricCategories.indexOf(oldName);
       if (idx > -1) {
-        if (PhotoCategories.includes(trimmedName)) {
+        if (LyricCategories.includes(trimmedName)) {
           alert(`Category '${trimmedName}' already exists.`);
           return;
         }
         
-        PhotoCategories[idx] = trimmedName;
+        LyricCategories[idx] = trimmedName;
         saveCategorySettings();
         populateCategoryDropdowns();
         
-        const photos = AdminData.get('photos');
-        for (const photo of photos) {
-          if (photo.category === oldName) {
-            photo.category = trimmedName;
-            await AdminData.update('photos', photo.id, { category: trimmedName });
+        const docs = AdminData.get('lyrics');
+        for (const doc of docs) {
+          if (doc.category === oldName) {
+            doc.category = trimmedName;
+            await AdminData.update('lyrics', doc.id, { category: trimmedName });
           }
         }
         
-        renderPhotosTable();
+        renderDocsTable();
       }
     }
 
     function removeCategoryAndSave(catName) {
-      const idx = PhotoCategories.indexOf(catName);
+      const idx = LyricCategories.indexOf(catName);
       if (idx > -1) {
-        PhotoCategories.splice(idx, 1);
+        LyricCategories.splice(idx, 1);
         saveCategorySettings();
         populateCategoryDropdowns();
       }
@@ -301,74 +317,66 @@
 
     function addCategoryAndSave(catName) {
       const name = catName.trim();
-      if (!name || PhotoCategories.includes(name)) return;
-      PhotoCategories.push(name);
+      if (!name || LyricCategories.includes(name)) return;
+      LyricCategories.push(name);
       saveCategorySettings();
       populateCategoryDropdowns();
     }
 
     function saveCategorySettings() {
       const settings = AdminData.get('settings') || {};
-      settings.photoCategories = PhotoCategories.filter(c => c !== 'All');
+      settings.LyricCategories = LyricCategories.filter(c => c !== 'All');
       AdminData.save('settings', settings);
     }
 
-    function renderPhotosTable() {
-      const tbody = document.getElementById('photos-table-body');
+    function renderDocsTable() {
+      const tbody = document.getElementById('docs-table-body');
       if (!tbody) return;
 
-      const photos = AdminData.get('photos');
+      const docs = AdminData.get('lyrics');
 
-      // Filter photos by search & category dropdown
-      let filtered = photos;
+      let filtered = docs;
       if (currentSearch.trim()) {
         const q = currentSearch.toLowerCase();
-        filtered = filtered.filter(p => p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
+        filtered = filtered.filter(d => d.title.toLowerCase().includes(q) || d.description.toLowerCase().includes(q));
       }
       if (currentCategoryFilter !== 'All') {
-        filtered = filtered.filter(p => p.category === currentCategoryFilter);
+        filtered = filtered.filter(d => d.category === currentCategoryFilter);
       }
 
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
-              No photos found matching filters.
+            <td colspan="7" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+              No lyrics found matching filters.
             </td>
           </tr>
         `;
         return;
       }
 
-      tbody.innerHTML = filtered.map(photo => {
-        const url = convertDriveUrl(photo.imageUrl);
-        const isFolder = url && url.includes('embeddedfolderview');
-        const mediaTag = isFolder 
-          ? `<div style="width: 50px; height: 38px; display: flex; align-items: center; justify-content: center; background: var(--color-surface-hover); border-radius: var(--radius-md); border: 1px solid var(--color-border); font-size: 16px;" title="Google Drive Folder">📁</div>`
-          : `<img src="${url}" alt="${photo.title}" style="width: 50px; height: 38px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-border);">`;
-        
-        return `
-        <tr data-id="${photo.id}">
+      tbody.innerHTML = filtered.map(doc => `
+        <tr data-id="${doc.id}">
           <td style="text-align: center;">
-            <input type="checkbox" class="row-checkbox" value="${photo.id}" style="cursor: pointer; width: 16px; height: 16px;">
+            <input type="checkbox" class="row-checkbox" value="${doc.id}" style="cursor: pointer; width: 16px; height: 16px;">
           </td>
           <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
           <td>
-            ${mediaTag}
+            <div class="file-icon file-icon-${doc.fileType.toLowerCase()}" style="width: 40px; height: 40px; font-size: 10px;">${doc.fileType}</div>
           </td>
-          <td style="font-weight: var(--fw-semibold);">${photo.title}</td>
-          <td><span class="badge badge-primary">${photo.category}</span></td>
-          <td>📅 ${formatDate(photo.date)}</td>
-          <td>${photo.featured ? '⭐ Yes' : 'No'}</td>
+          <td style="font-weight: var(--fw-semibold);">${doc.title}</td>
+          <td><span class="badge badge-gold">${doc.category}</span></td>
+          <td>📅 ${formatDate(doc.date)}</td>
+          <td>${doc.fileSize}</td>
+          <td>${doc.featured ? '⭐ Yes' : 'No'}</td>
           <td>
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm" onclick="openEditModal('${photo.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Photo">✏️</button>
-              <button class="btn btn-outline btn-sm" onclick="confirmDeletePhoto('${photo.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Photo">❌</button>
+              <button class="btn btn-outline btn-sm" onclick="openEditModal('${doc.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Lyric">✏️</button>
+              <button class="btn btn-outline btn-sm" onclick="confirmDeleteDoc('${doc.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Lyric">❌</button>
             </div>
           </td>
         </tr>
-      `;
-      }).join('');
+      `).join('');
 
       // Attach event listeners to new row checkboxes
       document.querySelectorAll('.row-checkbox').forEach(cb => {
@@ -380,9 +388,8 @@
       updateBulkDeleteUI();
     }
 
-
     function initSortable() {
-      const tbody = document.getElementById('photos-table-body');
+      const tbody = document.getElementById('docs-table-body');
       if (typeof Sortable === 'undefined' || !tbody) return;
 
       new Sortable(tbody, {
@@ -393,7 +400,7 @@
           // (it would mess up global ordering unexpectedly)
           if (currentSearch.trim() || currentCategoryFilter !== 'All') {
             AdminToast.show('Cannot reorder items while search or filter is active. Please clear filters first.', 'error');
-            renderPhotosTable(); // Reset table
+            renderDocsTable(); // Reset table
             return;
           }
 
@@ -401,12 +408,12 @@
           const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
           
           try {
-            await AdminData.reorder('photos', newOrderIds);
-            AdminToast.show('Photos reordered successfully!', 'success');
+            await AdminData.reorder('lyrics', newOrderIds);
+            AdminToast.show('lyrics reordered successfully!', 'success');
           } catch (e) {
             console.error(e);
             AdminToast.show('Failed to save new order.', 'error');
-            renderPhotosTable(); // Revert
+            renderDocsTable(); // Revert
           }
         }
       });
@@ -415,48 +422,48 @@
     function setupEvents() {
       // Category editor toggle
       document.getElementById('btn-toggle-cat-editor').addEventListener('click', () => {
-        document.getElementById('photo-cat-editor').classList.toggle('open');
+        document.getElementById('lyric-cat-editor').classList.toggle('open');
       });
       document.getElementById('btn-add-new-cat').addEventListener('click', () => {
-        const input = document.getElementById('photo-new-cat-input');
+        const input = document.getElementById('lyric-new-cat-input');
         addCategoryAndSave(input.value);
         input.value = '';
       });
-      document.getElementById('photo-new-cat-input').addEventListener('keydown', (e) => {
+      document.getElementById('lyric-new-cat-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-new-cat').click(); }
       });
 
-      // Toggle image source
-      const photoSourceRadios = document.getElementsByName('photo-source');
-      const uploadContainer = document.getElementById('photo-upload-container');
-      const urlContainer = document.getElementById('photo-url-container');
+      // Toggle source
+      const docSourceRadios = document.getElementsByName('lyric-source');
+      const uploadContainer = document.getElementById('lyric-upload-container');
+      const urlContainer = document.getElementById('lyric-url-container');
       
-      const togglePhotoSource = (source) => {
+      const toggleDocSource = (source) => {
         if (source === 'upload') {
           uploadContainer.style.display = 'block';
           urlContainer.style.display = 'none';
-          document.getElementById('photo-url').required = false;
+          document.getElementById('lyric-url').required = false;
         } else {
           uploadContainer.style.display = 'none';
           urlContainer.style.display = 'block';
-          document.getElementById('photo-url').required = true;
+          document.getElementById('lyric-url').required = true;
         }
       };
 
-      photoSourceRadios.forEach(radio => {
-        radio.addEventListener('change', (e) => togglePhotoSource(e.target.value));
+      docSourceRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => toggleDocSource(e.target.value));
       });
 
       // Search
       document.getElementById('admin-search-input').addEventListener('input', (e) => {
         currentSearch = e.target.value;
-        renderPhotosTable();
+        renderDocsTable();
       });
 
       // Category filter dropdown
       document.getElementById('admin-filter-category').addEventListener('change', (e) => {
         currentCategoryFilter = e.target.value;
-        renderPhotosTable();
+        renderDocsTable();
       });
 
       // Bulk Delete Selection Logic
@@ -478,19 +485,19 @@
           const selectedCbs = document.querySelectorAll('.row-checkbox:checked');
           if (selectedCbs.length === 0) return;
 
-          if (confirm(`Are you sure you want to delete the ${selectedCbs.length} selected photo(s)? This cannot be undone.`)) {
+          if (confirm(`Are you sure you want to delete the ${selectedCbs.length} selected Lyric(s)? This cannot be undone.`)) {
             try {
               bulkDeleteBtn.disabled = true;
               bulkDeleteBtn.innerHTML = '⌛ Deleting...';
               
               for (const cb of selectedCbs) {
-                await AdminData.delete('photos', cb.value);
+                await AdminData.delete('lyrics', cb.value);
               }
               
-              AdminToast.show(`Successfully deleted ${selectedCbs.length} photo(s).`, 'success');
-              renderPhotosTable();
+              AdminToast.show(`Successfully deleted ${selectedCbs.length} Lyric(s).`, 'success');
+              renderDocsTable();
             } catch (err) {
-              console.error("Error deleting photos:", err);
+              console.error("Error deleting lyrics:", err);
               AdminToast.show('Error during bulk deletion: ' + (err.message || 'Permission denied'), 'error');
             } finally {
               bulkDeleteBtn.disabled = false;
@@ -502,78 +509,38 @@
       }
 
       // Show Add Modal
-      document.getElementById('btn-add-photo').addEventListener('click', () => {
-        document.getElementById('photo-crud-form').reset();
-        document.getElementById('photo-action-type').value = 'add';
-        document.getElementById('modal-form-title').textContent = 'Add New Photo';
-        document.getElementById('photo-date').value = new Date().toISOString().split('T')[0];
-        document.querySelector('input[name="photo-source"][value="upload"]').checked = true;
-        togglePhotoSource('upload');
-        ModalSystem.open('photo-form-modal');
+      document.getElementById('btn-add-doc').addEventListener('click', () => {
+        document.getElementById('lyric-crud-form').reset();
+        document.getElementById('lyric-action-type').value = 'add';
+        document.getElementById('modal-form-title').textContent = 'Add New Lyric';
+        document.getElementById('lyric-date').value = new Date().toISOString().split('T')[0];
+        document.querySelector('input[name="lyric-source"][value="upload"]').checked = true;
+        toggleDocSource('upload');
+        ModalSystem.open('lyric-form-modal');
       });
 
-      // Image helper to read file as data URL and compress it via canvas
-      function readAndCompressImage(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-              const canvas = document.createElement('canvas');
-              let width = img.width;
-              let height = img.height;
-              const max_size = 1024; // Max dimension
-
-              if (width > height) {
-                if (width > max_size) {
-                  height *= max_size / width;
-                  width = max_size;
-                }
-              } else {
-                if (height > max_size) {
-                  width *= max_size / height;
-                  height = max_size;
-                }
-              }
-
-              canvas.width = width;
-              canvas.height = height;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0, width, height);
-
-              // Compress to JPEG (0.7 quality)
-              const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-              resolve(dataUrl);
-            };
-            img.onerror = reject;
-            img.src = e.target.result;
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      }
-
       // Close modal actions
-      const closeModal = () => ModalSystem.close('photo-form-modal');
-      document.getElementById('close-photo-modal').addEventListener('click', closeModal);
+      const closeModal = () => ModalSystem.close('lyric-form-modal');
+      document.getElementById('close-lyric-modal').addEventListener('click', closeModal);
       document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
 
       // Form Submit (Save/Update)
-      document.getElementById('photo-crud-form').addEventListener('submit', async (e) => {
+      document.getElementById('lyric-crud-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const actionType = document.getElementById('photo-action-type').value;
-        const photoId = document.getElementById('photo-edit-id').value;
+        const actionType = document.getElementById('lyric-action-type').value;
+        const docId = document.getElementById('lyric-edit-id').value;
 
-        const title = document.getElementById('photo-title').value;
-        const category = document.getElementById('photo-category').value;
-        const description = document.getElementById('photo-desc').value;
-        const date = document.getElementById('photo-date').value;
-        const featured = document.getElementById('photo-featured').checked;
-        
-        const source = document.querySelector('input[name="photo-source"]:checked').value;
-        const fileInput = document.getElementById('photo-file');
-        const urlInput = document.getElementById('photo-url');
+        const title = document.getElementById('lyric-title').value;
+        const category = document.getElementById('lyric-category').value;
+        const description = document.getElementById('lyric-desc').value;
+        const fileType = document.getElementById('lyric-type').value;
+        const fileSize = document.getElementById('lyric-size').value;
+        const date = document.getElementById('lyric-date').value;
+        const featured = document.getElementById('lyric-featured').checked;
+
+        const source = document.querySelector('input[name="lyric-source"]:checked').value;
+        const urlInput = document.getElementById('lyric-url');
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -582,23 +549,14 @@
           submitBtn.disabled = true;
           submitBtn.innerHTML = '⌛ Saving...';
 
-          let imageUrlsToSave = [];
           let isFolderImport = false;
+          let docsToSave = [];
 
-          if (source === 'upload') {
-            if (fileInput && fileInput.files && fileInput.files[0]) {
-              imageUrlsToSave.push(await readAndCompressImage(fileInput.files[0]));
-            } else if (actionType === 'add') {
-              // Generate an SVG placeholder using a random seed based on date
-              const seed = Math.floor(Math.random() * 50);
-              imageUrlsToSave.push(generatePhotoPlaceholder(seed, 800, 600));
-            }
-          } else {
+          if (source === 'url') {
             const urlVal = urlInput.value.trim();
-            const folderIdMatch = urlVal.match(/\/folders\/([a-zA-Z0-9_-]+)/);
-            
+            const folderIdMatch = urlVal.match(/(?:\/folders\/|\/drive\/folders\/)([a-zA-Z0-9_-]+)/);
+
             if (folderIdMatch && folderIdMatch[1] && actionType === 'add') {
-              // Extract all photos from Google Drive folder via API
               isFolderImport = true;
               submitBtn.innerHTML = '⌛ Importing Folder...';
               const folderId = folderIdMatch[1];
@@ -607,70 +565,86 @@
                 throw new Error("Google Drive API key is missing in firebase-config.js!");
               }
 
-              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&fields=files(id,name)&key=${googleDriveApiKey}`;
+              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType!='application/vnd.google-apps.folder'&fields=files(id,name,size,mimeType)&key=${googleDriveApiKey}`;
               
               const res = await fetch(apiEndpoint);
               if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                console.error("Drive API Error:", errData);
-                throw new Error("Failed to fetch folder. Is the API key correct and the folder shared as 'Anyone with the link'?");
+                throw new Error("Failed to fetch folder from Google Drive. Ensure the folder is public ('Anyone with the link').");
               }
               const data = await res.json();
               if (data.files && data.files.length > 0) {
                 data.files.forEach(file => {
-                  imageUrlsToSave.push(`https://lh3.googleusercontent.com/d/${file.id}`);
+                  let fType = 'PDF';
+                  if (file.mimeType.includes('wordprocessingml') || file.mimeType.includes('msword')) fType = 'DOCX';
+                  
+                  let fSizeStr = 'Unknown';
+                  if (file.size) {
+                    const mb = parseInt(file.size) / (1024 * 1024);
+                    fSizeStr = mb >= 1 ? `${mb.toFixed(1)} MB` : `${(parseInt(file.size) / 1024).toFixed(0)} KB`;
+                  }
+                  
+                  let cleanTitle = file.name.replace(/\.[^/.]+$/, "");
+                  
+                  docsToSave.push({
+                    title: cleanTitle,
+                    category,
+                    description,
+                    fileType: fType,
+                    fileSize: fSizeStr,
+                    date,
+                    featured,
+                    downloadUrl: convertDriveUrl(`https://drive.google.com/file/d/${file.id}/view`, 'file')
+                  });
                 });
               } else {
-                throw new Error("No images found in this Google Drive folder!");
+                throw new Error("No files found in this Google Drive folder!");
               }
             } else {
-              // It's a standard URL, or we are editing an existing entry
-              imageUrlsToSave.push(convertDriveUrl(urlVal));
+              docsToSave.push({
+                title, category, description, fileType, fileSize, date, featured,
+                downloadUrl: convertDriveUrl(urlVal, 'file')
+              });
             }
+          } else {
+            docsToSave.push({
+              title, category, description, fileType, fileSize, date, featured,
+              downloadUrl: '#'
+            });
           }
 
           if (actionType === 'add') {
-            // Loop through and add all
-            for (let i = 0; i < imageUrlsToSave.length; i++) {
-              const imgUrl = imageUrlsToSave[i];
-              const suffix = isFolderImport && imageUrlsToSave.length > 1 ? ` (${i+1})` : '';
-              const newPhoto = {
-                title: title + suffix,
-                category,
-                description,
-                date,
-                featured,
-                imageUrl: imgUrl,
-                downloadUrl: imgUrl
-              };
-              await AdminData.add('photos', newPhoto);
+            for (const docObj of docsToSave) {
+              await AdminData.add('lyrics', docObj);
             }
             if (isFolderImport) {
-              AdminToast.show(`Successfully imported ${imageUrlsToSave.length} photos from folder!`, 'success');
+              AdminToast.show(`Successfully imported ${docsToSave.length} lyrics from folder!`, 'success');
             } else {
-              AdminToast.show('Photo added successfully!', 'success');
+              AdminToast.show('Lyric added successfully!', 'success');
             }
           } else {
             const updatedFields = {
               title,
               category,
               description,
+              fileType,
+              fileSize,
               date,
               featured
             };
-            if (imageUrlsToSave.length > 0 && imageUrlsToSave[0]) {
-              updatedFields.imageUrl = imageUrlsToSave[0];
-              updatedFields.downloadUrl = imageUrlsToSave[0];
+            if (source === 'url') {
+              updatedFields.downloadUrl = docsToSave[0].downloadUrl;
+            } else {
+              updatedFields.downloadUrl = '#';
             }
-            await AdminData.update('photos', photoId, updatedFields);
-            AdminToast.show('Photo details updated!', 'success');
+            await AdminData.update('lyrics', docId, updatedFields);
+            AdminToast.show('Lyric updated!', 'success');
           }
 
           closeModal();
-          renderPhotosTable();
+          renderDocsTable();
         } catch (err) {
-          console.error("Error saving photo:", err);
-          AdminToast.show('Error saving photo: ' + (err.message || 'Permission denied'), 'error');
+          console.error("Error saving Lyric:", err);
+          AdminToast.show('Error saving Lyric: ' + (err.message || 'Permission denied'), 'error');
         } finally {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalBtnText;
@@ -678,7 +652,7 @@
       });
 
       // Expose toggle internally for edit modal
-      window._togglePhotoSource = togglePhotoSource;
+      window._toggleDocSource = toggleDocSource;
     }
 
     function updateBulkDeleteUI() {
@@ -700,47 +674,49 @@
 
     // Exposed to onclick triggers
     window.openEditModal = function (id) {
-      const photos = AdminData.get('photos');
-      const photo = photos.find(p => p.id === id);
-      if (!photo) return;
+      const docs = AdminData.get('lyrics');
+      const doc = docs.find(d => d.id === id);
+      if (!doc) return;
 
-      document.getElementById('photo-action-type').value = 'edit';
-      document.getElementById('photo-edit-id').value = id;
-      document.getElementById('modal-form-title').textContent = 'Edit Photo Details';
+      document.getElementById('lyric-action-type').value = 'edit';
+      document.getElementById('lyric-edit-id').value = id;
+      document.getElementById('modal-form-title').textContent = 'Edit Lyric Details';
 
-      document.getElementById('photo-title').value = photo.title;
-      document.getElementById('photo-category').value = photo.category;
-      document.getElementById('photo-desc').value = photo.description;
-      document.getElementById('photo-date').value = photo.date;
-      document.getElementById('photo-featured').checked = photo.featured;
+      document.getElementById('lyric-title').value = doc.title;
+      document.getElementById('lyric-category').value = doc.category;
+      document.getElementById('lyric-desc').value = doc.description;
+      document.getElementById('lyric-type').value = doc.fileType;
+      document.getElementById('lyric-size').value = doc.fileSize;
+      document.getElementById('lyric-date').value = doc.date;
+      document.getElementById('lyric-featured').checked = doc.featured;
 
-      const isExternal = photo.imageUrl && !photo.imageUrl.startsWith('data:');
+      const isExternal = doc.downloadUrl && doc.downloadUrl !== '#';
       if (isExternal) {
-        document.querySelector('input[name="photo-source"][value="url"]').checked = true;
-        document.getElementById('photo-url').value = photo.imageUrl;
-        if (window._togglePhotoSource) window._togglePhotoSource('url');
+        document.querySelector('input[name="lyric-source"][value="url"]').checked = true;
+        document.getElementById('lyric-url').value = doc.downloadUrl;
+        if (window._toggleDocSource) window._toggleDocSource('url');
       } else {
-        document.querySelector('input[name="photo-source"][value="upload"]').checked = true;
-        document.getElementById('photo-url').value = '';
-        if (window._togglePhotoSource) window._togglePhotoSource('upload');
+        document.querySelector('input[name="lyric-source"][value="upload"]').checked = true;
+        document.getElementById('lyric-url').value = '';
+        if (window._toggleDocSource) window._toggleDocSource('upload');
       }
 
-      ModalSystem.open('photo-form-modal');
+      ModalSystem.open('lyric-form-modal');
     };
 
-    window.confirmDeletePhoto = async function (id) {
-      const photos = AdminData.get('photos');
-      const photo = photos.find(p => p.id === id);
-      if (!photo) return;
+    window.confirmDeleteDoc = async function (id) {
+      const docs = AdminData.get('lyrics');
+      const doc = docs.find(d => d.id === id);
+      if (!doc) return;
 
-      if (confirm(`Are you sure you want to delete the photo "${photo.title}"?`)) {
+      if (confirm(`Are you sure you want to delete the publication "${doc.title}"?`)) {
         try {
-          await AdminData.delete('photos', id);
-          AdminToast.show('Photo deleted.', 'info');
-          renderPhotosTable();
+          await AdminData.delete('lyrics', id);
+          AdminToast.show('Lyric deleted.', 'info');
+          renderDocsTable();
         } catch (err) {
-          console.error("Error deleting photo:", err);
-          AdminToast.show('Error deleting photo: ' + (err.message || 'Permission denied'), 'error');
+          console.error("Error deleting Lyric:", err);
+          AdminToast.show('Error deleting Lyric: ' + (err.message || 'Permission denied'), 'error');
         }
       }
     };

@@ -26,6 +26,7 @@ function renderHeader(activePage = '') {
         <a href="photos.html" class="nav-link ${activePage === 'photos' ? 'active' : ''}" id="nav-photos">Photos</a>
         <a href="mipui-aw.html" class="nav-link ${activePage === 'mipui-aw' ? 'active' : ''}" id="nav-mipui-aw">Mipui Aw</a>
         <a href="sermons.html" class="nav-link ${activePage === 'sermons' ? 'active' : ''}" id="nav-sermons">Sermons</a>
+        <a href="hla-lyrics.html" class="nav-link ${activePage === 'hla-lyrics' ? 'active' : ''}" id="nav-hla-lyrics">Hla Lyrics</a>
         <a href="admin/index.html" class="nav-link ${activePage === 'admin' ? 'active' : ''}" id="nav-admin">Admin</a>
       </nav>
 
@@ -85,6 +86,9 @@ function renderHeader(activePage = '') {
     </a>
     <a href="sermons.html" class="nav-mobile-link ${activePage === 'sermons' ? 'active' : ''}">
       <span class="nav-icon">📖</span> Sermons
+    </a>
+    <a href="hla-lyrics.html" class="nav-mobile-link ${activePage === 'hla-lyrics' ? 'active' : ''}">
+      <span class="nav-icon">🎵</span> Hla Lyrics
     </a>
     <div class="nav-mobile-divider"></div>
     
@@ -418,7 +422,8 @@ function setupMobileMenu() {
   const nav = document.getElementById('nav-mobile');
   if (!btn || !nav) return;
 
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
     const isOpen = nav.classList.toggle('open');
     btn.classList.toggle('open');
     btn.setAttribute('aria-expanded', isOpen);
@@ -433,6 +438,16 @@ function setupMobileMenu() {
       btn.setAttribute('aria-expanded', 'false');
       document.body.classList.remove('modal-open');
     });
+  });
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('modal-open');
+    }
   });
 }
 

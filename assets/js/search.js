@@ -51,9 +51,18 @@ const SearchEngine = {
   /**
    * Sort items
    */
-  sort(items, order = 'newest') {
+  sort(items, order = 'manual') {
     const sorted = [...items];
     switch (order) {
+      case 'manual':
+        sorted.sort((a, b) => {
+          const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
+          const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
+          // If orderIndex is identical, fallback to newest
+          if (aIdx === bIdx) return new Date(b.date) - new Date(a.date);
+          return aIdx - bIdx;
+        });
+        break;
       case 'newest':
         sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
         break;

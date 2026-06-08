@@ -205,6 +205,7 @@ for (let i = 0; i < 36; i++) {
 // Files: Firebase Storage download URL
 // ========================
 const DocumentCategories = ['All', 'Mipui Aw', 'Church Report', 'Minutes', 'Newsletter', 'Guidelines', 'Forms'];
+const LyricCategories = ['All'];
 
 const Documents = [
   {
