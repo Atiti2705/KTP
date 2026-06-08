@@ -607,7 +607,7 @@
                 throw new Error("Google Drive API key is missing in firebase-config.js!");
               }
 
-              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&fields=files(id,name)&key=${googleDriveApiKey}`;
+              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&pageSize=1000&fields=files(id,name)&key=${googleDriveApiKey}`;
               
               const res = await fetch(apiEndpoint);
               if (!res.ok) {
