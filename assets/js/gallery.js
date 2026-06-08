@@ -8,7 +8,7 @@ let currentCategory = 'All';
 let searchQuery = '';
 let currentSort = 'manual';
 let currentPage = 1;
-const itemsPerPage = 36;
+const itemsPerPage = 1000;
 let currentLightboxPhotos = [];
 let currentLightboxIndex = 0;
 

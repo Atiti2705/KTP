@@ -10,7 +10,7 @@ let currentAlphabet = 'All';
 let searchQuery = '';
 let currentSort = 'a-z';
 let currentPage = 1;
-const itemsPerPage = 100;
+const itemsPerPage = 1000;
 const Lyrics = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
