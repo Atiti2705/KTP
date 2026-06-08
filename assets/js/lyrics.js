@@ -8,7 +8,7 @@ const mizoAlphabets = ['All', 'A', 'AW', 'B', 'CH', 'D', 'E', 'F', 'G', 'NG', 'H
 
 let currentAlphabet = 'All';
 let searchQuery = '';
-let currentSort = 'manual';
+let currentSort = 'a-z';
 let currentPage = 1;
 const itemsPerPage = 12;
 const Lyrics = [];
@@ -139,10 +139,19 @@ function renderLyrics() {
   }
 
   // 3. Sort
+  const mizoSortStr = (str) => {
+    if (!str) return '';
+    return str.toUpperCase()
+      .replace(/AW/g, 'A~')
+      .replace(/CH/g, 'C~')
+      .replace(/NG/g, 'G~')
+      .replace(/Ṭ/g, 'T~');
+  };
+
   if (currentSort === 'a-z') {
-    filtered.sort((a,b) => (a.title||'').localeCompare(b.title||''));
+    filtered.sort((a, b) => mizoSortStr(a.title).localeCompare(mizoSortStr(b.title)));
   } else if (currentSort === 'z-a') {
-    filtered.sort((a,b) => (b.title||'').localeCompare(a.title||''));
+    filtered.sort((a, b) => mizoSortStr(b.title).localeCompare(mizoSortStr(a.title)));
   } else if (currentSort === 'newest') {
     filtered.sort((a,b) => new Date(b.date||0) - new Date(a.date||0));
   } else if (currentSort === 'oldest') {
