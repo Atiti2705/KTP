@@ -323,6 +323,33 @@
   border-color: var(--brand-sky);
 }
 
+.subfilter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.subfilter-chip:hover {
+  border-color: var(--color-text);
+  color: var(--color-text);
+}
+
+.subfilter-chip.active {
+  border-color: var(--color-text);
+  color: var(--color-text);
+  background: var(--color-bg-hover);
+}
+
 .filter-select {
   padding: var(--sp-2) var(--sp-4);
   padding-right: var(--sp-8);

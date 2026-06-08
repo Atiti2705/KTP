@@ -103,17 +103,23 @@ function renderSubCategoryChips() {
 
   container.style.display = 'flex';
   
-  container.innerHTML = ['All', ...uniqueSubCats].map(subcat => `
-    <button class="filter-chip ${subcat === currentSubCategory ? 'active' : ''}" data-subcategory="${subcat}">
+  container.innerHTML = uniqueSubCats.map(subcat => `
+    <button class="subfilter-chip ${subcat === currentSubCategory ? 'active' : ''}" data-subcategory="${subcat}">
       ${subcat}
     </button>
   `).join('');
 
-  container.querySelectorAll('.filter-chip').forEach(btn => {
+  container.querySelectorAll('.subfilter-chip').forEach(btn => {
     btn.addEventListener('click', () => {
-      container.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentSubCategory = btn.dataset.subcategory;
+      if (currentSubCategory === btn.dataset.subcategory) {
+        // Toggle OFF if clicking the already active one
+        btn.classList.remove('active');
+        currentSubCategory = 'All';
+      } else {
+        container.querySelectorAll('.subfilter-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSubCategory = btn.dataset.subcategory;
+      }
       currentPage = 1;
       renderDocuments();
     });
