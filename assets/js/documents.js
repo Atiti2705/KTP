@@ -48,16 +48,18 @@ function renderCategoryChips() {
   const container = document.getElementById('category-chips');
   if (!container) return;
 
+  container.className = 'modern-filter-container';
+
   container.innerHTML = DocumentCategories.map(cat => `
-    <button class="filter-chip ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
+    <button class="modern-chip ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
       ${cat}
     </button>
   `).join('');
 
   // Add click events
-  container.querySelectorAll('.filter-chip').forEach(btn => {
+  container.querySelectorAll('.modern-chip').forEach(btn => {
     btn.addEventListener('click', () => {
-      container.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+      container.querySelectorAll('.modern-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentCategory = btn.dataset.category;
       currentPage = 1; // Reset to page 1 on filter change
