@@ -77,9 +77,14 @@ function renderSubCategoryChips() {
   const container = document.getElementById('subcategory-chips');
   if (!container) return;
 
-  const docsInCat = currentCategory === 'All' 
-    ? Documents 
-    : Documents.filter(d => d.category === currentCategory);
+  // Only show subcategories if a specific category is selected
+  if (currentCategory === 'All') {
+    container.style.display = 'none';
+    currentSubCategory = 'All';
+    return;
+  }
+
+  const docsInCat = Documents.filter(d => d.category === currentCategory);
     
   const subcats = new Set();
   docsInCat.forEach(d => {

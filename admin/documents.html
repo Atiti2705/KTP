@@ -120,7 +120,8 @@
 
           <div class="form-group">
             <label for="doc-subcategory" class="form-label">Sub Category (Optional)</label>
-            <input type="text" id="doc-subcategory" class="form-input" placeholder="e.g. May">
+            <input type="text" id="doc-subcategory" class="form-input" placeholder="e.g. May" list="subcat-list">
+            <datalist id="subcat-list"></datalist>
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Useful for grouping within a category (e.g. months inside a year).</small>
           </div>
 
@@ -430,6 +431,22 @@
     }
 
     function setupEvents() {
+      // Subcategory datalist population
+      document.getElementById('doc-category').addEventListener('change', (e) => {
+        const cat = e.target.value;
+        const docs = AdminData.get('documents') || [];
+        const subcats = new Set();
+        docs.filter(d => d.category === cat).forEach(d => {
+          if (d.subcategory && d.subcategory.trim() !== '') {
+            subcats.add(d.subcategory.trim());
+          }
+        });
+        const datalist = document.getElementById('subcat-list');
+        if (datalist) {
+          datalist.innerHTML = Array.from(subcats).sort().map(s => `<option value="${s}">`).join('');
+        }
+      });
+
       // Category editor toggle
       document.getElementById('btn-toggle-cat-editor').addEventListener('click', () => {
         document.getElementById('doc-cat-editor').classList.toggle('open');
