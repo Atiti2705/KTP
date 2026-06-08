@@ -147,21 +147,11 @@ function renderSermons() {
   }
 
   listContainer.innerHTML = paginationData.items.map(sermon => `
-    <div class="doc-card reveal selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${sermon.title}.${sermon.fileType.toLowerCase()}" style="position: relative;">
+    <div class="doc-card reveal selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${sermon.title}.${(sermon.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center; padding: 10px 14px; min-height: auto; gap: 12px; display: flex;">
       
-      <div class="file-icon file-icon-${sermon.fileType.toLowerCase()}">${sermon.fileType}</div>
-      <div class="doc-card-content">
-        <h3 class="doc-card-title">${sermon.title}</h3>
-        <p class="doc-card-desc">${sermon.description}</p>
-        <div class="doc-card-meta">
-          <span>🎙️ ${sermon.speaker}</span>
-          <span>📖 ${sermon.scripture}</span>
-          <span>📅 ${formatDate(sermon.date)}</span>
-          <span class="badge badge-gold" style="padding: 2px 8px;">${sermon.topic}</span>
-        </div>
-      </div>
-      <div class="doc-card-actions">
-        <!-- Buttons removed for cleaner UI; double-click/tap now handles preview -->
+      <div class="file-icon" style="font-size: 1.1rem; width: 34px; height: 34px; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky); display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">📖</div>
+      <div class="doc-card-content" style="flex: 1; min-width: 0;">
+        <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${sermon.title}</h3>
       </div>
     </div>
   `).join('');

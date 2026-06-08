@@ -147,20 +147,11 @@ function renderDocuments() {
   }
 
   listContainer.innerHTML = paginationData.items.map(doc => `
-    <div class="doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${doc.fileType.toLowerCase()}" style="position: relative;">
+    <div class="doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${(doc.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center; padding: 10px 14px; min-height: auto; gap: 12px; display: flex;">
       
-      <div class="file-icon file-icon-${doc.fileType.toLowerCase()}">${doc.fileType}</div>
-      <div class="doc-card-content">
-        <h3 class="doc-card-title">${doc.title}</h3>
-        <p class="doc-card-desc">${doc.description}</p>
-        <div class="doc-card-meta">
-          <span>📅 ${formatDate(doc.date)}</span>
-          <span>📁 ${doc.fileSize}</span>
-          <span class="badge badge-primary" style="padding: 2px 8px;">${doc.category}</span>
-        </div>
-      </div>
-      <div class="doc-card-actions">
-        <!-- Buttons removed for cleaner UI; double-click/tap now handles preview -->
+      <div class="file-icon" style="font-size: 1.1rem; width: 34px; height: 34px; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky); display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">📄</div>
+      <div class="doc-card-content" style="flex: 1; min-width: 0;">
+        <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${doc.title}</h3>
       </div>
     </div>
   `).join('');
