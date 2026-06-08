@@ -7,6 +7,7 @@ service cloud.firestore {
     match /photos/{doc} { allow read: if true; }
     match /documents/{doc} { allow read: if true; }
     match /sermons/{doc} { allow read: if true; }
+    match /lyrics/{doc} { allow read: if true; }
     match /settings/{doc} { allow read: if true; }
 
     // 2. Allow general authenticated users to write/edit their profile
