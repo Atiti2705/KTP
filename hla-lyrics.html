@@ -22,13 +22,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=23">
-  <link rel="stylesheet" href="assets/css/base.css?v=23">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=23">
-  <link rel="stylesheet" href="assets/css/animations.css?v=23">
-  <link rel="stylesheet" href="assets/css/components.css?v=23">
-  <link rel="stylesheet" href="assets/css/layout.css?v=23">
-  <link rel="stylesheet" href="assets/css/pages.css?v=23">
+  <link rel="stylesheet" href="assets/css/variables.css?v=24">
+  <link rel="stylesheet" href="assets/css/base.css?v=24">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=24">
+  <link rel="stylesheet" href="assets/css/animations.css?v=24">
+  <link rel="stylesheet" href="assets/css/components.css?v=24">
+  <link rel="stylesheet" href="assets/css/layout.css?v=24">
+  <link rel="stylesheet" href="assets/css/pages.css?v=24">
 </head>
 <body>
   <!-- Header -->
@@ -79,15 +79,15 @@
           </div>
 
           <!-- Selection Toolbar for Bulk Download -->
-          <div id="selection-toolbar" style="display: flex; align-items: center; justify-content: space-between; background: var(--color-bg-elevated); padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-md); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); margin-top: var(--sp-2);">
+          <div id="selection-toolbar" class="modern-selection-toolbar" style="display: flex; align-items: center; justify-content: space-between; margin-top: var(--sp-2);">
             <div style="display: flex; align-items: center; gap: var(--sp-3);">
               <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm); font-weight: var(--fw-medium);">
-                <input type="checkbox" id="select-all-cb" style="width: 16px; height: 16px; cursor: pointer;">
+                <input type="checkbox" id="select-all-cb" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--brand-sky);">
                 Select All
               </label>
-              <span id="selected-count" style="font-size: var(--fs-xs); color: var(--color-text-secondary); background: var(--color-bg-hover); padding: 2px 8px; border-radius: 12px; font-weight: var(--fw-bold);">0</span>
+              <span id="selected-count" style="font-size: var(--fs-xs); color: var(--brand-sky); background: rgba(56, 189, 248, 0.15); padding: 2px 8px; border-radius: 12px; font-weight: var(--fw-bold);">0</span>
             </div>
-            <button id="btn-bulk-download" class="btn btn-primary btn-sm" disabled style="opacity: 0.5; transition: all var(--transition-base);">
+            <button id="btn-bulk-download" class="btn btn-primary btn-sm" disabled style="opacity: 0.5; transition: all var(--transition-base); border-radius: 8px;">
               📦 Download Selected
             </button>
           </div>
@@ -128,24 +128,24 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=23"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=23"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=23"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=24"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=24"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=24"></script>
 
   <!-- JSZip & FileSaver for Bulk Downloads -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=23"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=23"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=24"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=24"></script>
 
   <!-- App Configuration & Services -->
-  <script src="assets/js/firebase-config.js?v=23"></script>
-  <script src="assets/js/theme.js?v=23"></script>
-  <script src="assets/js/data.js?v=23"></script>
-  <script src="assets/js/auth.js?v=23"></script>
-  <script src="assets/js/db-service.js?v=23"></script>
-  <script src="assets/js/components.js?v=23"></script>
-  <script src="assets/js/search.js?v=23"></script>
-  <script src="assets/js/lyrics.js?v=23"></script>
-  <script src="assets/js/app.js?v=23"></script>
+  <script src="assets/js/firebase-config.js?v=24"></script>
+  <script src="assets/js/theme.js?v=24"></script>
+  <script src="assets/js/data.js?v=24"></script>
+  <script src="assets/js/auth.js?v=24"></script>
+  <script src="assets/js/db-service.js?v=24"></script>
+  <script src="assets/js/components.js?v=24"></script>
+  <script src="assets/js/search.js?v=24"></script>
+  <script src="assets/js/lyrics.js?v=24"></script>
+  <script src="assets/js/app.js?v=24"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('hla-lyrics');
