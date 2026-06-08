@@ -22,13 +22,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=35">
-  <link rel="stylesheet" href="assets/css/base.css?v=35">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=35">
-  <link rel="stylesheet" href="assets/css/animations.css?v=35">
-  <link rel="stylesheet" href="assets/css/components.css?v=35">
-  <link rel="stylesheet" href="assets/css/layout.css?v=35">
-  <link rel="stylesheet" href="assets/css/pages.css?v=35">
+  <link rel="stylesheet" href="assets/css/variables.css?v=36">
+  <link rel="stylesheet" href="assets/css/base.css?v=36">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=36">
+  <link rel="stylesheet" href="assets/css/animations.css?v=36">
+  <link rel="stylesheet" href="assets/css/components.css?v=36">
+  <link rel="stylesheet" href="assets/css/layout.css?v=36">
+  <link rel="stylesheet" href="assets/css/pages.css?v=36">
 </head>
 <body>
   <!-- Header -->
@@ -99,8 +99,8 @@
 
         </div>
 
-        <!-- Sermons List (1-column stack) -->
-        <div class="content-grid" id="sermons-list" style="grid-template-columns: 1fr;">
+        <!-- Sermons List (2-column layout) -->
+        <div class="content-grid" id="sermons-list" style="grid-template-columns: repeat(2, 1fr); gap: var(--sp-2);">
           <!-- Populated by JS -->
         </div>
 
@@ -128,24 +128,24 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=35"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=35"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=35"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=36"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=36"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=36"></script>
 
   <!-- JSZip & FileSaver for Bulk Downloads -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=35"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=35"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=36"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=36"></script>
 
   <!-- App Configuration & Services -->
-  <script src="assets/js/firebase-config.js?v=35"></script>
-  <script src="assets/js/theme.js?v=35"></script>
-  <script src="assets/js/data.js?v=35"></script>
-  <script src="assets/js/auth.js?v=35"></script>
-  <script src="assets/js/db-service.js?v=35"></script>
-  <script src="assets/js/components.js?v=35"></script>
-  <script src="assets/js/search.js?v=35"></script>
-  <script src="assets/js/sermons.js?v=35"></script>
-  <script src="assets/js/app.js?v=35"></script>
+  <script src="assets/js/firebase-config.js?v=36"></script>
+  <script src="assets/js/theme.js?v=36"></script>
+  <script src="assets/js/data.js?v=36"></script>
+  <script src="assets/js/auth.js?v=36"></script>
+  <script src="assets/js/db-service.js?v=36"></script>
+  <script src="assets/js/components.js?v=36"></script>
+  <script src="assets/js/search.js?v=36"></script>
+  <script src="assets/js/sermons.js?v=36"></script>
+  <script src="assets/js/app.js?v=36"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('sermons');
