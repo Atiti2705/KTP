@@ -41,18 +41,18 @@ function renderAlphabetChips() {
   const container = document.getElementById('alphabet-chips');
   if (!container) return;
 
-  container.className = 'modern-filter-container';
+  container.className = 'alphabet-filter-container';
 
   container.innerHTML = mizoAlphabets.map(alpha => `
-    <button class="modern-chip ${alpha === currentAlphabet ? 'active' : ''}" data-alpha="${alpha}">
+    <button class="alphabet-modern-chip ${alpha === currentAlphabet ? 'active' : ''}" data-alpha="${alpha}">
       ${alpha}
     </button>
   `).join('');
 
   // Add click events
-  container.querySelectorAll('.modern-chip').forEach(btn => {
+  container.querySelectorAll('.alphabet-modern-chip').forEach(btn => {
     btn.addEventListener('click', () => {
-      container.querySelectorAll('.modern-chip').forEach(b => b.classList.remove('active'));
+      container.querySelectorAll('.alphabet-modern-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentAlphabet = btn.dataset.alpha;
       currentPage = 1; // Reset to page 1 on filter change

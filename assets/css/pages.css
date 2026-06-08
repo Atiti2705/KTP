@@ -707,34 +707,34 @@
   .featured-scroll>* {
     flex: 0 0 300px;
   }
-}/* Modern Filter */
-.modern-filter-container {
+}/* Modern Alphabet Filter */
+.alphabet-filter-container {
   display: flex;
   gap: 4px;
   padding: 6px;
   padding-bottom: 8px;
-  background: var(--color-bg-elevated);
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--color-border);
   border-radius: 16px;
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
-.modern-filter-container::-webkit-scrollbar {
+.alphabet-filter-container::-webkit-scrollbar {
   height: 6px;
 }
-.modern-filter-container::-webkit-scrollbar-track {
+.alphabet-filter-container::-webkit-scrollbar-track {
   background: transparent;
 }
-.modern-filter-container::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+.alphabet-filter-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
 }
-.modern-filter-container::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-tertiary);
+.alphabet-filter-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
-.modern-chip {
+.alphabet-modern-chip {
   flex: 0 0 auto;
   padding: 6px 12px;
   font-size: 0.8rem;
@@ -750,11 +750,11 @@
   justify-content: center;
   min-width: 36px;
 }
-.modern-chip:hover {
-  background: var(--color-bg-hover);
+.alphabet-modern-chip:hover {
+  background: rgba(255, 255, 255, 0.06);
   color: var(--color-text);
 }
-.modern-chip.active {
+.alphabet-modern-chip.active {
   background: linear-gradient(135deg, var(--brand-sky), #3b82f6);
   color: #fff;
   box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
@@ -762,11 +762,11 @@
 
 /* Modern Selection Toolbar */
 .modern-selection-toolbar {
-  background: var(--glass-bg) !important;
+  background: rgba(25, 30, 40, 0.6) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--color-border) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 16px !important;
   padding: 14px 20px !important;
-  box-shadow: var(--shadow-md) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
 }
