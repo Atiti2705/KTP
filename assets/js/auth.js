@@ -63,7 +63,7 @@ const AuthService = {
           createdAt: new Date().toISOString()
         });
 
-        return { email, displayName, role, uid: user.uid };
+        return { email, displayName, role, uid: user.uid, photoURL: user.photoURL };
       } catch (error) {
         console.error("Firebase Registration Error:", error);
         throw error;
@@ -87,7 +87,7 @@ const AuthService = {
       users.push(newUser);
       localStorage.setItem(this.LOCAL_USERS_KEY, JSON.stringify(users));
 
-      const sessionUser = { email, displayName, role, uid: newUser.uid };
+      const sessionUser = { email, displayName, role, uid: newUser.uid, photoURL: null };
       localStorage.setItem(this.USER_SESSION_KEY, JSON.stringify(sessionUser));
       this.triggerAuthStateChange(sessionUser);
 
@@ -124,7 +124,7 @@ const AuthService = {
           });
         }
 
-        return { email, displayName: user.displayName || 'User', role, uid: user.uid };
+        return { email, displayName: user.displayName || 'User', role, uid: user.uid, photoURL: user.photoURL };
       } catch (error) {
         console.error("Firebase Login Error:", error);
         throw error;
@@ -142,7 +142,8 @@ const AuthService = {
         email: foundUser.email,
         displayName: foundUser.displayName,
         role: foundUser.role,
-        uid: foundUser.uid
+        uid: foundUser.uid,
+        photoURL: foundUser.photoURL || null
       };
 
       // Set admin compatibility key
@@ -185,7 +186,7 @@ const AuthService = {
           });
         }
 
-        return { email, displayName: user.displayName || 'Google User', role, uid: user.uid };
+        return { email, displayName: user.displayName || 'Google User', role, uid: user.uid, photoURL: user.photoURL };
       } catch (error) {
         console.error("Firebase Google Auth Error:", error);
         throw error;
@@ -254,7 +255,8 @@ const AuthService = {
         email: user.email,
         displayName: user.displayName || 'Firebase User',
         role: role,
-        uid: user.uid
+        uid: user.uid,
+        photoURL: user.photoURL
       };
     } else {
       const stored = localStorage.getItem(this.USER_SESSION_KEY);
@@ -280,7 +282,8 @@ const AuthService = {
             email: user.email,
             displayName: user.displayName || 'User',
             role: role,
-            uid: user.uid
+            uid: user.uid,
+            photoURL: user.photoURL
           };
           localStorage.setItem(this.USER_SESSION_KEY, JSON.stringify(sessionUser));
           
