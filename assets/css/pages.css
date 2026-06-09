@@ -296,10 +296,10 @@
 .quick-access-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--sp-3);
-  margin: var(--sp-6) auto 0;
+  gap: clamp(10px, 2vw, var(--sp-3));
+  margin: clamp(1rem, 4vh, var(--sp-6)) auto 0;
   max-width: 600px;
-  padding: 0 var(--sp-4);
+  padding: 0 clamp(12px, 3vw, var(--sp-4));
 }
 
 @media (min-width: 640px) {
@@ -311,7 +311,7 @@
 
 .quick-card {
   position: relative;
-  padding: var(--sp-4) var(--sp-2);
+  padding: clamp(10px, 2vh, var(--sp-4)) clamp(8px, 2vw, var(--sp-2));
   text-align: center;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(16px);
@@ -362,14 +362,18 @@
 }
 
 .quick-card-icon {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto var(--sp-3);
+  width: clamp(32px, 10vw, 48px);
+  height: clamp(32px, 10vw, 48px);
+  margin: 0 auto clamp(6px, 1.5vh, var(--sp-3));
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-xl);
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.quick-card-icon svg {
+  width: clamp(20px, 5vw, 24px);
+  height: clamp(20px, 5vw, 24px);
 }
 
 .quick-card:hover .quick-card-icon {
@@ -402,7 +406,7 @@
 
 .quick-card-title {
   font-family: var(--font-heading);
-  font-size: 0.95rem;
+  font-size: clamp(0.75rem, 3.5vw, 0.95rem);
   font-weight: var(--fw-semibold);
   color: var(--color-text);
   margin-bottom: 0;
