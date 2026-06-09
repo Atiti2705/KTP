@@ -147,11 +147,13 @@ function renderSermons() {
   }
 
   listContainer.innerHTML = paginationData.items.map(sermon => `
-    <div class="doc-card reveal selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${sermon.title}.${(sermon.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center; padding: 10px 14px; min-height: auto; gap: 12px; display: flex;">
-      
-      <div class="file-icon" style="font-size: 1.1rem; width: 34px; height: 34px; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky); display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">📖</div>
-      <div class="doc-card-content" style="flex: 1; min-width: 0;">
-        <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${sermon.title}</h3>
+    <div class="modern-doc-card reveal selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${sermon.title}.${String(sermon.fileType||'PDF').toLowerCase()}">
+      <div class="modern-doc-icon">📖</div>
+      <div class="modern-doc-content">
+        <h3 class="modern-doc-title">${sermon.title}</h3>
+      </div>
+      <div class="modern-doc-action">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
       </div>
     </div>
   `).join('');
