@@ -332,18 +332,16 @@ function setupLightbox() {
     }
   });
 
-  // Swipe Navigation
-  let touchStartX = 0;
-  let touchEndX = 0;
-  modal.addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].screenX;
-  });
-  modal.addEventListener('touchend', e => {
-    touchEndX = e.changedTouches[0].screenX;
-    const minSwipeDistance = 50;
-    if (touchEndX < touchStartX - minSwipeDistance) navigateLightbox(1); // Swipe left -> next
-    if (touchEndX > touchStartX + minSwipeDistance) navigateLightbox(-1); // Swipe right -> prev
-  });
+  // Swipe and Zoom Navigation (Google Drive Style)
+  const modalImg = document.getElementById('modal-image');
+  if (modalImg && !window.galleryTouchZoomHandler) {
+    window.galleryTouchZoomHandler = new TouchZoomHandler(
+      modalImg, 
+      modal, 
+      () => navigateLightbox(1), // Swipe left -> next
+      () => navigateLightbox(-1) // Swipe right -> prev
+    );
+  }
 }
 
 function navigateLightbox(direction) {
@@ -357,6 +355,10 @@ function navigateLightbox(direction) {
 function updateLightboxContent() {
   const photo = currentLightboxPhotos[currentLightboxIndex];
   if (!photo) return;
+
+  if (window.galleryTouchZoomHandler) {
+    window.galleryTouchZoomHandler.reset();
+  }
 
   const modalImage = document.getElementById('modal-image');
   const modalDownload = document.getElementById('modal-download');

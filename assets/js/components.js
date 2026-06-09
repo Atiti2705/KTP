@@ -833,3 +833,174 @@ class SelectionManager {
 }
 
 window.SelectionManager = SelectionManager;
+
+/* =========================================
+   TouchZoomHandler (Google Drive Style Zoom)
+   ========================================= */
+class TouchZoomHandler {
+  constructor(imageElement, modalElement, onSwipeLeft, onSwipeRight) {
+    this.img = imageElement;
+    this.modal = modalElement;
+    this.onSwipeLeft = onSwipeLeft;
+    this.onSwipeRight = onSwipeRight;
+
+    this.scale = 1;
+    this.translateX = 0;
+    this.translateY = 0;
+
+    this.lastTapTime = 0;
+    
+    // For panning
+    this.isDragging = false;
+    this.startX = 0;
+    this.startY = 0;
+    this.prevTranslateX = 0;
+    this.prevTranslateY = 0;
+
+    // For pinch zoom
+    this.initialPinchDistance = null;
+    this.initialScale = 1;
+
+    this.initEvents();
+  }
+
+  reset() {
+    this.scale = 1;
+    this.translateX = 0;
+    this.translateY = 0;
+    this.updateTransform();
+  }
+
+  updateTransform(clamp = true) {
+    if (this.scale < 1) this.scale = 1;
+    if (clamp) {
+      if (this.scale === 1) {
+        this.translateX = 0;
+        this.translateY = 0;
+      } else {
+        const maxTx = (this.scale - 1) * this.img.offsetWidth / 2;
+        const maxTy = (this.scale - 1) * this.img.offsetHeight / 2;
+        if (this.translateX > maxTx) this.translateX = maxTx;
+        if (this.translateX < -maxTx) this.translateX = -maxTx;
+        if (this.translateY > maxTy) this.translateY = maxTy;
+        if (this.translateY < -maxTy) this.translateY = -maxTy;
+      }
+    }
+    this.img.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale})`;
+  }
+
+  initEvents() {
+    this.img.style.transition = 'transform 0.1s ease-out';
+    this.img.style.touchAction = 'none'; // Prevent browser default zoom/pan
+
+    // We attach events to modal to catch touches even outside image bounds
+    this.modal.addEventListener('touchstart', this.onTouchStart.bind(this), { passive: false });
+    this.modal.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: false });
+    this.modal.addEventListener('touchend', this.onTouchEnd.bind(this));
+  }
+
+  getDistance(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  onTouchStart(e) {
+    // Only intercept if we are interacting with the modal background or image itself, not buttons
+    if (e.target.closest('button') || e.target.closest('a')) return;
+
+    if (e.touches.length === 2) {
+      //e.preventDefault(); // Sometimes causes issues on iOS
+      this.initialPinchDistance = this.getDistance(e.touches);
+      this.initialScale = this.scale;
+      this.isDragging = false;
+    } else if (e.touches.length === 1) {
+      // Check double tap
+      const now = Date.now();
+      if (now - this.lastTapTime < 300) {
+        // Double tap
+        e.preventDefault();
+        this.img.style.transition = 'transform 0.3s ease';
+        if (this.scale > 1) {
+          this.scale = 1;
+        } else {
+          this.scale = 2.5; // Zoom in
+        }
+        this.updateTransform();
+        this.lastTapTime = 0;
+      } else {
+        this.lastTapTime = now;
+        this.isDragging = true;
+        this.startX = e.touches[0].clientX;
+        this.startY = e.touches[0].clientY;
+        this.prevTranslateX = this.translateX;
+        this.prevTranslateY = this.translateY;
+        this.img.style.transition = 'none'; // disable transition during drag
+      }
+    }
+  }
+
+  onTouchMove(e) {
+    if (e.target.closest('button') || e.target.closest('a')) return;
+
+    if (e.touches.length === 2 && this.initialPinchDistance) {
+      e.preventDefault();
+      const dist = this.getDistance(e.touches);
+      this.scale = this.initialScale * (dist / this.initialPinchDistance);
+      this.updateTransform();
+    } else if (e.touches.length === 1 && this.isDragging) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - this.startX;
+      const dy = e.touches[0].clientY - this.startY;
+      
+      if (this.scale > 1) {
+        let newTx = this.prevTranslateX + dx;
+        const maxTx = (this.scale - 1) * this.img.offsetWidth / 2;
+        
+        // Allow overscroll with resistance
+        if (newTx > maxTx) {
+          newTx = maxTx + (newTx - maxTx) * 0.3;
+        } else if (newTx < -maxTx) {
+          newTx = -maxTx + (newTx + maxTx) * 0.3;
+        }
+        
+        this.translateX = newTx;
+        this.translateY = this.prevTranslateY + dy;
+        this.updateTransform(false); // pass false to not clamp visually
+      } else {
+        // Swiping when not zoomed in
+        this.translateX = dx;
+        this.img.style.transform = `translate(${this.translateX}px, 0) scale(1)`;
+      }
+    }
+  }
+
+  onTouchEnd(e) {
+    this.initialPinchDistance = null;
+    this.isDragging = false;
+    this.img.style.transition = 'transform 0.3s ease-out';
+
+    if (this.scale <= 1) {
+      if (this.translateX < -50) {
+        if (this.onSwipeLeft) this.onSwipeLeft();
+      } else if (this.translateX > 50) {
+        if (this.onSwipeRight) this.onSwipeRight();
+      }
+      this.reset();
+    } else {
+      const maxTx = (this.scale - 1) * this.img.offsetWidth / 2;
+      // If overscrolled by 50px, navigate
+      if (this.translateX > maxTx + 50) {
+        if (this.onSwipeRight) this.onSwipeRight();
+        this.reset();
+      } else if (this.translateX < -maxTx - 50) {
+        if (this.onSwipeLeft) this.onSwipeLeft();
+        this.reset();
+      } else {
+        this.updateTransform(true); // Snap back
+      }
+    }
+  }
+}
+
+window.TouchZoomHandler = TouchZoomHandler;
