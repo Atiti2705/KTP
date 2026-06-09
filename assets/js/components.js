@@ -191,8 +191,8 @@ function renderUserWidgets(user) {
       headerWidget.className = 'theme-switcher';
       headerWidget.style.position = 'relative';
       headerWidget.innerHTML = `
-        <button class="theme-btn" id="user-dropdown-btn" style="border-radius: var(--radius-full); background: var(--color-bg-hover); font-weight: bold; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border: 2px solid var(--brand-sky);" aria-label="User menu">
-          ${firstLetter}
+        <button class="theme-btn" id="user-dropdown-btn" style="border-radius: var(--radius-full); background: var(--color-bg-hover); font-weight: bold; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border: 2px solid var(--brand-sky); padding: 0; overflow: hidden;" aria-label="User menu">
+          ${user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : firstLetter}
         </button>
         <div class="theme-dropdown" id="user-dropdown" style="min-width: 200px;">
           <div style="padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid var(--color-border-light); margin-bottom: var(--sp-1);">
@@ -236,8 +236,8 @@ function renderUserWidgets(user) {
     if (mobileWidget) {
       mobileWidget.innerHTML = `
         <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); margin:12px 0;">
-          <div style="width:40px; height:40px; border-radius:50%; background:var(--brand-sky); color:white; font-weight:bold; display:flex; align-items:center; justify-content:center; font-size:18px; border: 2px solid var(--brand-sky-dark);">
-            ${firstLetter}
+          <div style="width:40px; height:40px; border-radius:50%; background:var(--brand-sky); color:white; font-weight:bold; display:flex; align-items:center; justify-content:center; font-size:18px; border: 2px solid var(--brand-sky-dark); overflow: hidden;">
+            ${user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" style="width:100%; height:100%; object-fit:cover;">` : firstLetter}
           </div>
           <div style="flex:1; min-width:0;">
             <div style="font-weight:bold; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--color-text);">${user.displayName}</div>
