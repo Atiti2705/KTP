@@ -152,8 +152,8 @@ function renderSermons() {
       <div class="modern-doc-content" style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
         <h3 class="modern-doc-title" style="margin-bottom: 4px;">${sermon.title}</h3>
         <div style="display: flex; flex-direction: column; gap: 3px;">
-          ${sermon.speaker ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary);">🎙️ <strong style="font-weight: 600;">Speaker:</strong> ${sermon.speaker}</span>` : ''}
-          ${sermon.scripture ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary);">📖 <strong style="font-weight: 600;">Scripture:</strong> ${sermon.scripture}</span>` : ''}
+          ${sermon.speaker ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary);">🎙️ ${sermon.speaker}</span>` : ''}
+          ${sermon.scripture ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary);">📖 ${sermon.scripture}</span>` : ''}
           ${sermon.description ? `<span style="font-size: 0.75rem; color: var(--color-text-tertiary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px;">📝 ${sermon.description}</span>` : ''}
         </div>
       </div>
