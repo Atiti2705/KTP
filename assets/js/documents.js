@@ -93,7 +93,30 @@ function renderSubCategoryChips() {
     }
   });
 
-  const uniqueSubCats = Array.from(subcats).sort();
+  const getMonthIndex = (str) => {
+    const lower = str.toLowerCase();
+    const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    for (let i = 0; i < months.length; i++) {
+      if (lower.startsWith(months[i])) return i;
+    }
+    const shortMonths = ['jan ', 'feb ', 'mar ', 'apr ', 'may ', 'jun ', 'jul ', 'aug ', 'sep ', 'oct ', 'nov ', 'dec '];
+    for (let i = 0; i < shortMonths.length; i++) {
+      if (lower.startsWith(shortMonths[i])) return i;
+    }
+    // Also check exact short months
+    const exactShorts = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    for (let i = 0; i < exactShorts.length; i++) {
+      if (lower === exactShorts[i]) return i;
+    }
+    return -1;
+  };
+
+  const uniqueSubCats = Array.from(subcats).sort((a, b) => {
+    const idxA = getMonthIndex(a);
+    const idxB = getMonthIndex(b);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    return a.localeCompare(b);
+  });
 
   if (uniqueSubCats.length === 0) {
     container.style.display = 'none';
@@ -213,7 +236,7 @@ function renderDocuments() {
   listContainer.innerHTML = paginationData.items.map(doc => `
     <div class="doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${(doc.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center; padding: 10px 14px; min-height: auto; gap: 12px; display: flex;">
       
-      <div class="file-icon" style="font-size: 1.1rem; width: 34px; height: 34px; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky); display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">📄</div>
+      <div class="file-icon" style="font-size: 0.75rem; font-weight: 700; width: 34px; height: 34px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">PDF</div>
       <div class="doc-card-content" style="flex: 1; min-width: 0;">
         <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${doc.title}</h3>
       </div>
