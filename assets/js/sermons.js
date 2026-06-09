@@ -151,10 +151,10 @@ function renderSermons() {
       <div class="modern-doc-icon">📖</div>
       <div class="modern-doc-content" style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
         <h3 class="modern-doc-title" style="margin-bottom: 4px;">${sermon.title}</h3>
-        <div style="display: flex; flex-direction: column; gap: 3px;">
-          ${sermon.speaker ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary);">🎙️ ${sermon.speaker}</span>` : ''}
-          ${sermon.scripture ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary);">📖 ${sermon.scripture}</span>` : ''}
-          ${sermon.description ? `<span style="font-size: 0.75rem; color: var(--color-text-tertiary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px;">📝 ${sermon.description}</span>` : ''}
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 2px;">
+          ${sermon.speaker ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${sermon.speaker}</span>` : ''}
+          ${sermon.scripture ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> ${sermon.scripture}</span>` : ''}
+          ${sermon.description ? `<span style="font-size: 0.75rem; color: var(--color-text-tertiary); display: flex; align-items: flex-start; gap: 6px; margin-top: 2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7; flex-shrink: 0; margin-top: 2px;"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="14" y1="18" x2="3" y2="18"></line></svg> <span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${sermon.description}</span></span>` : ''}
         </div>
       </div>
       <div class="modern-doc-action">
