@@ -369,7 +369,7 @@ function setupBulkDownload() {
   if (!selectAllCb || (!btnDownload && !btnSave)) return;
 
   docSelectionManager = new SelectionManager(
-    'docs-list',
+    'documents-list',
     '.selectable-item',
     (selectedItems) => {
       countSpan.textContent = selectedItems.size;
@@ -377,7 +377,7 @@ function setupBulkDownload() {
       if (btnDownload) { btnDownload.disabled = !hasSel; btnDownload.style.opacity = hasSel ? '1' : '0.5'; }
       if (btnSave) { btnSave.disabled = !hasSel; btnSave.style.opacity = hasSel ? '1' : '0.5'; }
       
-      const totalItems = document.querySelectorAll('#docs-list .selectable-item[data-url]:not([data-url=""])').length;
+      const totalItems = document.querySelectorAll('#documents-list .selectable-item[data-url]:not([data-url=""])').length;
       selectAllCb.checked = (hasSel && selectedItems.size === totalItems && totalItems > 0);
     },
     (id) => {
