@@ -59,11 +59,11 @@
           </div>
 
           <!-- Alphabet Filter -->
-          <div>
-            <p style="font-size: var(--fs-xs); color: var(--color-text-tertiary); font-weight: var(--fw-semibold); margin-bottom: var(--sp-2); text-transform: uppercase; letter-spacing: 0.5px;">Mizo Alphabet Filter</p>
-            <div class="filter-bar no-scrollbar" id="alphabet-chips" style="overflow-x: auto; padding-bottom: var(--sp-1);">
+          <div style="display: flex; align-items: center; gap: var(--sp-2);">
+            <label for="alphabet-select" style="font-size: var(--fs-xs); color: var(--color-text-tertiary); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 0.5px;">Mizo Alphabet Filter:</label>
+            <select id="alphabet-select" class="filter-select" style="flex: 1; max-width: 200px;">
               <!-- Populated by JS -->
-            </div>
+            </select>
           </div>
 
           <!-- Selection Toolbar for Bulk Download -->

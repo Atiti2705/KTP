@@ -38,26 +38,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 // RENDER ALPHABET CHIPS
 // ========================
 function renderAlphabetChips() {
-  const container = document.getElementById('alphabet-chips');
-  if (!container) return;
+  const select = document.getElementById('alphabet-select');
+  if (!select) return;
 
-  container.className = 'alphabet-filter-container';
-
-  container.innerHTML = mizoAlphabets.map(alpha => `
-    <button class="alphabet-modern-chip ${alpha === currentAlphabet ? 'active' : ''}" data-alpha="${alpha}">
-      ${alpha}
-    </button>
+  select.innerHTML = mizoAlphabets.map(alpha => `
+    <option value="${alpha}" ${alpha === currentAlphabet ? 'selected' : ''}>
+      ${alpha === 'All' ? 'All' : alpha}
+    </option>
   `).join('');
 
-  // Add click events
-  container.querySelectorAll('.alphabet-modern-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      container.querySelectorAll('.alphabet-modern-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentAlphabet = btn.dataset.alpha;
-      currentPage = 1; // Reset to page 1 on filter change
-      renderLyrics();
-    });
+  // Add change event
+  select.addEventListener('change', (e) => {
+    currentAlphabet = e.target.value;
+    currentPage = 1; // Reset to page 1 on filter change
+    renderLyrics();
   });
 }
 
