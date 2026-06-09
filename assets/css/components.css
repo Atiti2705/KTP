@@ -869,3 +869,28 @@
 .item-select-label {
   display: none !important;
 }
+
+/* =========================================
+   Floating Selection Toolbar
+   ========================================= */
+.floating-selection-toolbar {
+  position: fixed;
+  bottom: var(--sp-6);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  background: var(--color-bg-elevated);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  width: max-content;
+  max-width: 90vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
