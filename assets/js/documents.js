@@ -234,11 +234,17 @@ function renderDocuments() {
   }
 
   listContainer.innerHTML = paginationData.items.map(doc => `
-    <div class="doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${(doc.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center; padding: 10px 14px; min-height: auto; gap: 12px; display: flex;">
-      
-      <div class="file-icon" style="font-size: 0.75rem; font-weight: 700; width: 34px; height: 34px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">PDF</div>
-      <div class="doc-card-content" style="flex: 1; min-width: 0;">
-        <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${doc.title}</h3>
+    <div class="modern-doc-card reveal selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${(doc.fileType||'PDF').toLowerCase()}">
+      <div class="modern-doc-icon">PDF</div>
+      <div class="modern-doc-content">
+        <h3 class="modern-doc-title">${doc.title}</h3>
+        <p class="modern-doc-meta">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          ${doc.subcategory && doc.subcategory !== '' ? doc.subcategory : (doc.category || 'Document')}
+        </p>
+      </div>
+      <div class="modern-doc-action">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
       </div>
     </div>
   `).join('');
