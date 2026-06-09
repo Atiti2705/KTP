@@ -40,8 +40,7 @@
     <!-- Page Header -->
     <section class="page-title-section mizo-pattern-subtle">
       <div class="container">
-        <h1 class="reveal">📖 Sermons & Bible Studies</h1>
-        <p class="reveal-delay-1">Sermon outlines, Bible study notes, and spiritual guidelines from pastors and lay preachers.</p>
+        <h1 class="reveal">📖 Sermons</h1>
       </div>
     </section>
 
@@ -56,17 +55,6 @@
               <span class="search-icon">🔍</span>
               <input type="text" id="sermon-search" class="search-input" placeholder="Search by title, speaker, scripture, or keywords...">
               <span class="search-clear" id="search-clear-btn" role="button" aria-label="Clear search">&times;</span>
-            </div>
-            
-            <div style="display: flex; align-items: center; gap: var(--sp-2);">
-              <label for="sermon-sort" style="font-size: var(--fs-xs); color: var(--color-text-secondary); font-weight: var(--fw-medium);">Sort:</label>
-              <select id="sermon-sort" class="filter-select">
-                <option value="manual">Manual Order</option>
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="a-z">Alphabetical (A-Z)</option>
-                <option value="z-a">Alphabetical (Z-A)</option>
-              </select>
             </div>
           </div>
 
@@ -97,9 +85,19 @@
             </div>
           </div>
 
-          <!-- Results count/info -->
-          <div class="results-info">
+          <!-- Results count/info and Sort -->
+          <div class="results-info" style="margin-bottom: var(--sp-2);">
             <span class="results-count" id="sermon-count">Loading sermons...</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label for="sermon-sort" style="font-size: 12px; color: var(--color-text-tertiary); font-weight: var(--fw-medium);">Sort:</label>
+              <select id="sermon-sort" class="filter-select" style="padding: 4px 8px; padding-right: 24px; font-size: 13px; height: 30px; border-radius: var(--radius-md); background-position: right 8px center; background-size: 12px; border: 1px solid var(--color-border); background-color: var(--color-bg-card); cursor: pointer;">
+                <option value="manual">Manual</option>
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="a-z">A-Z</option>
+                <option value="z-a">Z-A</option>
+              </select>
+            </div>
           </div>
 
         </div>
