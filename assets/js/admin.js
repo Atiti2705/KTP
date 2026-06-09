@@ -380,7 +380,7 @@ function setupLoginPage() {
         }
 
         // Bridge to Firebase Auth: Automatically login to generic admin account so Firestore Rules work
-        const adminEmail = 'admin@ktpsaikhamakawn.org';
+        const adminEmail = 'admin_v2@ktpsaikhamakawn.org';
         const firebasePassword = 'admin123'; // The actual password configured in Firebase Auth
         let success = false;
         try {
@@ -389,7 +389,7 @@ function setupLoginPage() {
           success = true;
         } catch (authErr) {
           // If the account doesn't exist yet, create it on the fly!
-          if (authErr.code === 'auth/user-not-found' || authErr.message.includes('password') || authErr.message.includes('record')) {
+          if (authErr.code === 'auth/user-not-found' || authErr.code === 'auth/too-many-requests' || authErr.message.includes('password') || authErr.message.includes('record')) {
             try {
               const user = await AuthService.register(adminEmail, firebasePassword, 'Admin KṬP');
               // Setup local storage directly since register bypasses AdminAuth.login checks
