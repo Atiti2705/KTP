@@ -127,12 +127,13 @@ function renderLyrics() {
   }
 
   // 2. Filter by Search Query
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(lyric => 
-      (lyric.title || '').toLowerCase().includes(q) || 
-      (lyric.description || '').toLowerCase().includes(q)
-    );
+  if (searchQuery && searchQuery.trim() !== '') {
+    const terms = searchQuery.toLowerCase().trim().split(/\s+/);
+    filtered = filtered.filter(lyric => {
+      const title = (lyric.title || '').toLowerCase();
+      const desc = (lyric.description || '').toLowerCase();
+      return terms.every(term => title.includes(term) || desc.includes(term));
+    });
   }
 
   // 3. Sort

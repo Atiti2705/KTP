@@ -33,12 +33,14 @@ const SearchEngine = {
 
     // Filter by search query
     if (query.trim()) {
-      const q = String(query).toLowerCase().trim();
+      const terms = String(query).toLowerCase().trim().split(/\s+/);
       results = results.filter(item =>
-        searchFields.some(field => {
-          const val = item[field];
-          return val !== null && val !== undefined && String(val).toLowerCase().includes(q);
-        })
+        terms.every(term =>
+          searchFields.some(field => {
+            const val = item[field];
+            return val !== null && val !== undefined && String(val).toLowerCase().includes(term);
+          })
+        )
       );
     }
 
