@@ -112,13 +112,7 @@ function renderHeader(activePage = '') {
     <a href="admin/index.html" class="nav-mobile-link ${activePage === 'admin' ? 'active' : ''}">
       <span class="nav-icon">⚙️</span> Admin
     </a>
-    <div class="nav-mobile-footer">
-      <div class="social-links" style="justify-content: center;">
-        <a href="${SocialMedia.instagram.url}" target="_blank" rel="noopener" class="social-link instagram" aria-label="Instagram">📷</a>
-        <a href="${SocialMedia.facebook.url}" target="_blank" rel="noopener" class="social-link facebook" aria-label="Facebook">📘</a>
-        <a href="${SocialMedia.youtube.url}" target="_blank" rel="noopener" class="social-link youtube" aria-label="YouTube">▶️</a>
-      </div>
-    </div>
+
   `;
   document.body.appendChild(mobileNav);
 
