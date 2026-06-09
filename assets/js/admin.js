@@ -367,7 +367,6 @@ function setupLoginPage() {
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const user = document.getElementById('username').value;
       const pass = document.getElementById('password').value;
 
       const submitBtn = loginForm.querySelector('button[type="submit"]');
@@ -376,11 +375,39 @@ function setupLoginPage() {
       submitBtn.innerHTML = '⌛ Logging in...';
 
       try {
-        const success = await AdminAuth.login(user, pass);
+        if (pass !== 'saikhamakawn2026') {
+          throw new Error("Invalid admin password.");
+        }
+
+        // Bridge to Firebase Auth: Automatically login to generic admin account so Firestore Rules work
+        const adminEmail = 'admin@ktpsaikhamakawn.org';
+        let success = false;
+        try {
+          // Attempt Login
+          await AdminAuth.login(adminEmail, pass);
+          success = true;
+        } catch (authErr) {
+          // If the account doesn't exist yet, create it on the fly!
+          if (authErr.code === 'auth/user-not-found' || authErr.message.includes('password') || authErr.message.includes('record')) {
+            try {
+              const user = await AuthService.register(adminEmail, pass, 'Admin KṬP');
+              // Setup local storage directly since register bypasses AdminAuth.login checks
+              localStorage.setItem('ktp_admin_logged_in', 'true');
+              localStorage.setItem('ktp_admin_user', JSON.stringify({ name: 'Admin KṬP', role: 'Administrator' }));
+              success = true;
+            } catch (regErr) {
+              console.error("Auto-registration failed:", regErr);
+              throw new Error("Failed to initialize admin account.");
+            }
+          } else {
+            // Attempt fallback login if it was a generic auth error (like using local storage)
+            await AdminAuth.login(adminEmail, pass);
+            success = true;
+          }
+        }
+
         if (success) {
           window.location.href = 'dashboard.html';
-        } else {
-          throw new Error("Invalid username or password.");
         }
       } catch (err) {
         submitBtn.disabled = false;
