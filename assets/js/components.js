@@ -97,11 +97,19 @@ function renderHeader(activePage = '') {
     <div class="nav-mobile-divider"></div>
 
     <!-- Mobile Theme Row -->
-    <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;">
-      <span style="font-size: 0.75rem; color: var(--color-text-tertiary); padding: 0 4px; flex-shrink: 0;">Theme</span>
-      <button class="mobile-theme-opt" data-theme="light" style="flex:1; padding: 8px 4px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text-secondary); font-size: 0.78rem; cursor: pointer; transition: all 0.2s;">☀️ Light</button>
-      <button class="mobile-theme-opt" data-theme="dark" style="flex:1; padding: 8px 4px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text-secondary); font-size: 0.78rem; cursor: pointer; transition: all 0.2s;">🌙 Dark</button>
-      <button class="mobile-theme-opt" data-theme="system" style="flex:1; padding: 8px 4px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text-secondary); font-size: 0.78rem; cursor: pointer; transition: all 0.2s;">⚙️ Auto</button>
+    <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 0;">
+      <span style="font-size: 0.85rem; color: var(--color-text-secondary); font-weight: 500;">Appearance</span>
+      <div style="display: flex; background: var(--color-bg-alt); padding: 4px; border-radius: 30px; border: 1px solid var(--color-border-light); width: 100%;">
+        <button class="mobile-theme-opt" data-theme="light" style="flex:1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; border-radius: 26px; border: none; background: transparent; color: var(--color-text-secondary); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg> Light
+        </button>
+        <button class="mobile-theme-opt" data-theme="dark" style="flex:1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; border-radius: 26px; border: none; background: transparent; color: var(--color-text-secondary); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Dark
+        </button>
+        <button class="mobile-theme-opt" data-theme="system" style="flex:1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; border-radius: 26px; border: none; background: transparent; color: var(--color-text-secondary); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> Auto
+        </button>
+      </div>
     </div>
 
     <div class="nav-mobile-divider"></div>
@@ -469,9 +477,6 @@ function setupMobileMenu() {
         document.documentElement.setAttribute('data-theme', theme);
         try { localStorage.setItem('ktp-theme-preference', theme); } catch(_) {}
       }
-      // Highlight active button
-      nav.querySelectorAll('.mobile-theme-opt').forEach(b => b.style.borderColor = 'var(--color-border)');
-      button.style.borderColor = 'var(--brand-sky)';
     });
   });
 }

@@ -37,6 +37,19 @@ const ThemeManager = {
     document.querySelectorAll('.theme-option').forEach(opt => {
       opt.classList.toggle('active', opt.dataset.theme === theme);
     });
+
+    // Update mobile segmented control active states
+    document.querySelectorAll('.mobile-theme-opt').forEach(opt => {
+      if (opt.dataset.theme === theme) {
+        opt.style.background = 'var(--color-bg)';
+        opt.style.color = 'var(--brand-primary)';
+        opt.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)';
+      } else {
+        opt.style.background = 'transparent';
+        opt.style.color = 'var(--color-text-secondary)';
+        opt.style.boxShadow = 'none';
+      }
+    });
   },
 
   updateToggleIcon(effectiveTheme) {
