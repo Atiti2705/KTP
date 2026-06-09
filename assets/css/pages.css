@@ -9,7 +9,7 @@
 .hero {
   position: relative;
   min-height: auto;
-  padding-top: calc(var(--header-height) + 2rem);
+  padding-top: 2rem;
   padding-bottom: 2rem;
   display: flex;
   align-items: center;
