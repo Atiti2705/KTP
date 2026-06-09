@@ -92,7 +92,7 @@ function renderHeader(activePage = '') {
       <span class="nav-icon">🎵</span> Hla Lyrics
     </a>
     <a href="saved.html" class="nav-mobile-link ${activePage === 'saved' ? 'active' : ''}">
-      <span class="nav-icon">🔖</span> Saved
+      <span class="nav-icon">⭐</span> Saved
     </a>
     <div class="nav-mobile-divider"></div>
 
