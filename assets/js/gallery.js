@@ -236,7 +236,14 @@ function setupLightbox() {
     <div class="modal-backdrop lightbox-modal" id="photo-modal" style="background: rgba(0,0,0,0.95); user-select: none; padding: 0;">
       <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 0;">
         <button id="close-photo-modal" aria-label="Back" style="position: absolute; top: 16px; left: 16px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); transition: background 0.2s;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
-        <a id="modal-download" href="#" download style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); text-decoration: none; transition: background 0.2s;" title="Download"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a>
+        
+        <div style="position: absolute; top: 16px; right: 16px; display: flex; gap: 12px; z-index: 10;">
+          <button id="modal-save" aria-label="Save" title="Save Photo" style="background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); transition: background 0.2s;">
+            <svg id="modal-save-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+          </button>
+          <a id="modal-download" href="#" download style="background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); text-decoration: none; transition: background 0.2s;" title="Download"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a>
+        </div>
+
         <button id="modal-prev" class="lightbox-nav-btn" aria-label="Previous" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❮</button>
         <button id="modal-next" class="lightbox-nav-btn" aria-label="Next" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❯</button>
         <img src="" alt="" id="modal-image" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
@@ -284,6 +291,35 @@ function setupLightbox() {
       } catch {
         window.open(url, '_blank');
       }
+    });
+  }
+
+  // Save Button
+  const saveBtn = document.getElementById('modal-save');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const photo = currentLightboxPhotos[currentLightboxIndex];
+      if (!photo) return;
+      
+      if (!window.SaveService) {
+        if(window.Toast) Toast.show('Save service is not available', 'error');
+        return;
+      }
+      
+      const isSaved = SaveService.isSaved('photos', photo.id);
+      if (isSaved) {
+        SaveService.unsaveItem('photos', photo.id);
+        if(window.Toast) Toast.show('Photo removed from saved', 'success');
+      } else {
+        SaveService.saveItem('photos', photo.id, {
+          title: photo.title || 'Photo',
+          url: photo.imageUrl,
+          date: photo.date || new Date().toISOString()
+        });
+        if(window.Toast) Toast.show('Photo saved!', 'success');
+      }
+      updateLightboxContent(); // Refresh icon
     });
   }
 
@@ -337,6 +373,17 @@ function updateLightboxContent() {
     modalDownload.href = photo.imageUrl;
     modalDownload.setAttribute('download', `${photo.title || 'photo'}.jpg`);
   }
+  
+  // Update Save Icon state
+  const saveIcon = document.getElementById('modal-save-icon');
+  if (saveIcon && window.SaveService) {
+    const isSaved = SaveService.isSaved('photos', photo.id);
+    if (isSaved) {
+      saveIcon.setAttribute('fill', 'currentColor');
+    } else {
+      saveIcon.setAttribute('fill', 'none');
+    }
+  }
 }
 
 function openPhotoModal(photoId) {
@@ -360,9 +407,10 @@ let gallerySelectionManager = null;
 function setupBulkDownload() {
   const selectAllCb = document.getElementById('select-all-cb');
   const btnDownload = document.getElementById('btn-bulk-download');
+  const btnSave = document.getElementById('btn-bulk-save');
   const countSpan = document.getElementById('selected-count');
   
-  if (!selectAllCb || !btnDownload) return;
+  if (!selectAllCb || (!btnDownload && !btnSave)) return;
 
   // Initialize SelectionManager
   gallerySelectionManager = new SelectionManager(
@@ -371,17 +419,13 @@ function setupBulkDownload() {
     (selectedItems) => {
       // Callback when selection changes
       countSpan.textContent = selectedItems.size;
-      if (selectedItems.size > 0) {
-        btnDownload.disabled = false;
-        btnDownload.style.opacity = '1';
-      } else {
-        btnDownload.disabled = true;
-        btnDownload.style.opacity = '0.5';
-      }
+      const hasSel = selectedItems.size > 0;
+      if (btnDownload) { btnDownload.disabled = !hasSel; btnDownload.style.opacity = hasSel ? '1' : '0.5'; }
+      if (btnSave) { btnSave.disabled = !hasSel; btnSave.style.opacity = hasSel ? '1' : '0.5'; }
       
       // Update "Select All" checkbox state
       const totalItems = document.querySelectorAll('#gallery-grid .selectable-item').length;
-      selectAllCb.checked = (selectedItems.size > 0 && selectedItems.size === totalItems);
+      selectAllCb.checked = (hasSel && selectedItems.size === totalItems);
     },
     (id) => {
       // Callback for double click / single tap (preview)
@@ -445,6 +489,38 @@ function setupBulkDownload() {
       selectAllCb.checked = false;
     }
   });
+
+  if (btnSave) {
+    btnSave.addEventListener('click', async () => {
+      const selectedDocs = gallerySelectionManager.selectedItems;
+      if (selectedDocs.size === 0) return;
+      
+      const originalHtml = btnSave.innerHTML;
+      btnSave.innerHTML = '⏳';
+      btnSave.disabled = true;
+      
+      try {
+        if (window.SaveService) {
+          const selectedNodes = document.querySelectorAll('#gallery-grid .selectable-item.selected');
+          selectedNodes.forEach(node => {
+             const photoId = node.dataset.id;
+             const photoObj = fetchedPhotos.find(p => p.id === photoId) || { id: photoId, imageUrl: node.dataset.url, title: node.dataset.name };
+             SaveService.saveItem('photos', photoObj.id, {
+               title: photoObj.title || 'Photo',
+               url: photoObj.imageUrl || photoObj.url,
+               date: photoObj.date || new Date().toISOString()
+             });
+          });
+          if(window.Toast) Toast.show(`Saved ${selectedNodes.length} items!`, 'success');
+        }
+      } finally {
+        btnSave.innerHTML = originalHtml;
+        btnSave.disabled = false;
+        gallerySelectionManager.clearSelection();
+        selectAllCb.checked = false;
+      }
+    });
+  }
 }
 
 // Initialize bulk download when DOM is ready

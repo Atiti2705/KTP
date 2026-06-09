@@ -25,8 +25,9 @@ function renderHeader(activePage = '') {
         <a href="index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}" id="nav-home">Home</a>
         <a href="photos.html" class="nav-link ${activePage === 'photos' ? 'active' : ''}" id="nav-photos">Photos</a>
         <a href="mipui-aw.html" class="nav-link ${activePage === 'mipui-aw' ? 'active' : ''}" id="nav-mipui-aw">Mipui Aw</a>
-        <a href="sermons.html" class="nav-link ${activePage === 'sermons' ? 'active' : ''}" id="nav-sermons">Sermons</a>
+        <a href="sermons.html" class="nav-link ${activePage === 'sermons' ? 'active' : ''}" id="nav-sermons">Documents</a>
         <a href="hla-lyrics.html" class="nav-link ${activePage === 'hla-lyrics' ? 'active' : ''}" id="nav-hla-lyrics">Hla Lyrics</a>
+        <a href="saved.html" class="nav-link ${activePage === 'saved' ? 'active' : ''}" id="nav-saved">Saved</a>
         <a href="admin/index.html" class="nav-link ${activePage === 'admin' ? 'active' : ''}" id="nav-admin">Admin</a>
       </nav>
 
@@ -85,10 +86,13 @@ function renderHeader(activePage = '') {
       <span class="nav-icon">📄</span> Mipui Aw
     </a>
     <a href="sermons.html" class="nav-mobile-link ${activePage === 'sermons' ? 'active' : ''}">
-      <span class="nav-icon">📖</span> Sermons
+      <span class="nav-icon">📖</span> Documents
     </a>
     <a href="hla-lyrics.html" class="nav-mobile-link ${activePage === 'hla-lyrics' ? 'active' : ''}">
       <span class="nav-icon">🎵</span> Hla Lyrics
+    </a>
+    <a href="saved.html" class="nav-mobile-link ${activePage === 'saved' ? 'active' : ''}">
+      <span class="nav-icon">🔖</span> Saved
     </a>
     <div class="nav-mobile-divider"></div>
     
@@ -816,6 +820,12 @@ class SelectionManager {
   }
 
   notifyChange() {
+    const toolbar = document.getElementById('selection-toolbar');
+    if (toolbar) {
+      const anySelected = document.querySelectorAll('.selectable-item.selected').length > 0;
+      toolbar.style.display = anySelected ? 'flex' : 'none';
+    }
+
     if (this.onSelectionChange) {
       this.onSelectionChange(this.selectedItems);
     }

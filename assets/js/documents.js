@@ -334,25 +334,22 @@ let docSelectionManager = null;
 function setupBulkDownload() {
   const selectAllCb = document.getElementById('select-all-cb');
   const btnDownload = document.getElementById('btn-bulk-download');
+  const btnSave = document.getElementById('btn-bulk-save');
   const countSpan = document.getElementById('selected-count');
   
-  if (!selectAllCb || !btnDownload) return;
+  if (!selectAllCb || (!btnDownload && !btnSave)) return;
 
   docSelectionManager = new SelectionManager(
-    'documents-list',
+    'docs-list',
     '.selectable-item',
     (selectedItems) => {
       countSpan.textContent = selectedItems.size;
-      if (selectedItems.size > 0) {
-        btnDownload.disabled = false;
-        btnDownload.style.opacity = '1';
-      } else {
-        btnDownload.disabled = true;
-        btnDownload.style.opacity = '0.5';
-      }
+      const hasSel = selectedItems.size > 0;
+      if (btnDownload) { btnDownload.disabled = !hasSel; btnDownload.style.opacity = hasSel ? '1' : '0.5'; }
+      if (btnSave) { btnSave.disabled = !hasSel; btnSave.style.opacity = hasSel ? '1' : '0.5'; }
       
-      const totalItems = document.querySelectorAll('#documents-list .selectable-item[data-url]:not([data-url=""])').length;
-      selectAllCb.checked = (selectedItems.size > 0 && selectedItems.size === totalItems && totalItems > 0);
+      const totalItems = document.querySelectorAll('#docs-list .selectable-item[data-url]:not([data-url=""])').length;
+      selectAllCb.checked = (hasSel && selectedItems.size === totalItems && totalItems > 0);
     },
     (id) => {
       openPreviewModal(id);
@@ -413,6 +410,38 @@ function setupBulkDownload() {
       selectAllCb.checked = false;
     }
   });
+
+  if (btnSave) {
+    btnSave.addEventListener('click', async () => {
+      const selectedDocs = docSelectionManager.selectedItems;
+      if (selectedDocs.size === 0) return;
+      
+      const originalHtml = btnSave.innerHTML;
+      btnSave.innerHTML = '⏳';
+      btnSave.disabled = true;
+      
+      try {
+        if (window.SaveService) {
+          const selectedNodes = document.querySelectorAll('#docs-list .selectable-item.selected');
+          selectedNodes.forEach(node => {
+             const id = node.dataset.id;
+             const docObj = Documents.find(d => d.id === id) || { id, downloadUrl: node.dataset.url, title: node.dataset.name };
+             SaveService.saveItem('mipui-aw', docObj.id, {
+               title: docObj.title || 'Document',
+               url: docObj.downloadUrl || docObj.url,
+               date: docObj.date || new Date().toISOString()
+             });
+          });
+          if(window.Toast) Toast.show(`Saved ${selectedNodes.length} items!`, 'success');
+        }
+      } finally {
+        btnSave.innerHTML = originalHtml;
+        btnSave.disabled = false;
+        docSelectionManager.clearSelection();
+        selectAllCb.checked = false;
+      }
+    });
+  }
 }
 
 // Initialize bulk download when DOM is ready

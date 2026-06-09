@@ -73,12 +73,12 @@ function getRandomHeight(seed) {
 const ChurchInfo = {
   name: 'KṬP Saikhamakawn',
   fullName: 'Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam',
-  established: 1954,
+  established: 1975,
   address: 'Saikhamakawn, Mizoram',
   phone: '+91 XXXXX XXXXX',
   email: 'ktp.saikhamakawn@gmail.com',
   tagline: 'Rawngbawl Tura Chhandam',
-  description: 'Kristian Ṭhalai Pawl (KṬP) Saikhamakawn — serving the community through faith, fellowship, and service since 1954.'
+  description: 'Kristian Ṭhalai Pawl (KṬP) Saikhamakawn — serving the community through faith, fellowship, and service since 1975.'
 };
 
 // ========================
@@ -156,7 +156,7 @@ const Announcements = [
 // Firestore: db.collection('photos').orderBy('date','desc').limit(12)
 // Images: Cloudinary delivery URL
 // ========================
-const PhotoCategories = ['All', 'Worship', 'Fellowship', 'Events', 'Youth', 'Choir', 'Community', 'Celebrations'];
+const PhotoCategories = ['All', 'Mipui Aw', 'Worship', 'Fellowship', 'Events', 'Youth', 'Choir', 'Community', 'Celebrations'];
 
 const Photos = [];
 const photoTitles = [
@@ -435,7 +435,7 @@ const Documents = [
 // TODO: Replace with Firebase Storage + Firestore
 // Firestore: db.collection('sermons').orderBy('date','desc').limit(10)
 // ========================
-const SermonCategories = ['All', 'Sunday Sermon', 'Bible Study', 'Youth Message', 'Special Service', 'Revival', 'Conference'];
+const SermonCategories = ['All', 'Mipui Aw', 'Sunday Sermon', 'Bible Study', 'Youth Message', 'Special Service', 'Revival', 'Conference'];
 
 const Sermons = [
   {

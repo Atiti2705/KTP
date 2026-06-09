@@ -291,36 +291,51 @@
    ======================== */
 .filter-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
+  flex-wrap: nowrap;
+  gap: 6px;
   align-items: center;
+  overflow-x: auto;
+  padding-bottom: var(--sp-2);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+.filter-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .filter-chip {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-1);
-  padding: var(--sp-2) var(--sp-4);
+  padding: 6px 14px;
   font-size: var(--fs-xs);
-  font-weight: var(--fw-medium);
+  font-weight: var(--fw-semibold);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   background: var(--color-bg-card);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   white-space: nowrap;
+  scroll-snap-align: start;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
 }
 
 .filter-chip:hover {
-  border-color: var(--brand-sky);
-  color: var(--brand-sky);
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+  transform: translateY(-2px);
+  border-color: var(--color-text-tertiary);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 .filter-chip.active {
-  background: var(--brand-sky);
+  background: linear-gradient(135deg, var(--brand-sky), var(--brand-sky-dark));
   color: #fff;
-  border-color: var(--brand-sky);
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(135, 206, 235, 0.35);
+  transform: translateY(-2px);
 }
 
 .subfilter-chip {

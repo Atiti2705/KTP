@@ -38,28 +38,29 @@
 .header-logo {
   display: flex;
   align-items: center;
-  gap: var(--sp-3);
+  gap: var(--sp-2);
   text-decoration: none;
   z-index: calc(var(--z-header) + 1);
 }
 
 .header-logo img {
-  height: 40px;
+  height: 38px;
   width: auto;
   object-fit: contain;
 }
 
 .header-logo-text {
   font-family: var(--font-heading);
-  font-size: var(--fs-md);
+  font-size: clamp(0.85rem, 3.5vw, var(--fs-md));
   font-weight: var(--fw-bold);
   color: var(--color-text);
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .header-logo-text small {
   display: block;
-  font-size: var(--fs-xs);
+  font-size: clamp(0.65rem, 2.5vw, var(--fs-xs));
   font-weight: var(--fw-regular);
   color: var(--color-text-secondary);
   letter-spacing: 0.5px;
