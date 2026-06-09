@@ -147,7 +147,7 @@ function renderSermons() {
   }
 
   listContainer.innerHTML = paginationData.items.map(sermon => `
-    <div class="modern-doc-card reveal selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${sermon.title}.${String(sermon.fileType||'PDF').toLowerCase()}">
+    <div class="modern-doc-card selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${sermon.title}.${String(sermon.fileType||'PDF').toLowerCase()}">
       <div class="modern-doc-icon">📖</div>
       <div class="modern-doc-content" style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
         <h3 class="modern-doc-title" style="margin-bottom: 4px;">${sermon.title}</h3>
