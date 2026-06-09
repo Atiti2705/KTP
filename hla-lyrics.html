@@ -38,35 +38,23 @@
   <main class="main-content">
     
     <!-- Page Header -->
-    <section class="page-title-section mizo-pattern-subtle">
+    <section class="page-title-section mizo-pattern-subtle" style="padding: var(--sp-3) 0 var(--sp-2) 0;">
       <div class="container">
-        <h1 class="reveal">📄 Hla Lyrics (Publications)</h1>
-        <p class="reveal-delay-1">Official reports, newsletters, meeting minutes, and registration forms of KṬP Saikhamakawn.</p>
+        <h1 class="reveal" style="font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: 0;">🎵 Hla Lyrics</h1>
       </div>
     </section>
 
     <!-- Search & Filter Controls -->
-    <section class="section-sm">
+    <section class="section-sm" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
       <div class="container">
-        <div style="display: flex; flex-direction: column; gap: var(--sp-4); margin-bottom: var(--sp-6);">
+        <div style="display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-3);">
           
-          <!-- Search input and Sort Selection -->
+          <!-- Search input -->
           <div style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
-            <div class="search-container">
+            <div class="search-container" style="width: 100%; max-width: 100%;">
               <span class="search-icon">🔍</span>
               <input type="text" id="doc-search" class="search-input" placeholder="Search lyrics by title...">
               <span class="search-clear" id="search-clear-btn" role="button" aria-label="Clear search">&times;</span>
-            </div>
-            
-            <div style="display: flex; align-items: center; gap: var(--sp-2);">
-              <label for="lyric-sort" style="font-size: var(--fs-xs); color: var(--color-text-secondary); font-weight: var(--fw-medium);">Sort:</label>
-              <select id="lyric-sort" class="filter-select">
-                <option value="a-z" selected>Mizo Alphabetical (A-Z)</option>
-                <option value="z-a">Mizo Alphabetical (Z-A)</option>
-                <option value="manual">Manual Order</option>
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-              </select>
             </div>
           </div>
 
@@ -98,8 +86,18 @@
           </div>
 
           <!-- Results count/info -->
-          <div class="results-info">
+          <div class="results-info" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--sp-3); border-bottom: 1px solid var(--color-border); padding-bottom: var(--sp-3); margin-bottom: var(--sp-2);">
             <span class="results-count" id="doc-count">Loading lyrics...</span>
+            <div style="display: flex; align-items: center; gap: var(--sp-2);">
+              <label for="lyric-sort" style="font-size: var(--fs-xs); color: var(--color-text-secondary); font-weight: var(--fw-medium);">Sort:</label>
+              <select id="lyric-sort" class="filter-select">
+                <option value="a-z" selected>Mizo Alphabetical (A-Z)</option>
+                <option value="z-a">Mizo Alphabetical (Z-A)</option>
+                <option value="manual">Manual Order</option>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+              </select>
+            </div>
           </div>
 
         </div>
