@@ -95,7 +95,17 @@ function renderHeader(activePage = '') {
       <span class="nav-icon">🔖</span> Saved
     </a>
     <div class="nav-mobile-divider"></div>
-    
+
+    <!-- Mobile Theme Row -->
+    <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+      <span style="font-size: 0.75rem; color: var(--color-text-tertiary); padding: 0 4px; flex-shrink: 0;">Theme</span>
+      <button class="mobile-theme-opt" data-theme="light" style="flex:1; padding: 8px 4px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text-secondary); font-size: 0.78rem; cursor: pointer; transition: all 0.2s;">☀️ Light</button>
+      <button class="mobile-theme-opt" data-theme="dark" style="flex:1; padding: 8px 4px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text-secondary); font-size: 0.78rem; cursor: pointer; transition: all 0.2s;">🌙 Dark</button>
+      <button class="mobile-theme-opt" data-theme="system" style="flex:1; padding: 8px 4px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text-secondary); font-size: 0.78rem; cursor: pointer; transition: all 0.2s;">⚙️ Auto</button>
+    </div>
+
+    <div class="nav-mobile-divider"></div>
+
     <!-- Mobile User Widget Section -->
     <div id="mobile-user-widget"></div>
 
@@ -452,6 +462,23 @@ function setupMobileMenu() {
       btn.setAttribute('aria-expanded', 'false');
       document.body.classList.remove('modal-open');
     }
+  });
+
+  // Mobile theme buttons
+  nav.querySelectorAll('.mobile-theme-opt').forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const theme = button.dataset.theme;
+      if (typeof ThemeManager !== 'undefined' && ThemeManager.applyTheme) {
+        ThemeManager.applyTheme(theme);
+      } else {
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('ktp-theme-preference', theme); } catch(_) {}
+      }
+      // Highlight active button
+      nav.querySelectorAll('.mobile-theme-opt').forEach(b => b.style.borderColor = 'var(--color-border)');
+      button.style.borderColor = 'var(--brand-sky)';
+    });
   });
 }
 

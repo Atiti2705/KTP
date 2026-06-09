@@ -102,6 +102,16 @@
   gap: var(--sp-2);
 }
 
+/* Hide theme switcher and login button on mobile — they live in the mobile menu */
+@media (max-width: 767px) {
+  .theme-switcher {
+    display: none !important;
+  }
+  #header-user-widget {
+    display: none !important;
+  }
+}
+
 /* Theme Switcher */
 .theme-switcher {
   position: relative;
