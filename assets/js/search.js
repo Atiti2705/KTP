@@ -33,11 +33,11 @@ const SearchEngine = {
 
     // Filter by search query
     if (query.trim()) {
-      const q = query.toLowerCase().trim();
+      const q = String(query).toLowerCase().trim();
       results = results.filter(item =>
         searchFields.some(field => {
           const val = item[field];
-          return val && val.toLowerCase().includes(q);
+          return val !== null && val !== undefined && String(val).toLowerCase().includes(q);
         })
       );
     }
