@@ -93,7 +93,30 @@ function renderSubCategoryChips() {
     }
   });
 
-  const uniqueSubCats = Array.from(subcats).sort();
+  const getMonthIndex = (str) => {
+    const lower = str.toLowerCase();
+    const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    for (let i = 0; i < months.length; i++) {
+      if (lower.startsWith(months[i])) return i;
+    }
+    const shortMonths = ['jan ', 'feb ', 'mar ', 'apr ', 'may ', 'jun ', 'jul ', 'aug ', 'sep ', 'oct ', 'nov ', 'dec '];
+    for (let i = 0; i < shortMonths.length; i++) {
+      if (lower.startsWith(shortMonths[i])) return i;
+    }
+    // Also check exact short months
+    const exactShorts = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    for (let i = 0; i < exactShorts.length; i++) {
+      if (lower === exactShorts[i]) return i;
+    }
+    return -1;
+  };
+
+  const uniqueSubCats = Array.from(subcats).sort((a, b) => {
+    const idxA = getMonthIndex(a);
+    const idxB = getMonthIndex(b);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    return a.localeCompare(b);
+  });
 
   if (uniqueSubCats.length === 0) {
     container.style.display = 'none';
