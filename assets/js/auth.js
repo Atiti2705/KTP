@@ -246,9 +246,13 @@ const AuthService = {
       // for instant UI rendering, or localStorage cache
       const cached = localStorage.getItem(this.USER_SESSION_KEY);
       let role = this.determineRole(user.email);
+      let savedItems = [];
       if (cached) {
         const parsed = JSON.parse(cached);
-        if (parsed.uid === user.uid) role = parsed.role || role;
+        if (parsed.uid === user.uid) {
+          role = parsed.role || role;
+          savedItems = parsed.savedItems || [];
+        }
       }
 
       return {
@@ -256,7 +260,8 @@ const AuthService = {
         displayName: user.displayName || 'Firebase User',
         role: role,
         uid: user.uid,
-        photoURL: user.photoURL
+        photoURL: user.photoURL,
+        savedItems: savedItems
       };
     } else {
       const stored = localStorage.getItem(this.USER_SESSION_KEY);
@@ -274,8 +279,11 @@ const AuthService = {
           // Sync role and displayName
           const userDoc = await FirebaseConfig.db.collection('users').doc(user.uid).get();
           let role = this.determineRole(user.email);
+          let savedItems = [];
           if (userDoc.exists) {
-            role = userDoc.data().role || 'member';
+            const data = userDoc.data();
+            role = data.role || 'member';
+            savedItems = data.savedItems || [];
           }
           
           const sessionUser = {
@@ -283,7 +291,8 @@ const AuthService = {
             displayName: user.displayName || 'User',
             role: role,
             uid: user.uid,
-            photoURL: user.photoURL
+            photoURL: user.photoURL,
+            savedItems: savedItems
           };
           localStorage.setItem(this.USER_SESSION_KEY, JSON.stringify(sessionUser));
           

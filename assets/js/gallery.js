@@ -446,7 +446,7 @@ function setupLightbox() {
   // Save Button
   const saveBtn = document.getElementById('modal-save');
   if (saveBtn) {
-    saveBtn.addEventListener('click', (e) => {
+    saveBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const photo = currentLightboxPhotos[currentLightboxIndex];
       if (!photo) return;
@@ -458,10 +458,10 @@ function setupLightbox() {
       
       const isSaved = SaveService.isSaved('photos', photo.id);
       if (isSaved) {
-        SaveService.unsaveItem('photos', photo.id);
+        await SaveService.unsaveItem('photos', photo.id);
         if(window.Toast) Toast.show('Photo removed from saved', 'success');
       } else {
-        SaveService.saveItem('photos', photo.id, {
+        await SaveService.saveItem('photos', photo.id, {
           title: photo.title || 'Photo',
           url: photo.imageUrl,
           date: photo.date || new Date().toISOString()
@@ -654,7 +654,7 @@ function setupBulkDownload() {
           const selectedNodes = document.querySelectorAll('#gallery-grid .selectable-item.selected');
           selectedNodes.forEach(node => {
              const photoId = node.dataset.id;
-             const photoObj = fetchedPhotos.find(p => p.id === photoId) || { id: photoId, imageUrl: node.dataset.url, title: node.dataset.name };
+             const photoObj = Photos.find(p => p.id === photoId) || { id: photoId, imageUrl: node.dataset.url, title: node.dataset.name };
              SaveService.saveItem('photos', photoObj.id, {
                title: photoObj.title || 'Photo',
                url: photoObj.imageUrl || photoObj.url,
