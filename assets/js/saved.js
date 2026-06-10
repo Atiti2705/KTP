@@ -675,22 +675,24 @@ function setupSelection() {
           const fileIdMatch = file.url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
           if (fileIdMatch && fileIdMatch[1]) {
             downloadUrl = `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
+          } else {
+            const idMatch = file.url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+            if (idMatch && idMatch[1]) {
+               downloadUrl = `https://drive.google.com/uc?export=download&id=${idMatch[1]}`;
+            }
           }
 
-          const response = await fetch(downloadUrl, { mode: 'cors' });
-          if (!response.ok) throw new Error('Network response was not ok');
-          const blob = await response.blob();
-          const blobUrl = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.href = blobUrl;
+          a.href = downloadUrl;
+          a.target = '_blank';
           a.download = file.name || `saved_file_${i}`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          URL.revokeObjectURL(blobUrl);
-          if (i < files.length - 1) await new Promise(r => setTimeout(r, 500));
+          
+          if (i < files.length - 1) await new Promise(r => setTimeout(r, 800));
         } catch (err) {
-          console.error("Failed to download file:", file.url, err);
+          console.error("Failed to trigger download:", file.url, err);
           window.open(file.url, '_blank');
         }
       }
