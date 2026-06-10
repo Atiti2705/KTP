@@ -367,17 +367,20 @@ function setupBulkDownload() {
       try {
         if (window.SaveService) {
           const selectedNodes = document.querySelectorAll('#sermons-list .selectable-item.selected');
-          selectedNodes.forEach(node => {
+          const promises = Array.from(selectedNodes).map(node => {
              const id = node.dataset.id;
              const docObj = Sermons.find(d => d.id === id) || { id, fileUrl: node.dataset.url, title: node.dataset.name };
-             SaveService.saveItem('sermons', docObj.id, {
+             return SaveService.saveItem('sermons', docObj.id, {
                title: docObj.title || 'Sermon',
                url: docObj.fileUrl || docObj.url,
                date: docObj.date || new Date().toISOString()
              });
           });
+          await Promise.all(promises);
           if(window.Toast) Toast.show(`Saved ${selectedNodes.length} items!`, 'success');
         }
+      } catch (err) {
+        console.error("Bulk save error:", err);
       } finally {
         btnSave.innerHTML = originalHtml;
         btnSave.disabled = false;

@@ -277,7 +277,7 @@ function injectAuthModal() {
   if (document.getElementById('auth-modal')) return;
 
   const modalHtml = `
-    <div class="modal-backdrop" id="auth-modal">
+    <div class="modal-backdrop" id="auth-modal" style="z-index: 9999;">
       <div class="modal" style="max-width: 400px; padding: var(--sp-2);">
         <div class="modal-header">
           <h3 id="auth-modal-title">Sign In</h3>
@@ -549,7 +549,7 @@ window.addEventListener('popstate', (e) => {
 // ========================
 // TOAST NOTIFICATIONS
 // ========================
-const Toast = {
+const Toast = window.Toast = {
   container: null,
 
   init() {

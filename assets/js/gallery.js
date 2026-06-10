@@ -452,9 +452,12 @@ function setupLightbox() {
       if (!photo) return;
       
       if (!window.SaveService) {
+        alert('Save service is not available');
         if(window.Toast) Toast.show('Save service is not available', 'error');
         return;
       }
+      
+      alert('Save click! Photo ID: ' + photo.id);
       
       const isSaved = SaveService.isSaved('photos', photo.id);
       if (isSaved) {
@@ -649,20 +652,25 @@ function setupBulkDownload() {
       btnSave.innerHTML = '⏳';
       btnSave.disabled = true;
       
+      alert('Bulk Save click! Selected: ' + selectedDocs.size);
+      
       try {
         if (window.SaveService) {
           const selectedNodes = document.querySelectorAll('#gallery-grid .selectable-item.selected');
-          selectedNodes.forEach(node => {
+          const promises = Array.from(selectedNodes).map(node => {
              const photoId = node.dataset.id;
              const photoObj = Photos.find(p => p.id === photoId) || { id: photoId, imageUrl: node.dataset.url, title: node.dataset.name };
-             SaveService.saveItem('photos', photoObj.id, {
+             return SaveService.saveItem('photos', photoObj.id, {
                title: photoObj.title || 'Photo',
                url: photoObj.imageUrl || photoObj.url,
                date: photoObj.date || new Date().toISOString()
              });
           });
+          await Promise.all(promises);
           if(window.Toast) Toast.show(`Saved ${selectedNodes.length} items!`, 'success');
         }
+      } catch (err) {
+        console.error("Bulk save error:", err);
       } finally {
         btnSave.innerHTML = originalHtml;
         btnSave.disabled = false;

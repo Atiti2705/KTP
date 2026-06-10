@@ -453,17 +453,20 @@ function setupBulkDownload() {
       try {
         if (window.SaveService) {
           const selectedNodes = document.querySelectorAll('#documents-list .selectable-item.selected');
-          selectedNodes.forEach(node => {
+          const promises = Array.from(selectedNodes).map(node => {
              const id = node.dataset.id;
              const docObj = Documents.find(d => d.id === id) || { id, downloadUrl: node.dataset.url, title: node.dataset.name };
-             SaveService.saveItem('mipui-aw', docObj.id, {
+             return SaveService.saveItem('mipui-aw', docObj.id, {
                title: docObj.title || 'Document',
                url: docObj.downloadUrl || docObj.url,
                date: docObj.date || new Date().toISOString()
              });
           });
+          await Promise.all(promises);
           if(window.Toast) Toast.show(`Saved ${selectedNodes.length} items!`, 'success');
         }
+      } catch (err) {
+        console.error("Bulk save error:", err);
       } finally {
         btnSave.innerHTML = originalHtml;
         btnSave.disabled = false;
