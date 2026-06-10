@@ -148,9 +148,6 @@ function renderSermons() {
 
   listContainer.innerHTML = paginationData.items.map(sermon => `
     <div class="modern-doc-card selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${sermon.title}.${String(sermon.fileType||'PDF').toLowerCase()}">
-      <div class="selection-checkbox">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
       <div class="modern-doc-icon">📖</div>
       <div class="modern-doc-content" style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
         <h3 class="modern-doc-title" style="margin-bottom: 4px;">${sermon.title}</h3>
