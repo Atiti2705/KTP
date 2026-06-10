@@ -134,30 +134,42 @@
       renderHeader('home');
       renderFooter();
 
-      // Load dynamic databases before rendering home page content
+      // Render immediately with local/cached data
+      renderHomepage();
+
+      // Load dynamic databases in parallel
       try {
-        const annData = await DbService.get('announcements');
+        const [annData, photoData, docData, sermonData, settings] = await Promise.all([
+          DbService.get('announcements').catch(() => null),
+          DbService.get('photos').catch(() => null),
+          DbService.get('documents').catch(() => null),
+          DbService.get('sermons').catch(() => null),
+          DbService.get('settings').catch(() => null)
+        ]);
+
+        let needsRerender = false;
+
         if (annData && Array.isArray(annData)) {
           Announcements.length = 0;
           Announcements.push(...annData);
+          needsRerender = true;
         }
-        const photoData = await DbService.get('photos');
         if (photoData && Array.isArray(photoData)) {
           Photos.length = 0;
           Photos.push(...photoData);
+          needsRerender = true;
         }
-        const docData = await DbService.get('documents');
         if (docData && Array.isArray(docData)) {
           Documents.length = 0;
           Documents.push(...docData);
+          needsRerender = true;
         }
-        const sermonData = await DbService.get('sermons');
         if (sermonData && Array.isArray(sermonData)) {
           Sermons.length = 0;
           Sermons.push(...sermonData);
+          needsRerender = true;
         }
 
-        const settings = await DbService.get('settings');
         if (settings) {
           if (settings.churchInfo) Object.assign(ChurchInfo, settings.churchInfo);
           if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
@@ -165,12 +177,15 @@
           // Re-render header/footer if settings were fetched from DB
           renderHeader('home');
           renderFooter();
+          needsRerender = true;
+        }
+
+        if (needsRerender) {
+          renderHomepage();
         }
       } catch (err) {
         console.error("Error loading home page database...", err);
       }
-
-      renderHomepage();
     });
 
     function renderHomepage() {
