@@ -347,30 +347,22 @@ function setupBulkDownload() {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         try {
-          let downloadUrl = file.url;
-          const fileIdMatch = file.url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-          if (fileIdMatch && fileIdMatch[1]) {
-            downloadUrl = `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
-          } else {
-            const idMatch = file.url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-            if (idMatch && idMatch[1]) {
-               downloadUrl = `https://drive.google.com/uc?export=download&id=${idMatch[1]}`;
-            }
-          }
-
+          const response = await fetch(file.url, { mode: 'cors' });
+          if (!response.ok) throw new Error('Network response was not ok');
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.href = downloadUrl;
-          a.target = '_blank';
-          let finalName = file.name || `Lyric_${i}`;
+          a.href = blobUrl;
+          let finalName = file.name;
           if (!finalName.includes('.')) finalName += '.pdf';
           a.download = finalName;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          
-          if (i < files.length - 1) await new Promise(r => setTimeout(r, 800));
+          URL.revokeObjectURL(blobUrl);
+          if (i < files.length - 1) await new Promise(r => setTimeout(r, 500));
         } catch (err) {
-          console.error("Failed to trigger download:", file.url, err);
+          console.error("Failed to download file:", file.url, err);
           window.open(file.url, '_blank');
         }
       }
