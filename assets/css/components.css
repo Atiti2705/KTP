@@ -829,6 +829,8 @@
 .selectable-item {
   position: relative;
   user-select: none; /* Prevent text selection during shift-click/long-press */
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   transition: all var(--transition-base);
   cursor: pointer;
 }

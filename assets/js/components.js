@@ -693,12 +693,18 @@ class SelectionManager {
   }
 
   initEvents() {
+    let startX = 0;
+    let startY = 0;
+
     // Handle pointerdown for long press (mobile)
     this.container.addEventListener('pointerdown', (e) => {
+      this.lastPointerType = e.pointerType;
       const item = e.target.closest(this.itemSelector);
       if (!item) return;
 
       if (e.pointerType === 'touch') {
+        startX = e.clientX;
+        startY = e.clientY;
         this.longPressTimer = setTimeout(() => {
           this.handleLongPress(item);
         }, 500); // 500ms long press
@@ -707,12 +713,24 @@ class SelectionManager {
 
     this.container.addEventListener('pointerup', () => clearTimeout(this.longPressTimer));
     this.container.addEventListener('pointercancel', () => clearTimeout(this.longPressTimer));
-    this.container.addEventListener('pointermove', () => clearTimeout(this.longPressTimer));
+    this.container.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') {
+        const dx = Math.abs(e.clientX - startX);
+        const dy = Math.abs(e.clientY - startY);
+        // Only clear if moved more than a small threshold (handles sensitive digitizers like Pixel 6a)
+        if (dx > 10 || dy > 10) {
+          clearTimeout(this.longPressTimer);
+        }
+      } else {
+        clearTimeout(this.longPressTimer);
+      }
+    });
 
     // Handle contextmenu (prevent default on long press)
     this.container.addEventListener('contextmenu', (e) => {
       const item = e.target.closest(this.itemSelector);
-      if (item && e.pointerType === 'touch') {
+      // contextmenu is a MouseEvent so pointerType is undefined, use last stored
+      if (item && this.lastPointerType === 'touch') {
         e.preventDefault();
       }
     });
