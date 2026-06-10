@@ -4,9 +4,9 @@
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzKa1lWa6aS769lnnG2IECrq6ldIhS9Ts",
-  authDomain: "skkktp.firebaseapp.com",
-  projectId: "skkktp",
-  storageBucket: "skkktp.firebasestorage.app",
+  authDomain: "saikhamakawnktp.firebaseapp.com",
+  projectId: "saikhamakawnktp",
+  storageBucket: "saikhamakawnktp.firebasestorage.app",
   messagingSenderId: "437184405719",
   appId: "1:437184405719:web:d3c4823aa85cc191cc9092",
   measurementId: "G-JB6DGBKJX3"
