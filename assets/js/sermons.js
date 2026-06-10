@@ -308,43 +308,44 @@ function setupBulkDownload() {
     }
   });
 
-  // Handle Download Button
+  // Handle Download Button — downloads each file individually
   btnDownload.addEventListener('click', async () => {
     const selectedSermons = sermonSelectionManager.selectedItems;
     if (selectedSermons.size === 0) return;
     
     const originalText = btnDownload.innerHTML;
-    btnDownload.innerHTML = '⏳ Zipping...';
+    btnDownload.innerHTML = '⏳ Downloading...';
     btnDownload.disabled = true;
     
     try {
-      const zip = new JSZip();
       const files = Array.from(selectedSermons).map(item => JSON.parse(item));
       
-      const promises = files.map(async (file, index) => {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
         try {
           const response = await fetch(file.url, { mode: 'cors' });
           if (!response.ok) throw new Error('Network response was not ok');
           const blob = await response.blob();
-          
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
           let finalName = file.name;
           if (!finalName.includes('.')) finalName += '.pdf';
-          finalName = `${index}_${finalName}`; // prevent duplicates
-          
-          zip.file(finalName, blob);
+          a.download = finalName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+          if (i < files.length - 1) await new Promise(r => setTimeout(r, 500));
         } catch (err) {
-          console.error("Failed to fetch file for zip:", file.url, err);
+          console.error("Failed to download file:", file.url, err);
+          window.open(file.url, '_blank');
         }
-      });
+      }
       
-      await Promise.all(promises);
-      
-      const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, 'KTP_Sermons.zip');
-      
+      if (window.Toast) Toast.show(`Downloaded ${files.length} file${files.length > 1 ? 's' : ''}!`, 'success');
     } catch (err) {
-      console.error("Error creating zip:", err);
-      alert("Failed to create zip file. Please try downloading files individually.");
+      console.error("Error downloading files:", err);
     } finally {
       btnDownload.innerHTML = originalText;
       btnDownload.disabled = false;

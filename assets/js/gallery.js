@@ -593,44 +593,43 @@ function setupBulkDownload() {
     }
   });
 
-  // Handle Download Button
+  // Handle Download Button — downloads each file individually
   btnDownload.addEventListener('click', async () => {
     const selectedPhotos = gallerySelectionManager.selectedItems;
     if (selectedPhotos.size === 0) return;
     
     const originalText = btnDownload.innerHTML;
-    btnDownload.innerHTML = '⏳ Zipping...';
+    btnDownload.innerHTML = '⏳ Downloading...';
     btnDownload.disabled = true;
     
     try {
-      const zip = new JSZip();
       const files = Array.from(selectedPhotos).map(item => JSON.parse(item));
       
-      const promises = files.map(async (file, index) => {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
         try {
           const response = await fetch(file.url, { mode: 'cors' });
           if (!response.ok) throw new Error('Network response was not ok');
           const blob = await response.blob();
-          
-          // Ensure unique filenames
-          const ext = file.name.split('.').pop() || 'jpg';
-          const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || `photo_${index}`;
-          const finalName = `${baseName}_${index}.${ext}`;
-          
-          zip.file(finalName, blob);
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = file.name || `photo_${i}.jpg`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+          // Small delay between downloads to prevent browser blocking
+          if (i < files.length - 1) await new Promise(r => setTimeout(r, 500));
         } catch (err) {
-          console.error("Failed to fetch image for zip:", file.url, err);
+          console.error("Failed to download file:", file.url, err);
+          window.open(file.url, '_blank');
         }
-      });
+      }
       
-      await Promise.all(promises);
-      
-      const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, 'KTP_Photos.zip');
-      
+      if (window.Toast) Toast.show(`Downloaded ${files.length} photo${files.length > 1 ? 's' : ''}!`, 'success');
     } catch (err) {
-      console.error("Error creating zip:", err);
-      alert("Failed to create zip file. Please try downloading files individually.");
+      console.error("Error downloading files:", err);
     } finally {
       btnDownload.innerHTML = originalText;
       btnDownload.disabled = false;
