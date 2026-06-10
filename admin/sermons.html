@@ -33,6 +33,7 @@
           </div>
         </div>
         <div style="display: flex; gap: var(--sp-3); align-items: center;">
+          <button class="btn btn-outline" id="btn-bulk-edit" style="color: var(--brand-sky); border-color: var(--brand-sky); display: none;">✏️ Edit Selected</button>
           <button class="btn btn-outline" id="btn-bulk-delete" style="color: var(--brand-red); border-color: var(--brand-red); display: none;">🗑️ Delete Selected</button>
           <button class="btn btn-primary" id="btn-add-sermon">➕ Add Sermon</button>
         </div>
@@ -210,6 +211,56 @@
     </div>
   </div>
 
+  <!-- Bulk Edit Modal -->
+  <div class="modal-backdrop" id="bulk-edit-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Bulk Edit Sermons</h3>
+        <button class="modal-close" id="close-bulk-edit-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="bulk-edit-form">
+        <div class="modal-body">
+          <p style="margin-bottom: var(--sp-4); font-size: var(--fs-sm); color: var(--color-text-secondary);">
+            Select the fields you want to update for <strong id="bulk-edit-count">0</strong> selected sermons. Unchecked fields will remain unchanged.
+          </p>
+
+          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
+            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
+              <input type="checkbox" id="bulk-enable-topic" style="width: 16px; height: 16px;">
+              Update Topic / Category
+            </label>
+            <select id="bulk-sermon-topic" class="form-input form-select" disabled>
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
+            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
+              <input type="checkbox" id="bulk-enable-date" style="width: 16px; height: 16px;">
+              Update Delivery Date
+            </label>
+            <input type="date" id="bulk-sermon-date" class="form-input" disabled>
+          </div>
+
+          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
+            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
+              <input type="checkbox" id="bulk-enable-featured" style="width: 16px; height: 16px;">
+              Update Featured Status
+            </label>
+            <select id="bulk-sermon-featured" class="form-input form-select" disabled>
+              <option value="true">Yes, feature on Homepage</option>
+              <option value="false">No, remove from Homepage</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-bulk-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Apply Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <!-- SortableJS for drag-and-drop -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=99"></script>
@@ -251,10 +302,12 @@
     function populateCategoryDropdowns() {
       const filterSelect = document.getElementById('admin-filter-category');
       const formSelect = document.getElementById('sermon-topic');
+      const bulkSelect = document.getElementById('bulk-sermon-topic');
       if (!filterSelect || !formSelect) return;
 
       filterSelect.innerHTML = '<option value="All">All Topics</option>';
       formSelect.innerHTML = '<option value="" disabled selected>Select topic...</option>';
+      if (bulkSelect) bulkSelect.innerHTML = '<option value="" disabled selected>Select topic...</option>';
 
       SermonCategories.forEach(cat => {
         if (cat !== 'All') {
@@ -267,6 +320,13 @@
           opt2.value = cat;
           opt2.textContent = cat;
           formSelect.appendChild(opt2);
+          
+          if (bulkSelect) {
+            const opt3 = document.createElement('option');
+            opt3.value = cat;
+            opt3.textContent = cat;
+            bulkSelect.appendChild(opt3);
+          }
         }
       });
 
@@ -482,6 +542,7 @@
       // Bulk Delete Selection Logic
       const selectAllCb = document.getElementById('select-all-checkbox');
       const bulkDeleteBtn = document.getElementById('btn-bulk-delete');
+      const bulkEditBtn = document.getElementById('btn-bulk-edit');
 
       if (selectAllCb) {
         selectAllCb.addEventListener('change', (e) => {
@@ -520,6 +581,83 @@
           }
         });
       }
+
+      // Bulk Edit Logic
+      if (bulkEditBtn) {
+        bulkEditBtn.addEventListener('click', () => {
+          const selectedCbs = document.querySelectorAll('.row-checkbox:checked');
+          if (selectedCbs.length === 0) return;
+          
+          document.getElementById('bulk-edit-count').textContent = selectedCbs.length;
+          document.getElementById('bulk-edit-form').reset();
+          
+          // Disable all inputs by default
+          document.getElementById('bulk-sermon-topic').disabled = true;
+          document.getElementById('bulk-sermon-date').disabled = true;
+          document.getElementById('bulk-sermon-featured').disabled = true;
+
+          ModalSystem.open('bulk-edit-modal');
+        });
+      }
+
+      // Bulk Edit field toggles
+      ['topic', 'date', 'featured'].forEach(field => {
+        const checkbox = document.getElementById(`bulk-enable-${field}`);
+        const input = document.getElementById(`bulk-sermon-${field}`);
+        if (checkbox && input) {
+          checkbox.addEventListener('change', (e) => {
+            input.disabled = !e.target.checked;
+            if (e.target.checked) input.focus();
+          });
+        }
+      });
+
+      // Bulk Edit form submission
+      document.getElementById('bulk-edit-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const selectedCbs = document.querySelectorAll('.row-checkbox:checked');
+        if (selectedCbs.length === 0) return;
+
+        const enableTopic = document.getElementById('bulk-enable-topic').checked;
+        const enableDate = document.getElementById('bulk-enable-date').checked;
+        const enableFeat = document.getElementById('bulk-enable-featured').checked;
+
+        if (!enableTopic && !enableDate && !enableFeat) {
+          AdminToast.show('No fields selected for update.', 'error');
+          return;
+        }
+
+        const updates = {};
+        if (enableTopic) updates.topic = document.getElementById('bulk-sermon-topic').value;
+        if (enableDate) updates.date = document.getElementById('bulk-sermon-date').value;
+        if (enableFeat) updates.featured = document.getElementById('bulk-sermon-featured').value === 'true';
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        try {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⌛ Applying...';
+
+          for (const cb of selectedCbs) {
+            await AdminData.update('sermons', cb.value, updates);
+          }
+
+          AdminToast.show(`Successfully updated ${selectedCbs.length} sermon(s).`, 'success');
+          ModalSystem.close('bulk-edit-modal');
+          renderSermonsTable();
+        } catch (err) {
+          console.error("Error bulk updating sermons:", err);
+          AdminToast.show('Error during bulk update: ' + (err.message || 'Permission denied'), 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
+
+      const closeBulkModal = () => ModalSystem.close('bulk-edit-modal');
+      document.getElementById('close-bulk-edit-modal')?.addEventListener('click', closeBulkModal);
+      document.getElementById('btn-cancel-bulk-modal')?.addEventListener('click', closeBulkModal);
 
       // Show Add Modal
       document.getElementById('btn-add-sermon').addEventListener('click', () => {
@@ -678,11 +816,17 @@
       const selectedCount = document.querySelectorAll('.row-checkbox:checked').length;
       const totalCount = document.querySelectorAll('.row-checkbox').length;
       const bulkDeleteBtn = document.getElementById('btn-bulk-delete');
+      const bulkEditBtn = document.getElementById('btn-bulk-edit');
       const selectAllCb = document.getElementById('select-all-checkbox');
 
       if (bulkDeleteBtn) {
         bulkDeleteBtn.style.display = selectedCount > 0 ? 'inline-block' : 'none';
         bulkDeleteBtn.textContent = `🗑️ Delete Selected (${selectedCount})`;
+      }
+      
+      if (bulkEditBtn) {
+        bulkEditBtn.style.display = selectedCount > 0 ? 'inline-block' : 'none';
+        bulkEditBtn.textContent = `✏️ Edit Selected (${selectedCount})`;
       }
 
       if (selectAllCb && totalCount > 0) {

@@ -5,6 +5,7 @@
    ============================================ */
 
 let currentCategory = 'All';
+let currentSubCategory = 'All';
 let searchQuery = '';
 let currentSort = 'manual';
 let currentPage = 1;
@@ -63,7 +64,92 @@ function renderCategoryChips() {
       container.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentCategory = btn.dataset.category;
+      currentSubCategory = 'All'; // Reset subcategory when category changes
       currentPage = 1; // Reset to page 1 on filter
+      renderSubCategoryChips();
+      renderGallery();
+    });
+  });
+  renderSubCategoryChips();
+}
+
+// ========================
+// RENDER SUB CATEGORY CHIPS
+// ========================
+function renderSubCategoryChips() {
+  const container = document.getElementById('subcategory-chips');
+  if (!container) return;
+
+  // Only show subcategories if a specific category is selected
+  if (currentCategory === 'All') {
+    container.style.display = 'none';
+    currentSubCategory = 'All';
+    return;
+  }
+
+  const photosInCat = Photos.filter(p => p.category === currentCategory);
+    
+  const subcats = new Set();
+  photosInCat.forEach(p => {
+    if (p.subcategory) {
+      const subStr = String(p.subcategory).trim();
+      if (subStr !== '') {
+        subcats.add(subStr);
+      }
+    }
+  });
+
+  const getMonthIndex = (str) => {
+    if (!str) return -1;
+    const lower = String(str).toLowerCase();
+    const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    for (let i = 0; i < months.length; i++) {
+      if (lower.startsWith(months[i])) return i;
+    }
+    const shortMonths = ['jan ', 'feb ', 'mar ', 'apr ', 'may ', 'jun ', 'jul ', 'aug ', 'sep ', 'oct ', 'nov ', 'dec '];
+    for (let i = 0; i < shortMonths.length; i++) {
+      if (lower.startsWith(shortMonths[i])) return i;
+    }
+    const exactShorts = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    for (let i = 0; i < exactShorts.length; i++) {
+      if (lower === exactShorts[i]) return i;
+    }
+    return -1;
+  };
+
+  const uniqueSubCats = Array.from(subcats).sort((a, b) => {
+    const idxA = getMonthIndex(a);
+    const idxB = getMonthIndex(b);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    return a.localeCompare(b);
+  });
+
+  if (uniqueSubCats.length === 0) {
+    container.style.display = 'none';
+    currentSubCategory = 'All';
+    return;
+  }
+
+  container.style.display = 'flex';
+  
+  container.innerHTML = uniqueSubCats.map(subcat => `
+    <button class="subfilter-chip ${subcat === currentSubCategory ? 'active' : ''}" data-subcategory="${subcat}">
+      ${subcat}
+    </button>
+  `).join('');
+
+  container.querySelectorAll('.subfilter-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (currentSubCategory === btn.dataset.subcategory) {
+        // Toggle OFF if clicking the already active one
+        btn.classList.remove('active');
+        currentSubCategory = 'All';
+      } else {
+        container.querySelectorAll('.subfilter-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSubCategory = btn.dataset.subcategory;
+      }
+      currentPage = 1;
       renderGallery();
     });
   });
@@ -119,13 +205,18 @@ function renderGallery() {
   if (!grid) return;
 
   // 1. Get filtered items
-  const filtered = SearchEngine.filter(Photos, {
+  let filtered = SearchEngine.filter(Photos, {
     query: searchQuery,
     category: currentCategory,
     sort: currentSort,
     searchFields: ['title', 'description'],
     categoryField: 'category'
   });
+
+  // Apply subcategory filter
+  if (currentSubCategory !== 'All') {
+    filtered = filtered.filter(p => p.subcategory === currentSubCategory);
+  }
 
   // Save for lightbox navigation (exclude folders)
   currentLightboxPhotos = filtered.filter(p => !(p.imageUrl && p.imageUrl.includes('embeddedfolderview')));

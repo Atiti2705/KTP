@@ -33,6 +33,7 @@
           </div>
         </div>
         <div style="display: flex; gap: var(--sp-3); align-items: center;">
+          <button class="btn btn-outline" id="btn-bulk-edit" style="color: var(--brand-sky); border-color: var(--brand-sky); display: none;">✏️ Edit Selected</button>
           <button class="btn btn-outline" id="btn-bulk-delete" style="color: var(--brand-red); border-color: var(--brand-red); display: none;">🗑️ Delete Selected</button>
           <button class="btn btn-primary" id="btn-add-photo">➕ Add Photo</button>
         </div>
@@ -67,6 +68,7 @@
                 <th style="width: 80px;">Preview</th>
                 <th>Title</th>
                 <th>Category</th>
+                <th>Sub Category</th>
                 <th>Date</th>
                 <th>Featured</th>
                 <th style="width: 120px;">Actions</th>
@@ -115,6 +117,13 @@
                 <button type="button" id="btn-add-new-cat">➕ Add</button>
               </div>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="photo-subcategory" class="form-label">Sub Category (Optional)</label>
+            <input type="text" id="photo-subcategory" class="form-input" placeholder="e.g. May" list="photo-subcat-list">
+            <datalist id="photo-subcat-list"></datalist>
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Useful for grouping within a category (e.g. months inside a year).</small>
           </div>
 
           <div class="form-group">
@@ -177,6 +186,64 @@
     </div>
   </div>
 
+  <!-- Bulk Edit Modal -->
+  <div class="modal-backdrop" id="bulk-edit-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Bulk Edit Photos</h3>
+        <button class="modal-close" id="close-bulk-edit-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="bulk-edit-form">
+        <div class="modal-body">
+          <p style="margin-bottom: var(--sp-4); font-size: var(--fs-sm); color: var(--color-text-secondary);">
+            Select the fields you want to update for <strong id="bulk-edit-count">0</strong> selected photos. Unchecked fields will remain unchanged.
+          </p>
+
+          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
+            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
+              <input type="checkbox" id="bulk-enable-category" style="width: 16px; height: 16px;">
+              Update Category
+            </label>
+            <select id="bulk-photo-category" class="form-input form-select" disabled>
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
+            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
+              <input type="checkbox" id="bulk-enable-subcategory" style="width: 16px; height: 16px;">
+              Update Sub Category
+            </label>
+            <input type="text" id="bulk-photo-subcategory" class="form-input" placeholder="e.g. May, June" disabled>
+          </div>
+
+          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
+            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
+              <input type="checkbox" id="bulk-enable-date" style="width: 16px; height: 16px;">
+              Update Date Taken
+            </label>
+            <input type="date" id="bulk-photo-date" class="form-input" disabled>
+          </div>
+
+          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
+            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
+              <input type="checkbox" id="bulk-enable-featured" style="width: 16px; height: 16px;">
+              Update Featured Status
+            </label>
+            <select id="bulk-photo-featured" class="form-input form-select" disabled>
+              <option value="true">Yes, feature on Homepage</option>
+              <option value="false">No, remove from Homepage</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-bulk-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Apply Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <!-- SortableJS for drag-and-drop -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=99"></script>
@@ -219,10 +286,12 @@
     function populateCategoryDropdowns() {
       const filterSelect = document.getElementById('admin-filter-category');
       const formSelect = document.getElementById('photo-category');
+      const bulkSelect = document.getElementById('bulk-photo-category');
       if (!filterSelect || !formSelect) return;
 
       filterSelect.innerHTML = '<option value="All">All Categories</option>';
       formSelect.innerHTML = '<option value="" disabled selected>Select category...</option>';
+      if (bulkSelect) bulkSelect.innerHTML = '<option value="" disabled selected>Select category...</option>';
 
       PhotoCategories.forEach(cat => {
         if (cat !== 'All') {
@@ -235,6 +304,13 @@
           opt2.value = cat;
           opt2.textContent = cat;
           formSelect.appendChild(opt2);
+          
+          if (bulkSelect) {
+            const opt3 = document.createElement('option');
+            opt3.value = cat;
+            opt3.textContent = cat;
+            bulkSelect.appendChild(opt3);
+          }
         }
       });
 
@@ -358,6 +434,7 @@
           </td>
           <td style="font-weight: var(--fw-semibold);">${photo.title}</td>
           <td><span class="badge badge-primary">${photo.category}</span></td>
+          <td>${photo.subcategory ? `<span class="badge" style="background: var(--color-bg-hover); font-size: 10px;">${photo.subcategory}</span>` : ''}</td>
           <td>📅 ${formatDate(photo.date)}</td>
           <td>${photo.featured ? '⭐ Yes' : 'No'}</td>
           <td>
@@ -413,6 +490,22 @@
     }
 
     function setupEvents() {
+      // Subcategory datalist population
+      document.getElementById('photo-category').addEventListener('change', (e) => {
+        const cat = e.target.value;
+        const photos = AdminData.get('photos') || [];
+        const subcats = new Set();
+        photos.filter(p => p.category === cat).forEach(p => {
+          if (p.subcategory && p.subcategory.trim() !== '') {
+            subcats.add(p.subcategory.trim());
+          }
+        });
+        const datalist = document.getElementById('photo-subcat-list');
+        if (datalist) {
+          datalist.innerHTML = Array.from(subcats).sort().map(s => `<option value="${s}">`).join('');
+        }
+      });
+
       // Category editor toggle
       document.getElementById('btn-toggle-cat-editor').addEventListener('click', () => {
         document.getElementById('photo-cat-editor').classList.toggle('open');
@@ -462,6 +555,7 @@
       // Bulk Delete Selection Logic
       const selectAllCb = document.getElementById('select-all-checkbox');
       const bulkDeleteBtn = document.getElementById('btn-bulk-delete');
+      const bulkEditBtn = document.getElementById('btn-bulk-edit');
 
       if (selectAllCb) {
         selectAllCb.addEventListener('change', (e) => {
@@ -500,6 +594,86 @@
           }
         });
       }
+
+      // Bulk Edit Logic
+      if (bulkEditBtn) {
+        bulkEditBtn.addEventListener('click', () => {
+          const selectedCbs = document.querySelectorAll('.row-checkbox:checked');
+          if (selectedCbs.length === 0) return;
+          
+          document.getElementById('bulk-edit-count').textContent = selectedCbs.length;
+          document.getElementById('bulk-edit-form').reset();
+          
+          // Disable all inputs by default
+          document.getElementById('bulk-photo-category').disabled = true;
+          document.getElementById('bulk-photo-subcategory').disabled = true;
+          document.getElementById('bulk-photo-date').disabled = true;
+          document.getElementById('bulk-photo-featured').disabled = true;
+
+          ModalSystem.open('bulk-edit-modal');
+        });
+      }
+
+      // Bulk Edit field toggles
+      ['category', 'subcategory', 'date', 'featured'].forEach(field => {
+        const checkbox = document.getElementById(`bulk-enable-${field}`);
+        const input = document.getElementById(`bulk-photo-${field}`);
+        if (checkbox && input) {
+          checkbox.addEventListener('change', (e) => {
+            input.disabled = !e.target.checked;
+            if (e.target.checked) input.focus();
+          });
+        }
+      });
+
+      // Bulk Edit form submission
+      document.getElementById('bulk-edit-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const selectedCbs = document.querySelectorAll('.row-checkbox:checked');
+        if (selectedCbs.length === 0) return;
+
+        const enableCat = document.getElementById('bulk-enable-category').checked;
+        const enableSubcat = document.getElementById('bulk-enable-subcategory').checked;
+        const enableDate = document.getElementById('bulk-enable-date').checked;
+        const enableFeat = document.getElementById('bulk-enable-featured').checked;
+
+        if (!enableCat && !enableSubcat && !enableDate && !enableFeat) {
+          AdminToast.show('No fields selected for update.', 'error');
+          return;
+        }
+
+        const updates = {};
+        if (enableCat) updates.category = document.getElementById('bulk-photo-category').value;
+        if (enableSubcat) updates.subcategory = document.getElementById('bulk-photo-subcategory').value.trim();
+        if (enableDate) updates.date = document.getElementById('bulk-photo-date').value;
+        if (enableFeat) updates.featured = document.getElementById('bulk-photo-featured').value === 'true';
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        try {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⌛ Applying...';
+
+          for (const cb of selectedCbs) {
+            await AdminData.update('photos', cb.value, updates);
+          }
+
+          AdminToast.show(`Successfully updated ${selectedCbs.length} photo(s).`, 'success');
+          ModalSystem.close('bulk-edit-modal');
+          renderPhotosTable();
+        } catch (err) {
+          console.error("Error bulk updating photos:", err);
+          AdminToast.show('Error during bulk update: ' + (err.message || 'Permission denied'), 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
+
+      const closeBulkModal = () => ModalSystem.close('bulk-edit-modal');
+      document.getElementById('close-bulk-edit-modal')?.addEventListener('click', closeBulkModal);
+      document.getElementById('btn-cancel-bulk-modal')?.addEventListener('click', closeBulkModal);
 
       // Show Add Modal
       document.getElementById('btn-add-photo').addEventListener('click', () => {
@@ -567,6 +741,7 @@
 
         const title = document.getElementById('photo-title').value;
         const category = document.getElementById('photo-category').value;
+        const subcategory = document.getElementById('photo-subcategory').value.trim();
         const description = document.getElementById('photo-desc').value;
         const date = document.getElementById('photo-date').value;
         const featured = document.getElementById('photo-featured').checked;
@@ -637,6 +812,7 @@
               const newPhoto = {
                 title: title + suffix,
                 category,
+                subcategory,
                 description,
                 date,
                 featured,
@@ -654,6 +830,7 @@
             const updatedFields = {
               title,
               category,
+              subcategory,
               description,
               date,
               featured
@@ -685,11 +862,17 @@
       const selectedCount = document.querySelectorAll('.row-checkbox:checked').length;
       const totalCount = document.querySelectorAll('.row-checkbox').length;
       const bulkDeleteBtn = document.getElementById('btn-bulk-delete');
+      const bulkEditBtn = document.getElementById('btn-bulk-edit');
       const selectAllCb = document.getElementById('select-all-checkbox');
 
       if (bulkDeleteBtn) {
         bulkDeleteBtn.style.display = selectedCount > 0 ? 'inline-block' : 'none';
         bulkDeleteBtn.textContent = `🗑️ Delete Selected (${selectedCount})`;
+      }
+      
+      if (bulkEditBtn) {
+        bulkEditBtn.style.display = selectedCount > 0 ? 'inline-block' : 'none';
+        bulkEditBtn.textContent = `✏️ Edit Selected (${selectedCount})`;
       }
 
       if (selectAllCb && totalCount > 0) {
@@ -710,6 +893,7 @@
 
       document.getElementById('photo-title').value = photo.title;
       document.getElementById('photo-category').value = photo.category;
+      document.getElementById('photo-subcategory').value = photo.subcategory || '';
       document.getElementById('photo-desc').value = photo.description;
       document.getElementById('photo-date').value = photo.date;
       document.getElementById('photo-featured').checked = photo.featured;
