@@ -41,6 +41,23 @@ const SaveService = {
   },
 
   /**
+   * Explicitly save an item (for backwards compatibility with existing code)
+   */
+  async saveItem(collection, id, data) {
+    if (this.isSaved(collection, id)) return true;
+    return await this.toggleSave(collection, id);
+  },
+
+  /**
+   * Explicitly unsave an item (for backwards compatibility)
+   */
+  async unsaveItem(collection, id) {
+    if (!this.isSaved(collection, id)) return false;
+    await this.toggleSave(collection, id);
+    return false;
+  },
+
+  /**
    * Toggle the save state of a document
    * @param {string} collection - The collection name
    * @param {string} id - The document ID
