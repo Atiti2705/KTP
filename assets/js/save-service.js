@@ -150,3 +150,5 @@ window.handleSaveToggle = async function(event, collection, id) {
     console.error("Save toggle error:", err);
   }
 };
+
+window.SaveService = SaveService;

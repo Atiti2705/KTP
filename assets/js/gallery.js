@@ -452,12 +452,9 @@ function setupLightbox() {
       if (!photo) return;
       
       if (!window.SaveService) {
-        alert('Save service is not available');
         if(window.Toast) Toast.show('Save service is not available', 'error');
         return;
       }
-      
-      alert('Save click! Photo ID: ' + photo.id);
       
       const isSaved = SaveService.isSaved('photos', photo.id);
       if (isSaved) {
@@ -651,8 +648,6 @@ function setupBulkDownload() {
       const originalHtml = btnSave.innerHTML;
       btnSave.innerHTML = '⏳';
       btnSave.disabled = true;
-      
-      alert('Bulk Save click! Selected: ' + selectedDocs.size);
       
       try {
         if (window.SaveService) {
