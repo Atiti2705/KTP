@@ -49,15 +49,26 @@
       <div class="container">
         <div style="display: flex; flex-direction: column; gap: var(--sp-3); margin-bottom: var(--sp-5);">
 
-          <!-- Category Chips -->
-          <div>
-            <p style="font-size: var(--fs-xs); color: var(--color-text-tertiary); font-weight: var(--fw-semibold); margin-bottom: var(--sp-2); text-transform: uppercase; letter-spacing: 0.5px;">Categories</p>
-            <div class="filter-bar no-scrollbar" id="category-chips" style="overflow-x: auto; padding-bottom: var(--sp-1);">
-              <!-- Populated by JS -->
+          <!-- Filters Row: Year, Category, Sub-category -->
+          <div style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center;">
+
+            <!-- Year Filter -->
+            <div id="year-filter-row" style="display: flex; align-items: center; gap: var(--sp-2); flex: 1; min-width: 130px;">
+              <label for="year-select" style="font-size: var(--fs-sm); color: var(--color-text-secondary); font-weight: var(--fw-medium); white-space: nowrap;">Year:</label>
+              <div id="year-filter-wrap" style="flex: 1;"></div>
             </div>
-            <div class="filter-bar no-scrollbar" id="subcategory-chips" style="overflow-x: auto; padding-bottom: var(--sp-1); margin-top: var(--sp-3); display: none;">
-              <!-- Populated by JS -->
+
+            <!-- Category Filter -->
+            <div id="category-filter-row" style="display: flex; align-items: center; gap: var(--sp-2); flex: 1; min-width: 150px;">
+              <label for="category-select" style="font-size: var(--fs-sm); color: var(--color-text-secondary); font-weight: var(--fw-medium); white-space: nowrap;">Category:</label>
+              <div id="category-chips" style="flex: 1;"></div>
             </div>
+
+            <!-- Sub-category Filter -->
+            <div id="subcategory-chips" style="display: none; align-items: center; gap: var(--sp-2); flex: 1; min-width: 150px;">
+              <label style="font-size: var(--fs-sm); color: var(--color-text-secondary); font-weight: var(--fw-medium); white-space: nowrap;">Sub-category:</label>
+            </div>
+
           </div>
 
           <!-- Selection Toolbar for Bulk Download -->

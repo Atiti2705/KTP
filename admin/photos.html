@@ -47,10 +47,17 @@
             <span class="search-icon">🔍</span>
             <input type="text" id="admin-search-input" class="search-input" placeholder="Search photos by title...">
           </div>
-          <div>
-            <select id="admin-filter-category" class="filter-select"
-              style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
+          <div style="display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center;">
+            <select id="admin-filter-year" class="filter-select" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
+              <option value="All">All Years</option>
+              <!-- Populated via JS -->
+            </select>
+            <select id="admin-filter-category" class="filter-select" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
               <option value="All">All Categories</option>
+              <!-- Populated via JS -->
+            </select>
+            <select id="admin-filter-subcategory" class="filter-select" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2); display: none;">
+              <option value="All">All Sub-categories</option>
               <!-- Populated via JS -->
             </select>
           </div>
@@ -265,6 +272,8 @@
   <script>
     let currentSearch = '';
     let currentCategoryFilter = 'All';
+    let currentYearFilter = 'All';
+    let currentSubCategoryFilter = 'All';
 
     document.addEventListener('DOMContentLoaded', () => {
       // Toast notification system helper
@@ -314,7 +323,64 @@
         }
       });
 
+      populateYearFilter();
       renderCatEditorChips();
+    }
+
+    function populateYearFilter() {
+      const photos = AdminData.get('photos') || [];
+      const yearSel = document.getElementById('admin-filter-year');
+      if (!yearSel) return;
+
+      const years = Array.from(
+        new Set(photos.map(p => p.date ? String(new Date(p.date).getFullYear()) : null).filter(Boolean))
+      ).sort((a, b) => b - a);
+
+      yearSel.innerHTML = '<option value="All">All Years</option>';
+      years.forEach(y => {
+        const o = document.createElement('option');
+        o.value = y;
+        o.textContent = y;
+        if (y === currentYearFilter) o.selected = true;
+        yearSel.appendChild(o);
+      });
+    }
+
+    function updateSubCategoryFilter(category) {
+      const subSel = document.getElementById('admin-filter-subcategory');
+      if (!subSel) return;
+
+      if (category === 'All') {
+        subSel.style.display = 'none';
+        currentSubCategoryFilter = 'All';
+        return;
+      }
+
+      const photos = AdminData.get('photos') || [];
+      const subcats = Array.from(
+        new Set(
+          photos
+            .filter(p => p.category === category && (currentYearFilter === 'All' || (p.date && String(new Date(p.date).getFullYear()) === currentYearFilter)))
+            .map(p => p.subcategory && p.subcategory.trim())
+            .filter(Boolean)
+        )
+      ).sort();
+
+      if (subcats.length < 2) {
+        subSel.style.display = 'none';
+        currentSubCategoryFilter = 'All';
+        return;
+      }
+
+      subSel.style.display = '';
+      subSel.innerHTML = '<option value="All">All Sub-categories</option>';
+      subcats.forEach(s => {
+        const o = document.createElement('option');
+        o.value = s;
+        o.textContent = s;
+        if (s === currentSubCategoryFilter) o.selected = true;
+        subSel.appendChild(o);
+      });
     }
 
     /* --- Inline Category Editor --- */
@@ -395,14 +461,20 @@
 
       const photos = AdminData.get('photos');
 
-      // Filter photos by search & category dropdown
+      // Filter photos by search, year, category, and sub-category
       let filtered = photos;
       if (currentSearch.trim()) {
         const q = currentSearch.toLowerCase();
         filtered = filtered.filter(p => p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
       }
+      if (currentYearFilter !== 'All') {
+        filtered = filtered.filter(p => p.date && String(new Date(p.date).getFullYear()) === currentYearFilter);
+      }
       if (currentCategoryFilter !== 'All') {
         filtered = filtered.filter(p => p.category === currentCategoryFilter);
+      }
+      if (currentSubCategoryFilter !== 'All') {
+        filtered = filtered.filter(p => p.subcategory === currentSubCategoryFilter);
       }
 
       if (filtered.length === 0) {
@@ -466,9 +538,8 @@
         animation: 150,
         handle: '.drag-handle',
         onEnd: async function () {
-          // If a search or filter is active, don't allow sorting 
-          // (it would mess up global ordering unexpectedly)
-          if (currentSearch.trim() || currentCategoryFilter !== 'All') {
+          // If a search or filter is active, don't allow sorting
+          if (currentSearch.trim() || currentCategoryFilter !== 'All' || currentYearFilter !== 'All' || currentSubCategoryFilter !== 'All') {
             AdminToast.show('Cannot reorder items while search or filter is active. Please clear filters first.', 'error');
             renderPhotosTable(); // Reset table
             return;
@@ -546,9 +617,29 @@
         renderPhotosTable();
       });
 
+      // Year filter
+      document.getElementById('admin-filter-year').addEventListener('change', (e) => {
+        currentYearFilter = e.target.value;
+        currentCategoryFilter = 'All';
+        currentSubCategoryFilter = 'All';
+        const catSel = document.getElementById('admin-filter-category');
+        if (catSel) catSel.value = 'All';
+        const subSel = document.getElementById('admin-filter-subcategory');
+        if (subSel) { subSel.style.display = 'none'; }
+        renderPhotosTable();
+      });
+
       // Category filter dropdown
       document.getElementById('admin-filter-category').addEventListener('change', (e) => {
         currentCategoryFilter = e.target.value;
+        currentSubCategoryFilter = 'All';
+        updateSubCategoryFilter(currentCategoryFilter);
+        renderPhotosTable();
+      });
+
+      // Sub-category filter dropdown
+      document.getElementById('admin-filter-subcategory').addEventListener('change', (e) => {
+        currentSubCategoryFilter = e.target.value;
         renderPhotosTable();
       });
 

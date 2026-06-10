@@ -6,6 +6,7 @@
 
 let currentCategory = 'All';
 let currentSubCategory = 'All';
+let currentYear = 'All';
 let searchQuery = '';
 let currentSort = 'manual';
 let currentPage = 1;
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error("Error loading custom PhotoCategories:", err);
   }
 
+  renderYearFilter();
   renderCategoryChips();
   setupSearchAndSort();
   setupLightbox();
@@ -42,34 +44,94 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error("Error loading photos database:", error);
   }
 
+  renderYearFilter();
+  renderCategoryChips();
   renderGallery();
 });
 
 // ========================
-// RENDER CATEGORY CHIPS
+// RENDER YEAR FILTER
 // ========================
-function renderCategoryChips() {
-  const container = document.getElementById('category-chips');
+function renderYearFilter() {
+  const container = document.getElementById('year-filter-wrap');
+  const row = document.getElementById('year-filter-row');
   if (!container) return;
 
-  container.innerHTML = PhotoCategories.map(cat => `
-    <button class="filter-chip ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
-      ${cat}
-    </button>
-  `).join('');
+  const years = Array.from(
+    new Set(Photos.map(p => p.date ? String(new Date(p.date).getFullYear()) : null).filter(Boolean))
+  ).sort((a, b) => b - a); // newest first
 
-  // Add click events
-  container.querySelectorAll('.filter-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      container.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentCategory = btn.dataset.category;
-      currentSubCategory = 'All'; // Reset subcategory when category changes
-      currentPage = 1; // Reset to page 1 on filter
+  // Hide the whole Year row if there's only 1 year (no real choice)
+  if (years.length <= 1) {
+    if (row) row.style.display = 'none';
+    currentYear = 'All';
+    return;
+  }
+
+  if (row) row.style.display = 'flex';
+  container.innerHTML = `
+    <select id="year-select" class="filter-select" style="width: 100%;">
+      <option value="All" ${currentYear === 'All' ? 'selected' : ''}>All Years</option>
+      ${years.map(y => `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`).join('')}
+    </select>
+  `;
+
+  const sel = container.querySelector('#year-select');
+  if (sel) {
+    sel.addEventListener('change', (e) => {
+      currentYear = e.target.value;
+      currentCategory = 'All'; // reset category when year changes
+      currentSubCategory = 'All';
+      currentPage = 1;
+      renderCategoryChips(); // category options may change per year
+      renderGallery();
+    });
+  }
+}
+
+function renderCategoryChips() {
+  const container = document.getElementById('category-chips');
+  const row = document.getElementById('category-filter-row');
+  if (!container) return;
+
+  // Exclude 'By Year' from the category dropdown — year is its own separate filter now
+  const cats = PhotoCategories.filter(c => c !== 'By Year');
+
+  // Count how many distinct categories are present in the currently year-filtered photos
+  const presentCats = new Set(
+    Photos
+      .filter(p => currentYear === 'All' || (p.date && String(new Date(p.date).getFullYear()) === currentYear))
+      .map(p => p.category)
+      .filter(Boolean)
+  );
+
+  // Hide the whole Category row if only 1 category exists (no real choice)
+  if (presentCats.size <= 1) {
+    if (row) row.style.display = 'none';
+    currentCategory = 'All';
+    renderSubCategoryChips();
+    return;
+  }
+
+  if (row) row.style.display = 'flex';
+  container.innerHTML = `
+    <select id="category-select" class="filter-select" style="width: 100%;">
+      ${cats.map(cat =>
+        `<option value="${cat}" ${cat === currentCategory ? 'selected' : ''}>${cat}</option>`
+      ).join('')}
+    </select>
+  `;
+
+  const select = container.querySelector('#category-select');
+  if (select) {
+    select.addEventListener('change', (e) => {
+      currentCategory = e.target.value;
+      currentSubCategory = 'All';
+      currentPage = 1;
       renderSubCategoryChips();
       renderGallery();
     });
-  });
+  }
   renderSubCategoryChips();
 }
 
@@ -80,79 +142,65 @@ function renderSubCategoryChips() {
   const container = document.getElementById('subcategory-chips');
   if (!container) return;
 
-  // Only show subcategories if a specific category is selected
-  if (currentCategory === 'All') {
+  const hide = () => {
     container.style.display = 'none';
     currentSubCategory = 'All';
-    return;
-  }
+  };
 
-  const photosInCat = Photos.filter(p => p.category === currentCategory);
-    
+  if (currentCategory === 'All') { hide(); return; }
+
+  // Gather subcategories respecting both current year and category
+  const photosInCat = Photos.filter(p => {
+    const matchCat = p.category === currentCategory;
+    const matchYear = currentYear === 'All' || (p.date && String(new Date(p.date).getFullYear()) === currentYear);
+    return matchCat && matchYear;
+  });
+
   const subcats = new Set();
   photosInCat.forEach(p => {
     if (p.subcategory) {
       const subStr = String(p.subcategory).trim();
-      if (subStr !== '') {
-        subcats.add(subStr);
-      }
+      if (subStr !== '') subcats.add(subStr);
     }
   });
 
   const getMonthIndex = (str) => {
     if (!str) return -1;
     const lower = String(str).toLowerCase();
-    const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
-    for (let i = 0; i < months.length; i++) {
-      if (lower.startsWith(months[i])) return i;
-    }
-    const shortMonths = ['jan ', 'feb ', 'mar ', 'apr ', 'may ', 'jun ', 'jul ', 'aug ', 'sep ', 'oct ', 'nov ', 'dec '];
-    for (let i = 0; i < shortMonths.length; i++) {
-      if (lower.startsWith(shortMonths[i])) return i;
-    }
-    const exactShorts = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-    for (let i = 0; i < exactShorts.length; i++) {
-      if (lower === exactShorts[i]) return i;
-    }
+    const months = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+    for (let i = 0; i < months.length; i++) { if (lower.startsWith(months[i])) return i; }
+    const shorts = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    for (let i = 0; i < shorts.length; i++) { if (lower === shorts[i] || lower.startsWith(shorts[i]+' ')) return i; }
     return -1;
   };
 
   const uniqueSubCats = Array.from(subcats).sort((a, b) => {
-    const idxA = getMonthIndex(a);
-    const idxB = getMonthIndex(b);
-    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    const ia = getMonthIndex(a), ib = getMonthIndex(b);
+    if (ia !== -1 && ib !== -1) return ia - ib;
     return a.localeCompare(b);
   });
 
-  if (uniqueSubCats.length === 0) {
-    container.style.display = 'none';
-    currentSubCategory = 'All';
-    return;
-  }
+  // Hide if fewer than 2 subcategories — no meaningful choice to offer
+  if (uniqueSubCats.length < 2) { hide(); return; }
 
   container.style.display = 'flex';
-  
-  container.innerHTML = uniqueSubCats.map(subcat => `
-    <button class="subfilter-chip ${subcat === currentSubCategory ? 'active' : ''}" data-subcategory="${subcat}">
-      ${subcat}
-    </button>
-  `).join('');
+  container.innerHTML = `
+    <select id="subcategory-select" class="filter-select" style="width: 100%;">
+      <option value="All" ${currentSubCategory === 'All' ? 'selected' : ''}>All</option>
+      ${uniqueSubCats.map(s =>
+        `<option value="${s}" ${s === currentSubCategory ? 'selected' : ''}>${s}</option>`
+      ).join('')}
+    </select>
+  `;
 
-  container.querySelectorAll('.subfilter-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (currentSubCategory === btn.dataset.subcategory) {
-        // Toggle OFF if clicking the already active one
-        btn.classList.remove('active');
-        currentSubCategory = 'All';
-      } else {
-        container.querySelectorAll('.subfilter-chip').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentSubCategory = btn.dataset.subcategory;
-      }
+  const select = container.querySelector('#subcategory-select');
+  if (select) {
+    select.addEventListener('change', (e) => {
+      currentSubCategory = e.target.value;
       currentPage = 1;
       renderGallery();
     });
-  });
+  }
 }
 
 // ========================
@@ -204,16 +252,26 @@ function renderGallery() {
   
   if (!grid) return;
 
-  // 1. Get filtered items
+  // 1. Get filtered items — apply year, category, and subcategory independently
   let filtered = SearchEngine.filter(Photos, {
     query: searchQuery,
-    category: currentCategory,
+    category: 'All', // we handle category ourselves below
     sort: currentSort,
     searchFields: ['title', 'description'],
     categoryField: 'category'
   });
 
-  // Apply subcategory filter
+  // Year filter
+  if (currentYear !== 'All') {
+    filtered = filtered.filter(p => p.date && String(new Date(p.date).getFullYear()) === currentYear);
+  }
+
+  // Category filter
+  if (currentCategory !== 'All') {
+    filtered = filtered.filter(p => p.category === currentCategory);
+  }
+
+  // Sub-category filter
   if (currentSubCategory !== 'All') {
     filtered = filtered.filter(p => p.subcategory === currentSubCategory);
   }
