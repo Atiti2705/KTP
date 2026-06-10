@@ -452,7 +452,7 @@ function setupBulkDownload() {
       
       try {
         if (window.SaveService) {
-          const selectedNodes = document.querySelectorAll('#docs-list .selectable-item.selected');
+          const selectedNodes = document.querySelectorAll('#documents-list .selectable-item.selected');
           selectedNodes.forEach(node => {
              const id = node.dataset.id;
              const docObj = Documents.find(d => d.id === id) || { id, downloadUrl: node.dataset.url, title: node.dataset.name };
