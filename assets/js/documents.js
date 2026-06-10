@@ -239,6 +239,9 @@ function renderDocuments() {
 
   listContainer.innerHTML = paginationData.items.map(doc => `
     <div class="modern-doc-card selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${String(doc.fileType||'PDF').toLowerCase()}">
+      <div class="selection-checkbox">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
       <div class="modern-doc-icon">PDF</div>
       <div class="modern-doc-content">
         <h3 class="modern-doc-title">${doc.title}</h3>
