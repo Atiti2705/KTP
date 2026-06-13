@@ -77,7 +77,6 @@
                 <th>Category</th>
                 <th>Sub Category</th>
                 <th>Date</th>
-                <th>Featured</th>
                 <th style="width: 120px;">Actions</th>
               </tr>
             </thead>
@@ -134,25 +133,8 @@
           </div>
 
           <div class="form-group">
-            <label for="photo-desc" class="form-label">Description</label>
-            <textarea id="photo-desc" class="form-input form-textarea" required
-              placeholder="Describe what is happening in the photo..."></textarea>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
-            <div class="form-group">
-              <label for="photo-date" class="form-label">Date Taken</label>
-              <input type="date" id="photo-date" class="form-input" required>
-            </div>
-
-            <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
-              <span class="form-label">Options</span>
-              <label
-                style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="checkbox" id="photo-featured" style="width: 16px; height: 16px;">
-                Show on Homepage (Featured)
-              </label>
-            </div>
+            <label for="photo-date" class="form-label">Date Taken</label>
+            <input type="date" id="photo-date" class="form-input" required>
           </div>
 
           <div class="form-group">
@@ -230,17 +212,6 @@
               Update Date Taken
             </label>
             <input type="date" id="bulk-photo-date" class="form-input" disabled>
-          </div>
-
-          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
-            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
-              <input type="checkbox" id="bulk-enable-featured" style="width: 16px; height: 16px;">
-              Update Featured Status
-            </label>
-            <select id="bulk-photo-featured" class="form-input form-select" disabled>
-              <option value="true">Yes, feature on Homepage</option>
-              <option value="false">No, remove from Homepage</option>
-            </select>
           </div>
         </div>
         <div class="modal-footer">
@@ -508,7 +479,6 @@
           <td><span class="badge badge-primary">${photo.category}</span></td>
           <td>${photo.subcategory ? `<span class="badge" style="background: var(--color-bg-hover); font-size: 10px;">${photo.subcategory}</span>` : ''}</td>
           <td>📅 ${formatDate(photo.date)}</td>
-          <td>${photo.featured ? '⭐ Yes' : 'No'}</td>
           <td>
             <div class="table-actions">
               <button class="btn btn-outline btn-sm" onclick="openEditModal('${photo.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Photo">✏️</button>
@@ -699,14 +669,13 @@
           document.getElementById('bulk-photo-category').disabled = true;
           document.getElementById('bulk-photo-subcategory').disabled = true;
           document.getElementById('bulk-photo-date').disabled = true;
-          document.getElementById('bulk-photo-featured').disabled = true;
 
           ModalSystem.open('bulk-edit-modal');
         });
       }
 
       // Bulk Edit field toggles
-      ['category', 'subcategory', 'date', 'featured'].forEach(field => {
+      ['category', 'subcategory', 'date'].forEach(field => {
         const checkbox = document.getElementById(`bulk-enable-${field}`);
         const input = document.getElementById(`bulk-photo-${field}`);
         if (checkbox && input) {
@@ -726,9 +695,8 @@
         const enableCat = document.getElementById('bulk-enable-category').checked;
         const enableSubcat = document.getElementById('bulk-enable-subcategory').checked;
         const enableDate = document.getElementById('bulk-enable-date').checked;
-        const enableFeat = document.getElementById('bulk-enable-featured').checked;
 
-        if (!enableCat && !enableSubcat && !enableDate && !enableFeat) {
+        if (!enableCat && !enableSubcat && !enableDate) {
           AdminToast.show('No fields selected for update.', 'error');
           return;
         }
@@ -737,7 +705,6 @@
         if (enableCat) updates.category = document.getElementById('bulk-photo-category').value;
         if (enableSubcat) updates.subcategory = document.getElementById('bulk-photo-subcategory').value.trim();
         if (enableDate) updates.date = document.getElementById('bulk-photo-date').value;
-        if (enableFeat) updates.featured = document.getElementById('bulk-photo-featured').value === 'true';
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -833,9 +800,9 @@
         const title = document.getElementById('photo-title').value;
         const category = document.getElementById('photo-category').value;
         const subcategory = document.getElementById('photo-subcategory').value.trim();
-        const description = document.getElementById('photo-desc').value;
+        const description = '';
         const date = document.getElementById('photo-date').value;
-        const featured = document.getElementById('photo-featured').checked;
+        const featured = false;
         
         const source = document.querySelector('input[name="photo-source"]:checked').value;
         const fileInput = document.getElementById('photo-file');
@@ -985,9 +952,7 @@
       document.getElementById('photo-title').value = photo.title;
       document.getElementById('photo-category').value = photo.category;
       document.getElementById('photo-subcategory').value = photo.subcategory || '';
-      document.getElementById('photo-desc').value = photo.description;
       document.getElementById('photo-date').value = photo.date;
-      document.getElementById('photo-featured').checked = photo.featured;
 
       const isExternal = photo.imageUrl && !photo.imageUrl.startsWith('data:');
       if (isExternal) {
