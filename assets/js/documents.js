@@ -258,7 +258,7 @@ function renderDocuments() {
       <div class="modern-doc-icon">PDF</div>
       <div class="modern-doc-content">
         <h3 class="modern-doc-title">${doc.title}</h3>
-        ${displayDate ? `<p style="font-size: 12px; color: var(--color-text-tertiary); margin-top: 4px;">📅 ${displayDate}</p>` : ''}
+        ${displayDate ? `<p style="font-size: 12px; color: var(--color-text-tertiary); margin-top: 4px;">${displayDate}</p>` : ''}
       </div>
       <div class="modern-doc-action">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
