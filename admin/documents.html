@@ -70,7 +70,6 @@
                 <th>Category</th>
                 <th>Date</th>
                 <th>Size</th>
-                <th>Featured</th>
                 <th style="width: 120px;">Actions</th>
               </tr>
             </thead>
@@ -127,41 +126,8 @@
           </div>
 
           <div class="form-group">
-            <label for="doc-desc" class="form-label">Description / Summary</label>
-            <textarea id="doc-desc" class="form-input form-textarea" required
-              placeholder="Provide a brief summary of what this document contains..."></textarea>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
-            <div class="form-group">
-              <label for="doc-type" class="form-label">File Extension</label>
-              <select id="doc-type" class="form-input form-select" required>
-                <option value="PDF">PDF Document</option>
-                <option value="DOC">Word Document (DOC)</option>
-                <option value="DOCX">Word Document (DOCX)</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="doc-size" class="form-label">File Size</label>
-              <input type="text" id="doc-size" class="form-input" required placeholder="e.g. 1.8 MB" value="1.2 MB">
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
-            <div class="form-group">
-              <label for="doc-date" class="form-label">Published Date</label>
-              <input type="date" id="doc-date" class="form-input" required>
-            </div>
-
-            <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
-              <span class="form-label">Options</span>
-              <label
-                style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="checkbox" id="doc-featured" style="width: 16px; height: 16px;">
-                Pin as Featured
-              </label>
-            </div>
+            <label for="doc-date" class="form-label">Published Date</label>
+            <input type="date" id="doc-date" class="form-input" required>
           </div>
 
           <div class="form-group">
@@ -239,17 +205,6 @@
               Update Published Date
             </label>
             <input type="date" id="bulk-doc-date" class="form-input" disabled>
-          </div>
-
-          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
-            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
-              <input type="checkbox" id="bulk-enable-featured" style="width: 16px; height: 16px;">
-              Update Featured Status
-            </label>
-            <select id="bulk-doc-featured" class="form-input form-select" disabled>
-              <option value="true">Yes, feature on Homepage</option>
-              <option value="false">No, remove from Homepage</option>
-            </select>
           </div>
         </div>
         <div class="modal-footer">
@@ -447,7 +402,6 @@
           </td>
           <td>📅 ${formatDate(doc.date)}</td>
           <td>${doc.fileSize}</td>
-          <td>${doc.featured ? '⭐ Yes' : 'No'}</td>
           <td>
             <div class="table-actions">
               <button class="btn btn-outline btn-sm" onclick="openEditModal('${doc.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Document">✏️</button>
@@ -617,14 +571,13 @@
           document.getElementById('bulk-doc-category').disabled = true;
           document.getElementById('bulk-doc-subcategory').disabled = true;
           document.getElementById('bulk-doc-date').disabled = true;
-          document.getElementById('bulk-doc-featured').disabled = true;
 
           ModalSystem.open('bulk-edit-modal');
         });
       }
 
       // Bulk Edit field toggles
-      ['category', 'subcategory', 'date', 'featured'].forEach(field => {
+      ['category', 'subcategory', 'date'].forEach(field => {
         const checkbox = document.getElementById(`bulk-enable-${field}`);
         const input = document.getElementById(`bulk-doc-${field}`);
         if (checkbox && input) {
@@ -644,9 +597,8 @@
         const enableCat = document.getElementById('bulk-enable-category').checked;
         const enableSubcat = document.getElementById('bulk-enable-subcategory').checked;
         const enableDate = document.getElementById('bulk-enable-date').checked;
-        const enableFeat = document.getElementById('bulk-enable-featured').checked;
 
-        if (!enableCat && !enableSubcat && !enableDate && !enableFeat) {
+        if (!enableCat && !enableSubcat && !enableDate) {
           AdminToast.show('No fields selected for update.', 'error');
           return;
         }
@@ -655,7 +607,6 @@
         if (enableCat) updates.category = document.getElementById('bulk-doc-category').value;
         if (enableSubcat) updates.subcategory = document.getElementById('bulk-doc-subcategory').value.trim();
         if (enableDate) updates.date = document.getElementById('bulk-doc-date').value;
-        if (enableFeat) updates.featured = document.getElementById('bulk-doc-featured').value === 'true';
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -710,11 +661,11 @@
         const title = document.getElementById('doc-title').value;
         const category = document.getElementById('doc-category').value;
         const subcategory = document.getElementById('doc-subcategory').value.trim();
-        const description = document.getElementById('doc-desc').value;
+        const description = '';
         const fileType = document.getElementById('doc-type').value;
         const fileSize = document.getElementById('doc-size').value;
         const date = document.getElementById('doc-date').value;
-        const featured = document.getElementById('doc-featured').checked;
+        const featured = false;
 
         const source = document.querySelector('input[name="doc-source"]:checked').value;
         const urlInput = document.getElementById('doc-url');
@@ -870,11 +821,9 @@
       document.getElementById('doc-title').value = doc.title;
       document.getElementById('doc-category').value = doc.category;
       document.getElementById('doc-subcategory').value = doc.subcategory || '';
-      document.getElementById('doc-desc').value = doc.description;
       document.getElementById('doc-type').value = doc.fileType;
       document.getElementById('doc-size').value = doc.fileSize;
       document.getElementById('doc-date').value = doc.date;
-      document.getElementById('doc-featured').checked = doc.featured;
 
       const isExternal = doc.downloadUrl && doc.downloadUrl !== '#';
       if (isExternal) {
