@@ -238,27 +238,11 @@ function renderDocuments() {
   }
 
   listContainer.innerHTML = paginationData.items.map(doc => {
-    let displayDate = '';
-    if (doc.title) {
-      const dateMatch = doc.title.match(/(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);
-      if (dateMatch) {
-        const day = parseInt(dateMatch[1], 10);
-        const month = parseInt(dateMatch[2], 10);
-        let year = parseInt(dateMatch[3], 10);
-        if (dateMatch[3].length === 2) year += 2000;
-        displayDate = `${day}.${month}.${year}`;
-      }
-    }
-    if (!displayDate) {
-      displayDate = typeof formatDate === 'function' ? formatDate(doc.date) : doc.date;
-    }
-
     return `
     <div class="modern-doc-card selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${String(doc.fileType||'PDF').toLowerCase()}">
       <div class="modern-doc-icon">PDF</div>
       <div class="modern-doc-content">
         <h3 class="modern-doc-title">${doc.title}</h3>
-        ${displayDate ? `<p style="font-size: 12px; color: var(--color-text-tertiary); margin-top: 4px;">${displayDate}</p>` : ''}
       </div>
       <div class="modern-doc-action">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
