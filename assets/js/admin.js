@@ -282,11 +282,12 @@ const AdminData = {
     if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
       try {
         console.log("🔄 Syncing admin databases with Firestore...");
-        const [photos, docs, sermons, announcements, settings] = await Promise.all([
+        const [photos, docs, sermons, announcements, lyrics, settings] = await Promise.all([
           DbService.get('photos'),
           DbService.get('documents'),
           DbService.get('sermons'),
           DbService.get('announcements'),
+          DbService.get('lyrics'),
           DbService.get('settings')
         ]);
 
@@ -294,6 +295,7 @@ const AdminData = {
         if (Array.isArray(docs)) localStorage.setItem('db_documents', JSON.stringify(docs));
         if (Array.isArray(sermons)) localStorage.setItem('db_sermons', JSON.stringify(sermons));
         if (Array.isArray(announcements)) localStorage.setItem('db_announcements', JSON.stringify(announcements));
+        if (Array.isArray(lyrics)) localStorage.setItem('db_lyrics', JSON.stringify(lyrics));
         if (settings) localStorage.setItem('db_settings', JSON.stringify(settings));
 
         console.log("✅ Sync complete!");
@@ -319,6 +321,10 @@ const AdminData = {
         if (settings.sermonCategories && typeof SermonCategories !== 'undefined') {
           SermonCategories.length = 0;
           SermonCategories.push('All', ...settings.sermonCategories.filter(c => c !== 'All'));
+        }
+        if (settings.LyricCategories && typeof LyricCategories !== 'undefined') {
+          LyricCategories.length = 0;
+          LyricCategories.push('All', ...settings.LyricCategories.filter(c => c !== 'All'));
         }
       }
 
