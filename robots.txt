@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 
-Sitemap: https://skkktp.netlify.app/sitemap.xml
+Sitemap: https://saikhamakawnktp.web.app/sitemap.xml
