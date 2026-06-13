@@ -47,10 +47,14 @@
             <span class="search-icon">🔍</span>
             <input type="text" id="admin-search-input" class="search-input" placeholder="Search documents by title...">
           </div>
-          <div>
+          <div style="display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center;">
             <select id="admin-filter-category" class="filter-select"
               style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
               <option value="All">All Categories</option>
+              <!-- Populated via JS -->
+            </select>
+            <select id="admin-filter-subcategory" class="filter-select" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2); display: none;">
+              <option value="All">All Sub-categories</option>
               <!-- Populated via JS -->
             </select>
           </div>
@@ -236,6 +240,7 @@
   <script>
     let currentSearch = '';
     let currentCategoryFilter = 'All';
+    let currentSubCategoryFilter = 'All';
 
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof Toast !== 'undefined') Toast.init();
@@ -285,6 +290,43 @@
       });
 
       renderCatEditorChips();
+    }
+
+    function updateSubCategoryFilter(category) {
+      const subSel = document.getElementById('admin-filter-subcategory');
+      if (!subSel) return;
+
+      if (category === 'All') {
+        subSel.style.display = 'none';
+        currentSubCategoryFilter = 'All';
+        return;
+      }
+
+      const docs = AdminData.get('documents') || [];
+      const subcats = Array.from(
+        new Set(
+          docs
+            .filter(d => d.category === category)
+            .map(d => d.subcategory && d.subcategory.trim())
+            .filter(Boolean)
+        )
+      ).sort();
+
+      if (subcats.length < 2) {
+        subSel.style.display = 'none';
+        currentSubCategoryFilter = 'All';
+        return;
+      }
+
+      subSel.style.display = '';
+      subSel.innerHTML = '<option value="All">All Sub-categories</option>';
+      subcats.forEach(s => {
+        const o = document.createElement('option');
+        o.value = s;
+        o.textContent = s;
+        if (s === currentSubCategoryFilter) o.selected = true;
+        subSel.appendChild(o);
+      });
     }
 
     /* --- Inline Category Editor --- */
@@ -371,6 +413,9 @@
       }
       if (currentCategoryFilter !== 'All') {
         filtered = filtered.filter(d => d.category === currentCategoryFilter);
+      }
+      if (currentSubCategoryFilter !== 'All') {
+        filtered = filtered.filter(d => d.subcategory === currentSubCategoryFilter);
       }
 
       if (filtered.length === 0) {
@@ -512,6 +557,14 @@
       // Category filter dropdown
       document.getElementById('admin-filter-category').addEventListener('change', (e) => {
         currentCategoryFilter = e.target.value;
+        currentSubCategoryFilter = 'All';
+        updateSubCategoryFilter(currentCategoryFilter);
+        renderDocsTable();
+      });
+
+      // Sub-category filter dropdown
+      document.getElementById('admin-filter-subcategory').addEventListener('change', (e) => {
+        currentSubCategoryFilter = e.target.value;
         renderDocsTable();
       });
 
