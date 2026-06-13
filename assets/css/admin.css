@@ -458,6 +458,60 @@
   background: var(--color-bg-hover);
 }
 
+/* Card layout for mobile tables */
+@media (max-width: 767px) {
+  .data-table table {
+    min-width: 100% !important;
+  }
+  
+  .data-table thead {
+    display: none;
+  }
+  
+  .data-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    padding: var(--sp-2) 0;
+  }
+  
+  .data-table tr {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--sp-4);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  
+  .data-table tr:hover td {
+    background: transparent;
+  }
+  
+  .data-table td {
+    display: flex;
+    align-items: center;
+    padding: var(--sp-2) 0 !important;
+    border-bottom: 1px dashed var(--color-border-light) !important;
+    text-align: left !important;
+    width: 100%;
+  }
+  
+  .data-table td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-top: var(--sp-2);
+  }
+
+  /* Make actions full width and spaced out if there are multiple */
+  .table-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
 .table-actions {
   display: flex;
   gap: var(--sp-1);
