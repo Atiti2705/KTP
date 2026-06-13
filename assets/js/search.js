@@ -51,6 +51,23 @@ const SearchEngine = {
   },
 
   /**
+   * Helper to extract date from title if it matches DD.MM.YYYY or DD.MM.YY, otherwise fallback to item.date
+   */
+  _getDate(item) {
+    if (item.title) {
+      const dateMatch = item.title.match(/(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);
+      if (dateMatch) {
+        const day = parseInt(dateMatch[1], 10);
+        const month = parseInt(dateMatch[2], 10) - 1;
+        let year = parseInt(dateMatch[3], 10);
+        if (dateMatch[3].length === 2) year += 2000;
+        return new Date(year, month, day);
+      }
+    }
+    return new Date(item.date);
+  },
+
+  /**
    * Sort items
    */
   sort(items, order = 'manual') {
@@ -61,15 +78,15 @@ const SearchEngine = {
           const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
           const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
           // If orderIndex is identical, fallback to newest
-          if (aIdx === bIdx) return new Date(b.date) - new Date(a.date);
+          if (aIdx === bIdx) return this._getDate(b) - this._getDate(a);
           return aIdx - bIdx;
         });
         break;
       case 'newest':
-        sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+        sorted.sort((a, b) => this._getDate(b) - this._getDate(a));
         break;
       case 'oldest':
-        sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+        sorted.sort((a, b) => this._getDate(a) - this._getDate(b));
         break;
       case 'a-z':
         sorted.sort((a, b) => a.title.localeCompare(b.title));
