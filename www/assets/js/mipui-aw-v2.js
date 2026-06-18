@@ -269,6 +269,9 @@ function setupPreviewModal() {
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(0,0,0,0.5); z-index: 10;">
           <h3 id="modal-doc-title" style="color: white; margin: 0; font-size: 1.2rem; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Document</h3>
           <div style="display: flex; gap: 16px; align-items: center;">
+             <button id="modal-doc-save" aria-label="Save" title="Save Document" style="background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+               <svg id="modal-doc-save-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+             </button>
              <a href="#" id="modal-doc-download" download style="color: white; text-decoration: none; display: flex; align-items: center; gap: 8px;" title="Download">
                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
              </a>
@@ -335,8 +338,13 @@ function openPreviewModal(docId) {
     if (downloadUrl && downloadUrl !== '#') {
       modalDownload.style.display = 'flex';
       modalDownload.href = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : downloadUrl;
-      modalDownload.onclick = () => {
-        Toast.show(`Downloading ${doc.title}...`, 'success');
+      modalDownload.onclick = async (e) => {
+        if (window.Capacitor && window.Capacitor.isNativePlatform() && window.NativeDownload) {
+          e.preventDefault();
+          await window.NativeDownload(modalDownload.href, `${doc.title}.pdf`);
+        } else {
+          Toast.show(`Downloading ${doc.title}...`, 'success');
+        }
       };
     } else {
       modalDownload.style.display = 'flex';
@@ -347,6 +355,40 @@ function openPreviewModal(docId) {
         Toast.show(`Downloading ${doc.title} (Simulated)...`, 'success');
       };
     }
+  }
+
+  const saveBtn = document.getElementById('modal-doc-save');
+  const saveIcon = document.getElementById('modal-doc-save-icon');
+  if (saveBtn && window.SaveService) {
+    const isSaved = SaveService.isSaved('mipuiaw', doc.id);
+    if (isSaved) {
+      saveIcon.setAttribute('fill', 'currentColor');
+    } else {
+      saveIcon.setAttribute('fill', 'none');
+    }
+    
+    // Remove old listeners to prevent duplicates
+    const newSaveBtn = saveBtn.cloneNode(true);
+    saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+    
+    newSaveBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const currentlySaved = SaveService.isSaved('mipuiaw', doc.id);
+      const icon = document.getElementById('modal-doc-save-icon');
+      if (currentlySaved) {
+        await SaveService.unsaveItem('mipuiaw', doc.id);
+        if(window.Toast) Toast.show('Mipui Aw removed from saved', 'success');
+        icon.setAttribute('fill', 'none');
+      } else {
+        await SaveService.saveItem('mipuiaw', doc.id, {
+          title: doc.title || 'Mipui Aw',
+          url: downloadUrl,
+          date: doc.date || new Date().toISOString()
+        });
+        if(window.Toast) Toast.show('Mipui Aw saved!', 'success');
+        icon.setAttribute('fill', 'currentColor');
+      }
+    });
   }
 
   ModalSystem.open('doc-modal');
@@ -393,17 +435,20 @@ function setupBulkDownload() {
 
   // Handle Download Selected
   if (btnDownload) {
-    btnDownload.addEventListener('click', () => {
+    btnDownload.addEventListener('click', async () => {
       const selectedIds = Array.from(docSelectionManager.getSelected());
       if (selectedIds.length === 0) return;
       
-      Toast.show(`Starting download of ${selectedIds.length} Mipui Aw...`, 'success');
+      const originalText = btnDownload.innerHTML;
+      btnDownload.innerHTML = '⏳ Downloading...';
+      btnDownload.disabled = true;
       
-      let delay = 0;
-      selectedIds.forEach(id => {
-        const doc = MipuiAwList.find(d => d.id === id);
-        if (doc && doc.downloadUrl && doc.downloadUrl !== '#') {
-          setTimeout(() => {
+      try {
+        let delay = 0;
+        for (let i = 0; i < selectedIds.length; i++) {
+          const id = selectedIds[i];
+          const doc = MipuiAwList.find(d => d.id === id);
+          if (doc && doc.downloadUrl && doc.downloadUrl !== '#') {
             let dlUrl = doc.downloadUrl;
             let fileId = '';
             const fileIdMatch = dlUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -416,18 +461,65 @@ function setupBulkDownload() {
             if (fileId) {
               dlUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
             }
-            const a = document.createElement('a');
-            a.href = dlUrl;
-            a.download = doc.title;
-            a.target = '_blank';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          }, delay);
-          delay += 1000;
+            
+            if (window.Capacitor && window.Capacitor.isNativePlatform() && window.NativeDownload) {
+              await window.NativeDownload(dlUrl, `${doc.title}.pdf`);
+              if (i < selectedIds.length - 1) await new Promise(r => setTimeout(r, 1000));
+            } else {
+              const a = document.createElement('a');
+              a.href = dlUrl;
+              a.download = doc.title;
+              a.target = '_blank';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              if (i < selectedIds.length - 1) await new Promise(r => setTimeout(r, 500));
+            }
+          }
         }
-      });
-      docSelectionManager.clearSelection();
+        if (window.Toast) Toast.show(`Downloaded ${selectedIds.length} Mipui Aw!`, 'success');
+      } catch (err) {
+        console.error("Error downloading files:", err);
+      } finally {
+        btnDownload.innerHTML = originalText;
+        btnDownload.disabled = false;
+        docSelectionManager.clearSelection();
+        if (selectAllCb) selectAllCb.checked = false;
+      }
+    });
+  }
+
+  if (btnSave) {
+    btnSave.addEventListener('click', async () => {
+      const selectedIds = Array.from(docSelectionManager.getSelected());
+      if (selectedIds.length === 0) return;
+      
+      const originalHtml = btnSave.innerHTML;
+      btnSave.innerHTML = '⏳';
+      btnSave.disabled = true;
+      
+      try {
+        if (window.SaveService) {
+          const promises = selectedIds.map(id => {
+             const docObj = MipuiAwList.find(d => d.id === id);
+             if (!docObj) return Promise.resolve();
+             return SaveService.saveItem('mipuiaw', docObj.id, {
+               title: docObj.title || 'Mipui Aw',
+               url: docObj.downloadUrl || docObj.fileUrl || '',
+               date: docObj.date || new Date().toISOString()
+             });
+          });
+          await Promise.all(promises);
+          if(window.Toast) Toast.show(`Saved ${selectedIds.length} items!`, 'success');
+        }
+      } catch (err) {
+        console.error("Bulk save error:", err);
+      } finally {
+        btnSave.innerHTML = originalHtml;
+        btnSave.disabled = false;
+        docSelectionManager.clearSelection();
+        if (selectAllCb) selectAllCb.checked = false;
+      }
     });
   }
 }

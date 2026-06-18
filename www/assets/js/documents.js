@@ -187,6 +187,9 @@ function setupPreviewModal() {
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(0,0,0,0.5); z-index: 10;">
           <h3 id="modal-sermon-title" style="color: white; margin: 0; font-size: 1.2rem; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Document Notes</h3>
           <div style="display: flex; gap: 16px; align-items: center;">
+             <button id="modal-sermon-save" aria-label="Save" title="Save Document" style="background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+               <svg id="modal-sermon-save-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+             </button>
              <a href="#" id="modal-sermon-download" download style="color: white; text-decoration: none; display: flex; align-items: center; gap: 8px;" title="Download">
                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
              </a>
@@ -253,8 +256,15 @@ function openPreviewModal(sermonId) {
     if (downloadUrl && downloadUrl !== '#') {
       modalDownload.style.display = 'flex';
       modalDownload.href = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : downloadUrl;
-      modalDownload.onclick = () => {
-        Toast.show(`Downloading ${sermon.title}...`, 'success');
+      modalDownload.onclick = async (e) => {
+        if (window.Capacitor && window.Capacitor.isNativePlatform() && window.NativeDownload) {
+          e.preventDefault();
+          let finalName = sermon.title;
+          if (!finalName.includes('.')) finalName += '.pdf';
+          await window.NativeDownload(modalDownload.href, finalName);
+        } else {
+          Toast.show(`Downloading ${sermon.title}...`, 'success');
+        }
       };
     } else {
       modalDownload.style.display = 'flex';
@@ -265,6 +275,40 @@ function openPreviewModal(sermonId) {
         Toast.show(`Downloading notes: ${sermon.title} (Simulated)...`, 'success');
       };
     }
+  }
+
+  const saveBtn = document.getElementById('modal-sermon-save');
+  const saveIcon = document.getElementById('modal-sermon-save-icon');
+  if (saveBtn && window.SaveService) {
+    const isSaved = SaveService.isSaved('sermons', sermon.id);
+    if (isSaved) {
+      saveIcon.setAttribute('fill', 'currentColor');
+    } else {
+      saveIcon.setAttribute('fill', 'none');
+    }
+    
+    // Remove old listeners to prevent duplicates
+    const newSaveBtn = saveBtn.cloneNode(true);
+    saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+    
+    newSaveBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const currentlySaved = SaveService.isSaved('sermons', sermon.id);
+      const icon = document.getElementById('modal-sermon-save-icon');
+      if (currentlySaved) {
+        await SaveService.unsaveItem('sermons', sermon.id);
+        if(window.Toast) Toast.show('Document removed from saved', 'success');
+        icon.setAttribute('fill', 'none');
+      } else {
+        await SaveService.saveItem('sermons', sermon.id, {
+          title: sermon.title || 'Document',
+          url: downloadUrl,
+          date: sermon.date || new Date().toISOString()
+        });
+        if(window.Toast) Toast.show('Document saved!', 'success');
+        icon.setAttribute('fill', 'currentColor');
+      }
+    });
   }
 
   ModalSystem.open('sermon-modal');
@@ -323,20 +367,26 @@ function setupBulkDownload() {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         try {
-          const response = await fetch(file.url, { mode: 'cors' });
-          if (!response.ok) throw new Error('Network response was not ok');
-          const blob = await response.blob();
-          const blobUrl = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = blobUrl;
           let finalName = file.name;
           if (!finalName.includes('.')) finalName += '.pdf';
-          a.download = finalName;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(blobUrl);
-          if (i < files.length - 1) await new Promise(r => setTimeout(r, 500));
+          
+          if (window.Capacitor && window.Capacitor.isNativePlatform() && window.NativeDownload) {
+            await window.NativeDownload(file.url, finalName);
+            if (i < files.length - 1) await new Promise(r => setTimeout(r, 1000));
+          } else {
+            const response = await fetch(file.url, { mode: 'cors' });
+            if (!response.ok) throw new Error('Network response was not ok');
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = finalName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+            if (i < files.length - 1) await new Promise(r => setTimeout(r, 500));
+          }
         } catch (err) {
           console.error("Failed to download file:", file.url, err);
           window.open(file.url, '_blank');
