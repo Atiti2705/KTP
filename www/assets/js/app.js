@@ -51,29 +51,33 @@ window.NativeDownload = async function(url, filename) {
   try {
     if (window.Toast) Toast.show('Downloading...', 'success');
     const { Filesystem } = window.Capacitor.Plugins;
-    const isPhoto = url.includes('lh3.googleusercontent') || filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.png');
+    const isPhoto = url.includes('lh3.googleusercontent') || filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.png') || filename.toLowerCase().endsWith('.jpeg');
     
     if (isPhoto && window.Capacitor.Plugins.Media) {
-      const perms = await window.Capacitor.Plugins.Media.checkPermissions();
-      if (perms.publicStorage !== 'granted') {
-        const req = await window.Capacitor.Plugins.Media.requestPermissions();
-        if (req.publicStorage !== 'granted') {
-          throw new Error('Permission denied');
-        }
+      try {
+        await window.Capacitor.Plugins.Media.requestPermissions();
+      } catch (e) {
+        console.warn('Permission request issue', e);
       }
     }
 
     const downloadResult = await Filesystem.downloadFile({
       url: url,
-      path: filename || (isPhoto ? 'photo.jpg' : 'document.pdf'),
-      directory: isPhoto ? 'CACHE' : 'DOCUMENTS'
+      path: filename || (isPhoto ? `photo_${Date.now()}.jpg` : `document_${Date.now()}.pdf`),
+      directory: 'DOCUMENTS'
     });
+    
     if (isPhoto && window.Capacitor.Plugins.Media) {
-      await window.Capacitor.Plugins.Media.savePhoto({ path: downloadResult.path });
-      if (window.Toast) Toast.show('Saved photo to gallery!', 'success');
-    } else {
-      if (window.Toast) Toast.show('Saved to Documents!', 'success');
+      try {
+        await window.Capacitor.Plugins.Media.savePhoto({ path: downloadResult.path });
+        if (window.Toast) Toast.show('Saved photo to gallery!', 'success');
+        return true;
+      } catch (err) {
+        console.error('Media savePhoto failed:', err);
+      }
     }
+    
+    if (window.Toast) Toast.show(`Saved ${filename} to Documents!`, 'success');
     return true;
   } catch (err) {
     console.error('Native download error:', err);
