@@ -178,7 +178,7 @@
           <div style="width: 60px; height: 60px; border-radius: 50%; padding: 2px; border: 2px solid var(--brand-sky); margin-bottom: 6px; cursor: pointer;" onclick="openOBPreviewModal(this.dataset.img, this.dataset.name, this.dataset.position)" data-img="${imageUrl}" data-name="${(ob.name||'').replace(/&/g, '&amp;').replace(/\"/g, '&quot;')}" data-position="${(ob.position||'').replace(/&/g, '&amp;').replace(/\"/g, '&quot;')}">
             <img src="${imageUrl}" alt="${ob.name}" onerror="this.onerror=null; this.src='assets/images/logo.png';" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-bg);">
           </div>
-          <div style="font-size: 12px; font-weight: 600; color: var(--color-text); width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ob.name}</div>
+          <div style="font-size: 12px; font-weight: 600; color: var(--color-text); width: 100%; line-height: 1.2; word-wrap: break-word; overflow-wrap: break-word;">${ob.name}</div>
           <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 2px;">${ob.position}</div>
         </div>
       `}).join('');
