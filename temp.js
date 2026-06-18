@@ -1,0 +1,289 @@
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Render static header and footer immediately for fast visual load
+      renderHeader('home');
+      renderFooter();
+
+      // Render immediately with local/cached data
+      renderHomepage();
+
+      // Load dynamic databases in parallel
+      try {
+        const [annData, photoData, docData, sermonData, settings] = await Promise.all([
+          DbService.get('announcements').catch(() => null),
+          DbService.get('photos').catch(() => null),
+          DbService.get('documents').catch(() => null),
+          DbService.get('sermons').catch(() => null),
+          DbService.get('settings').catch(() => null)
+        ]);
+
+        let needsRerender = false;
+
+        if (annData && Array.isArray(annData)) {
+          Announcements.length = 0;
+          Announcements.push(...annData);
+          needsRerender = true;
+        }
+        if (photoData && Array.isArray(photoData)) {
+          Photos.length = 0;
+          Photos.push(...photoData);
+          needsRerender = true;
+        }
+        if (docData && Array.isArray(docData)) {
+          Documents.length = 0;
+          Documents.push(...docData);
+          needsRerender = true;
+        }
+        if (sermonData && Array.isArray(sermonData)) {
+          Sermons.length = 0;
+          Sermons.push(...sermonData);
+          needsRerender = true;
+        }
+
+        if (settings) {
+          if (settings.churchInfo) Object.assign(ChurchInfo, settings.churchInfo);
+          if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
+          
+          // Re-render header/footer if settings were fetched from DB
+          renderHeader('home');
+          renderFooter();
+          needsRerender = true;
+        }
+
+        if (needsRerender) {
+          renderHomepage();
+        }
+      } catch (err) {
+        console.error("Error loading home page database...", err);
+      }
+    });
+
+    function renderHomepage() {
+      // Hide standard hero elements if they exist
+      const heroContent = document.querySelector('.hero-content');
+      if (heroContent) heroContent.style.display = 'none';
+
+      // Rebuild main structure
+      const main = document.querySelector('.main-content');
+      main.innerHTML = `
+        <!-- STORIES BAR -->
+        <div class="stories-bar" style="padding: 10px; border-bottom: 1px solid var(--color-border-light); background: var(--color-bg); overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch;">
+          <div id="stories-container" style="display: flex; gap: 12px; padding: 0 5px;"></div>
+        </div>
+
+        <!-- CREATE POST WIDGET -->
+        <div id="create-post-widget" style="padding: 15px; border-bottom: 1px solid var(--color-border-light); background: var(--color-bg); display: none;">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div id="post-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--color-border-light);"></div>
+            <input type="text" id="post-input-text" placeholder="What's on your mind?" style="flex: 1; border: none; background: transparent; font-size: 15px; outline: none; color: var(--color-text);">
+            <button id="btn-submit-post" style="background: none; border: none; color: var(--brand-sky); font-weight: bold; padding: 5px 10px;">Post</button>
+          </div>
+        </div>
+
+        <!-- INSTAGRAM FEED -->
+        <div id="feed-container" style="background: var(--color-bg-alt); min-height: 50vh;"></div>
+      `;
+
+      setupPostWidget();
+      renderAnnouncements(); // This is now renderStories
+      renderFeed();
+    }
+
+    function setupPostWidget() {
+      const widget = document.getElementById('create-post-widget');
+      const avatarContainer = document.getElementById('post-user-avatar');
+      const submitBtn = document.getElementById('btn-submit-post');
+      const input = document.getElementById('post-input-text');
+
+      if (typeof AuthService !== 'undefined') {
+        AuthService.onAuthStateChanged(user => {
+          if (user) {
+            widget.style.display = 'block';
+            if (user.photoURL) {
+              avatarContainer.innerHTML = `<img src="${user.photoURL}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            } else {
+              const first = user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U';
+              avatarContainer.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--color-primary); color:white; font-weight:bold;">${first}</div>`;
+            }
+          } else {
+            widget.style.display = 'none';
+          }
+        });
+      }
+
+      submitBtn.addEventListener('click', async () => {
+        const text = input.value.trim();
+        if (!text) return;
+        if (!AuthService.currentUser) return;
+
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '...';
+        submitBtn.disabled = true;
+
+        try {
+          const newPost = {
+            title: text,
+            author: AuthService.currentUser.displayName || 'Member',
+            authorId: AuthService.currentUser.uid,
+            date: new Date().toISOString(),
+            createdAt: new Date().toISOString()
+          };
+          
+          if (typeof DbService !== 'undefined') {
+            await DbService.add('posts', newPost);
+          }
+          if (typeof Posts !== 'undefined') {
+            Posts.unshift(newPost); // Update local array for immediate render
+          }
+          
+          input.value = '';
+          renderFeed();
+          if (window.Toast) Toast.show('Post created!', 'success');
+        } catch (err) {
+          console.error("Error creating post:", err);
+          if (window.Toast) Toast.show('Failed to create post.', 'error');
+        } finally {
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }
+      });
+    }
+
+    function renderAnnouncements() {
+      const container = document.getElementById('stories-container');
+      if (!container) return;
+
+      const sorted = [...Announcements].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      const yourStoryHtml = `
+        <a href="#" class="story-item" onclick="ModalSystem.open('create-story-modal'); return false;" style="position: relative; display: inline-flex; flex-direction: column; align-items: center; width: 70px; text-decoration: none; color: inherit;" id="your-story-btn">
+          <div class="story-ring seen" style="border-radius: 50%; padding: 2px; border: 2px solid transparent; width: 64px; height: 64px; position: relative;">
+            <img src="assets/images/logo.png" alt="Your Story" class="story-avatar" id="your-story-avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-bg);">
+            <div style="position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; background: var(--brand-sky); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: bold; border: 2px solid var(--color-bg); line-height: 1;">+</div>
+          </div>
+          <div class="story-name" style="font-size: 11px; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">Your Story</div>
+        </a>
+      `;
+
+      container.innerHTML = yourStoryHtml + sorted.map(ann => {
+        let avatarUrl = 'assets/images/logo.png'; // fallback
+        if (ann.imageUrl) {
+          avatarUrl = typeof convertDriveUrl === 'function' ? convertDriveUrl(ann.imageUrl) : ann.imageUrl;
+        }
+        
+        return `
+          <a href="${ann.linkUrl || '#'}" class="story-item" onclick="if(!'${ann.linkUrl}') { ModalSystem.open('announcement-${ann.id}'); return false; }" style="display: inline-flex; flex-direction: column; align-items: center; width: 70px; text-decoration: none; color: inherit;">
+            <div class="story-ring ${ann.featured ? '' : 'seen'}" style="border-radius: 50%; padding: 2px; border: 2px solid ${ann.featured ? 'var(--brand-sky)' : 'var(--color-border-light)'}; width: 64px; height: 64px;">
+              <img src="${avatarUrl}" alt="Story" class="story-avatar" onerror="this.onerror=null; this.src='assets/images/logo.png';" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-bg);">
+            </div>
+            <div class="story-name" style="font-size: 11px; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${ann.title}</div>
+          </a>
+        `;
+      }).join('');
+      
+      // Update Your Story avatar if logged in
+      if (typeof AuthService !== 'undefined') {
+        const user = AuthService.getCurrentUser();
+        if (user) {
+          const btn = document.getElementById('your-story-btn');
+          const avatar = document.getElementById('your-story-avatar');
+          if (btn) btn.onclick = function() { ModalSystem.open('create-story-modal'); return false; };
+          if (avatar && user.photoURL) avatar.src = user.photoURL;
+        }
+      }
+    }
+
+    function renderFeed() {
+      const container = document.getElementById('feed-container');
+      if (!container) return;
+
+      const p = typeof Posts !== 'undefined' ? Posts : [];
+
+      const allItems = [
+        ...p.map(post => ({...post, type: 'post'})),
+        ...Photos.map(photo => ({...photo, type: 'photo'})),
+        ...Documents.map(doc => ({...doc, type: 'document'})),
+        ...Sermons.map(s => ({...s, type: 'sermon'}))
+      ].sort((a, b) => new Date(b.date || b.createdAt || 0) - new Date(a.date || a.createdAt || 0));
+
+      container.innerHTML = allItems.slice(0, 20).map(item => {
+        // Build author info
+        const authorName = item.author || item.speaker || "KṬP Saikhamakawn";
+        const authorAvatar = "assets/images/logo.png";
+        
+        // Build media section
+        let mediaHtml = '';
+        if ((item.type === 'photo' || item.type === 'post') && item.imageUrl) {
+          const finalUrl = typeof convertDriveUrl === 'function' ? convertDriveUrl(item.imageUrl) : item.imageUrl;
+          mediaHtml = `<img src="${finalUrl}" class="ig-post-media" alt="${item.title}" loading="lazy" onerror="this.onerror=null; this.src='assets/images/logo.png';" style="width: 100%; max-height: 500px; object-fit: contain; background: black;">`;
+        } else if (item.type === 'document' || item.type === 'sermon') {
+          const icon = item.type === 'document' ? '📄' : '🎙️';
+          mediaHtml = `
+            <div class="ig-post-doc-icon" onclick="${item.downloadUrl && item.downloadUrl !== '#' ? `window.open('${item.downloadUrl}', '_blank')` : ''}" style="padding: 40px 20px; background: var(--color-bg); text-align: center; border-top: 1px solid var(--color-border-light); border-bottom: 1px solid var(--color-border-light); cursor: pointer;">
+              <span style="font-size: 3rem;">${icon}</span>
+              <h3 style="margin-top: 10px; font-size: 1rem;">${item.title}</h3>
+              <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Tap to download</p>
+            </div>
+          `;
+        }
+
+        const likesCount = Math.floor(Math.random() * 200) + 15;
+
+        return `
+          <div class="ig-post" style="background: var(--color-bg); margin-bottom: 15px; border-bottom: 1px solid var(--color-border-light);">
+            <div class="ig-post-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px;">
+              <a href="#" class="ig-post-user" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                <img src="${authorAvatar}" class="ig-post-avatar" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; border: 1px solid var(--color-border-light);">
+                <span class="ig-post-username" style="font-weight: 600; font-size: 14px;">${authorName}</span>
+              </a>
+              <button class="ig-post-options" style="background: none; border: none; color: var(--color-text);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="1.5"></circle><circle cx="6" cy="12" r="1.5"></circle><circle cx="18" cy="12" r="1.5"></circle></svg>
+              </button>
+            </div>
+            
+            ${mediaHtml}
+
+            <div class="ig-post-actions" style="display: flex; justify-content: space-between; padding: 10px 15px 5px;">
+              <div class="ig-post-actions-left" style="display: flex; gap: 15px;">
+                <button class="ig-post-action-btn" onclick="this.style.color='var(--brand-red)'" style="background: none; border: none; padding: 0; color: var(--color-text);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                <button class="ig-post-action-btn" style="background: none; border: none; padding: 0; color: var(--color-text);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></button>
+                <button class="ig-post-action-btn" style="background: none; border: none; padding: 0; color: var(--color-text);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
+              </div>
+              <button class="ig-post-action-btn" style="background: none; border: none; padding: 0; color: var(--color-text);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+            </div>
+
+            <div class="ig-post-likes" style="padding: 0 15px; font-weight: 600; font-size: 14px; margin-bottom: 5px;">${likesCount} likes</div>
+            
+            <div class="ig-post-caption" style="padding: 0 15px; font-size: 14px; line-height: 1.4; margin-bottom: 5px;">
+              <span class="username" style="font-weight: 600;">${authorName}</span> ${item.description || item.title}
+            </div>
+
+            <div class="ig-post-time" style="padding: 0 15px; font-size: 12px; color: var(--color-text-secondary); margin-bottom: 10px; text-transform: uppercase;">${formatDate(item.date)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderSocialGrid() {
+      const container = document.getElementById('social-grid');
+      if (!container) return;
+
+      container.innerHTML = `
+        <a href="${SocialMedia.instagram.url}" target="_blank" rel="noopener" class="social-card instagram" id="social-instagram">
+          <div class="social-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
+          <span class="social-card-name">${SocialMedia.instagram.label}</span>
+          <span class="social-card-handle">${SocialMedia.instagram.handle}</span>
+        </a>
+        <a href="${SocialMedia.facebook.url}" target="_blank" rel="noopener" class="social-card facebook" id="social-facebook">
+          <div class="social-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div>
+          <span class="social-card-name">${SocialMedia.facebook.label}</span>
+          <span class="social-card-handle">${SocialMedia.facebook.handle}</span>
+        </a>
+        <a href="${SocialMedia.youtube.url}" target="_blank" rel="noopener" class="social-card youtube" id="social-youtube">
+          <div class="social-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
+          <span class="social-card-name">${SocialMedia.youtube.label}</span>
+          <span class="social-card-handle">${SocialMedia.youtube.handle}</span>
+        </a>
+      `;
+    }
+  

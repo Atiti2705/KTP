@@ -1,0 +1,223 @@
+/* ============================================
+   KṬP Saikhamakawn — Mizo Puan Patterns
+   CSS-generated traditional weave patterns
+   Inspired by the logo's ribbon/puan design
+   ============================================ */
+
+/* === Mizo Puan Pattern (Black/Red/Yellow Grid) === */
+.mizo-pattern {
+  background-color: #1a1a1a;
+  background-image:
+    /* Red vertical lines */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      rgba(220, 20, 60, 0.85) 8px,
+      rgba(220, 20, 60, 0.85) 10px,
+      transparent 10px,
+      transparent 18px
+    ),
+    /* Red horizontal lines */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 8px,
+      rgba(220, 20, 60, 0.85) 8px,
+      rgba(220, 20, 60, 0.85) 10px,
+      transparent 10px,
+      transparent 18px
+    ),
+    /* Yellow accent lines vertical */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 36px,
+      rgba(255, 215, 0, 0.7) 36px,
+      rgba(255, 215, 0, 0.7) 38px,
+      transparent 38px,
+      transparent 54px
+    ),
+    /* Yellow accent lines horizontal */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 36px,
+      rgba(255, 215, 0, 0.7) 36px,
+      rgba(255, 215, 0, 0.7) 38px,
+      transparent 38px,
+      transparent 54px
+    );
+}
+
+/* Subtle pattern overlay for sections */
+.mizo-pattern-subtle {
+  position: relative;
+}
+
+.mizo-pattern-subtle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.04;
+  pointer-events: none;
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      var(--brand-red) 8px,
+      var(--brand-red) 10px,
+      transparent 10px,
+      transparent 18px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 8px,
+      var(--brand-red) 8px,
+      var(--brand-red) 10px,
+      transparent 10px,
+      transparent 18px
+    );
+}
+
+/* === Decorative Border Pattern (top or bottom of sections) === */
+.mizo-border-top,
+.mizo-border-bottom {
+  position: relative;
+}
+
+.mizo-border-top::before,
+.mizo-border-bottom::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--brand-gold) 0%,
+    var(--brand-red) 25%,
+    var(--brand-black) 50%,
+    var(--brand-red) 75%,
+    var(--brand-gold) 100%
+  );
+}
+
+/* === Section Divider with Mizo motif === */
+.mizo-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);
+  padding: var(--sp-6) 0;
+}
+
+.mizo-divider::before,
+.mizo-divider::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--brand-gold) 30%,
+    var(--brand-red) 50%,
+    var(--brand-gold) 70%,
+    transparent
+  );
+}
+
+.mizo-divider .divider-icon {
+  color: var(--brand-gold);
+  font-size: var(--fs-lg);
+}
+
+/* === Footer Puan Strip === */
+.footer-puan-strip {
+  width: 100%;
+  height: 8px;
+  background-color: #1a1a1a;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 4px,
+      rgba(220, 20, 60, 0.9) 4px,
+      rgba(220, 20, 60, 0.9) 5px,
+      transparent 5px,
+      transparent 9px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 215, 0, 0.7) 2px,
+      rgba(255, 215, 0, 0.7) 3px,
+      transparent 3px,
+      transparent 5px
+    );
+}
+
+/* === Hero Pattern Overlay === */
+.hero-pattern-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to top, var(--color-bg), transparent);
+}
+
+.hero-pattern-overlay::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--brand-gold),
+    var(--brand-red),
+    var(--brand-gold),
+    var(--brand-red),
+    var(--brand-gold)
+  );
+}
+
+/* === Card Mizo accent line === */
+.mizo-accent-line {
+  width: 40px;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--brand-gold), var(--brand-red));
+}
+
+/* === Puan Corner Decoration === */
+.mizo-corner {
+  position: relative;
+}
+
+.mizo-corner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, 
+    var(--brand-gold) 0%, 
+    var(--brand-gold) 33%, 
+    var(--brand-red) 33%, 
+    var(--brand-red) 66%, 
+    var(--brand-black) 66%
+  );
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  opacity: 0.8;
+  border-radius: 0 var(--radius-lg) 0 0;
+}

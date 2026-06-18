@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Office Bearers — KṬP Saikhamakawn</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../assets/css/variables.css?v=104">
+  <link rel="stylesheet" href="../assets/css/base.css?v=104">
+  <link rel="stylesheet" href="../assets/css/components.css?v=104">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=104">
+</head>
+
+<body>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside id="admin-sidebar"></aside>
+
+    <!-- Main Content Panel -->
+    <main class="admin-main">
+
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+          <div>
+            <h1 class="admin-page-title">Office Bearers Manager</h1>
+            <p class="admin-page-desc">Manage the 2026 Office Bearers displayed on the homepage</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: var(--sp-3); align-items: center;">
+          <button class="btn btn-primary" id="btn-add-ob">➕ Add Member</button>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="data-table-wrapper" style="margin-top: var(--sp-4);">
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 40px; text-align: center;" title="Drag to reorder">↕️</th>
+                <th style="width: 60px;">Photo</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th style="width: 120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ob-table-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Edit/Add Modal -->
+  <div class="modal-backdrop" id="ob-form-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-form-title">Add New Office Bearer</h3>
+        <button class="modal-close" id="close-ob-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="ob-crud-form">
+        <input type="hidden" id="ob-action-type" value="add">
+        <input type="hidden" id="ob-edit-id" value="">
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="ob-name" class="form-label">Name</label>
+            <input type="text" id="ob-name" class="form-input" required placeholder="e.g. John Doe">
+          </div>
+
+          <div class="form-group">
+            <label for="ob-position" class="form-label">Position</label>
+            <input type="text" id="ob-position" class="form-input" required placeholder="e.g. Leader">
+          </div>
+
+          <div class="form-group">
+            <label for="ob-image" class="form-label">Photo Image Link (Google Drive URL)</label>
+            <input type="url" id="ob-image" class="form-input" placeholder="https://drive.google.com/file/d/.../view">
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: 5px;">Paste a Google Drive share link. It will automatically be converted to a direct image link.</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Member</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=104"></script>
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=104"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=104"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=104"></script>
+
+  <!-- App Configuration & Services -->
+  <script src="../assets/js/firebase-config.js?v=104"></script>
+  <script src="../assets/js/theme.js?v=104"></script>
+  <script src="../assets/js/data.js?v=104"></script>
+  <script src="../assets/js/auth.js?v=104"></script>
+  <script src="../assets/js/db-service.js?v=104"></script>
+  <script src="../assets/js/components.js?v=104"></script>
+  <script src="../assets/js/admin.js?v=104"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof Toast !== 'undefined') Toast.init();
+
+      renderOBTable();
+      setupEvents();
+      initSortable();
+    });
+
+    function renderOBTable() {
+      const tbody = document.getElementById('ob-table-body');
+      if (!tbody) return;
+
+      const members = AdminData.get('ob_members') || [];
+
+      // Sort by orderIndex if present
+      members.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+
+      if (members.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+              No Office Bearers found.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = members.map(m => {
+        const imageUrl = m.image && typeof convertDriveUrl === 'function' ? convertDriveUrl(m.image) : (m.image || '../assets/images/logo.png');
+        return `
+          <tr data-id="${m.id}">
+            <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
+            <td>
+              <img src="${imageUrl}" alt="${m.name}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='../assets/images/logo.png';" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+            </td>
+            <td style="font-weight: var(--fw-semibold);">${m.name}</td>
+            <td>${m.position}</td>
+            <td>
+              <div class="table-actions">
+                <button class="btn btn-outline btn-sm" onclick="openEditModal('${m.id}')" style="padding:4px 8px; font-size:12px;" title="Edit">✏️</button>
+                <button class="btn btn-outline btn-sm" onclick="confirmDeleteOB('${m.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete">❌</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function initSortable() {
+      const tbody = document.getElementById('ob-table-body');
+      if (typeof Sortable === 'undefined' || !tbody) return;
+
+      new Sortable(tbody, {
+        animation: 150,
+        handle: '.drag-handle',
+        onEnd: async function () {
+          const rows = tbody.querySelectorAll('tr[data-id]');
+          const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
+          
+          try {
+            await AdminData.reorder('ob_members', newOrderIds);
+            AdminToast.show('Office Bearers reordered successfully!', 'success');
+          } catch (e) {
+            console.error(e);
+            AdminToast.show('Failed to save new order.', 'error');
+            renderOBTable(); // Revert
+          }
+        }
+      });
+    }
+
+    function setupEvents() {
+      // Show Add Modal
+      document.getElementById('btn-add-ob').addEventListener('click', () => {
+        document.getElementById('ob-crud-form').reset();
+        document.getElementById('ob-action-type').value = 'add';
+        document.getElementById('modal-form-title').textContent = 'Add New Office Bearer';
+        ModalSystem.open('ob-form-modal');
+      });
+
+      // Close modal actions
+      const closeModal = () => ModalSystem.close('ob-form-modal');
+      document.getElementById('close-ob-modal').addEventListener('click', closeModal);
+      document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+
+      // Form Submit (Save/Update)
+      document.getElementById('ob-crud-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const actionType = document.getElementById('ob-action-type').value;
+        const obId = document.getElementById('ob-edit-id').value;
+
+        const name = document.getElementById('ob-name').value;
+        const position = document.getElementById('ob-position').value;
+        const image = document.getElementById('ob-image').value;
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        try {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⌛ Saving...';
+
+          if (actionType === 'add') {
+            const newOB = {
+              name,
+              position,
+              image
+            };
+            await AdminData.add('ob_members', newOB);
+            AdminToast.show('Member added successfully!', 'success');
+          } else {
+            const updatedFields = {
+              name,
+              position,
+              image
+            };
+            await AdminData.update('ob_members', obId, updatedFields);
+            AdminToast.show('Member updated successfully!', 'success');
+          }
+
+          closeModal();
+          renderOBTable();
+        } catch (err) {
+          console.error("Error saving member:", err);
+          AdminToast.show('Error saving member: ' + (err.message || 'Permission denied'), 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
+    }
+
+    // Exposed to onclick triggers
+    window.openEditModal = function (id) {
+      const members = AdminData.get('ob_members');
+      const m = members.find(a => a.id === id);
+      if (!m) return;
+
+      document.getElementById('ob-action-type').value = 'edit';
+      document.getElementById('ob-edit-id').value = id;
+      document.getElementById('modal-form-title').textContent = 'Edit Office Bearer';
+
+      document.getElementById('ob-name').value = m.name;
+      document.getElementById('ob-position').value = m.position;
+      document.getElementById('ob-image').value = m.image || '';
+
+      ModalSystem.open('ob-form-modal');
+    };
+
+    window.confirmDeleteOB = async function (id) {
+      const members = AdminData.get('ob_members');
+      const m = members.find(a => a.id === id);
+      if (!m) return;
+
+      if (confirm(`Are you sure you want to delete "${m.name}"?`)) {
+        try {
+          await AdminData.delete('ob_members', id);
+          AdminToast.show('Member deleted.', 'info');
+          renderOBTable();
+        } catch (err) {
+          console.error("Error deleting member:", err);
+          AdminToast.show('Error deleting member: ' + (err.message || 'Permission denied'), 'error');
+        }
+      }
+    };
+  </script>
+</body>
+
+</html>

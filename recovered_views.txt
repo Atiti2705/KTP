@@ -1,0 +1,75 @@
+
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\admin\\\\index.html\"","toolAction":"\"Viewing admin index.html\"","toolSummary":"\"View admin/index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","toolAction":"\"Viewing main index.html\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"250","StartLine":"150","toolAction":"\"Viewing index.html feed\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"149","StartLine":"100","toolAction":"\"Viewing index.html\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"100","StartLine":"70","toolAction":"\"Viewing index.html DOMContentLoaded\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"60","StartLine":"30","toolAction":"\"Viewing index.html structure\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"200","StartLine":"170","toolAction":"\"Viewing index.html feed\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"250","StartLine":"200","toolAction":"\"Viewing index.html renderFeed\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"300","StartLine":"250","toolAction":"\"Viewing index.html renderFeed\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"140","StartLine":"80","toolAction":"\"Viewing index.html fetch block\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\admin\\\\index.html\"","EndLine":"100","StartLine":"60","toolAction":"\"Viewing admin index.html\"","toolSummary":"\"View admin index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\admin\\\\index.html\"","EndLine":"60","StartLine":"30","toolAction":"\"Viewing admin index.html body\"","toolSummary":"\"View admin index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"300","StartLine":"100","toolAction":"\"Viewing index.html\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"250","StartLine":"150","toolAction":"\"Viewing index.html Mipui Aw section\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"350","StartLine":"250","toolAction":"\"Viewing index.html Mipui Aw rendering\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"350","StartLine":"270","toolAction":"\"Viewing index.html renderFeed\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"600","StartLine":"550","toolAction":"\"Viewing index.html nav\"","toolSummary":"\"View index.html nav\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"360","StartLine":"320","toolAction":"\"Viewing index.html nav\"","toolSummary":"\"View index.html nav\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"70","StartLine":"30","toolAction":"\"Viewing index.html header\"","toolSummary":"\"View header\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"60","StartLine":"1","toolAction":"\"Viewing index.html\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"368","StartLine":"300","toolAction":"\"Viewing script tags\"","toolSummary":"\"Index HTML scripts\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"245","StartLine":"220","toolAction":"\"Viewing script references\"","toolSummary":"\"Index HTML script refs\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"200","StartLine":"130","toolAction":"\"Viewing index.html script section\"","toolSummary":"\"View index.html scripts\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"110","StartLine":"62","toolAction":"\"Viewing index.html script includes\"","toolSummary":"\"View script includes\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"90","StartLine":"80","toolAction":"\"Checking version in index.html\"","toolSummary":"\"Check version\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"300","StartLine":"245","toolAction":"\"Viewing feed rendering\"","toolSummary":"\"View feed rendering\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"295","StartLine":"273","toolAction":"\"Viewing feed rendering code\"","toolSummary":"\"View feed rendering\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"295","StartLine":"273","toolAction":"\"Viewing feed mapping\"","toolSummary":"\"View feed mapping\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"280","StartLine":"230","toolAction":"\"Viewing stories list generation\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"369","StartLine":"300","toolAction":"\"Viewing index.html end\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"240","StartLine":"190","toolAction":"\"Viewing index.html form handler\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"100","StartLine":"70","toolAction":"\"Checking Firebase scripts\"","toolSummary":"\"Check index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"160","StartLine":"100","toolAction":"\"Viewing index.html homepage render\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"300","StartLine":"270","toolAction":"\"Viewing index.html your story button\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\index.html\"","EndLine":"270","StartLine":"200","toolAction":"\"Viewing index.html middle\"","toolSummary":"\"View index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\www\\\\index.html\"","EndLine":"160","StartLine":"100","toolAction":"\"Checking backup of index.html\"","toolSummary":"\"View www/index.html\""}
+VIEW FILE ARGS:
+{"AbsolutePath":"\"d:\\\\papuia\\\\Web\\\\1\\\\android\\\\app\\\\src\\\\main\\\\assets\\\\public\\\\index.html\"","EndLine":"300","StartLine":"240","toolAction":"\"Checking android index.html\"","toolSummary":"\"View android index.html\""}

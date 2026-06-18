@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
+  <meta name="referrer" content="no-referrer">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mipui Aw — KṬP Saikhamakawn</title>
@@ -22,13 +23,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=103">
-  <link rel="stylesheet" href="assets/css/base.css?v=103">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=103">
-  <link rel="stylesheet" href="assets/css/animations.css?v=103">
-  <link rel="stylesheet" href="assets/css/components.css?v=103">
-  <link rel="stylesheet" href="assets/css/layout.css?v=103">
-  <link rel="stylesheet" href="assets/css/pages.css?v=103">
+  <link rel="stylesheet" href="assets/css/variables.css?v=221">
+  <link rel="stylesheet" href="assets/css/base.css?v=221">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=221">
+  <link rel="stylesheet" href="assets/css/animations.css?v=221">
+  <link rel="stylesheet" href="assets/css/components.css?v=221">
+  <link rel="stylesheet" href="assets/css/layout.css?v=221">
+  <link rel="stylesheet" href="assets/css/pages.css?v=221">
 </head>
 <body>
   <!-- Header -->
@@ -60,11 +61,12 @@
 
           <!-- Category Chips -->
           <div>
-            <p style="font-size: var(--fs-xs); color: var(--color-text-tertiary); font-weight: var(--fw-semibold); margin-bottom: var(--sp-2); text-transform: uppercase; letter-spacing: 0.5px;">Categories</p>
+            <p style="font-size: var(--fs-xs); color: var(--color-text-tertiary); font-weight: var(--fw-semibold); margin-bottom: var(--sp-2); text-transform: uppercase; letter-spacing: 0.5px;">Years</p>
             <div class="filter-bar no-scrollbar" id="category-chips" style="overflow-x: auto; padding-bottom: var(--sp-1);">
               <!-- Populated by JS -->
             </div>
-            <div class="filter-bar no-scrollbar" id="subcategory-chips" style="overflow-x: auto; padding-bottom: var(--sp-1); margin-top: var(--sp-3); display: none;">
+            <p style="font-size: var(--fs-xs); color: var(--color-text-tertiary); font-weight: var(--fw-semibold); margin-top: var(--sp-3); margin-bottom: var(--sp-2); text-transform: uppercase; letter-spacing: 0.5px;">Months</p>
+            <div class="filter-bar no-scrollbar" id="subcategory-chips" style="overflow-x: auto; padding-bottom: var(--sp-1);">
               <!-- Populated by JS -->
             </div>
           </div>
@@ -134,25 +136,26 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=103"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=221"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=221"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=221"></script>
 
   <!-- JSZip & FileSaver for Bulk Downloads -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=103"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=103"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=221"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=221"></script>
 
   <!-- App Configuration & Services -->
-  <script src="assets/js/firebase-config.js?v=103"></script>
-  <script src="assets/js/theme.js?v=103"></script>
-  <script src="assets/js/data.js?v=103"></script>
-  <script src="assets/js/auth.js?v=103"></script>
-  <script src="assets/js/db-service.js?v=103"></script>
-  <script src="assets/js/save-service.js?v=103"></script>
-  <script src="assets/js/components.js?v=103"></script>
-  <script src="assets/js/search.js?v=103"></script>
-  <script src="assets/js/documents.js?v=104"></script>
-  <script src="assets/js/app.js?v=103"></script>
+  <script src="assets/js/firebase-config.js?v=221"></script>
+  <script src="assets/js/theme.js?v=221"></script>
+  <script src="assets/js/data.js?v=221"></script>
+  <script src="assets/js/auth.js?v=221"></script>
+  <script src="assets/js/db-service.js?v=221"></script>
+  <script src="assets/js/save-service.js?v=221"></script>
+  <script src="assets/js/components.js?v=221"></script>
+  <script src="assets/js/search.js?v=221"></script>
+
+  <script src="assets/js/mipui-aw-v2.js?v=221"></script>
+  <script src="assets/js/app.js?v=221"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('mipui-aw');

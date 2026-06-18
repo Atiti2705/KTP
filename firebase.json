@@ -7,11 +7,18 @@
   },
   "hosting": {
     "site": "saikhamakawnktp",
-    "public": ".",
+    "public": "www",
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "**/*.ps1",
+      "**/*.py",
+      "**/*.bat",
+      "**/*.exe"
     ]
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }

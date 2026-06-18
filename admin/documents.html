@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Publications — KṬP Saikhamakawn</title>
+  <title>Manage Documents — KṬP Saikhamakawn</title>
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/variables.css?v=103">
-  <link rel="stylesheet" href="../assets/css/base.css?v=103">
-  <link rel="stylesheet" href="../assets/css/components.css?v=103">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=103">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=104">
+  <link rel="stylesheet" href="../assets/css/base.css?v=104">
+  <link rel="stylesheet" href="../assets/css/components.css?v=104">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=104">
 </head>
 
 <body>
@@ -28,14 +28,14 @@
         <div class="admin-topbar-left">
           <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
           <div>
-            <h1 class="admin-page-title">Mipui Aw Publications Manager</h1>
-            <p class="admin-page-desc">Add, edit, or delete newsletters, templates, and reports</p>
+            <h1 class="admin-page-title">Documents & Studies Manager</h1>
+            <p class="admin-page-desc">Create, edit, or delete sermon outlines and notes</p>
           </div>
         </div>
         <div style="display: flex; gap: var(--sp-3); align-items: center;">
           <button class="btn btn-outline" id="btn-bulk-edit" style="color: var(--brand-sky); border-color: var(--brand-sky); display: none;">✏️ Edit Selected</button>
           <button class="btn btn-outline" id="btn-bulk-delete" style="color: var(--brand-red); border-color: var(--brand-red); display: none;">🗑️ Delete Selected</button>
-          <button class="btn btn-primary" id="btn-add-doc">➕ Add Document</button>
+          <button class="btn btn-primary" id="btn-add-sermon">➕ Add Sermon</button>
         </div>
       </div>
 
@@ -45,16 +45,13 @@
           style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
           <div class="search-container" style="max-width: 350px;">
             <span class="search-icon">🔍</span>
-            <input type="text" id="admin-search-input" class="search-input" placeholder="Search documents by title...">
+            <input type="text" id="admin-search-input" class="search-input"
+              placeholder="Search Documents by title or speaker...">
           </div>
-          <div style="display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center;">
+          <div>
             <select id="admin-filter-category" class="filter-select"
               style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
-              <option value="All">All Categories</option>
-              <!-- Populated via JS -->
-            </select>
-            <select id="admin-filter-subcategory" class="filter-select" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2); display: none;">
-              <option value="All">All Sub-categories</option>
+              <option value="All">All Topics</option>
               <!-- Populated via JS -->
             </select>
           </div>
@@ -69,15 +66,16 @@
               <tr>
                 <th style="width: 40px; text-align: center;"><input type="checkbox" id="select-all-checkbox" style="cursor: pointer; width: 16px; height: 16px;"></th>
                 <th style="width: 40px; text-align: center;" title="Drag to reorder">↕️</th>
-                <th style="width: 60px;">Type</th>
                 <th>Title</th>
-                <th>Category</th>
+                <th>Speaker</th>
+                <th>Topic</th>
+                <th>Scripture</th>
                 <th>Date</th>
-                <th>Size</th>
+                <th>Featured</th>
                 <th style="width: 120px;">Actions</th>
               </tr>
             </thead>
-            <tbody id="docs-table-body">
+            <tbody id="Documents-table-body">
               <!-- Rendered via JS -->
             </tbody>
           </table>
@@ -88,85 +86,126 @@
   </div>
 
   <!-- Edit/Add Modal -->
-  <div class="modal-backdrop" id="doc-form-modal">
+  <div class="modal-backdrop" id="sermon-form-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="modal-form-title">Add New Document</h3>
-        <button class="modal-close" id="close-doc-modal" aria-label="Close modal">&times;</button>
+        <h3 id="modal-form-title">Add New Sermon Notes</h3>
+        <button class="modal-close" id="close-sermon-modal" aria-label="Close modal">&times;</button>
       </div>
-      <form id="doc-crud-form">
-        <input type="hidden" id="doc-action-type" value="add">
-        <input type="hidden" id="doc-edit-id" value="">
+      <form id="sermon-crud-form">
+        <input type="hidden" id="sermon-action-type" value="add">
+        <input type="hidden" id="sermon-edit-id" value="">
 
         <div class="modal-body">
-          <div class="form-group">
-            <label for="doc-title" class="form-label">Document Title</label>
-            <input type="text" id="doc-title" class="form-input" required placeholder="e.g. Mipui Aw - July 2026">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="sermon-title" class="form-label">Sermon Title</label>
+              <input type="text" id="sermon-title" class="form-input" required
+                placeholder="e.g. Living a Life of Worship">
+            </div>
+
+            <div class="form-group">
+              <label for="sermon-speaker" class="form-label">Speaker</label>
+              <input type="text" id="sermon-speaker" class="form-input" required
+                placeholder="e.g. Pastor R. Lalthanmawia">
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="doc-category" class="form-label">Category</label>
-            <div class="category-field-row">
-              <select id="doc-category" class="form-input form-select" required style="flex:1;">
-                <!-- Populated via JS -->
-              </select>
-              <button type="button" class="btn-edit-cats" id="btn-toggle-cat-editor">✏️ Edit</button>
-            </div>
-            <div class="category-editor" id="doc-cat-editor">
-              <span class="category-editor-label">Add, remove, or rename categories:</span>
-              <div class="category-chips-editor" id="doc-cat-chips"></div>
-              <div class="cat-add-row">
-                <input type="text" id="doc-new-cat-input" placeholder="New category name…">
-                <button type="button" id="btn-add-new-cat">➕ Add</button>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="sermon-topic" class="form-label">Topic / Category</label>
+              <div class="category-field-row">
+                <select id="sermon-topic" class="form-input form-select" required style="flex:1;">
+                  <!-- Populated via JS -->
+                </select>
+                <button type="button" class="btn-edit-cats" id="btn-toggle-cat-editor">✏️ Edit</button>
+              </div>
+              <div class="category-editor" id="sermon-cat-editor">
+                <span class="category-editor-label">Add, remove, or rename categories:</span>
+                <div class="category-chips-editor" id="sermon-cat-chips"></div>
+                <div class="cat-add-row">
+                  <input type="text" id="sermon-new-cat-input" placeholder="New category name…">
+                  <button type="button" id="btn-add-new-cat">➕ Add</button>
+                </div>
               </div>
             </div>
+
+            <div class="form-group">
+              <label for="sermon-scripture" class="form-label">Scripture Reading</label>
+              <input type="text" id="sermon-scripture" class="form-input" required placeholder="e.g. Romans 12:1-2">
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="doc-subcategory" class="form-label">Sub Category (Optional)</label>
-            <input type="text" id="doc-subcategory" class="form-input" placeholder="e.g. May" list="subcat-list">
-            <datalist id="subcat-list"></datalist>
-            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Useful for grouping within a category (e.g. months inside a year).</small>
+            <label for="sermon-desc" class="form-label">Sermon Outline / Description</label>
+            <textarea id="sermon-desc" class="form-input form-textarea" required
+              placeholder="Enter primary scripture points, notes, and takeaway messages..."></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="sermon-type" class="form-label">Document Format</label>
+              <select id="sermon-type" class="form-input form-select" required>
+                <option value="PDF">PDF File</option>
+                <option value="DOCX">Word File (DOCX)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="sermon-size" class="form-label">Estimated File Size</label>
+              <input type="text" id="sermon-size" class="form-input" required placeholder="e.g. 1.2 MB" value="1.0 MB">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+            <div class="form-group">
+              <label for="sermon-date" class="form-label">Delivery Date</label>
+              <input type="date" id="sermon-date" class="form-input" required>
+            </div>
+
+            <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
+              <span class="form-label">Options</span>
+              <label
+                style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm);">
+                <input type="checkbox" id="sermon-featured" style="width: 16px; height: 16px;">
+                Feature on Homepage
+              </label>
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="doc-date" class="form-label">Published Date</label>
-            <input type="date" id="doc-date" class="form-input" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Document Source</label>
+            <label class="form-label">Sermon Notes Source</label>
             <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
               <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="doc-source" value="upload" checked style="width: 16px; height: 16px;">
+                <input type="radio" name="sermon-source" value="upload" checked style="width: 16px; height: 16px;">
                 Upload File (Mock)
               </label>
               <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="doc-source" value="url" style="width: 16px; height: 16px;">
+                <input type="radio" name="sermon-source" value="url" style="width: 16px; height: 16px;">
                 External Link (Google Drive / others)
               </label>
             </div>
           </div>
 
-          <div class="form-group" id="doc-upload-container">
-            <label for="doc-file" class="form-label">Upload File (Mock)</label>
-            <input type="file" id="doc-file" class="form-input">
+          <div class="form-group" id="sermon-upload-container">
+            <label for="sermon-file" class="form-label">Notes Attachment File (Mock)</label>
+            <input type="file" id="sermon-file" class="form-input">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Firebase Storage upload placeholder. File downloads will be simulated in demo mode.
+              Firebase Storage attachment point. PDF download simulation is automated.
             </small>
           </div>
 
-          <div class="form-group" id="doc-url-container" style="display: none; margin-bottom: 0;">
-            <label for="doc-url" class="form-label">Document Link URL</label>
-            <input type="url" id="doc-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or any download link">
+          <div class="form-group" id="sermon-url-container" style="display: none; margin-bottom: 0;">
+            <label for="sermon-url" class="form-label">Sermon Notes Link URL</label>
+            <input type="url" id="sermon-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or any file link">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Paste link to Google Drive, Dropbox, or any public document URL.
+              Paste link to Google Drive, Dropbox, or any public PDF/document URL.
             </small>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">💾 Save Document</button>
+          <button type="submit" class="btn btn-primary">💾 Save Sermon</button>
         </div>
       </form>
     </div>
@@ -182,33 +221,36 @@
       <form id="bulk-edit-form">
         <div class="modal-body">
           <p style="margin-bottom: var(--sp-4); font-size: var(--fs-sm); color: var(--color-text-secondary);">
-            Select the fields you want to update for <strong id="bulk-edit-count">0</strong> selected documents. Unchecked fields will remain unchanged.
+            Select the fields you want to update for <strong id="bulk-edit-count">0</strong> selected Documents. Unchecked fields will remain unchanged.
           </p>
 
           <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
             <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
-              <input type="checkbox" id="bulk-enable-category" style="width: 16px; height: 16px;">
-              Update Category
+              <input type="checkbox" id="bulk-enable-topic" style="width: 16px; height: 16px;">
+              Update Topic / Category
             </label>
-            <select id="bulk-doc-category" class="form-input form-select" disabled>
+            <select id="bulk-sermon-topic" class="form-input form-select" disabled>
               <!-- Populated via JS -->
             </select>
           </div>
 
           <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
             <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
-              <input type="checkbox" id="bulk-enable-subcategory" style="width: 16px; height: 16px;">
-              Update Sub Category
+              <input type="checkbox" id="bulk-enable-date" style="width: 16px; height: 16px;">
+              Update Delivery Date
             </label>
-            <input type="text" id="bulk-doc-subcategory" class="form-input" placeholder="e.g. May, June" disabled>
+            <input type="date" id="bulk-sermon-date" class="form-input" disabled>
           </div>
 
           <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
             <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
-              <input type="checkbox" id="bulk-enable-date" style="width: 16px; height: 16px;">
-              Update Published Date
+              <input type="checkbox" id="bulk-enable-featured" style="width: 16px; height: 16px;">
+              Update Featured Status
             </label>
-            <input type="date" id="bulk-doc-date" class="form-input" disabled>
+            <select id="bulk-sermon-featured" class="form-input form-select" disabled>
+              <option value="true">Yes, feature on Homepage</option>
+              <option value="false">No, remove from Homepage</option>
+            </select>
           </div>
         </div>
         <div class="modal-footer">
@@ -221,54 +263,53 @@
 
   <!-- Scripts -->
   <!-- SortableJS for drag-and-drop -->
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=103"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=104"></script>
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=103"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=104"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=104"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=104"></script>
 
   <!-- App Configuration & Services -->
-  <script src="../assets/js/firebase-config.js?v=103"></script>
-  <script src="../assets/js/theme.js?v=103"></script>
-  <script src="../assets/js/data.js?v=103"></script>
-  <script src="../assets/js/auth.js?v=103"></script>
-  <script src="../assets/js/db-service.js?v=103"></script>
-  <script src="../assets/js/components.js?v=103"></script>
-  <script src="../assets/js/search.js?v=103"></script>
-  <script src="../assets/js/admin.js?v=103"></script>
+  <script src="../assets/js/firebase-config.js?v=104"></script>
+  <script src="../assets/js/theme.js?v=104"></script>
+  <script src="../assets/js/data.js?v=104"></script>
+  <script src="../assets/js/auth.js?v=104"></script>
+  <script src="../assets/js/db-service.js?v=104"></script>
+  <script src="../assets/js/components.js?v=104"></script>
+  <script src="../assets/js/search.js?v=104"></script>
+  <script src="../assets/js/admin.js?v=104"></script>
 
   <script>
     let currentSearch = '';
     let currentCategoryFilter = 'All';
-    let currentSubCategoryFilter = 'All';
 
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof Toast !== 'undefined') Toast.init();
 
       // Load settings to fetch customized category list synchronously from localStorage cache
       const settings = AdminData.get('settings');
-      if (settings && settings.documentCategories && Array.isArray(settings.documentCategories)) {
-        DocumentCategories.length = 0;
-        DocumentCategories.push('All', ...settings.documentCategories.filter(c => c !== 'All'));
+      if (settings && settings.sermonCategories && Array.isArray(settings.sermonCategories)) {
+        SermonCategories.length = 0;
+        SermonCategories.push('All', ...settings.sermonCategories.filter(c => c !== 'All'));
       }
 
       populateCategoryDropdowns();
-      renderDocsTable();
+      renderDocumentsTable();
       setupEvents();
       initSortable();
     });
 
     function populateCategoryDropdowns() {
       const filterSelect = document.getElementById('admin-filter-category');
-      const formSelect = document.getElementById('doc-category');
-      const bulkSelect = document.getElementById('bulk-doc-category');
+      const formSelect = document.getElementById('sermon-topic');
+      const bulkSelect = document.getElementById('bulk-sermon-topic');
       if (!filterSelect || !formSelect) return;
 
-      filterSelect.innerHTML = '<option value="All">All Categories</option>';
-      formSelect.innerHTML = '<option value="" disabled selected>Select category...</option>';
-      if (bulkSelect) bulkSelect.innerHTML = '<option value="" disabled selected>Select category...</option>';
+      filterSelect.innerHTML = '<option value="All">All Topics</option>';
+      formSelect.innerHTML = '<option value="" disabled selected>Select topic...</option>';
+      if (bulkSelect) bulkSelect.innerHTML = '<option value="" disabled selected>Select topic...</option>';
 
-      DocumentCategories.forEach(cat => {
+      SermonCategories.forEach(cat => {
         if (cat !== 'All') {
           const opt1 = document.createElement('option');
           opt1.value = cat;
@@ -292,48 +333,11 @@
       renderCatEditorChips();
     }
 
-    function updateSubCategoryFilter(category) {
-      const subSel = document.getElementById('admin-filter-subcategory');
-      if (!subSel) return;
-
-      if (category === 'All') {
-        subSel.style.display = 'none';
-        currentSubCategoryFilter = 'All';
-        return;
-      }
-
-      const docs = AdminData.get('documents') || [];
-      const subcats = Array.from(
-        new Set(
-          docs
-            .filter(d => d.category === category)
-            .map(d => d.subcategory && d.subcategory.trim())
-            .filter(Boolean)
-        )
-      ).sort();
-
-      if (subcats.length < 2) {
-        subSel.style.display = 'none';
-        currentSubCategoryFilter = 'All';
-        return;
-      }
-
-      subSel.style.display = '';
-      subSel.innerHTML = '<option value="All">All Sub-categories</option>';
-      subcats.forEach(s => {
-        const o = document.createElement('option');
-        o.value = s;
-        o.textContent = s;
-        if (s === currentSubCategoryFilter) o.selected = true;
-        subSel.appendChild(o);
-      });
-    }
-
     /* --- Inline Category Editor --- */
     function renderCatEditorChips() {
-      const container = document.getElementById('doc-cat-chips');
+      const container = document.getElementById('sermon-cat-chips');
       if (!container) return;
-      const cats = DocumentCategories.filter(c => c !== 'All');
+      const cats = SermonCategories.filter(c => c !== 'All');
       container.innerHTML = cats.map(cat => `
         <span class="cat-chip" style="display:inline-flex; align-items:center; gap:4px;">
           ${cat}
@@ -354,33 +358,33 @@
       if (!newName || newName.trim() === '' || newName === oldName) return;
       
       const trimmedName = newName.trim();
-      const idx = DocumentCategories.indexOf(oldName);
+      const idx = SermonCategories.indexOf(oldName);
       if (idx > -1) {
-        if (DocumentCategories.includes(trimmedName)) {
+        if (SermonCategories.includes(trimmedName)) {
           alert(`Category '${trimmedName}' already exists.`);
           return;
         }
         
-        DocumentCategories[idx] = trimmedName;
+        SermonCategories[idx] = trimmedName;
         saveCategorySettings();
         populateCategoryDropdowns();
         
-        const docs = AdminData.get('documents');
-        for (const doc of docs) {
-          if (doc.category === oldName) {
-            doc.category = trimmedName;
-            await AdminData.update('documents', doc.id, { category: trimmedName });
+        const Documents = AdminData.get('sermons');
+        for (const sermon of Documents) {
+          if (sermon.topic === oldName) {
+            sermon.topic = trimmedName;
+            await AdminData.update('sermons', sermon.id, { topic: trimmedName });
           }
         }
         
-        renderDocsTable();
+        renderDocumentsTable();
       }
     }
 
     function removeCategoryAndSave(catName) {
-      const idx = DocumentCategories.indexOf(catName);
+      const idx = SermonCategories.indexOf(catName);
       if (idx > -1) {
-        DocumentCategories.splice(idx, 1);
+        SermonCategories.splice(idx, 1);
         saveCategorySettings();
         populateCategoryDropdowns();
       }
@@ -388,69 +392,60 @@
 
     function addCategoryAndSave(catName) {
       const name = catName.trim();
-      if (!name || DocumentCategories.includes(name)) return;
-      DocumentCategories.push(name);
+      if (!name || SermonCategories.includes(name)) return;
+      SermonCategories.push(name);
       saveCategorySettings();
       populateCategoryDropdowns();
     }
 
     function saveCategorySettings() {
       const settings = AdminData.get('settings') || {};
-      settings.documentCategories = DocumentCategories.filter(c => c !== 'All');
+      settings.sermonCategories = SermonCategories.filter(c => c !== 'All');
       AdminData.save('settings', settings);
     }
 
-    function renderDocsTable() {
-      const tbody = document.getElementById('docs-table-body');
+    function renderDocumentsTable() {
+      const tbody = document.getElementById('Documents-table-body');
       if (!tbody) return;
 
-      const docs = AdminData.get('documents');
+      const Documents = AdminData.get('sermons');
 
-      let filtered = docs;
+      let filtered = Documents;
       if (currentSearch.trim()) {
         const q = currentSearch.toLowerCase();
-        filtered = filtered.filter(d => d.title.toLowerCase().includes(q) || d.description.toLowerCase().includes(q));
+        filtered = filtered.filter(s => s.title.toLowerCase().includes(q) || s.speaker.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
       }
       if (currentCategoryFilter !== 'All') {
-        filtered = filtered.filter(d => d.category === currentCategoryFilter);
-      }
-      if (currentSubCategoryFilter !== 'All') {
-        filtered = filtered.filter(d => d.subcategory === currentSubCategoryFilter);
+        filtered = filtered.filter(s => s.topic === currentCategoryFilter);
       }
 
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="7" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
-              No documents found matching filters.
+              No Documents found matching filters.
             </td>
           </tr>
         `;
         return;
       }
 
-      tbody.innerHTML = filtered.map(doc => `
-        <tr data-id="${doc.id}">
+      tbody.innerHTML = filtered.map(sermon => `
+        <tr data-id="${sermon.id}">
           <td style="text-align: center;">
-            <input type="checkbox" class="row-checkbox" value="${doc.id}" style="cursor: pointer; width: 16px; height: 16px;">
+            <input type="checkbox" class="row-checkbox" value="${sermon.id}" style="cursor: pointer; width: 16px; height: 16px;">
           </td>
           <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
-          <td>
-            <div class="file-icon file-icon-${doc.fileType.toLowerCase()}" style="width: 40px; height: 40px; font-size: 10px;">${doc.fileType}</div>
-          </td>
-          <td style="font-weight: var(--fw-semibold);">${doc.title}</td>
-          <td>
-            <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
-              <span class="badge badge-gold">${doc.category}</span>
-              ${doc.subcategory ? `<span class="badge" style="background: var(--color-bg-hover); font-size: 10px;">${doc.subcategory}</span>` : ''}
-            </div>
-          </td>
-          <td>📅 ${formatDate(doc.date)}</td>
-          <td>${doc.fileSize}</td>
+          <td style="font-weight: var(--fw-semibold);">${sermon.title}</td>
+          <td>🎙️ ${sermon.speaker}</td>
+          <td><span class="badge badge-gold">${sermon.topic}</span></td>
+          <td style="font-family: monospace; font-size:12px;">${sermon.scripture}</td>
+          <td>📅 ${formatDate(sermon.date)}</td>
+          <td>${sermon.featured ? '⭐ Yes' : 'No'}</td>
           <td>
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm" onclick="openEditModal('${doc.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Document">✏️</button>
-              <button class="btn btn-outline btn-sm" onclick="confirmDeleteDoc('${doc.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Document">❌</button>
+              <button class="btn btn-outline btn-sm" onclick="openEditModal('${sermon.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Sermon">✏️</button>
+              <button class="btn btn-outline btn-sm" onclick="confirmDeleteSermon('${sermon.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Sermon">❌</button>
             </div>
           </td>
         </tr>
@@ -467,7 +462,7 @@
     }
 
     function initSortable() {
-      const tbody = document.getElementById('docs-table-body');
+      const tbody = document.getElementById('Documents-table-body');
       if (typeof Sortable === 'undefined' || !tbody) return;
 
       new Sortable(tbody, {
@@ -478,7 +473,7 @@
           // (it would mess up global ordering unexpectedly)
           if (currentSearch.trim() || currentCategoryFilter !== 'All') {
             AdminToast.show('Cannot reorder items while search or filter is active. Please clear filters first.', 'error');
-            renderDocsTable(); // Reset table
+            renderDocumentsTable(); // Reset table
             return;
           }
 
@@ -486,86 +481,62 @@
           const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
           
           try {
-            await AdminData.reorder('documents', newOrderIds);
+            await AdminData.reorder('sermons', newOrderIds);
             AdminToast.show('Documents reordered successfully!', 'success');
           } catch (e) {
             console.error(e);
             AdminToast.show('Failed to save new order.', 'error');
-            renderDocsTable(); // Revert
+            renderDocumentsTable(); // Revert
           }
         }
       });
     }
 
     function setupEvents() {
-      // Subcategory datalist population
-      document.getElementById('doc-category').addEventListener('change', (e) => {
-        const cat = e.target.value;
-        const docs = AdminData.get('documents') || [];
-        const subcats = new Set();
-        docs.filter(d => d.category === cat).forEach(d => {
-          if (d.subcategory && d.subcategory.trim() !== '') {
-            subcats.add(d.subcategory.trim());
-          }
-        });
-        const datalist = document.getElementById('subcat-list');
-        if (datalist) {
-          datalist.innerHTML = Array.from(subcats).sort().map(s => `<option value="${s}">`).join('');
-        }
-      });
-
       // Category editor toggle
       document.getElementById('btn-toggle-cat-editor').addEventListener('click', () => {
-        document.getElementById('doc-cat-editor').classList.toggle('open');
+        document.getElementById('sermon-cat-editor').classList.toggle('open');
       });
       document.getElementById('btn-add-new-cat').addEventListener('click', () => {
-        const input = document.getElementById('doc-new-cat-input');
+        const input = document.getElementById('sermon-new-cat-input');
         addCategoryAndSave(input.value);
         input.value = '';
       });
-      document.getElementById('doc-new-cat-input').addEventListener('keydown', (e) => {
+      document.getElementById('sermon-new-cat-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-new-cat').click(); }
       });
 
       // Toggle source
-      const docSourceRadios = document.getElementsByName('doc-source');
-      const uploadContainer = document.getElementById('doc-upload-container');
-      const urlContainer = document.getElementById('doc-url-container');
+      const DocumentsourceRadios = document.getElementsByName('sermon-source');
+      const uploadContainer = document.getElementById('sermon-upload-container');
+      const urlContainer = document.getElementById('sermon-url-container');
       
-      const toggleDocSource = (source) => {
+      const toggleDocumentsource = (source) => {
         if (source === 'upload') {
           uploadContainer.style.display = 'block';
           urlContainer.style.display = 'none';
-          document.getElementById('doc-url').required = false;
+          document.getElementById('sermon-url').required = false;
         } else {
           uploadContainer.style.display = 'none';
           urlContainer.style.display = 'block';
-          document.getElementById('doc-url').required = true;
+          document.getElementById('sermon-url').required = true;
         }
       };
 
-      docSourceRadios.forEach(radio => {
-        radio.addEventListener('change', (e) => toggleDocSource(e.target.value));
+      DocumentsourceRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => toggleDocumentsource(e.target.value));
       });
 
       // Search
       document.getElementById('admin-search-input').addEventListener('input', (e) => {
         currentSearch = e.target.value;
-        renderDocsTable();
+        renderDocumentsTable();
       });
 
       // Category filter dropdown
       document.getElementById('admin-filter-category').addEventListener('change', (e) => {
         currentCategoryFilter = e.target.value;
-        currentSubCategoryFilter = 'All';
-        updateSubCategoryFilter(currentCategoryFilter);
-        renderDocsTable();
-      });
-
-      // Sub-category filter dropdown
-      document.getElementById('admin-filter-subcategory').addEventListener('change', (e) => {
-        currentSubCategoryFilter = e.target.value;
-        renderDocsTable();
+        renderDocumentsTable();
       });
 
       // Bulk Delete Selection Logic
@@ -588,19 +559,19 @@
           const selectedCbs = document.querySelectorAll('.row-checkbox:checked');
           if (selectedCbs.length === 0) return;
 
-          if (confirm(`Are you sure you want to delete the ${selectedCbs.length} selected document(s)? This cannot be undone.`)) {
+          if (confirm(`Are you sure you want to delete the ${selectedCbs.length} selected sermon(s)? This cannot be undone.`)) {
             try {
               bulkDeleteBtn.disabled = true;
               bulkDeleteBtn.innerHTML = '⌛ Deleting...';
               
               for (const cb of selectedCbs) {
-                await AdminData.delete('documents', cb.value);
+                await AdminData.delete('sermons', cb.value);
               }
               
-              AdminToast.show(`Successfully deleted ${selectedCbs.length} document(s).`, 'success');
-              renderDocsTable();
+              AdminToast.show(`Successfully deleted ${selectedCbs.length} sermon(s).`, 'success');
+              renderDocumentsTable();
             } catch (err) {
-              console.error("Error deleting documents:", err);
+              console.error("Error deleting Documents:", err);
               AdminToast.show('Error during bulk deletion: ' + (err.message || 'Permission denied'), 'error');
             } finally {
               bulkDeleteBtn.disabled = false;
@@ -621,18 +592,18 @@
           document.getElementById('bulk-edit-form').reset();
           
           // Disable all inputs by default
-          document.getElementById('bulk-doc-category').disabled = true;
-          document.getElementById('bulk-doc-subcategory').disabled = true;
-          document.getElementById('bulk-doc-date').disabled = true;
+          document.getElementById('bulk-sermon-topic').disabled = true;
+          document.getElementById('bulk-sermon-date').disabled = true;
+          document.getElementById('bulk-sermon-featured').disabled = true;
 
           ModalSystem.open('bulk-edit-modal');
         });
       }
 
       // Bulk Edit field toggles
-      ['category', 'subcategory', 'date'].forEach(field => {
+      ['topic', 'date', 'featured'].forEach(field => {
         const checkbox = document.getElementById(`bulk-enable-${field}`);
-        const input = document.getElementById(`bulk-doc-${field}`);
+        const input = document.getElementById(`bulk-sermon-${field}`);
         if (checkbox && input) {
           checkbox.addEventListener('change', (e) => {
             input.disabled = !e.target.checked;
@@ -647,19 +618,19 @@
         const selectedCbs = document.querySelectorAll('.row-checkbox:checked');
         if (selectedCbs.length === 0) return;
 
-        const enableCat = document.getElementById('bulk-enable-category').checked;
-        const enableSubcat = document.getElementById('bulk-enable-subcategory').checked;
+        const enableTopic = document.getElementById('bulk-enable-topic').checked;
         const enableDate = document.getElementById('bulk-enable-date').checked;
+        const enableFeat = document.getElementById('bulk-enable-featured').checked;
 
-        if (!enableCat && !enableSubcat && !enableDate) {
+        if (!enableTopic && !enableDate && !enableFeat) {
           AdminToast.show('No fields selected for update.', 'error');
           return;
         }
 
         const updates = {};
-        if (enableCat) updates.category = document.getElementById('bulk-doc-category').value;
-        if (enableSubcat) updates.subcategory = document.getElementById('bulk-doc-subcategory').value.trim();
-        if (enableDate) updates.date = document.getElementById('bulk-doc-date').value;
+        if (enableTopic) updates.topic = document.getElementById('bulk-sermon-topic').value;
+        if (enableDate) updates.date = document.getElementById('bulk-sermon-date').value;
+        if (enableFeat) updates.featured = document.getElementById('bulk-sermon-featured').value === 'true';
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -669,14 +640,14 @@
           submitBtn.innerHTML = '⌛ Applying...';
 
           for (const cb of selectedCbs) {
-            await AdminData.update('documents', cb.value, updates);
+            await AdminData.update('sermons', cb.value, updates);
           }
 
-          AdminToast.show(`Successfully updated ${selectedCbs.length} document(s).`, 'success');
+          AdminToast.show(`Successfully updated ${selectedCbs.length} sermon(s).`, 'success');
           ModalSystem.close('bulk-edit-modal');
-          renderDocsTable();
+          renderDocumentsTable();
         } catch (err) {
-          console.error("Error bulk updating documents:", err);
+          console.error("Error bulk updating Documents:", err);
           AdminToast.show('Error during bulk update: ' + (err.message || 'Permission denied'), 'error');
         } finally {
           submitBtn.disabled = false;
@@ -689,39 +660,40 @@
       document.getElementById('btn-cancel-bulk-modal')?.addEventListener('click', closeBulkModal);
 
       // Show Add Modal
-      document.getElementById('btn-add-doc').addEventListener('click', () => {
-        document.getElementById('doc-crud-form').reset();
-        document.getElementById('doc-action-type').value = 'add';
-        document.getElementById('modal-form-title').textContent = 'Add New Document';
-        document.getElementById('doc-date').value = new Date().toISOString().split('T')[0];
-        document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
-        toggleDocSource('upload');
-        ModalSystem.open('doc-form-modal');
+      document.getElementById('btn-add-sermon').addEventListener('click', () => {
+        document.getElementById('sermon-crud-form').reset();
+        document.getElementById('sermon-action-type').value = 'add';
+        document.getElementById('modal-form-title').textContent = 'Add New Sermon Notes';
+        document.getElementById('sermon-date').value = new Date().toISOString().split('T')[0];
+        document.querySelector('input[name="sermon-source"][value="upload"]').checked = true;
+        toggleDocumentsource('upload');
+        ModalSystem.open('sermon-form-modal');
       });
 
       // Close modal actions
-      const closeModal = () => ModalSystem.close('doc-form-modal');
-      document.getElementById('close-doc-modal').addEventListener('click', closeModal);
+      const closeModal = () => ModalSystem.close('sermon-form-modal');
+      document.getElementById('close-sermon-modal').addEventListener('click', closeModal);
       document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
 
       // Form Submit (Save/Update)
-      document.getElementById('doc-crud-form').addEventListener('submit', async (e) => {
+      document.getElementById('sermon-crud-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const actionType = document.getElementById('doc-action-type').value;
-        const docId = document.getElementById('doc-edit-id').value;
+        const actionType = document.getElementById('sermon-action-type').value;
+        const sermonId = document.getElementById('sermon-edit-id').value;
 
-        const title = document.getElementById('doc-title').value;
-        const category = document.getElementById('doc-category').value;
-        const subcategory = document.getElementById('doc-subcategory').value.trim();
-        const description = '';
-        const fileType = document.getElementById('doc-type').value;
-        const fileSize = document.getElementById('doc-size').value;
-        const date = document.getElementById('doc-date').value;
-        const featured = false;
+        const title = document.getElementById('sermon-title').value;
+        const speaker = document.getElementById('sermon-speaker').value;
+        const topic = document.getElementById('sermon-topic').value;
+        const scripture = document.getElementById('sermon-scripture').value;
+        const description = document.getElementById('sermon-desc').value;
+        const fileType = document.getElementById('sermon-type').value;
+        const fileSize = document.getElementById('sermon-size').value;
+        const date = document.getElementById('sermon-date').value;
+        const featured = document.getElementById('sermon-featured').checked;
 
-        const source = document.querySelector('input[name="doc-source"]:checked').value;
-        const urlInput = document.getElementById('doc-url');
+        const source = document.querySelector('input[name="sermon-source"]:checked').value;
+        const urlInput = document.getElementById('sermon-url');
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -731,7 +703,7 @@
           submitBtn.innerHTML = '⌛ Saving...';
 
           let isFolderImport = false;
-          let docsToSave = [];
+          let DocumentsToSave = [];
 
           if (source === 'url') {
             const urlVal = urlInput.value.trim();
@@ -766,10 +738,11 @@
                   
                   let cleanTitle = file.name.replace(/\.[^/.]+$/, "");
                   
-                  docsToSave.push({
+                  DocumentsToSave.push({
                     title: cleanTitle,
-                    category,
-                    subcategory,
+                    speaker,
+                    topic,
+                    scripture,
                     description,
                     fileType: fType,
                     fileSize: fSizeStr,
@@ -782,32 +755,33 @@
                 throw new Error("No files found in this Google Drive folder!");
               }
             } else {
-              docsToSave.push({
-                title, category, subcategory, description, fileType, fileSize, date, featured,
+              DocumentsToSave.push({
+                title, speaker, topic, scripture, description, fileType, fileSize, date, featured,
                 downloadUrl: convertDriveUrl(urlVal, 'file')
               });
             }
           } else {
-            docsToSave.push({
-              title, category, subcategory, description, fileType, fileSize, date, featured,
+            DocumentsToSave.push({
+              title, speaker, topic, scripture, description, fileType, fileSize, date, featured,
               downloadUrl: '#'
             });
           }
 
           if (actionType === 'add') {
-            for (const docObj of docsToSave) {
-              await AdminData.add('documents', docObj);
+            for (const srmObj of DocumentsToSave) {
+              await AdminData.add('sermons', srmObj);
             }
             if (isFolderImport) {
-              AdminToast.show(`Successfully imported ${docsToSave.length} documents from folder!`, 'success');
+              AdminToast.show(`Successfully imported ${DocumentsToSave.length} Documents from folder!`, 'success');
             } else {
-              AdminToast.show('Document added successfully!', 'success');
+              AdminToast.show('Sermon notes saved!', 'success');
             }
           } else {
             const updatedFields = {
               title,
-              category,
-              subcategory,
+              speaker,
+              topic,
+              scripture,
               description,
               fileType,
               fileSize,
@@ -815,19 +789,19 @@
               featured
             };
             if (source === 'url') {
-              updatedFields.downloadUrl = docsToSave[0].downloadUrl;
+              updatedFields.downloadUrl = DocumentsToSave[0].downloadUrl;
             } else {
               updatedFields.downloadUrl = '#';
             }
-            await AdminData.update('documents', docId, updatedFields);
-            AdminToast.show('Document updated!', 'success');
+            await AdminData.update('sermons', sermonId, updatedFields);
+            AdminToast.show('Sermon notes updated!', 'success');
           }
 
           closeModal();
-          renderDocsTable();
+          renderDocumentsTable();
         } catch (err) {
-          console.error("Error saving document:", err);
-          AdminToast.show('Error saving document: ' + (err.message || 'Permission denied'), 'error');
+          console.error("Error saving sermon:", err);
+          AdminToast.show('Error saving sermon: ' + (err.message || 'Permission denied'), 'error');
         } finally {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalBtnText;
@@ -835,7 +809,7 @@
       });
 
       // Expose toggle internally for edit modal
-      window._toggleDocSource = toggleDocSource;
+      window._toggleDocumentsource = toggleDocumentsource;
     }
 
     function updateBulkDeleteUI() {
@@ -863,48 +837,51 @@
 
     // Exposed to onclick triggers
     window.openEditModal = function (id) {
-      const docs = AdminData.get('documents');
-      const doc = docs.find(d => d.id === id);
-      if (!doc) return;
+      const Documents = AdminData.get('sermons');
+      const sermon = Documents.find(s => s.id === id);
+      if (!sermon) return;
 
-      document.getElementById('doc-action-type').value = 'edit';
-      document.getElementById('doc-edit-id').value = id;
-      document.getElementById('modal-form-title').textContent = 'Edit Document Details';
+      document.getElementById('sermon-action-type').value = 'edit';
+      document.getElementById('sermon-edit-id').value = id;
+      document.getElementById('modal-form-title').textContent = 'Edit Sermon Notes';
 
-      document.getElementById('doc-title').value = doc.title;
-      document.getElementById('doc-category').value = doc.category;
-      document.getElementById('doc-subcategory').value = doc.subcategory || '';
-      document.getElementById('doc-type').value = doc.fileType;
-      document.getElementById('doc-size').value = doc.fileSize;
-      document.getElementById('doc-date').value = doc.date;
+      document.getElementById('sermon-title').value = sermon.title;
+      document.getElementById('sermon-speaker').value = sermon.speaker;
+      document.getElementById('sermon-topic').value = sermon.topic;
+      document.getElementById('sermon-scripture').value = sermon.scripture;
+      document.getElementById('sermon-desc').value = sermon.description;
+      document.getElementById('sermon-type').value = sermon.fileType;
+      document.getElementById('sermon-size').value = sermon.fileSize;
+      document.getElementById('sermon-date').value = sermon.date;
+      document.getElementById('sermon-featured').checked = sermon.featured;
 
-      const isExternal = doc.downloadUrl && doc.downloadUrl !== '#';
+      const isExternal = sermon.downloadUrl && sermon.downloadUrl !== '#';
       if (isExternal) {
-        document.querySelector('input[name="doc-source"][value="url"]').checked = true;
-        document.getElementById('doc-url').value = doc.downloadUrl;
-        if (window._toggleDocSource) window._toggleDocSource('url');
+        document.querySelector('input[name="sermon-source"][value="url"]').checked = true;
+        document.getElementById('sermon-url').value = sermon.downloadUrl;
+        if (window._toggleDocumentsource) window._toggleDocumentsource('url');
       } else {
-        document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
-        document.getElementById('doc-url').value = '';
-        if (window._toggleDocSource) window._toggleDocSource('upload');
+        document.querySelector('input[name="sermon-source"][value="upload"]').checked = true;
+        document.getElementById('sermon-url').value = '';
+        if (window._toggleDocumentsource) window._toggleDocumentsource('upload');
       }
 
-      ModalSystem.open('doc-form-modal');
+      ModalSystem.open('sermon-form-modal');
     };
 
-    window.confirmDeleteDoc = async function (id) {
-      const docs = AdminData.get('documents');
-      const doc = docs.find(d => d.id === id);
-      if (!doc) return;
+    window.confirmDeleteSermon = async function (id) {
+      const Documents = AdminData.get('sermons');
+      const sermon = Documents.find(s => s.id === id);
+      if (!sermon) return;
 
-      if (confirm(`Are you sure you want to delete the publication "${doc.title}"?`)) {
+      if (confirm(`Are you sure you want to delete the sermon notes for "${sermon.title}"?`)) {
         try {
-          await AdminData.delete('documents', id);
-          AdminToast.show('Document deleted.', 'info');
-          renderDocsTable();
+          await AdminData.delete('sermons', id);
+          AdminToast.show('Sermon deleted.', 'info');
+          renderDocumentsTable();
         } catch (err) {
-          console.error("Error deleting document:", err);
-          AdminToast.show('Error deleting document: ' + (err.message || 'Permission denied'), 'error');
+          console.error("Error deleting sermon:", err);
+          AdminToast.show('Error deleting sermon: ' + (err.message || 'Permission denied'), 'error');
         }
       }
     };
@@ -912,3 +889,5 @@
 </body>
 
 </html>
+
+

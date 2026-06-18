@@ -1,25 +1,24 @@
 /* ============================================
-   KṬP Saikhamakawn — Mipui Aw (Documents) Logic
+   KṬP Saikhamakawn — Sermons Page Logic
    Handles filtering, sorting, pagination,
-   and details preview modal.
+   and reading notes preview modal.
    ============================================ */
 
 let currentCategory = 'All';
-let currentSubCategory = 'All';
 let searchQuery = '';
-let currentSort = 'newest';
+let currentSort = 'manual';
 let currentPage = 1;
 const itemsPerPage = 1000;
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const settings = await DbService.get('settings');
-    if (settings && settings.documentCategories && Array.isArray(settings.documentCategories)) {
-      DocumentCategories.length = 0;
-      DocumentCategories.push('All', ...settings.documentCategories.filter(c => c !== 'All'));
+    if (settings && settings.sermonCategories && Array.isArray(settings.sermonCategories)) {
+      SermonCategories.length = 0;
+      SermonCategories.push('All', ...settings.sermonCategories.filter(c => c !== 'All'));
     }
   } catch (err) {
-    console.error("Error loading custom DocumentCategories:", err);
+    console.error("Error loading custom SermonCategories:", err);
   }
 
   renderCategoryChips();
@@ -27,19 +26,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupPreviewModal();
 
   try {
-    const data = await DbService.get('documents');
+    const data = await DbService.get('sermons');
     if (data && Array.isArray(data)) {
-      Documents.length = 0;
-      Documents.push(...data.map(d => {
-        if (d.downloadUrl) d.downloadUrl = convertDriveUrl(d.downloadUrl, 'file');
-        return d;
+      Sermons.length = 0;
+      Sermons.push(...data.map(s => {
+        if (s.downloadUrl) s.downloadUrl = convertDriveUrl(s.downloadUrl, 'file');
+        return s;
       }));
     }
   } catch (error) {
-    console.error("Error loading documents database:", error);
+    console.error("Error loading sermons database:", error);
   }
 
-  renderDocuments();
+  renderSermons();
 });
 
 // ========================
@@ -49,7 +48,7 @@ function renderCategoryChips() {
   const container = document.getElementById('category-chips');
   if (!container) return;
 
-  container.innerHTML = DocumentCategories.map(cat => `
+  container.innerHTML = SermonCategories.map(cat => `
     <button class="filter-chip ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
       ${cat}
     </button>
@@ -61,94 +60,8 @@ function renderCategoryChips() {
       container.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentCategory = btn.dataset.category;
-      currentSubCategory = 'All'; // Reset subcategory when category changes
       currentPage = 1; // Reset to page 1 on filter change
-      renderSubCategoryChips();
-      renderDocuments();
-    });
-  });
-  renderSubCategoryChips();
-}
-
-// ========================
-// RENDER SUB CATEGORY CHIPS
-// ========================
-function renderSubCategoryChips() {
-  const container = document.getElementById('subcategory-chips');
-  if (!container) return;
-
-  // Only show subcategories if a specific category is selected
-  if (currentCategory === 'All') {
-    container.style.display = 'none';
-    currentSubCategory = 'All';
-    return;
-  }
-
-  const docsInCat = Documents.filter(d => d.category === currentCategory);
-    
-  const subcats = new Set();
-  docsInCat.forEach(d => {
-    if (d.subcategory) {
-      const subStr = String(d.subcategory).trim();
-      if (subStr !== '') {
-        subcats.add(subStr);
-      }
-    }
-  });
-
-  const getMonthIndex = (str) => {
-    if (!str) return -1;
-    const lower = String(str).toLowerCase();
-    const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
-    for (let i = 0; i < months.length; i++) {
-      if (lower.startsWith(months[i])) return i;
-    }
-    const shortMonths = ['jan ', 'feb ', 'mar ', 'apr ', 'may ', 'jun ', 'jul ', 'aug ', 'sep ', 'oct ', 'nov ', 'dec '];
-    for (let i = 0; i < shortMonths.length; i++) {
-      if (lower.startsWith(shortMonths[i])) return i;
-    }
-    // Also check exact short months
-    const exactShorts = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-    for (let i = 0; i < exactShorts.length; i++) {
-      if (lower === exactShorts[i]) return i;
-    }
-    return -1;
-  };
-
-  const uniqueSubCats = Array.from(subcats).sort((a, b) => {
-    const idxA = getMonthIndex(a);
-    const idxB = getMonthIndex(b);
-    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-    return a.localeCompare(b);
-  });
-
-  if (uniqueSubCats.length === 0) {
-    container.style.display = 'none';
-    currentSubCategory = 'All';
-    return;
-  }
-
-  container.style.display = 'flex';
-  
-  container.innerHTML = uniqueSubCats.map(subcat => `
-    <button class="subfilter-chip ${subcat === currentSubCategory ? 'active' : ''}" data-subcategory="${subcat}">
-      ${subcat}
-    </button>
-  `).join('');
-
-  container.querySelectorAll('.subfilter-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (currentSubCategory === btn.dataset.subcategory) {
-        // Toggle OFF if clicking the already active one
-        btn.classList.remove('active');
-        currentSubCategory = 'All';
-      } else {
-        container.querySelectorAll('.subfilter-chip').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentSubCategory = btn.dataset.subcategory;
-      }
-      currentPage = 1;
-      renderDocuments();
+      renderSermons();
     });
   });
 }
@@ -157,8 +70,8 @@ function renderSubCategoryChips() {
 // SETUP SEARCH AND SORT
 // ========================
 function setupSearchAndSort() {
-  const searchInput = document.getElementById('doc-search');
-  const sortSelect = document.getElementById('doc-sort');
+  const searchInput = document.getElementById('sermon-search');
+  const sortSelect = document.getElementById('sermon-sort');
   const clearBtn = document.getElementById('search-clear-btn');
 
   if (searchInput) {
@@ -168,7 +81,7 @@ function setupSearchAndSort() {
       timeout = setTimeout(() => {
         searchQuery = e.target.value;
         currentPage = 1;
-        renderDocuments();
+        renderSermons();
       }, 300);
     });
   }
@@ -178,7 +91,7 @@ function setupSearchAndSort() {
       searchInput.value = '';
       searchQuery = '';
       currentPage = 1;
-      renderDocuments();
+      renderSermons();
     });
   }
 
@@ -186,33 +99,29 @@ function setupSearchAndSort() {
     sortSelect.addEventListener('change', (e) => {
       currentSort = e.target.value;
       currentPage = 1;
-      renderDocuments();
+      renderSermons();
     });
   }
 }
 
 // ========================
-// RENDER DOCUMENTS LIST
+// RENDER SERMONS LIST
 // ========================
-function renderDocuments() {
-  const listContainer = document.getElementById('documents-list');
+function renderSermons() {
+  const listContainer = document.getElementById('sermons-list');
   const paginationContainer = document.getElementById('pagination-container');
-  const countContainer = document.getElementById('doc-count');
+  const countContainer = document.getElementById('sermon-count');
 
   if (!listContainer) return;
 
   // 1. Get filtered items
-  let filtered = SearchEngine.filter(Documents, {
+  const filtered = SearchEngine.filter(Sermons, {
     query: searchQuery,
     category: currentCategory,
     sort: currentSort,
-    searchFields: ['title', 'description', 'category'],
-    categoryField: 'category'
+    searchFields: ['title', 'speaker', 'topic', 'description', 'scripture'],
+    categoryField: 'topic'
   });
-
-  if (currentSubCategory !== 'All') {
-    filtered = filtered.filter(d => d.subcategory === currentSubCategory);
-  }
 
   // 2. Paginate items
   const paginationData = SearchEngine.paginate(filtered, currentPage, itemsPerPage);
@@ -228,28 +137,31 @@ function renderDocuments() {
   if (paginationData.items.length === 0) {
     listContainer.innerHTML = `
       <div class="empty-state" style="grid-column: 1 / -1; width: 100%;">
-        <div class="empty-state-icon">📄</div>
+        <div class="empty-state-icon">📖</div>
         <h3>No Documents Found</h3>
-        <p>Try adjusting your search or category filters.</p>
+        <p>Try adjusting your search or topic filters.</p>
       </div>
     `;
     if (paginationContainer) paginationContainer.innerHTML = '';
     return;
   }
 
-  listContainer.innerHTML = paginationData.items.map(doc => {
-    return `
-    <div class="modern-doc-card selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${String(doc.fileType||'PDF').toLowerCase()}">
-      <div class="modern-doc-icon">PDF</div>
-      <div class="modern-doc-content">
-        <h3 class="modern-doc-title">${doc.title}</h3>
+  listContainer.innerHTML = paginationData.items.map(sermon => `
+    <div class="modern-doc-card selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${sermon.title}.${String(sermon.fileType||'PDF').toLowerCase()}">
+      <div class="modern-doc-icon">📖</div>
+      <div class="modern-doc-content" style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+        <h3 class="modern-doc-title" style="margin-bottom: 4px;">${sermon.title}</h3>
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 2px;">
+          ${sermon.speaker ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${sermon.speaker}</span>` : ''}
+          ${sermon.scripture ? `<span style="font-size: 0.75rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> ${sermon.scripture}</span>` : ''}
+          ${sermon.description ? `<span style="font-size: 0.75rem; color: var(--color-text-tertiary); display: flex; align-items: flex-start; gap: 6px; margin-top: 2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7; flex-shrink: 0; margin-top: 2px;"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="14" y1="18" x2="3" y2="18"></line></svg> <span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${sermon.description}</span></span>` : ''}
+        </div>
       </div>
       <div class="modern-doc-action">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
       </div>
     </div>
-    `;
-  }).join('');
+  `).join('');
 
   // Re-run scroll reveal
   setupScrollReveal();
@@ -257,9 +169,9 @@ function renderDocuments() {
   // Render pagination buttons
   SearchEngine.renderPagination(paginationContainer, paginationData, (newPage) => {
     currentPage = newPage;
-    renderDocuments();
+    renderSermons();
     // Scroll smoothly to top of results
-    document.getElementById('documents-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('sermons-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
 
@@ -267,24 +179,24 @@ function renderDocuments() {
 // PREVIEW MODAL LOGIC
 // ========================
 function setupPreviewModal() {
-  if (document.getElementById('doc-modal')) return;
+  if (document.getElementById('sermon-modal')) return;
 
   const modalMarkup = `
-    <div class="modal-backdrop lightbox-modal" id="doc-modal" style="background: rgba(0,0,0,0.95); padding: 0;">
+    <div class="modal-backdrop lightbox-modal" id="sermon-modal" style="background: rgba(0,0,0,0.95); padding: 0;">
       <div style="position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(0,0,0,0.5); z-index: 10;">
-          <h3 id="modal-doc-title" style="color: white; margin: 0; font-size: 1.2rem; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Document</h3>
+          <h3 id="modal-sermon-title" style="color: white; margin: 0; font-size: 1.2rem; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Document Notes</h3>
           <div style="display: flex; gap: 16px; align-items: center;">
-             <a href="#" id="modal-doc-download" download style="color: white; text-decoration: none; display: flex; align-items: center; gap: 8px;" title="Download">
+             <a href="#" id="modal-sermon-download" download style="color: white; text-decoration: none; display: flex; align-items: center; gap: 8px;" title="Download">
                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
              </a>
-             <button id="close-doc-modal" aria-label="Close" style="background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+             <button id="close-sermon-modal" aria-label="Close" style="background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
              </button>
           </div>
         </div>
         <div style="flex: 1; position: relative; width: 100%; height: 100%; background: #fff;">
-          <iframe id="modal-doc-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+          <iframe id="modal-sermon-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
       </div>
     </div>
@@ -294,28 +206,28 @@ function setupPreviewModal() {
   div.innerHTML = modalMarkup;
   document.body.appendChild(div.firstElementChild);
 
-  const closeBtn = document.getElementById('close-doc-modal');
+  const closeBtn = document.getElementById('close-sermon-modal');
   const closeAction = () => {
-    const iframe = document.getElementById('modal-doc-iframe');
+    const iframe = document.getElementById('modal-sermon-iframe');
     if (iframe) iframe.src = '';
-    ModalSystem.close('doc-modal');
+    ModalSystem.close('sermon-modal');
   };
 
   if (closeBtn) closeBtn.addEventListener('click', closeAction);
 }
 
-function openPreviewModal(docId) {
-  const doc = Documents.find(d => d.id === docId);
-  if (!doc) return;
+function openPreviewModal(sermonId) {
+  const sermon = Sermons.find(s => s.id === sermonId);
+  if (!sermon) return;
 
-  const modalTitle = document.getElementById('modal-doc-title');
-  const modalDownload = document.getElementById('modal-doc-download');
-  const modalIframe = document.getElementById('modal-doc-iframe');
+  const modalTitle = document.getElementById('modal-sermon-title');
+  const modalDownload = document.getElementById('modal-sermon-download');
+  const modalIframe = document.getElementById('modal-sermon-iframe');
 
-  if (modalTitle) modalTitle.textContent = doc.title;
+  if (modalTitle) modalTitle.textContent = sermon.title;
 
   let fileId = '';
-  const downloadUrl = doc.downloadUrl || doc.fileUrl;
+  const downloadUrl = sermon.downloadUrl || sermon.fileUrl;
   
   if (downloadUrl && downloadUrl !== '#') {
     const fileIdMatch = downloadUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -342,7 +254,7 @@ function openPreviewModal(docId) {
       modalDownload.style.display = 'flex';
       modalDownload.href = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : downloadUrl;
       modalDownload.onclick = () => {
-        Toast.show(`Downloading ${doc.title}...`, 'success');
+        Toast.show(`Downloading ${sermon.title}...`, 'success');
       };
     } else {
       modalDownload.style.display = 'flex';
@@ -350,17 +262,17 @@ function openPreviewModal(docId) {
       modalDownload.removeAttribute('target');
       modalDownload.onclick = (e) => {
         e.preventDefault();
-        Toast.show(`Downloading ${doc.title} (Simulated)...`, 'success');
+        Toast.show(`Downloading notes: ${sermon.title} (Simulated)...`, 'success');
       };
     }
   }
 
-  ModalSystem.open('doc-modal');
+  ModalSystem.open('sermon-modal');
 }
 
 // BULK DOWNLOAD LOGIC
 // ========================
-let docSelectionManager = null;
+let sermonSelectionManager = null;
 
 function setupBulkDownload() {
   const selectAllCb = document.getElementById('select-all-cb');
@@ -370,8 +282,8 @@ function setupBulkDownload() {
   
   if (!selectAllCb || (!btnDownload && !btnSave)) return;
 
-  docSelectionManager = new SelectionManager(
-    'documents-list',
+  sermonSelectionManager = new SelectionManager(
+    'sermons-list',
     '.selectable-item',
     (selectedItems) => {
       countSpan.textContent = selectedItems.size;
@@ -379,7 +291,7 @@ function setupBulkDownload() {
       if (btnDownload) { btnDownload.disabled = !hasSel; btnDownload.style.opacity = hasSel ? '1' : '0.5'; }
       if (btnSave) { btnSave.disabled = !hasSel; btnSave.style.opacity = hasSel ? '1' : '0.5'; }
       
-      const totalItems = document.querySelectorAll('#documents-list .selectable-item[data-url]:not([data-url=""])').length;
+      const totalItems = document.querySelectorAll('#sermons-list .selectable-item[data-url]:not([data-url=""])').length;
       selectAllCb.checked = (hasSel && selectedItems.size === totalItems && totalItems > 0);
     },
     (id) => {
@@ -390,23 +302,23 @@ function setupBulkDownload() {
   // Handle Select All
   selectAllCb.addEventListener('change', (e) => {
     if (e.target.checked) {
-      docSelectionManager.selectAll();
+      sermonSelectionManager.selectAll();
     } else {
-      docSelectionManager.clearSelection();
+      sermonSelectionManager.clearSelection();
     }
   });
 
   // Handle Download Button — downloads each file individually
   btnDownload.addEventListener('click', async () => {
-    const selectedDocs = docSelectionManager.selectedItems;
-    if (selectedDocs.size === 0) return;
+    const selectedSermons = sermonSelectionManager.selectedItems;
+    if (selectedSermons.size === 0) return;
     
     const originalText = btnDownload.innerHTML;
     btnDownload.innerHTML = '⏳ Downloading...';
     btnDownload.disabled = true;
     
     try {
-      const files = Array.from(selectedDocs).map(item => JSON.parse(item));
+      const files = Array.from(selectedSermons).map(item => JSON.parse(item));
       
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -438,14 +350,14 @@ function setupBulkDownload() {
       btnDownload.innerHTML = originalText;
       btnDownload.disabled = false;
       
-      docSelectionManager.clearSelection();
+      sermonSelectionManager.clearSelection();
       selectAllCb.checked = false;
     }
   });
 
   if (btnSave) {
     btnSave.addEventListener('click', async () => {
-      const selectedDocs = docSelectionManager.selectedItems;
+      const selectedDocs = sermonSelectionManager.selectedItems;
       if (selectedDocs.size === 0) return;
       
       const originalHtml = btnSave.innerHTML;
@@ -454,13 +366,13 @@ function setupBulkDownload() {
       
       try {
         if (window.SaveService) {
-          const selectedNodes = document.querySelectorAll('#documents-list .selectable-item.selected');
+          const selectedNodes = document.querySelectorAll('#sermons-list .selectable-item.selected');
           const promises = Array.from(selectedNodes).map(node => {
              const id = node.dataset.id;
-             const docObj = Documents.find(d => d.id === id) || { id, downloadUrl: node.dataset.url, title: node.dataset.name };
-             return SaveService.saveItem('mipui-aw', docObj.id, {
-               title: docObj.title || 'Document',
-               url: docObj.downloadUrl || docObj.url,
+             const docObj = Sermons.find(d => d.id === id) || { id, fileUrl: node.dataset.url, title: node.dataset.name };
+             return SaveService.saveItem('sermons', docObj.id, {
+               title: docObj.title || 'Sermon',
+               url: docObj.fileUrl || docObj.url,
                date: docObj.date || new Date().toISOString()
              });
           });
@@ -472,7 +384,7 @@ function setupBulkDownload() {
       } finally {
         btnSave.innerHTML = originalHtml;
         btnSave.disabled = false;
-        docSelectionManager.clearSelection();
+        sermonSelectionManager.clearSelection();
         selectAllCb.checked = false;
       }
     });
@@ -483,3 +395,4 @@ function setupBulkDownload() {
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(setupBulkDownload, 500); // Wait for initial render
 });
+

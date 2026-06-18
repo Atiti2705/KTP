@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta name="referrer" content="no-referrer">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — KṬP Saikhamakawn</title>
+  
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="apple-touch-icon" href="assets/images/logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="stylesheet" href="assets/css/variables.css?v=221">
+  <link rel="stylesheet" href="assets/css/base.css?v=221">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=221">
+  <link rel="stylesheet" href="assets/css/animations.css?v=221">
+  <link rel="stylesheet" href="assets/css/components.css?v=221">
+  <link rel="stylesheet" href="assets/css/layout.css?v=221">
+  <link rel="stylesheet" href="assets/css/pages.css?v=221">
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main class="main-content" style="max-width: 600px; margin: 0 auto; border-left: 1px solid var(--color-border); border-right: 1px solid var(--color-border); min-height: 100vh; padding-bottom: 80px;">
+    
+    <div style="padding: 32px 16px; border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: 20px;">
+       <div id="profile-page-avatar" style="width: 80px; height: 80px; border-radius: 50%; background: var(--color-bg-hover); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; overflow: hidden; border: 2px solid var(--color-border);">
+         👤
+       </div>
+       <div>
+         <h1 id="profile-page-name" style="font-size: 1.5rem; margin-bottom: 4px;">Guest User</h1>
+         <p id="profile-page-username" style="color: var(--color-text-tertiary); font-size: 0.85rem; margin-bottom: 2px; font-weight: 500;"></p>
+         <p id="profile-page-email" style="color: var(--color-text-secondary); font-size: 0.9rem; margin-bottom: 12px;">Not logged in</p>
+         <button id="profile-page-login-btn" class="btn btn-primary" style="padding: 6px 20px; font-size: 0.9rem; border-radius: 20px;">🔑 Log In</button>
+         <div style="display: flex; gap: 10px; margin-top: 10px;">
+           <button id="profile-page-edit-btn" class="btn btn-outline" style="padding: 6px 16px; font-size: 0.9rem; border-radius: 20px; display: none;">Edit Profile</button>
+           <button id="profile-page-logout-btn" class="btn btn-outline" style="padding: 6px 16px; font-size: 0.9rem; border-radius: 20px; display: none; color: var(--brand-red); border-color: rgba(220, 38, 38, 0.3);">Log Out</button>
+         </div>
+       </div>
+    </div>
+
+    <!-- My Posts Section (Instagram Style) -->
+    <div id="profile-posts-section" style="display: none;">
+      <div style="display: flex; justify-content: center; padding: 12px; border-bottom: 1px solid var(--color-border);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-text);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>
+      </div>
+      <div id="profile-user-posts-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;">
+         <!-- Posts will be injected here -->
+      </div>
+      <div id="profile-posts-loading" style="text-align: center; padding: 40px; display: none;">
+        <div class="spinner"></div>
+      </div>
+      <div id="profile-posts-empty" style="text-align: center; padding: 40px; display: none; color: var(--color-text-secondary);">
+        <div style="font-size: 40px; margin-bottom: 15px;">📷</div>
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">No Posts Yet</h3>
+      </div>
+    </div>
+
+    <div style="padding: 24px 16px;">
+       <h3 style="font-size: 0.85rem; color: var(--color-text-tertiary); text-transform: uppercase; margin-bottom: 16px; font-weight: bold; letter-spacing: 1px;">Account & Data</h3>
+       
+       <a href="saved.html" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--color-bg-card); border-radius: 12px; margin-bottom: 12px; text-decoration: none; color: var(--color-text); box-shadow: var(--shadow-sm);">
+         <div style="display: flex; align-items: center; gap: 16px;">
+           <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(56, 189, 248, 0.1); color: var(--brand-sky); display: flex; align-items: center; justify-content: center; font-size: 20px;">🔖</div>
+           <span style="font-weight: 600; font-size: 1.05rem;">Saved Items</span>
+         </div>
+         <span style="color: var(--color-text-tertiary); font-size: 24px; line-height: 1;">›</span>
+       </a>
+
+
+       <a href="admin/index.html" id="profile-page-admin-btn" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--color-bg-card); border-radius: 12px; margin-bottom: 12px; text-decoration: none; color: var(--color-text); box-shadow: var(--shadow-sm);">
+         <div style="display: flex; align-items: center; gap: 16px;">
+           <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(168, 85, 247, 0.1); color: #a855f7; display: flex; align-items: center; justify-content: center; font-size: 20px;">⚙️</div>
+           <span style="font-weight: 600; font-size: 1.05rem;">Admin Dashboard</span>
+         </div>
+         <span style="color: var(--color-text-tertiary); font-size: 24px; line-height: 1;">›</span>
+       </a>
+
+       <h3 style="font-size: 0.85rem; color: var(--color-text-tertiary); text-transform: uppercase; margin-top: 32px; margin-bottom: 16px; font-weight: bold; letter-spacing: 1px;">Settings</h3>
+
+       <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--color-bg-card); border-radius: 12px; margin-bottom: 12px; box-shadow: var(--shadow-sm);">
+         <div style="display: flex; align-items: center; gap: 16px;">
+           <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 20px;">🌓</div>
+           <span style="font-weight: 600; font-size: 1.05rem;">Dark Mode</span>
+         </div>
+         <div>
+            <button id="profile-theme-toggle" style="padding: 6px 16px; border-radius: 20px; background: var(--color-bg-hover); border: 1px solid var(--color-border); cursor: pointer; color: var(--color-text); font-weight: 500;">Toggle</button>
+         </div>
+       </div>
+
+       <h3 style="font-size: 0.85rem; color: var(--color-text-tertiary); text-transform: uppercase; margin-top: 32px; margin-bottom: 16px; font-weight: bold; letter-spacing: 1px;">Connect With Us</h3>
+
+       <div class="social-grid stagger-children" id="social-grid">
+         <!-- Populated by JS -->
+       </div>
+
+    </div>
+    </div>
+  </main>
+
+  <!-- Edit Profile Modal -->
+  <div class="modal-backdrop" id="edit-profile-modal">
+    <div class="modal-content" style="max-width: 400px; padding: 24px;">
+      <button class="modal-close" onclick="ModalSystem.close('edit-profile-modal')" aria-label="Close modal">&times;</button>
+      <h2 style="margin-top: 0; margin-bottom: 20px;">Edit Profile</h2>
+      
+      <form id="edit-profile-form">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+          <div id="edit-profile-avatar-preview" style="width: 80px; height: 80px; border-radius: 50%; background: var(--color-bg-hover); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; overflow: hidden; border: 2px solid var(--color-border); margin-bottom: 10px; cursor: pointer;">
+             👤
+          </div>
+          <label for="edit-profile-image" style="color: var(--brand-sky); font-size: 0.9rem; font-weight: 500; cursor: pointer;">Change Profile Photo</label>
+          <input type="file" id="edit-profile-image" accept="image/*" style="display: none;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: var(--sp-4);">
+          <label for="edit-profile-name" class="form-label">Full Name</label>
+          <input type="text" id="edit-profile-name" class="form-input" placeholder="Your Name" required>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: var(--sp-6);">
+          <label for="edit-profile-username" class="form-label">Username</label>
+          <input type="text" id="edit-profile-username" class="form-input" placeholder="username">
+        </div>
+
+        <div id="edit-profile-error" class="alert alert-error" style="display: none; margin-bottom: var(--sp-4);">
+          <span id="edit-profile-error-msg"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 8px;">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Post Options Modal -->
+  <div class="modal-backdrop" id="post-options-modal" style="z-index: 10000;">
+    <div class="modal-content" style="max-width: 400px; padding: 24px; text-align: center;">
+      <button class="modal-close" onclick="ModalSystem.close('post-options-modal')" aria-label="Close modal">&times;</button>
+      <h3 style="margin-top: 0; margin-bottom: 20px;">Post Options</h3>
+      <input type="hidden" id="options-post-id">
+      
+      <button onclick="openEditPostModal()" style="width: 100%; padding: 12px; background: none; border: 1px solid var(--color-border); border-radius: 8px; font-weight: 600; font-size: 16px; color: var(--color-text); margin-bottom: 10px; cursor: pointer;">Edit Caption</button>
+      
+      <button onclick="deleteProfilePost()" style="width: 100%; padding: 12px; background: none; border: 1px solid var(--brand-red); border-radius: 8px; font-weight: 600; font-size: 16px; color: var(--brand-red); cursor: pointer;">Delete Post</button>
+    </div>
+  </div>
+
+  <!-- Edit Post Modal -->
+  <div class="modal-backdrop" id="edit-post-modal" style="z-index: 10001;">
+    <div class="modal-content" style="max-width: 500px; padding: 24px;">
+      <button class="modal-close" onclick="ModalSystem.close('edit-post-modal')" aria-label="Close modal">&times;</button>
+      <h2 style="margin-top: 0; margin-bottom: 20px;">Edit Caption</h2>
+      
+      <form id="edit-post-form">
+        <input type="hidden" id="edit-post-id">
+        <div class="form-group" style="margin-bottom: var(--sp-4);">
+          <textarea id="edit-post-caption" class="form-input" placeholder="Write a caption..." style="resize: none; min-height: 120px;" required></textarea>
+        </div>
+        <button type="submit" id="edit-post-submit-btn" class="btn btn-primary" style="width: 100%; border-radius: 8px;">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=221"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=221"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=221"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js?v=221"></script>
+
+  <script src="assets/js/firebase-config.js?v=221"></script>
+  <script src="assets/js/theme.js?v=221"></script>
+  <script src="assets/js/data.js?v=221"></script>
+  <script src="assets/js/auth.js?v=221"></script>
+  <script src="assets/js/db-service.js?v=221"></script>
+  <script src="assets/js/components.js?v=221"></script>
+  <script src="assets/js/app.js?v=221"></script>
+  
+  <script>
+    function renderSocialGrid() {
+      const container = document.getElementById('social-grid');
+      if (!container) return;
+
+      container.innerHTML = `
+        <a href="${SocialMedia.instagram.url}" target="_blank" rel="noopener" class="social-card instagram" id="social-instagram">
+          <div class="social-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
+          <span class="social-card-name">${SocialMedia.instagram.label}</span>
+          <span class="social-card-handle">${SocialMedia.instagram.handle}</span>
+        </a>
+        <a href="${SocialMedia.facebook.url}" target="_blank" rel="noopener" class="social-card facebook" id="social-facebook">
+          <div class="social-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div>
+          <span class="social-card-name">${SocialMedia.facebook.label}</span>
+          <span class="social-card-handle">${SocialMedia.facebook.handle}</span>
+        </a>
+        <a href="${SocialMedia.youtube.url}" target="_blank" rel="noopener" class="social-card youtube" id="social-youtube">
+          <div class="social-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
+          <span class="social-card-name">${SocialMedia.youtube.label}</span>
+          <span class="social-card-handle">${SocialMedia.youtube.handle}</span>
+        </a>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHeader('profile');
+      renderFooter();
+      renderSocialGrid();
+
+      // Ensure auth modal is injected immediately so login button works
+      if (typeof injectAuthModal === 'function') {
+        injectAuthModal();
+      }
+      
+      var themeBtn = document.getElementById('profile-theme-toggle');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function() {
+          if (typeof ThemeManager !== 'undefined') {
+            var current = document.documentElement.getAttribute('data-theme');
+            var next = current === 'dark' ? 'light' : 'dark';
+            ThemeManager.setTheme(next);
+          }
+        });
+      }
+
+      var loginBtn = document.getElementById('profile-page-login-btn');
+      var logoutBtn = document.getElementById('profile-page-logout-btn');
+      
+      if (loginBtn) {
+        loginBtn.addEventListener('click', function() {
+          if (typeof ModalSystem !== 'undefined') {
+            ModalSystem.open('auth-modal');
+          }
+        });
+      }
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+          if (typeof AuthService !== 'undefined') {
+            AuthService.logout().then(function() {
+              window.location.reload();
+            });
+          }
+        });
+      }
+
+      if (typeof AuthService !== 'undefined') {
+        AuthService.onAuthStateChanged(function(user) {
+          var avatar = document.getElementById('profile-page-avatar');
+          var nameEl = document.getElementById('profile-page-name');
+          var usernameEl = document.getElementById('profile-page-username');
+          var emailEl = document.getElementById('profile-page-email');
+          var editBtn = document.getElementById('profile-page-edit-btn');
+          
+          if (user) {
+            loginBtn.style.display = 'none';
+            logoutBtn.style.display = 'block';
+            editBtn.style.display = 'block';
+            
+            nameEl.textContent = user.displayName || 'Member';
+            if (user.username) {
+              usernameEl.textContent = '@' + user.username;
+              usernameEl.style.display = 'block';
+            } else {
+              usernameEl.style.display = 'none';
+            }
+            emailEl.textContent = user.email || '';
+            var firstLetter = (user.displayName || 'U').charAt(0).toUpperCase();
+            var profilePic = user.photoBase64 || user.photoURL;
+            if (profilePic) {
+              avatar.innerHTML = '<img src="' + profilePic + '" style="width:100%;height:100%;object-fit:cover;">';
+            } else {
+              avatar.innerHTML = '<div style="width:100%;height:100%;background:var(--brand-sky);color:white;display:flex;align-items:center;justify-content:center;">' + firstLetter + '</div>';
+            }
+            avatar.style.border = '2px solid var(--brand-sky)';
+
+            // Setup Edit Profile Modal Data
+            document.getElementById('edit-profile-name').value = user.displayName || '';
+            document.getElementById('edit-profile-username').value = user.username || '';
+            if (profilePic) {
+              document.getElementById('edit-profile-avatar-preview').innerHTML = '<img src="' + profilePic + '" style="width:100%;height:100%;object-fit:cover;">';
+            } else {
+              document.getElementById('edit-profile-avatar-preview').innerHTML = '<div style="width:100%;height:100%;background:var(--brand-sky);color:white;display:flex;align-items:center;justify-content:center;">' + firstLetter + '</div>';
+            }
+            
+            document.getElementById('profile-posts-section').style.display = 'block';
+            if (typeof loadUserPosts === 'function') loadUserPosts(user.uid);
+
+          } else {
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+            editBtn.style.display = 'none';
+            
+            nameEl.textContent = 'Guest User';
+            usernameEl.style.display = 'none';
+            emailEl.textContent = 'Not logged in';
+            avatar.innerHTML = '👤';
+            avatar.style.border = '2px solid var(--color-border)';
+            
+            document.getElementById('profile-posts-section').style.display = 'none';
+          }
+        });
+      }
+
+      // Edit Profile Logic
+      var editBtn = document.getElementById('profile-page-edit-btn');
+      if (editBtn) {
+        editBtn.addEventListener('click', function() {
+          if (typeof ModalSystem !== 'undefined') {
+            ModalSystem.open('edit-profile-modal');
+          }
+        });
+      }
+
+      var avatarPreview = document.getElementById('edit-profile-avatar-preview');
+      var imageInput = document.getElementById('edit-profile-image');
+      if (avatarPreview && imageInput) {
+        avatarPreview.addEventListener('click', function() {
+          imageInput.click();
+        });
+
+        imageInput.addEventListener('change', function(e) {
+          var file = e.target.files[0];
+          if (file) {
+            var reader = new FileReader();
+            reader.onload = function(event) {
+              var img = new Image();
+              img.onload = function() {
+                var canvas = document.createElement('canvas');
+                var MAX_WIDTH = 200;
+                var MAX_HEIGHT = 200;
+                var width = img.width;
+                var height = img.height;
+                
+                if (width > height) {
+                  if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                  }
+                } else {
+                  if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                  }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Compress into highly optimized jpeg base64
+                var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                avatarPreview.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;" data-base64="' + dataUrl + '">';
+              };
+              img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      var editForm = document.getElementById('edit-profile-form');
+      if (editForm) {
+        editForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          var name = document.getElementById('edit-profile-name').value;
+          var username = document.getElementById('edit-profile-username').value;
+          
+          var base64Image = null;
+          var previewImg = avatarPreview.querySelector('img');
+          if (previewImg && previewImg.hasAttribute('data-base64')) {
+             base64Image = previewImg.getAttribute('data-base64');
+          }
+          
+          var submitBtn = editForm.querySelector('button[type="submit"]');
+          var errorAlert = document.getElementById('edit-profile-error');
+          var errorMsg = document.getElementById('edit-profile-error-msg');
+          
+          var originalText = submitBtn.innerHTML;
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = 'Saving...';
+          errorAlert.style.display = 'none';
+          
+          try {
+            await AuthService.updateProfileData(name, username, base64Image);
+            ModalSystem.close('edit-profile-modal');
+            window.location.reload();
+          } catch (err) {
+            errorAlert.style.display = 'flex';
+            errorMsg.textContent = err.message;
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          }
+        });
+      }
+
+      // ------------------------------------
+      // Profile Posts Logic
+      // ------------------------------------
+      window.currentUserPosts = [];
+
+      window.loadUserPosts = async function(uid) {
+        const grid = document.getElementById('profile-user-posts-grid');
+        const loader = document.getElementById('profile-posts-loading');
+        const empty = document.getElementById('profile-posts-empty');
+        
+        grid.innerHTML = '';
+        loader.style.display = 'block';
+        empty.style.display = 'none';
+
+        try {
+          if (typeof DbService !== 'undefined') {
+            let posts = [];
+            if (typeof DbService.getWhere === 'function') {
+              posts = await DbService.getWhere('announcements', 'authorId', '==', uid);
+            } else {
+              const allPosts = await DbService.get('announcements', 15000);
+              posts = allPosts.filter(p => p.authorId === uid);
+            }
+            window.currentUserPosts = posts;
+            
+            loader.style.display = 'none';
+            if (window.currentUserPosts.length === 0) {
+              empty.style.display = 'block';
+            } else {
+              grid.innerHTML = window.currentUserPosts.map(post => {
+                const allImages = post.images && post.images.length > 0 ? post.images : (post.imageUrl ? [post.imageUrl] : []);
+                const cover = allImages.length > 0 ? (typeof convertDriveUrl === 'function' ? convertDriveUrl(allImages[0]) : allImages[0]) : '';
+                
+                if (cover) {
+                  return `
+                    <div style="aspect-ratio: 1; cursor: pointer; position: relative;" onclick="openPostOptions('${post.id}')">
+                      <img src="${cover}" style="width: 100%; height: 100%; object-fit: cover; background: #000;" onerror="this.src='assets/images/logo.png'">
+                      ${allImages.length > 1 ? '<div style="position:absolute;top:5px;right:5px;color:white;background:rgba(0,0,0,0.5);border-radius:50%;padding:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="14" height="14" rx="2" ry="2"></rect></svg></div>' : ''}
+                    </div>
+                  `;
+                } else {
+                  return `
+                    <div style="aspect-ratio: 1; cursor: pointer; background: var(--color-bg-card); display: flex; align-items: center; justify-content: center; text-align: center; padding: 10px; border: 1px solid var(--color-border-light);" onclick="openPostOptions('${post.id}')">
+                      <span style="font-size: 0.8rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">${post.title}</span>
+                    </div>
+                  `;
+                }
+              }).join('');
+            }
+          }
+        } catch (e) {
+          console.error("Failed to load user posts", e);
+          loader.style.display = 'none';
+        }
+      };
+
+      window.openPostOptions = function(postId) {
+        document.getElementById('options-post-id').value = postId;
+        ModalSystem.open('post-options-modal');
+      };
+
+      window.deleteProfilePost = async function() {
+        const postId = document.getElementById('options-post-id').value;
+        if (!postId) return;
+        if (!confirm("Are you sure you want to delete this post?")) return;
+        
+        try {
+          ModalSystem.close('post-options-modal');
+          if (typeof DbService !== 'undefined') {
+            await DbService.delete('announcements', postId);
+            // Reload posts
+            const user = AuthService.getCurrentUser();
+            if (user) window.loadUserPosts(user.uid);
+          }
+        } catch (e) {
+          console.error("Failed to delete post", e);
+          alert("Failed to delete post.");
+        }
+      };
+
+      window.openEditPostModal = function() {
+        const postId = document.getElementById('options-post-id').value;
+        const post = window.currentUserPosts.find(p => p.id === postId);
+        if (!post) return;
+        
+        document.getElementById('edit-post-id').value = postId;
+        document.getElementById('edit-post-caption').value = post.title || '';
+        
+        ModalSystem.close('post-options-modal');
+        setTimeout(() => ModalSystem.open('edit-post-modal'), 300);
+      };
+
+      var editPostForm = document.getElementById('edit-post-form');
+      if (editPostForm) {
+        editPostForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const postId = document.getElementById('edit-post-id').value;
+          const newCaption = document.getElementById('edit-post-caption').value.trim();
+          const btn = document.getElementById('edit-post-submit-btn');
+          
+          btn.disabled = true;
+          btn.textContent = "Saving...";
+          
+          try {
+            if (typeof DbService !== 'undefined') {
+              await DbService.update('announcements', postId, { title: newCaption });
+              ModalSystem.close('edit-post-modal');
+              // Reload posts
+              const user = AuthService.getCurrentUser();
+              if (user) window.loadUserPosts(user.uid);
+            }
+          } catch (err) {
+            console.error("Failed to update post", err);
+            alert("Failed to update post.");
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Save Changes";
+          }
+        });
+      }
+
+    });
+  </script>
+</body>
+</html>

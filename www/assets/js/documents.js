@@ -138,7 +138,7 @@ function renderSermons() {
     listContainer.innerHTML = `
       <div class="empty-state" style="grid-column: 1 / -1; width: 100%;">
         <div class="empty-state-icon">📖</div>
-        <h3>No Sermons Found</h3>
+        <h3>No Documents Found</h3>
         <p>Try adjusting your search or topic filters.</p>
       </div>
     `;
@@ -185,7 +185,7 @@ function setupPreviewModal() {
     <div class="modal-backdrop lightbox-modal" id="sermon-modal" style="background: rgba(0,0,0,0.95); padding: 0;">
       <div style="position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(0,0,0,0.5); z-index: 10;">
-          <h3 id="modal-sermon-title" style="color: white; margin: 0; font-size: 1.2rem; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Sermon Notes</h3>
+          <h3 id="modal-sermon-title" style="color: white; margin: 0; font-size: 1.2rem; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Document Notes</h3>
           <div style="display: flex; gap: 16px; align-items: center;">
              <a href="#" id="modal-sermon-download" download style="color: white; text-decoration: none; display: flex; align-items: center; gap: 8px;" title="Download">
                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -395,3 +395,4 @@ function setupBulkDownload() {
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(setupBulkDownload, 500); // Wait for initial render
 });
+

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "437184405719",
+    "project_id": "ktp-skk",
+    "storage_bucket": "ktp-skk.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:437184405719:android:8eb3d28d32f8a088cc9092",
+        "android_client_info": {
+          "package_name": "com.ktpsaikhamakawn.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "437184405719-818m3gae9aifj4nse3ajb6vqfde5p4ip.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ktpsaikhamakawn.app",
+            "certificate_hash": "16d0ffdb4fdb44a0d75bf621939a9f358d3227b4"
+          }
+        },
+        {
+          "client_id": "437184405719-s9h5daf2ubsnmve1m95r09rfco75bbhn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB67ZBnr4-lNnac9idNLR98pB24FnH7mBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "437184405719-s9h5daf2ubsnmve1m95r09rfco75bbhn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
