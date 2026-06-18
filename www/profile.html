@@ -78,17 +78,6 @@
          <span style="color: var(--color-text-tertiary); font-size: 24px; line-height: 1;">›</span>
        </a>
 
-       <h3 style="font-size: 0.85rem; color: var(--color-text-tertiary); text-transform: uppercase; margin-top: 32px; margin-bottom: 16px; font-weight: bold; letter-spacing: 1px;">Settings</h3>
-
-       <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--color-bg-card); border-radius: 12px; margin-bottom: 12px; box-shadow: var(--shadow-sm);">
-         <div style="display: flex; align-items: center; gap: 16px;">
-           <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 20px;">🌓</div>
-           <span style="font-weight: 600; font-size: 1.05rem;">Dark Mode</span>
-         </div>
-         <div>
-            <button id="profile-theme-toggle" style="padding: 6px 16px; border-radius: 20px; background: var(--color-bg-hover); border: 1px solid var(--color-border); cursor: pointer; color: var(--color-text); font-weight: 500;">Toggle</button>
-         </div>
-       </div>
 
        <h3 style="font-size: 0.85rem; color: var(--color-text-tertiary); text-transform: uppercase; margin-top: 32px; margin-bottom: 16px; font-weight: bold; letter-spacing: 1px;">Connect With Us</h3>
 
@@ -210,16 +199,6 @@
         injectAuthModal();
       }
       
-      var themeBtn = document.getElementById('profile-theme-toggle');
-      if (themeBtn) {
-        themeBtn.addEventListener('click', function() {
-          if (typeof ThemeManager !== 'undefined') {
-            var current = document.documentElement.getAttribute('data-theme');
-            var next = current === 'dark' ? 'light' : 'dark';
-            ThemeManager.setTheme(next);
-          }
-        });
-      }
 
       var loginBtn = document.getElementById('profile-page-login-btn');
       var logoutBtn = document.getElementById('profile-page-logout-btn');
