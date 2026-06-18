@@ -198,6 +198,15 @@ function renderHeader(activePage = '') {
     <a href="admin/index.html" class="nav-mobile-link ${activePage === 'admin' ? 'active' : ''}">
       <span class="nav-icon">⚙️</span> Admin Dashboard
     </a>
+    <div class="nav-mobile-divider"></div>
+    <div style="padding: 0 var(--sp-4); margin-bottom: var(--sp-4);">
+      <div style="font-size: 13px; font-weight: bold; color: var(--color-text-secondary); margin-bottom: 8px; padding-left: 4px;">Theme</div>
+      <div style="display: flex; background: var(--color-bg-hover); border-radius: var(--radius-full); padding: 4px;">
+        <button class="mobile-theme-opt" data-theme="light" style="flex: 1; padding: 6px; border: none; border-radius: var(--radius-full); background: transparent; cursor: pointer; color: var(--color-text-secondary); transition: all 0.2s; font-size: 13px; font-weight: 500;">Light</button>
+        <button class="mobile-theme-opt" data-theme="dark" style="flex: 1; padding: 6px; border: none; border-radius: var(--radius-full); background: transparent; cursor: pointer; color: var(--color-text-secondary); transition: all 0.2s; font-size: 13px; font-weight: 500;">Dark</button>
+        <button class="mobile-theme-opt" data-theme="system" style="flex: 1; padding: 6px; border: none; border-radius: var(--radius-full); background: transparent; cursor: pointer; color: var(--color-text-secondary); transition: all 0.2s; font-size: 13px; font-weight: 500;">System</button>
+      </div>
+    </div>
   `;
   document.body.appendChild(mobileNav);
 
