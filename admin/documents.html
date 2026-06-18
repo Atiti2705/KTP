@@ -134,6 +134,26 @@
             <input type="date" id="doc-date" class="form-input" required>
           </div>
 
+          <div style="display: flex; gap: var(--sp-3);">
+            <div class="form-group" style="flex: 1;">
+              <label for="doc-type" class="form-label">File Type</label>
+              <select id="doc-type" class="form-input form-select">
+                <option value="PDF">PDF</option>
+                <option value="DOCX">DOCX</option>
+                <option value="DOC">DOC</option>
+                <option value="PPTX">PPTX</option>
+                <option value="XLSX">XLSX</option>
+                <option value="MP3">MP3</option>
+                <option value="MP4">MP4</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="doc-size" class="form-label">File Size <small style="color:var(--color-text-tertiary);">(e.g. 2.5 MB)</small></label>
+              <input type="text" id="doc-size" class="form-input" placeholder="e.g. 1.2 MB">
+            </div>
+          </div>
+
           <div class="form-group">
             <label class="form-label">Document Source</label>
             <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">

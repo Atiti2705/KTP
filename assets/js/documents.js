@@ -28,7 +28,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     const data = await DbService.get('documents');
-    if (data && Array.isArray(data)) {
+    // Only replace local data if Firestore actually returned records.
+    // If the collection is empty or the query failed, keep the existing
+    // static/localStorage data so the page never goes blank.
+    if (data && Array.isArray(data) && data.length > 0) {
       Documents.length = 0;
       Documents.push(...data.map(d => {
         if (d.downloadUrl) d.downloadUrl = convertDriveUrl(d.downloadUrl, 'file');
