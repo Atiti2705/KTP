@@ -78,11 +78,10 @@
     </section>
 
     <!-- ====== ANNOUNCEMENTS SECTION ====== -->
-    <section class="section announcements-section" id="announcements">
+    <section class="section announcements-section" id="announcements" style="padding-top: 3rem; padding-bottom: 3rem;">
       <div class="container">
-        <div class="section-header reveal" style="position: relative; text-align: center;">
+        <div class="section-header reveal" style="position: relative; text-align: center; margin-bottom: 2rem;">
           <h2 style="margin: 0 auto;">📢 Announcements</h2>
-          <p style="margin: 0 auto; max-width: 600px;">Stay updated with the latest news and announcements from KṬP Saikhamakawn.</p>
           <div class="carousel-nav-buttons desktop-only" style="position: absolute; right: 0; bottom: 0;">
             <button class="carousel-btn prev-btn" id="announcements-prev" aria-label="Previous">&larr;</button>
             <button class="carousel-btn next-btn" id="announcements-next" aria-label="Next">&rarr;</button>
@@ -92,6 +91,18 @@
           <div class="announcements-scroll no-scrollbar stagger-children" id="announcements-list">
             <!-- Populated by JS -->
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== ABOUT US SECTION ====== -->
+    <section class="section about-section" id="about">
+      <div class="container">
+        <div class="section-header reveal text-center" style="margin-bottom: 2rem;">
+          <h2 style="margin: 0 auto;">📖 About Us</h2>
+        </div>
+        <div class="about-list" id="about-list-container" style="display: flex; flex-direction: column; gap: 1rem; max-width: 800px; margin: 0 auto;">
+          <!-- Cards injected here via JS -->
         </div>
       </div>
     </section>
@@ -141,12 +152,13 @@
 
       // Load dynamic databases in parallel
       try {
-        const [annData, photoData, docData, sermonData, settings] = await Promise.all([
+        const [annData, photoData, docData, sermonData, settings, aboutData] = await Promise.all([
           DbService.get('announcements').catch(() => null),
           DbService.get('photos').catch(() => null),
           DbService.get('documents').catch(() => null),
           DbService.get('sermons').catch(() => null),
-          DbService.get('settings').catch(() => null)
+          DbService.get('settings').catch(() => null),
+          DbService.get('about').catch(() => null)
         ]);
 
         let needsRerender = false;
@@ -169,6 +181,11 @@
         if (sermonData && Array.isArray(sermonData)) {
           Sermons.length = 0;
           Sermons.push(...sermonData);
+          needsRerender = true;
+        }
+        if (aboutData && Array.isArray(aboutData)) {
+          About.length = 0;
+          About.push(...aboutData);
           needsRerender = true;
         }
 
@@ -203,10 +220,96 @@
       // No animation for Chibai text
 
       renderAnnouncements();
+      renderAbout();
       renderFeaturedPhotos();
       renderFeaturedDocs();
       renderFeaturedSermons();
       renderSocialGrid();
+
+      // Ensure dynamically injected elements with .reveal class are observed
+      setTimeout(() => {
+        if (typeof setupScrollReveal === 'function') {
+          setupScrollReveal();
+        }
+      }, 100);
+    }
+
+    function renderAbout() {
+      const container = document.getElementById('about-list-container');
+      if (!container) return;
+
+      if (!About || About.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary);">No content available at the moment.</p>';
+        return;
+      }
+
+      const sorted = [...About].sort((a, b) => {
+        const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
+        const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
+        return aIdx - bIdx;
+      });
+
+      container.innerHTML = sorted.map(item => {
+        const imgUrl = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : 'assets/images/logo.png';
+        const strippedContent = item.content ? item.content.replace(/<[^>]*>?/gm, '') : '';
+        return `
+        <div class="about-card reveal" data-id="${item.id}" style="display: flex; gap: 1rem; padding: 1rem; background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px solid var(--color-border-light); cursor: pointer; transition: transform 0.2s; box-shadow: var(--shadow-sm); text-align: left; align-items: center;">
+          <div style="flex-shrink: 0; width: 100px; height: 100px; border-radius: 8px; overflow: hidden; background: var(--color-bg-alt);">
+            <img src="${imgUrl}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='assets/images/logo.png';">
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden;">
+            <h3 style="font-size: 1rem; line-height: 1.3; margin-bottom: 0.25rem; color: var(--color-text); text-transform: uppercase; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
+            <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; text-align: left;">${strippedContent}</p>
+            <div style="font-size: 0.75rem; color: var(--brand-sky); display: flex; align-items: center; gap: 4px;">
+              <span style="display:inline-block; width:4px; height:4px; border-radius:50%; background:var(--brand-sky);"></span>
+              ${item.date || ''}
+            </div>
+          </div>
+        </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.about-card').forEach(card => {
+        card.addEventListener('click', () => {
+          openAboutDetail(card.getAttribute('data-id'));
+        });
+      });
+    }
+
+    function openAboutDetail(id) {
+      const item = About.find(a => a.id === id);
+      if (!item) return;
+
+      document.getElementById('about-detail-title').textContent = item.title || 'Untitled';
+      document.getElementById('about-detail-date').textContent = item.date || '';
+      document.getElementById('about-detail-content').innerHTML = item.content || '';
+
+      const sliderContainer = document.getElementById('about-detail-slider-container');
+      const slider = document.getElementById('about-detail-slider');
+      const dotsContainer = document.getElementById('about-detail-dots');
+
+      if (item.imageUrls && item.imageUrls.length > 0) {
+        sliderContainer.style.display = 'block';
+        slider.innerHTML = item.imageUrls.map((url, i) => `
+          <img src="${url}" style="width: 100%; max-height: 300px; object-fit: contain; scroll-snap-align: center; border-radius: 8px; flex-shrink: 0;" alt="Slide ${i+1}" onerror="this.onerror=null; this.src='assets/images/logo.png';">
+        `).join('');
+        
+        dotsContainer.innerHTML = item.imageUrls.map((_, i) => `
+          <div class="slider-dot ${i === 0 ? 'active' : ''}" style="width: 8px; height: 8px; border-radius: 50%; background: ${i === 0 ? 'var(--brand-sky)' : 'var(--color-border)'}; transition: background 0.3s;"></div>
+        `).join('');
+
+        slider.onscroll = () => {
+          const index = Math.round(slider.scrollLeft / slider.clientWidth);
+          const dots = dotsContainer.querySelectorAll('.slider-dot');
+          dots.forEach((dot, i) => {
+            dot.style.background = i === index ? 'var(--brand-sky)' : 'var(--color-border)';
+          });
+        };
+      } else {
+        sliderContainer.style.display = 'none';
+      }
+
+      ModalSystem.open('about-detail-modal');
     }
 
     function renderAnnouncements() {
@@ -236,14 +339,14 @@
         if (formattedUrl) {
           return `
           <${tag} ${href} class="announcement-card reveal" style="${clickableStyle} display: flex; flex-direction: column; background: var(--color-bg-card); overflow: hidden;">
-            <div style="height: 220px; position: relative; overflow: hidden; border-bottom: 1px solid var(--color-border-light); background: #000;">
+            <div style="height: 140px; position: relative; overflow: hidden; border-bottom: 1px solid var(--color-border-light); background: #000;">
               <div style="position: absolute; inset: -20px; background-image: url('${formattedUrl}'); background-size: cover; background-position: center; filter: blur(15px); opacity: 0.5;"></div>
               <div style="position: absolute; inset: 0; background-image: url('${formattedUrl}'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
             </div>
-            <div style="padding: var(--sp-4); flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            <div style="padding: var(--sp-3); flex: 1; display: flex; flex-direction: column; justify-content: center;">
               <div class="announcement-date" style="color: var(--brand-sky); font-size: var(--fs-xs); margin-bottom: var(--sp-1);">📌 ${formatDate(ann.date)}</div>
-              <h3 class="announcement-title" style="font-size: var(--fs-md); margin-bottom: var(--sp-2); color: var(--color-text); line-height: 1.3;">${ann.title}</h3>
-              <p class="announcement-text" style="color: var(--color-text-secondary); font-size: var(--fs-sm); -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0;">${ann.content}</p>
+              <h3 class="announcement-title" style="font-size: var(--fs-md); margin-bottom: var(--sp-1); color: var(--color-text); line-height: 1.3;">${ann.title || ''}</h3>
+              <p class="announcement-text" style="color: var(--color-text-secondary); font-size: var(--fs-sm); -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0;">${ann.content || ''}</p>
             </div>
           </${tag}>
           `;
@@ -366,6 +469,37 @@
       `;
     }
   </script>
+  <!-- Detailed View Modal -->
+  <div class="modal-backdrop" id="about-detail-modal" style="z-index: 9999; background: var(--color-bg);">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto; background: var(--color-bg); position: relative;">
+      
+      <!-- App-like Header -->
+      <div style="display: flex; align-items: center; padding: 1rem; border-bottom: 1px solid var(--color-border-light); background: var(--color-bg);">
+        <button class="btn btn-outline" onclick="ModalSystem.close('about-detail-modal')" style="border: none; padding: 0.5rem; font-size: 1.5rem; cursor: pointer; color: var(--color-text);">←</button>
+        <div style="flex: 1; text-align: center; font-weight: bold; font-size: 1.1rem; color: var(--color-text);">News</div>
+        <div style="width: 40px;"></div> <!-- Spacer for centering -->
+      </div>
+      
+      <!-- Scrollable Content -->
+      <div style="flex: 1; overflow-y: auto; padding: 1.5rem;">
+        <h2 id="about-detail-title" style="font-size: 1.5rem; margin-bottom: 0.5rem; line-height: 1.3; color: var(--color-text);"></h2>
+        <div id="about-detail-date" style="color: var(--color-text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;"></div>
+        
+        <!-- Image Slider -->
+        <div id="about-detail-slider-container" style="display: none; margin-bottom: 1.5rem;">
+          <div id="about-detail-slider" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; scrollbar-width: none; border-radius: var(--radius-lg);">
+            <!-- Images go here -->
+          </div>
+          <!-- Dots -->
+          <div id="about-detail-dots" style="display: flex; justify-content: center; gap: 8px; margin-top: 1rem;">
+          </div>
+        </div>
+
+        <div id="about-detail-content" style="line-height: 1.8; color: var(--color-text); font-size: var(--fs-md); text-align: justify;"></div>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>

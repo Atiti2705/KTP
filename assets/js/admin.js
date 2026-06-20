@@ -108,6 +108,10 @@ const AdminData = {
     if (!localStorage.getItem('db_announcements')) {
       localStorage.setItem('db_announcements', JSON.stringify(Announcements));
     }
+    // About
+    if (!localStorage.getItem('db_about')) {
+      localStorage.setItem('db_about', JSON.stringify(About));
+    }
     // Lyrics
     if (!localStorage.getItem('db_lyrics')) {
       localStorage.setItem('db_lyrics', JSON.stringify([]));
@@ -282,19 +286,21 @@ const AdminData = {
     if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
       try {
         console.log("🔄 Syncing admin databases with Firestore...");
-        const [photos, docs, sermons, announcements, lyrics, settings] = await Promise.all([
+        const [photos, docs, sermons, announcements, lyrics, settings, about] = await Promise.all([
           DbService.get('photos'),
           DbService.get('documents'),
           DbService.get('sermons'),
           DbService.get('announcements'),
           DbService.get('lyrics'),
-          DbService.get('settings')
+          DbService.get('settings'),
+          DbService.get('about')
         ]);
 
         if (Array.isArray(photos)) localStorage.setItem('db_photos', JSON.stringify(photos));
         if (Array.isArray(docs)) localStorage.setItem('db_documents', JSON.stringify(docs));
         if (Array.isArray(sermons)) localStorage.setItem('db_sermons', JSON.stringify(sermons));
         if (Array.isArray(announcements)) localStorage.setItem('db_announcements', JSON.stringify(announcements));
+        if (Array.isArray(about)) localStorage.setItem('db_about', JSON.stringify(about));
         if (Array.isArray(lyrics)) localStorage.setItem('db_lyrics', JSON.stringify(lyrics));
         if (settings) localStorage.setItem('db_settings', JSON.stringify(settings));
 
@@ -475,9 +481,10 @@ function renderSidebar() {
       currentPath.endsWith('photos.html') ? 'photos' :
         currentPath.endsWith('documents.html') ? 'documents' :
           currentPath.endsWith('sermons.html') ? 'sermons' :
-            currentPath.endsWith('lyrics.html') ? 'lyrics' :
-              currentPath.endsWith('announcements.html') ? 'announcements' :
-                currentPath.endsWith('settings.html') ? 'settings' : '';
+              currentPath.endsWith('lyrics.html') ? 'lyrics' :
+                currentPath.endsWith('about.html') ? 'about' :
+                  currentPath.endsWith('announcements.html') ? 'announcements' :
+                    currentPath.endsWith('settings.html') ? 'settings' : '';
 
   const user = JSON.parse(localStorage.getItem('ktp_admin_user') || '{"name":"Admin","role":"User"}');
 
@@ -509,6 +516,9 @@ function renderSidebar() {
       </a>
       <a href="announcements.html" class="sidebar-link ${activePage === 'announcements' ? 'active' : ''}">
         <span class="link-icon">📢</span> Announcements
+      </a>
+      <a href="about.html" class="sidebar-link ${activePage === 'about' ? 'active' : ''}">
+        <span class="link-icon">📖</span> About Us
       </a>
       <a href="settings.html" class="sidebar-link ${activePage === 'settings' ? 'active' : ''}">
         <span class="link-icon">⚙️</span> Site Settings

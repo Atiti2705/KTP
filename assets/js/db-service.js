@@ -130,6 +130,7 @@ const DbService = {
       else if (collection === 'documents') localStorage.setItem(key, JSON.stringify(Documents));
       else if (collection === 'sermons') localStorage.setItem(key, JSON.stringify(Sermons));
       else if (collection === 'announcements') localStorage.setItem(key, JSON.stringify(Announcements));
+      else if (collection === 'about') localStorage.setItem(key, JSON.stringify(About));
       else if (collection === 'lyrics') localStorage.setItem(key, JSON.stringify([]));
       else if (collection === 'settings') {
         localStorage.setItem(key, JSON.stringify({

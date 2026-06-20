@@ -151,6 +151,28 @@ const Announcements = [
 ];
 
 // ========================
+// ABOUT US
+// ========================
+const About = [
+  {
+    id: 'about-1',
+    title: 'KṬP Saikhamakawn Branch',
+    date: 'Est. 1954',
+    content: 'Kristian Ṭhalai Pawl (KṬP) is the youth fellowship of the Presbyterian Church of Mizoram. The Saikhamakawn Branch is dedicated to serving the Lord through youth ministry, nurturing the spiritual growth of our members, and contributing to the church and society.',
+    imageUrls: [],
+    orderIndex: 0
+  },
+  {
+    id: 'about-2',
+    title: 'Our Motto',
+    date: 'KṬP Motto',
+    content: 'Our motto is <strong style="color: var(--brand-sky);">"Rawngbawl Tura Chhandam"</strong> (Saved to Serve).',
+    imageUrls: [],
+    orderIndex: 1
+  }
+];
+
+// ========================
 // PHOTOS
 // TODO: Replace with Cloudinary + Firestore
 // Firestore: db.collection('photos').orderBy('date','desc').limit(12)
@@ -732,6 +754,9 @@ function formatDateLong(dateStr) {
   if (!localStorage.getItem('db_announcements')) {
     localStorage.setItem('db_announcements', JSON.stringify(Announcements));
   }
+  if (!localStorage.getItem('db_about')) {
+    localStorage.setItem('db_about', JSON.stringify(About));
+  }
   if (!localStorage.getItem('db_settings')) {
     localStorage.setItem('db_settings', JSON.stringify({
       churchInfo: ChurchInfo,
@@ -744,6 +769,7 @@ function formatDateLong(dateStr) {
   const storedDocs = JSON.parse(localStorage.getItem('db_documents'));
   const storedSermons = JSON.parse(localStorage.getItem('db_sermons'));
   const storedAnnouncements = JSON.parse(localStorage.getItem('db_announcements'));
+  const storedAbout = JSON.parse(localStorage.getItem('db_about'));
   const storedSettings = JSON.parse(localStorage.getItem('db_settings'));
 
   // 3. Mutate static objects/arrays in-place
@@ -765,6 +791,10 @@ function formatDateLong(dateStr) {
   if (storedAnnouncements) {
     Announcements.length = 0;
     Announcements.push(...storedAnnouncements);
+  }
+  if (storedAbout) {
+    About.length = 0;
+    About.push(...storedAbout);
   }
   if (storedSettings) {
     if (storedSettings.churchInfo) {

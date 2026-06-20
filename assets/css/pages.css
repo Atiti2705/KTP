@@ -9,26 +9,25 @@
 .hero {
   position: relative;
   min-height: auto;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   overflow: hidden;
-  background: linear-gradient(135deg,
-      rgba(135, 206, 235, 0.1) 0%,
-      var(--color-bg) 30%,
-      var(--color-bg) 70%,
-      rgba(255, 215, 0, 0.08) 100%);
+  background-color: var(--color-bg);
+  background-image: 
+    linear-gradient(to bottom, rgba(248, 250, 252, 0.6), rgba(248, 250, 252, 0.95)),
+    url('../images/hero-bg.jpeg');
+  background-size: cover;
+  background-position: top center;
 }
 
 [data-theme="dark"] .hero {
-  background: linear-gradient(135deg,
-      rgba(135, 206, 235, 0.05) 0%,
-      var(--color-bg) 30%,
-      var(--color-bg) 70%,
-      rgba(255, 215, 0, 0.04) 100%);
+  background-image: 
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.95)),
+    url('../images/hero-bg.jpeg');
 }
 
 .hero-bg-decoration {
@@ -233,7 +232,7 @@
 }
 
 .poster-card {
-  height: 300px;
+  height: 220px;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -255,7 +254,7 @@
     flex: 0 0 240px;
   }
   .poster-card {
-    height: 360px;
+    height: 260px;
   }
 }
 
