@@ -2,18 +2,30 @@
    KṬP Saikhamakawn — Firebase Config & Init
    ============================================ */
 
+let customSettings = null;
+try {
+  const stored = localStorage.getItem('db_settings');
+  if (stored) {
+    customSettings = JSON.parse(stored);
+  }
+} catch (e) {
+  console.warn("Could not read custom settings from localStorage", e);
+}
+
+const customFirebaseConfig = customSettings?.apiKeys?.firebaseConfig || {};
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBzKa1lWa6aS769lnnG2IECrq6ldIhS9Ts",
-  authDomain: "ktp-skk.firebaseapp.com",
-  projectId: "ktp-skk",
-  storageBucket: "ktp-skk.firebasestorage.app",
-  messagingSenderId: "437184405719",
-  appId: "1:437184405719:web:d3c4823aa85cc191cc9092",
-  measurementId: "G-JB6DGBKJX3"
+  apiKey: customFirebaseConfig.apiKey || "AIzaSyCjAtBVv3rxinMWomrXhlD3bvorEoEwYqQ",
+  authDomain: customFirebaseConfig.authDomain || "saikhamakawnktp-67519.firebaseapp.com",
+  projectId: customFirebaseConfig.projectId || "saikhamakawnktp-67519",
+  storageBucket: customFirebaseConfig.storageBucket || "saikhamakawnktp-67519.firebasestorage.app",
+  messagingSenderId: customFirebaseConfig.messagingSenderId || "1070032910802",
+  appId: customFirebaseConfig.appId || "1:1070032910802:web:ed6370c2492102d03a300b",
+  measurementId: customFirebaseConfig.measurementId || "G-K2Y01XTWY8"
 };
 
 // Google Drive API Key for folder imports
-const googleDriveApiKey = "AIzaSyAXV2QBWS3K8YUR7eFtE1jN07jCJohJvCo";
+const googleDriveApiKey = customSettings?.apiKeys?.googleDriveApiKey || "AIzaSyAXV2QBWS3K8YUR7eFtE1jN07jCJohJvCo";
 
 let db = null;
 let auth = null;

@@ -42,7 +42,13 @@ const DbService = {
         items.sort((a, b) => {
           const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
           const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
-          if (aIdx === bIdx) return new Date(b.date || 0) - new Date(a.date || 0);
+          if (aIdx === bIdx) {
+            const timeA = new Date(a.date || 0).getTime();
+            const timeB = new Date(b.date || 0).getTime();
+            const valA = isNaN(timeA) ? 0 : timeA;
+            const valB = isNaN(timeB) ? 0 : timeB;
+            return valB - valA;
+          }
           return aIdx - bIdx;
         });
         

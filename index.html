@@ -25,13 +25,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=103">
-  <link rel="stylesheet" href="assets/css/base.css?v=103">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=103">
-  <link rel="stylesheet" href="assets/css/animations.css?v=103">
-  <link rel="stylesheet" href="assets/css/components.css?v=103">
-  <link rel="stylesheet" href="assets/css/layout.css?v=103">
-  <link rel="stylesheet" href="assets/css/pages.css?v=103">
+  <link rel="stylesheet" href="assets/css/variables.css?v=105">
+  <link rel="stylesheet" href="assets/css/base.css?v=105">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=105">
+  <link rel="stylesheet" href="assets/css/animations.css?v=105">
+  <link rel="stylesheet" href="assets/css/components.css?v=105">
+  <link rel="stylesheet" href="assets/css/layout.css?v=105">
+  <link rel="stylesheet" href="assets/css/pages.css?v=105">
 </head>
 
 <body>
@@ -107,6 +107,19 @@
       </div>
     </section>
 
+    <!-- ====== FEATURED VIDEO SECTION ====== -->
+    <section class="section video-section" id="featured-video">
+      <div class="container">
+        <div class="section-header reveal text-center" style="margin-bottom: 2rem;">
+          <h2 style="margin: 0 auto;">🎥 Featured Videos</h2>
+          <p style="margin-top: 0.5rem; color: var(--color-text-secondary);">Watch our latest updates and activities on YouTube.</p>
+        </div>
+        <div id="featured-video-grid" class="reveal" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto;">
+          <!-- Videos injected via JS -->
+        </div>
+      </div>
+    </section>
+
     <!-- ====== SOCIAL MEDIA ====== -->
     <section class="section social-section" id="social-media">
       <div class="container">
@@ -127,20 +140,20 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=103"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=105"></script>
 
   <!-- App Configuration & Services -->
-  <script src="assets/js/firebase-config.js?v=103"></script>
-  <script src="assets/js/theme.js?v=103"></script>
-  <script src="assets/js/data.js?v=103"></script>
-  <script src="assets/js/auth.js?v=103"></script>
-  <script src="assets/js/db-service.js?v=103"></script>
-  <script src="assets/js/save-service.js?v=103"></script>
-  <script src="assets/js/components.js?v=103"></script>
-  <script src="assets/js/search.js?v=103"></script>
-  <script src="assets/js/app.js?v=103"></script>
+  <script src="assets/js/firebase-config.js?v=105"></script>
+  <script src="assets/js/theme.js?v=105"></script>
+  <script src="assets/js/data.js?v=105"></script>
+  <script src="assets/js/auth.js?v=105"></script>
+  <script src="assets/js/db-service.js?v=105"></script>
+  <script src="assets/js/save-service.js?v=105"></script>
+  <script src="assets/js/components.js?v=105"></script>
+  <script src="assets/js/search.js?v=105"></script>
+  <script src="assets/js/app.js?v=105"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // Render static header and footer immediately for fast visual load
@@ -166,30 +179,36 @@
         if (annData && Array.isArray(annData)) {
           Announcements.length = 0;
           Announcements.push(...annData);
+          localStorage.setItem('db_announcements', JSON.stringify(annData));
           needsRerender = true;
         }
         if (photoData && Array.isArray(photoData)) {
           Photos.length = 0;
           Photos.push(...photoData);
+          localStorage.setItem('db_photos', JSON.stringify(photoData));
           needsRerender = true;
         }
         if (docData && Array.isArray(docData)) {
           Documents.length = 0;
           Documents.push(...docData);
+          localStorage.setItem('db_documents', JSON.stringify(docData));
           needsRerender = true;
         }
         if (sermonData && Array.isArray(sermonData)) {
           Sermons.length = 0;
           Sermons.push(...sermonData);
+          localStorage.setItem('db_sermons', JSON.stringify(sermonData));
           needsRerender = true;
         }
         if (aboutData && Array.isArray(aboutData)) {
           About.length = 0;
           About.push(...aboutData);
+          localStorage.setItem('db_about', JSON.stringify(aboutData));
           needsRerender = true;
         }
 
         if (settings) {
+          localStorage.setItem('db_settings', JSON.stringify(settings));
           if (settings.churchInfo) Object.assign(ChurchInfo, settings.churchInfo);
           if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
           
@@ -221,6 +240,7 @@
 
       renderAnnouncements();
       renderAbout();
+      renderFeaturedVideo();
       renderFeaturedPhotos();
       renderFeaturedDocs();
       renderFeaturedSermons();
@@ -232,6 +252,63 @@
           setupScrollReveal();
         }
       }, 100);
+    }
+
+    function renderFeaturedVideo() {
+      const section = document.getElementById('featured-video');
+      const grid = document.getElementById('featured-video-grid');
+      if (!section || !grid) return;
+
+      let videoUrls = [];
+      if (typeof DbService !== 'undefined') {
+        const settings = DbService.getLocal('settings');
+        if (settings && settings.featuredVideos && Array.isArray(settings.featuredVideos)) {
+          videoUrls = settings.featuredVideos;
+        } else if (settings && settings.featuredVideoUrl) {
+          // Fallback for old single url setting
+          videoUrls = [settings.featuredVideoUrl];
+        }
+      }
+
+      if (videoUrls.length === 0) {
+        // Fallback to the latest uploads playlist if no manual video is set
+        videoUrls = ["https://www.youtube.com/embed?listType=playlist&list=UUlBDNEDug81W0nYFFVO39_w"];
+      }
+
+      grid.innerHTML = '';
+      
+      videoUrls.forEach(videoUrl => {
+        let embedUrl = videoUrl;
+        let videoId = null;
+        
+        if (videoUrl.length === 11 && !videoUrl.includes('/')) {
+          videoId = videoUrl;
+        } else {
+          // More robust regex to handle /shorts/, /live/, and extra parameters
+          const ytMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))([^"&?\/\s]{11})/);
+          if (ytMatch && ytMatch[1]) {
+            videoId = ytMatch[1];
+          }
+        }
+
+        if (videoId) {
+          embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0`;
+        }
+
+        const videoContainer = document.createElement('div');
+        videoContainer.className = 'video-container';
+        videoContainer.style.cssText = 'position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); background: #000;';
+        
+        const iframe = document.createElement('iframe');
+        iframe.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;';
+        iframe.src = embedUrl;
+        iframe.title = 'YouTube video player';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        
+        videoContainer.appendChild(iframe);
+        grid.appendChild(videoContainer);
+      });
     }
 
     function renderAbout() {
@@ -246,7 +323,13 @@
       const sorted = [...About].sort((a, b) => {
         const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
         const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
-        return aIdx - bIdx;
+        if (aIdx !== bIdx) return aIdx - bIdx;
+        // Fallback to sorting by date (newest first), handling invalid dates
+        const timeA = a.date ? new Date(a.date).getTime() : 0;
+        const timeB = b.date ? new Date(b.date).getTime() : 0;
+        const valA = isNaN(timeA) ? 0 : timeA;
+        const valB = isNaN(timeB) ? 0 : timeB;
+        return valB - valA;
       });
 
       container.innerHTML = sorted.map(item => {
@@ -282,7 +365,12 @@
 
       document.getElementById('about-detail-title').textContent = item.title || 'Untitled';
       document.getElementById('about-detail-date').textContent = item.date || '';
-      document.getElementById('about-detail-content').innerHTML = item.content || '';
+      const contentRaw = item.content || '';
+      const formattedContent = contentRaw.split('\n').map(p => {
+        if (p.trim() === '') return '<div style="height: 0.5rem;"></div>';
+        return `<p style="margin-top: 0; margin-bottom: 0.5rem;">${p}</p>`;
+      }).join('');
+      document.getElementById('about-detail-content').innerHTML = formattedContent;
 
       const sliderContainer = document.getElementById('about-detail-slider-container');
       const slider = document.getElementById('about-detail-slider');
