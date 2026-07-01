@@ -4,7 +4,7 @@
    and details preview modal.
    ============================================ */
 
-let currentCategory = window.FIXED_CATEGORY || 'All';
+let currentCategory = 'All';
 let currentSubCategory = 'All';
 let searchQuery = '';
 let currentYearFilter = 'All';
@@ -27,7 +27,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupPreviewModal();
 
   try {
-    const data = await DbService.get('documents');
+    const targetCollection = window.TARGET_COLLECTION || 'documents';
+    const data = await DbService.get(targetCollection);
     // Only replace local data if Firestore actually returned records.
     // If the collection is empty or the query failed, keep the existing
     // static/localStorage data so the page never goes blank.
@@ -52,13 +53,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 function renderCategoryChips() {
   const container = document.getElementById('category-chips');
   if (!container) return;
-
-  // If the page is locked to a specific category, hide the category chips
-  if (window.FIXED_CATEGORY) {
-    container.style.display = 'none';
-    renderSubCategoryChips();
-    return;
-  }
 
   container.innerHTML = DocumentCategories.map(cat => `
     <button class="filter-chip ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">

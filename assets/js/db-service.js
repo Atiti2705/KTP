@@ -133,12 +133,16 @@ const DbService = {
     if (!localStorage.getItem(key)) {
       // Lazy init matching data.js
       if (collection === 'photos') localStorage.setItem(key, JSON.stringify(Photos));
-      else if (collection === 'documents') localStorage.setItem(key, JSON.stringify(Documents));
+      else if (['documents', 'mipuiaw', 'bulletins', 'souvenirs'].includes(collection)) {
+        // Fallback to the same Documents array for mock data initially
+        localStorage.setItem(key, JSON.stringify(Documents));
+      }
       else if (collection === 'sermons') localStorage.setItem(key, JSON.stringify(Sermons));
       else if (collection === 'announcements') localStorage.setItem(key, JSON.stringify(Announcements));
       else if (collection === 'about') localStorage.setItem(key, JSON.stringify(About));
       else if (collection === 'lyrics') localStorage.setItem(key, JSON.stringify([]));
       else if (collection === 'branch-info') localStorage.setItem(key, JSON.stringify([]));
+      else if (collection === 'statistics') localStorage.setItem(key, JSON.stringify(Statistics));
       else if (collection === 'settings') {
         localStorage.setItem(key, JSON.stringify({
           churchInfo: ChurchInfo,

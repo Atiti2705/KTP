@@ -112,6 +112,10 @@ const AdminData = {
     if (!localStorage.getItem('db_about')) {
       localStorage.setItem('db_about', JSON.stringify(About));
     }
+    // Statistics
+    if (!localStorage.getItem('db_statistics')) {
+      localStorage.setItem('db_statistics', JSON.stringify(Statistics));
+    }
     // Lyrics
     if (!localStorage.getItem('db_lyrics')) {
       localStorage.setItem('db_lyrics', JSON.stringify([]));
@@ -290,7 +294,7 @@ const AdminData = {
     if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
       try {
         console.log("🔄 Syncing admin databases with Firestore...");
-        const [photos, docs, sermons, announcements, lyrics, settings, about, branchObHlui] = await Promise.all([
+        const [photos, docs, sermons, announcements, lyrics, settings, about, branchObHlui, statistics] = await Promise.all([
           DbService.get('photos'),
           DbService.get('documents'),
           DbService.get('sermons'),
@@ -298,7 +302,8 @@ const AdminData = {
           DbService.get('lyrics'),
           DbService.get('settings'),
           DbService.get('about'),
-          DbService.get('branch-info')
+          DbService.get('branch-info'),
+          DbService.get('statistics')
         ]);
 
         if (Array.isArray(photos)) localStorage.setItem('db_photos', JSON.stringify(photos));
@@ -308,6 +313,7 @@ const AdminData = {
         if (Array.isArray(about)) localStorage.setItem('db_about', JSON.stringify(about));
         if (Array.isArray(lyrics)) localStorage.setItem('db_lyrics', JSON.stringify(lyrics));
         if (Array.isArray(branchObHlui)) localStorage.setItem('db_branch-info', JSON.stringify(branchObHlui));
+        if (Array.isArray(statistics)) localStorage.setItem('db_statistics', JSON.stringify(statistics));
         if (settings) localStorage.setItem('db_settings', JSON.stringify(settings));
 
         console.log("✅ Sync complete!");
@@ -483,18 +489,22 @@ function renderSidebar() {
 
   const currentPath = window.location.pathname;
   const urlParams = new URLSearchParams(window.location.search);
-  const catParam = urlParams.get('cat');
+  const collectionParam = urlParams.get('collection');
   
   const activePage =
     currentPath.endsWith('dashboard.html') ? 'dashboard' :
-      currentPath.endsWith('photos.html') ? 'photos' :
-        currentPath.endsWith('documents.html') ? (catParam === 'Bulletin' ? 'bulletin' : catParam === 'Souvenir' ? 'souvenir' : catParam === 'Mipui Aw' ? 'mipuiaw' : 'documents') :
+      currentPath.endsWith('news.html') ? 'news' :
+        currentPath.endsWith('lawmpuina.html') ? 'lawmpuina' :
+          currentPath.endsWith('sunna.html') ? 'sunna' :
+            currentPath.endsWith('photos.html') ? 'photos' :
+        currentPath.endsWith('documents.html') ? (collectionParam === 'bulletins' ? 'bulletin' : collectionParam === 'souvenirs' ? 'souvenir' : collectionParam === 'mipuiaw' ? 'mipuiaw' : 'documents') :
           currentPath.endsWith('sermons.html') ? 'sermons' :
               currentPath.endsWith('lyrics.html') ? 'lyrics' :
                 currentPath.endsWith('branch-info.html') ? 'branch-info' :
                   currentPath.endsWith('about.html') ? 'about' :
                     currentPath.endsWith('announcements.html') ? 'announcements' :
-                      currentPath.endsWith('settings.html') ? 'settings' : '';
+                      currentPath.endsWith('statistics.html') ? 'statistics' :
+                        currentPath.endsWith('settings.html') ? 'settings' : '';
 
   const user = JSON.parse(localStorage.getItem('ktp_admin_user') || '{"name":"Admin","role":"User"}');
 
@@ -512,17 +522,26 @@ function renderSidebar() {
       <a href="dashboard.html" class="sidebar-link ${activePage === 'dashboard' ? 'active' : ''}">
         <span class="link-icon">📊</span> Dashboard
       </a>
+      <a href="news.html" class="sidebar-link ${activePage === 'news' ? 'active' : ''}">
+        <span class="link-icon">📰</span> News
+      </a>
+      <a href="lawmpuina.html" class="sidebar-link ${activePage === 'lawmpuina' ? 'active' : ''}">
+        <span class="link-icon">🎉</span> Lawmpuina
+      </a>
+      <a href="sunna.html" class="sidebar-link ${activePage === 'sunna' ? 'active' : ''}">
+        <span class="link-icon">🕯️</span> Sunna
+      </a>
       <a href="photos.html" class="sidebar-link ${activePage === 'photos' ? 'active' : ''}">
         <span class="link-icon">📸</span> Photos Gallery
       </a>
-      <a href="documents.html?cat=Mipui Aw" class="sidebar-link ${activePage === 'mipuiaw' ? 'active' : ''}">
+      <a href="documents.html?collection=mipuiaw&title=Mipui%20Aw" class="sidebar-link ${activePage === 'mipuiaw' ? 'active' : ''}">
         <span class="link-icon">📄</span> Mipui Aw
       </a>
-      <a href="documents.html?cat=Bulletin" class="sidebar-link ${activePage === 'bulletin' ? 'active' : ''}">
+      <a href="documents.html?collection=bulletins&title=Bulletin" class="sidebar-link ${activePage === 'bulletin' ? 'active' : ''}">
         <span class="link-icon">📰</span> Bulletin
       </a>
-      <a href="documents.html?cat=Souvenir" class="sidebar-link ${activePage === 'souvenir' ? 'active' : ''}">
-        <span class="link-icon">📖</span> Souvenir
+      <a href="documents.html?collection=souvenirs&title=Souvenir" class="sidebar-link ${activePage === 'souvenir' ? 'active' : ''}">
+        <span class="link-icon">📘</span> Souvenir
       </a>
       <a href="sermons.html" class="sidebar-link ${activePage === 'sermons' ? 'active' : ''}">
         <span class="link-icon">📖</span> Sermons & Study
@@ -535,6 +554,9 @@ function renderSidebar() {
       </a>
       <a href="about.html" class="sidebar-link ${activePage === 'about' ? 'active' : ''}">
         <span class="link-icon">📖</span> About Us
+      </a>
+      <a href="statistics.html" class="sidebar-link ${activePage === 'statistics' ? 'active' : ''}">
+        <span class="link-icon">📊</span> Statistics
       </a>
       <a href="branch-info.html" class="sidebar-link ${activePage === 'branch-info' ? 'active' : ''}">
         <span class="link-icon">👨‍💼</span> Branch Info & Committees

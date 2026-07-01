@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statistics — KṬP Saikhamakawn</title>
+  <meta name="description" content="Branch statistics and membership numbers for KṬP Saikhamakawn — Kristian Ṭhalai Pawl.">
+  <meta name="keywords" content="KTP Saikhamakawn statistics, members, branch data, Mizo church">
+  <meta property="og:title" content="Statistics — KṬP Saikhamakawn">
+  <meta property="og:description" content="Branch statistics and membership numbers for KṬP Saikhamakawn.">
+  <meta property="og:image" content="assets/images/logo.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="apple-touch-icon" href="assets/images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/css/variables.css?v=105">
+  <link rel="stylesheet" href="assets/css/base.css?v=105">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=105">
+  <link rel="stylesheet" href="assets/css/animations.css?v=105">
+  <link rel="stylesheet" href="assets/css/components.css?v=105">
+  <link rel="stylesheet" href="assets/css/layout.css?v=105">
+  <link rel="stylesheet" href="assets/css/pages.css?v=105">
+
+  <style>
+    /* ================================================
+       STATISTICS PAGE  — Premium Redesign
+       ================================================ */
+
+    /* ─── Entry Card ─────────────────────────────── */
+    .stat-entry {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-light);
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.07);
+      overflow: hidden;
+      transition: box-shadow .3s, transform .3s;
+    }
+    .stat-entry:hover {
+      box-shadow: 0 10px 40px rgba(0,0,0,.13);
+      transform: translateY(-2px);
+    }
+
+    /* ─── Header Banner ──────────────────────────── */
+    .stat-entry-header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 1.5rem 2rem;
+      background: linear-gradient(130deg, #0ea5e9 0%, #1e5fa8 60%, #134e8c 100%);
+      color: #fff;
+      overflow: hidden;
+    }
+    /* Decorative circle blobs in header */
+    .stat-entry-header::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.07);
+      pointer-events: none;
+    }
+    .stat-entry-header::after {
+      content: '';
+      position: absolute;
+      bottom: -50px; left: 10%;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.05);
+      pointer-events: none;
+    }
+    .stat-entry-year-bubble {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,.18);
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 14px;
+      padding: .5rem 1rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .stat-entry-year-text {
+      display: block;
+      font-size: 2.2rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+    .stat-entry-year-label {
+      display: block;
+      font-size: .6rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      opacity: .7;
+      margin-top: 2px;
+    }
+    .stat-entry-meta {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      min-width: 0;
+    }
+    .stat-entry-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0 0 .3rem;
+      line-height: 1.3;
+    }
+    .stat-entry-desc {
+      font-size: .8rem;
+      opacity: .8;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .stat-latest-badge {
+      position: relative;
+      z-index: 1;
+      font-size: .6rem;
+      font-weight: 800;
+      background: rgba(255,255,255,.22);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 20px;
+      padding: 4px 12px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ─── Overall Stats Row ──────────────────────── */
+    .stat-overall-section {
+      padding: 1.75rem 2rem;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .stat-section-label {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--color-text-secondary);
+      margin: 0 0 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .stat-section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border-light);
+    }
+    .stat-overall-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .stat-overall-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .4rem;
+      padding: 1.25rem .75rem;
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border-light);
+      border-radius: 14px;
+      text-align: center;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .stat-overall-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,.08);
+    }
+    .stat-overall-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: .2rem;
+    }
+    .icon-total  { background: linear-gradient(135deg, rgba(14,165,233,.18), rgba(14,165,233,.05)); }
+    .icon-men    { background: linear-gradient(135deg, rgba(99,102,241,.18), rgba(99,102,241,.05)); }
+    .icon-female { background: linear-gradient(135deg, rgba(236,72,153,.18), rgba(236,72,153,.05)); }
+    .stat-overall-value {
+      font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+      font-weight: 900;
+      color: var(--brand-sky);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-overall-label {
+      font-size: .7rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+    }
+
+    /* ─── Groups Section ─────────────────────────── */
+    .stat-groups-section {
+      padding: 1.75rem 2rem;
+    }
+    .stat-groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+      gap: 1rem;
+    }
+    .stat-group-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      padding: 1.5rem 1rem 1rem;
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border-light);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      text-align: center;
+      overflow: hidden;
+    }
+    .stat-group-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--brand-sky), var(--brand-gold));
+      opacity: 0;
+      transition: opacity .25s;
+    }
+    .stat-group-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 32px rgba(14,165,233,.18);
+      border-color: rgba(14,165,233,.35);
+    }
+    .stat-group-card:hover::before { opacity: 1; }
+
+    .stat-group-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-sky), #1e5fa8);
+      color: #fff;
+      font-size: 1.3rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: .2rem;
+      box-shadow: 0 4px 12px rgba(14,165,233,.3);
+      flex-shrink: 0;
+    }
+    .stat-group-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+
+    /* Men / Female split row inside group card */
+    .stat-group-split {
+      display: flex;
+      gap: 0;
+      width: 100%;
+      border: 1px solid var(--color-border-light);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: .25rem 0;
+    }
+    .stat-group-split-cell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: .5rem .25rem;
+    }
+    .stat-group-split-cell:first-child {
+      border-right: 1px solid var(--color-border-light);
+      background: rgba(99,102,241,.06);
+    }
+    .stat-group-split-cell:last-child {
+      background: rgba(236,72,153,.06);
+    }
+    .stat-group-split-value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--brand-sky);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-group-split-label {
+      font-size: .58rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+    }
+
+    .stat-group-total-badge {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--brand-sky);
+      background: rgba(14,165,233,.1);
+      border-radius: 20px;
+      padding: 2px 12px;
+    }
+    .stat-group-hint {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: .65rem;
+      font-weight: 600;
+      color: var(--brand-sky);
+      opacity: .85;
+    }
+    .stat-group-no-members {
+      font-size: .65rem;
+      color: var(--color-text-secondary);
+      opacity: .6;
+    }
+
+    /* ─── Empty State ────────────────────────────── */
+    .stat-empty {
+      text-align: center;
+      padding: 5rem 2rem;
+      color: var(--color-text-secondary);
+    }
+    .stat-empty-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    /* ─── GROUP MEMBERS MODAL ────────────────────── */
+    .group-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9998;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+    .group-modal-backdrop.active { display: flex; }
+
+    @media (min-width: 600px) {
+      .group-modal-backdrop {
+        align-items: center;
+        padding: 1.5rem;
+      }
+    }
+
+    .group-modal-sheet {
+      background: var(--color-bg-card);
+      width: 100%;
+      max-width: 480px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -12px 60px rgba(0,0,0,.22);
+      animation: slideUp .3s cubic-bezier(.22,.68,0,1.2);
+    }
+    @media (min-width: 600px) {
+      .group-modal-sheet {
+        border-radius: 20px;
+        max-height: 80vh;
+        box-shadow: 0 24px 80px rgba(0,0,0,.22);
+      }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    /* Drag handle (mobile) */
+    .group-modal-handle {
+      width: 40px; height: 4px;
+      background: var(--color-border);
+      border-radius: 4px;
+      margin: .75rem auto .25rem;
+      flex-shrink: 0;
+    }
+    @media (min-width: 600px) { .group-modal-handle { display: none; } }
+
+    .group-modal-header {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      padding: 1.25rem 1.5rem 1rem;
+      flex-shrink: 0;
+    }
+    .group-modal-avatar {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--brand-sky), #1e5fa8);
+      color: #fff;
+      font-size: 1.3rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .group-modal-title-wrap { flex: 1; min-width: 0; }
+    .group-modal-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--color-text);
+      margin: 0 0 .1rem;
+    }
+    .group-modal-subtitle {
+      font-size: .75rem;
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+    .group-modal-close {
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border-light);
+      color: var(--color-text-secondary);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s, color .2s;
+      flex-shrink: 0;
+    }
+    .group-modal-close:hover {
+      background: var(--color-bg-hover);
+      color: var(--color-text);
+    }
+
+    /* Stat pills row inside modal */
+    .group-modal-stats {
+      display: flex;
+      gap: .75rem;
+      padding: 0 1.5rem 1.25rem;
+      flex-shrink: 0;
+    }
+    .group-modal-stat-pill {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: .75rem .5rem;
+      border-radius: 12px;
+      border: 1px solid var(--color-border-light);
+    }
+    .pill-men    { background: rgba(99,102,241,.07); }
+    .pill-female { background: rgba(236,72,153,.07); }
+    .pill-total  { background: rgba(14,165,233,.07); }
+    .group-modal-stat-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--brand-sky);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .group-modal-stat-label {
+      font-size: .6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--color-text-secondary);
+      margin-top: 3px;
+    }
+
+    /* Divider */
+    .group-modal-divider {
+      height: 1px;
+      background: var(--color-border-light);
+      margin: 0 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .group-modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 1.25rem 1.5rem;
+    }
+
+    /* Search */
+    .member-search-wrap {
+      position: relative;
+      margin-bottom: .85rem;
+    }
+    .member-search-icon {
+      position: absolute;
+      left: .85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: .85rem;
+      pointer-events: none;
+      color: var(--color-text-secondary);
+    }
+    .member-search-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: .65rem 1rem .65rem 2.4rem;
+      border: 1.5px solid var(--color-border);
+      border-radius: 999px;
+      background: var(--color-bg-alt);
+      color: var(--color-text);
+      font-size: .875rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .member-search-input:focus { border-color: var(--brand-sky); }
+
+    /* Member count label */
+    .member-count-label {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--color-text-secondary);
+      margin: 0 0 .5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Member list */
+    .member-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: .2rem;
+    }
+    .member-list-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .55rem .75rem;
+      border-radius: 10px;
+      transition: background .15s;
+    }
+    .member-list-item:hover { background: var(--color-bg-alt); }
+    .member-number {
+      font-size: .65rem;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      min-width: 1.6rem;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .member-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-sky), #1e5fa8);
+      color: #fff;
+      font-size: .85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      letter-spacing: 0;
+    }
+    .member-name {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--color-text);
+      line-height: 1.3;
+    }
+    .member-empty {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--color-text-secondary);
+      font-size: .875rem;
+    }
+
+    /* ─── Responsive tweaks ──────────────────────── */
+    @media (max-width: 479px) {
+      .stat-entry-header { padding: 1.25rem 1.25rem; gap: .75rem; }
+      .stat-overall-section,
+      .stat-groups-section { padding: 1.25rem 1rem; }
+      .stat-overall-grid { gap: .6rem; }
+      .stat-overall-icon-wrap { width: 38px; height: 38px; font-size: 1.1rem; }
+      .stat-entry-year-text { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main class="main-content">
+
+    <!-- Page Header -->
+    <section class="page-title-section mizo-pattern-subtle" style="padding: var(--sp-6) 0 var(--sp-4) 0;">
+      <div class="container">
+        <h1 class="reveal" style="font-size: clamp(1.8rem, 4vw, 2.2rem); margin-bottom: .35rem;">📊 Branch Statistics</h1>
+        <p class="reveal" style="color: var(--color-text-secondary); margin: 0; font-size: .875rem;">
+          Membership data for KṬP Saikhamakawn. <strong>Tap a group card</strong> to see its member list.
+        </p>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <section class="section">
+      <div class="container">
+        <div id="statistics-list" style="display: flex; flex-direction: column; gap: 2rem; max-width: 860px; margin: 0 auto;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <!-- ── GROUP MEMBERS MODAL ─────────────────────── -->
+  <div class="group-modal-backdrop" id="group-modal" role="dialog" aria-modal="true" aria-labelledby="group-modal-title-text">
+    <div class="group-modal-sheet">
+      <div class="group-modal-handle"></div>
+
+      <!-- Header -->
+      <div class="group-modal-header">
+        <div class="group-modal-avatar" id="group-modal-avatar">J</div>
+        <div class="group-modal-title-wrap">
+          <h2 class="group-modal-title" id="group-modal-title-text"></h2>
+          <p class="group-modal-subtitle" id="group-modal-subtitle"></p>
+        </div>
+        <button class="group-modal-close" id="group-modal-close" aria-label="Close">✕</button>
+      </div>
+
+      <!-- Stat pills -->
+      <div class="group-modal-stats" id="group-modal-stats"></div>
+
+      <div class="group-modal-divider"></div>
+
+      <!-- Scrollable body -->
+      <div class="group-modal-body">
+        <div class="member-search-wrap">
+          <span class="member-search-icon">🔍</span>
+          <input type="text" class="member-search-input" id="member-search" placeholder="Search member name…" autocomplete="off">
+        </div>
+        <p class="member-count-label">
+          <span id="member-count-label">Members</span>
+        </p>
+        <ul class="member-list" id="member-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=105"></script>
+  <script src="assets/js/firebase-config.js?v=105"></script>
+  <script src="assets/js/theme.js?v=105"></script>
+  <script src="assets/js/data.js?v=105"></script>
+  <script src="assets/js/auth.js?v=105"></script>
+  <script src="assets/js/db-service.js?v=105"></script>
+  <script src="assets/js/save-service.js?v=105"></script>
+  <script src="assets/js/components.js?v=105"></script>
+  <script src="assets/js/search.js?v=105"></script>
+  <script src="assets/js/app.js?v=105"></script>
+
+  <script>
+    /* ================================================
+       PAGE INIT
+       ================================================ */
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderHeader('statistic');
+      renderFooter();
+      renderStatisticsPage();
+
+      try {
+        const statsData = await DbService.get('statistics').catch(() => null);
+        if (statsData && Array.isArray(statsData)) {
+          Statistics.length = 0;
+          Statistics.push(...statsData);
+          localStorage.setItem('db_statistics', JSON.stringify(statsData));
+          renderStatisticsPage();
+        }
+      } catch (err) {
+        console.error('Error loading statistics:', err);
+      }
+
+      setupModal();
+    });
+
+    /* ================================================
+       RENDER ENTRIES
+       ================================================ */
+    function renderStatisticsPage() {
+      const container = document.getElementById('statistics-list');
+      if (!container) return;
+
+      if (!Statistics || Statistics.length === 0) {
+        container.innerHTML = `
+          <div class="stat-empty reveal">
+            <span class="stat-empty-icon">📊</span>
+            <h3 style="margin-bottom:.5rem;">No Statistics Available</h3>
+            <p>Check back later for updated branch statistics.</p>
+          </div>`;
+        return;
+      }
+
+      const sorted = [...Statistics].sort((a, b) => {
+        const ai = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
+        const bi = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
+        if (ai !== bi) return ai - bi;
+        return new Date(b.date) - new Date(a.date);
+      });
+
+      container.innerHTML = sorted.map((stat, index) => {
+        const groups  = Array.isArray(stat.groups) ? stat.groups : [];
+        const isLatest = index === 0;
+
+        /* --- Groups HTML --- */
+        const groupsHtml = groups.length > 0 ? `
+          <div class="stat-groups-section">
+            <p class="stat-section-label">🏷️ Groups</p>
+            <div class="stat-groups-grid">
+              ${groups.map((g, gi) => {
+                const hasMembers = Array.isArray(g.members) && g.members.length > 0;
+                const initial = (g.name || '?').charAt(0).toUpperCase();
+                return `
+                  <div class="stat-group-card"
+                       onclick="openGroupModal('${stat.id}', ${gi})"
+                       role="button"
+                       tabindex="0"
+                       aria-label="View ${g.name} group members"
+                       onkeydown="if(event.key==='Enter')openGroupModal('${stat.id}',${gi})">
+                    <div class="stat-group-avatar">${initial}</div>
+                    <div class="stat-group-name">${g.name}</div>
+                    <div class="stat-group-split">
+                      <div class="stat-group-split-cell">
+                        <span class="stat-group-split-value" data-target="${g.men || 0}">${g.men || 0}</span>
+                        <span class="stat-group-split-label">👨 Men</span>
+                      </div>
+                      <div class="stat-group-split-cell">
+                        <span class="stat-group-split-value" data-target="${g.female || 0}">${g.female || 0}</span>
+                        <span class="stat-group-split-label">👩 Female</span>
+                      </div>
+                    </div>
+                    <span class="stat-group-total-badge">Total: ${g.total || (g.men||0)+(g.female||0)}</span>
+                    ${hasMembers
+                      ? `<div class="stat-group-hint">👁 View ${g.members.length} members</div>`
+                      : `<div class="stat-group-no-members">No member list yet</div>`}
+                  </div>`;
+              }).join('')}
+            </div>
+          </div>` : '';
+
+        return `
+          <div class="stat-entry reveal">
+
+            <!-- Header Banner -->
+            <div class="stat-entry-header">
+              <div class="stat-entry-year-bubble">
+                <span class="stat-entry-year-text">${stat.year || '—'}</span>
+                <span class="stat-entry-year-label">Year</span>
+              </div>
+              <div class="stat-entry-meta">
+                <h2 class="stat-entry-title">${stat.title || 'Statistics'}</h2>
+                ${stat.description ? `<p class="stat-entry-desc">${stat.description}</p>` : ''}
+              </div>
+              ${isLatest ? '<span class="stat-latest-badge">⭐ Latest</span>' : ''}
+            </div>
+
+            <!-- Overall Membership -->
+            <div class="stat-overall-section">
+              <p class="stat-section-label">👥 Overall Membership</p>
+              <div class="stat-overall-grid">
+                <div class="stat-overall-card">
+                  <div class="stat-overall-icon-wrap icon-total">👥</div>
+                  <span class="stat-overall-value" data-target="${stat.totalMembers || 0}">${stat.totalMembers || 0}</span>
+                  <span class="stat-overall-label">Total Members</span>
+                </div>
+                <div class="stat-overall-card">
+                  <div class="stat-overall-icon-wrap icon-men">👨</div>
+                  <span class="stat-overall-value" data-target="${stat.men || 0}">${stat.men || 0}</span>
+                  <span class="stat-overall-label">Men</span>
+                </div>
+                <div class="stat-overall-card">
+                  <div class="stat-overall-icon-wrap icon-female">👩</div>
+                  <span class="stat-overall-value" data-target="${stat.female || 0}">${stat.female || 0}</span>
+                  <span class="stat-overall-label">Female</span>
+                </div>
+              </div>
+            </div>
+
+            ${groupsHtml}
+          </div>`;
+      }).join('');
+
+      animateCounters();
+      setTimeout(() => { if (typeof setupScrollReveal === 'function') setupScrollReveal(); }, 50);
+    }
+
+    /* ================================================
+       COUNTER ANIMATION
+       ================================================ */
+    function animateCounters() {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          if (el.dataset.animated) return;
+          el.dataset.animated = 'true';
+          const target = parseInt(el.getAttribute('data-target'), 10);
+          if (isNaN(target)) return;
+          let cur = 0;
+          const step = Math.max(1, Math.floor(target / 60));
+          const timer = setInterval(() => {
+            cur = Math.min(cur + step, target);
+            el.textContent = cur;
+            if (cur >= target) clearInterval(timer);
+          }, 20);
+          io.unobserve(el);
+        });
+      }, { threshold: 0.3 });
+      document.querySelectorAll('[data-target]').forEach(el => io.observe(el));
+    }
+
+    /* ================================================
+       GROUP MODAL
+       ================================================ */
+    let _currentMembers = [];
+    let _currentGroup   = null;
+
+    function setupModal() {
+      const backdrop   = document.getElementById('group-modal');
+      const closeBtn   = document.getElementById('group-modal-close');
+      const searchInput = document.getElementById('member-search');
+
+      closeBtn.addEventListener('click', closeGroupModal);
+      backdrop.addEventListener('click', e => { if (e.target === backdrop) closeGroupModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGroupModal(); });
+      searchInput.addEventListener('input', () => filterMemberList(searchInput.value.trim().toLowerCase()));
+    }
+
+    function openGroupModal(statId, groupIndex) {
+      const stat  = Statistics.find(s => s.id === statId);
+      if (!stat) return;
+      const group = (stat.groups || [])[groupIndex];
+      if (!group) return;
+
+      _currentMembers = Array.isArray(group.members) ? group.members : [];
+      _currentGroup   = group;
+
+      const initial = (group.name || '?').charAt(0).toUpperCase();
+
+      // Avatar
+      document.getElementById('group-modal-avatar').textContent = initial;
+
+      // Header text
+      document.getElementById('group-modal-title-text').textContent = `${group.name} Group`;
+      document.getElementById('group-modal-subtitle').textContent    = stat.title || stat.year || '';
+
+      // Stat pills
+      const total = group.total || (group.men||0) + (group.female||0);
+      document.getElementById('group-modal-stats').innerHTML = `
+        <div class="group-modal-stat-pill pill-men">
+          <span class="group-modal-stat-value">${group.men || 0}</span>
+          <span class="group-modal-stat-label">👨 Men</span>
+        </div>
+        <div class="group-modal-stat-pill pill-female">
+          <span class="group-modal-stat-value">${group.female || 0}</span>
+          <span class="group-modal-stat-label">👩 Female</span>
+        </div>
+        <div class="group-modal-stat-pill pill-total">
+          <span class="group-modal-stat-value">${total}</span>
+          <span class="group-modal-stat-label">👥 Total</span>
+        </div>`;
+
+      // Reset search
+      document.getElementById('member-search').value = '';
+      renderMemberList(_currentMembers);
+
+      document.getElementById('group-modal').classList.add('active');
+      document.body.classList.add('modal-open');
+      if (_currentMembers.length > 0) {
+        setTimeout(() => document.getElementById('member-search').focus(), 100);
+      }
+    }
+
+    function closeGroupModal() {
+      document.getElementById('group-modal').classList.remove('active');
+      document.body.classList.remove('modal-open');
+    }
+
+    function filterMemberList(query) {
+      const filtered = query
+        ? _currentMembers.filter(m => m.toLowerCase().includes(query))
+        : _currentMembers;
+      renderMemberList(filtered, query);
+    }
+
+    function renderMemberList(members, highlight = '') {
+      const list  = document.getElementById('member-list');
+      const label = document.getElementById('member-count-label');
+
+      if (!members || members.length === 0) {
+        if (label) label.textContent = 'Members';
+        list.innerHTML = `<li class="member-empty">
+          ${highlight ? '😕 No members match your search.' : '📋 No member names added yet.'}
+        </li>`;
+        return;
+      }
+
+      if (label) label.textContent = `${members.length} Member${members.length !== 1 ? 's' : ''}`;
+
+      list.innerHTML = members.map((name, i) => {
+        const initial     = name.trim().charAt(0).toUpperCase() || '?';
+        const displayName = highlight
+          ? name.replace(new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'),
+              '<mark style="background:rgba(14,165,233,.18);border-radius:3px;padding:0 2px;">$1</mark>')
+          : name;
+        return `
+          <li class="member-list-item">
+            <span class="member-number">${i + 1}.</span>
+            <div class="member-avatar">${initial}</div>
+            <span class="member-name">${displayName}</span>
+          </li>`;
+      }).join('');
+    }
+  </script>
+</body>
+</html>

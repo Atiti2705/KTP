@@ -70,8 +70,8 @@
                 <th style="width: 40px; text-align: center;" title="Drag to reorder">↕️</th>
                 <th style="width: 60px;">Type</th>
                 <th>Title</th>
-                <th>Category</th>
-                <th>Date</th>
+                <th id="th-category">Category</th>
+                <th id="th-date">Date</th>
                 <th>Size</th>
                 <th style="width: 120px;">Actions</th>
               </tr>
@@ -103,7 +103,7 @@
             <input type="text" id="doc-title" class="form-input" required placeholder="e.g. Mipui Aw - July 2026">
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="group-doc-category">
             <label for="doc-category" class="form-label">Category</label>
             <div class="category-field-row">
               <select id="doc-category" class="form-input form-select" style="flex:1;">
@@ -121,17 +121,18 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="group-doc-subcategory">
             <label for="doc-subcategory" class="form-label">Category / Type (Optional)</label>
             <input type="text" id="doc-subcategory" class="form-input" placeholder="e.g. Special Edition, Monthly" list="subcat-list">
             <datalist id="subcat-list"></datalist>
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Use this to create custom filters inside this manager.</small>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="group-doc-date">
             <label for="doc-date" class="form-label">Published Date</label>
             <input type="date" id="doc-date" class="form-input" required>
           </div>
+
 
           <div style="display: flex; gap: var(--sp-3);">
             <div class="form-group" style="flex: 1;">
@@ -153,7 +154,7 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="group-doc-source">
             <label class="form-label">Document Source</label>
             <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
               <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
@@ -258,10 +259,11 @@
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const initialCat = urlParams.get('cat');
+    const targetCollection = urlParams.get('collection') || 'documents';
+    const pageTitle = urlParams.get('title') || 'Documents';
 
     let currentSearch = '';
-    let currentCategoryFilter = initialCat || 'All';
+    let currentCategoryFilter = 'All';
     let currentSubCategoryFilter = 'All';
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -276,31 +278,33 @@
 
       populateCategoryDropdowns();
 
-      if (initialCat) {
-        document.querySelector('.admin-page-title').textContent = initialCat + ' Manager';
-        document.querySelector('.admin-page-desc').textContent = `Manage your ${initialCat} documents here.`;
-        
-        const filterCatSelect = document.getElementById('admin-filter-category');
-        if (filterCatSelect) {
-          filterCatSelect.value = initialCat;
-          filterCatSelect.disabled = true;
-          filterCatSelect.style.display = 'none';
-        }
-
-        const formCatSelect = document.getElementById('doc-category');
-        if (formCatSelect) {
-          formCatSelect.value = initialCat;
-          const formGroup = formCatSelect.closest('.form-group');
-          if (formGroup) formGroup.style.display = 'none';
-        }
+      if (targetCollection !== 'documents') {
+        document.querySelector('.admin-page-title').textContent = pageTitle + ' Manager';
+        document.querySelector('.admin-page-desc').textContent = `Manage your ${pageTitle} files here.`;
       }
+      
+      // Hide Category UI for Bulletin and Souvenir
+      if (targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
+        document.getElementById('admin-filter-category').style.display = 'none';
+        document.getElementById('admin-filter-subcategory').style.display = 'none';
+        document.getElementById('group-doc-category').style.display = 'none';
+        document.getElementById('group-doc-subcategory').style.display = 'none';
+        document.getElementById('group-doc-date').style.display = 'none';
+        document.getElementById('group-doc-source').style.display = 'none';
+        document.getElementById('th-category').style.display = 'none';
+        document.getElementById('th-date').style.display = 'none';
+        
+        // Ensure inputs are not required
+        document.getElementById('doc-date').required = false;
+      }
+
 
       // Sync from Firestore before rendering
       if (typeof DbService !== 'undefined') {
         try {
-          const remoteDocs = await DbService.get('documents');
+          const remoteDocs = await DbService.get(targetCollection);
           if (remoteDocs && remoteDocs.length > 0) {
-             localStorage.setItem('db_documents', JSON.stringify(remoteDocs));
+             localStorage.setItem('db_' + targetCollection, JSON.stringify(remoteDocs));
           }
         } catch (e) {
           console.warn("Could not sync documents from Firestore:", e);
@@ -356,7 +360,7 @@
         return;
       }
 
-      const docs = AdminData.get('documents') || [];
+      const docs = AdminData.get(targetCollection) || [];
       const subcats = Array.from(
         new Set(
           docs
@@ -419,11 +423,11 @@
         saveCategorySettings();
         populateCategoryDropdowns();
         
-        const docs = AdminData.get('documents');
+        const docs = AdminData.get(targetCollection);
         for (const doc of docs) {
           if (doc.category === oldName) {
             doc.category = trimmedName;
-            await AdminData.update('documents', doc.id, { category: trimmedName });
+            await AdminData.update(targetCollection, doc.id, { category: trimmedName });
           }
         }
         
@@ -458,7 +462,7 @@
       const tbody = document.getElementById('docs-table-body');
       if (!tbody) return;
 
-      const docs = AdminData.get('documents');
+      const docs = AdminData.get(targetCollection);
 
       let filtered = docs;
       if (currentSearch.trim()) {
@@ -493,13 +497,13 @@
             <div class="file-icon file-icon-${doc.fileType.toLowerCase()}" style="width: 40px; height: 40px; font-size: 10px;">${doc.fileType}</div>
           </td>
           <td style="font-weight: var(--fw-semibold);">${doc.title}</td>
-          <td>
+          <td class="td-category">
             <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
               <span class="badge badge-gold">${doc.category}</span>
               ${doc.subcategory ? `<span class="badge" style="background: var(--color-bg-hover); font-size: 10px;">${doc.subcategory}</span>` : ''}
             </div>
           </td>
-          <td>📅 ${formatDate(doc.date)}</td>
+          <td class="td-date">📅 ${formatDate(doc.date)}</td>
           <td>${doc.fileSize}</td>
           <td>
             <div class="table-actions">
@@ -514,6 +518,12 @@
       document.querySelectorAll('.row-checkbox').forEach(cb => {
         cb.addEventListener('change', updateBulkDeleteUI);
       });
+      
+      // Hide category elements if needed
+      if (targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
+        tbody.querySelectorAll('.td-category').forEach(td => td.style.display = 'none');
+        tbody.querySelectorAll('.td-date').forEach(td => td.style.display = 'none');
+      }
       // Reset select-all state when table re-renders
       const selectAllCb = document.getElementById('select-all-checkbox');
       if (selectAllCb) selectAllCb.checked = false;
@@ -555,7 +565,7 @@
       // Subcategory datalist population
       document.getElementById('doc-category').addEventListener('change', (e) => {
         const cat = e.target.value;
-        const docs = AdminData.get('documents') || [];
+        const docs = AdminData.get(targetCollection) || [];
         const subcats = new Set();
         docs.filter(d => d.category === cat).forEach(d => {
           if (d.subcategory && d.subcategory.trim() !== '') {
@@ -648,7 +658,7 @@
               bulkDeleteBtn.innerHTML = '⌛ Deleting...';
               
               for (const cb of selectedCbs) {
-                await AdminData.delete('documents', cb.value);
+                await AdminData.delete(targetCollection, cb.value);
               }
               
               AdminToast.show(`Successfully deleted ${selectedCbs.length} document(s).`, 'success');
@@ -723,7 +733,7 @@
           submitBtn.innerHTML = '⌛ Applying...';
 
           for (const cb of selectedCbs) {
-            await AdminData.update('documents', cb.value, updates);
+            await AdminData.update(targetCollection, cb.value, updates);
           }
 
           AdminToast.show(`Successfully updated ${selectedCbs.length} document(s).`, 'success');
@@ -751,9 +761,15 @@
         document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
         toggleDocSource('upload');
         
-        if (initialCat) {
+        if (pageTitle !== 'Documents') {
           const catSelect = document.getElementById('doc-category');
-          catSelect.value = initialCat;
+          if(catSelect) catSelect.value = pageTitle;
+        }
+        
+        // Default to URL for Bulletins and Souvenirs
+        if (targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
+          document.querySelector('input[name="doc-source"][value="url"]').checked = true;
+          toggleDocSource('url');
         }
         
         ModalSystem.open('doc-form-modal');
@@ -773,16 +789,13 @@
 
         const title = document.getElementById('doc-title').value;
         let category = document.getElementById('doc-category').value;
-        if (initialCat) {
-          category = initialCat;
-        }
         const subcategory = document.getElementById('doc-subcategory').value.trim();
         const description = '';
         let fileType = 'PDF';
         let fileSize = 'Unknown';
         
         if (actionType === 'edit') {
-           const existingDoc = AdminData.get('documents').find(d => d.id === docId);
+           const existingDoc = AdminData.get(targetCollection).find(d => d.id === docId);
            if (existingDoc) {
              fileType = existingDoc.fileType || 'PDF';
              fileSize = existingDoc.fileSize || 'Unknown';
@@ -880,7 +893,7 @@
 
           if (actionType === 'add') {
             for (const docObj of docsToSave) {
-              await AdminData.add('documents', docObj);
+              await AdminData.add(targetCollection, docObj);
             }
             if (isFolderImport) {
               AdminToast.show(`Successfully imported ${docsToSave.length} documents from folder!`, 'success');
@@ -903,7 +916,7 @@
             } else {
               updatedFields.downloadUrl = '#';
             }
-            await AdminData.update('documents', docId, updatedFields);
+            await AdminData.update(targetCollection, docId, updatedFields);
             AdminToast.show('Document updated!', 'success');
           }
 
@@ -947,7 +960,7 @@
 
     // Exposed to onclick triggers
     window.openEditModal = function (id) {
-      const docs = AdminData.get('documents');
+      const docs = AdminData.get(targetCollection);
       const doc = docs.find(d => d.id === id);
       if (!doc) return;
 
@@ -963,9 +976,9 @@
       document.getElementById('doc-date').value = doc.date;
 
       const isExternal = doc.downloadUrl && doc.downloadUrl !== '#';
-      if (isExternal) {
+      if (isExternal || targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
         document.querySelector('input[name="doc-source"][value="url"]').checked = true;
-        document.getElementById('doc-url').value = doc.downloadUrl;
+        document.getElementById('doc-url').value = doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '';
         if (window._toggleDocSource) window._toggleDocSource('url');
       } else {
         document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
@@ -977,13 +990,13 @@
     };
 
     window.confirmDeleteDoc = async function (id) {
-      const docs = AdminData.get('documents');
+      const docs = AdminData.get(targetCollection);
       const doc = docs.find(d => d.id === id);
       if (!doc) return;
 
       if (confirm(`Are you sure you want to delete the publication "${doc.title}"?`)) {
         try {
-          await AdminData.delete('documents', id);
+          await AdminData.delete(targetCollection, id);
           AdminToast.show('Document deleted.', 'info');
           renderDocsTable();
         } catch (err) {
