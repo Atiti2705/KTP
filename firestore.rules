@@ -17,6 +17,11 @@ service cloud.firestore {
     match /settings/{doc} { allow read: if true; }
     match /about/{doc} { allow read: if true; }
     match /branch-info/{doc} { allow read: if true; }
+    match /statistics/{doc} { allow read: if true; }
+    match /counselling/{doc} { 
+      allow read: if true; 
+      allow create: if true; // Allow anonymous question posting
+    }
 
     // 2. Allow general authenticated users to write/edit their profile
     match /users/{userId} {

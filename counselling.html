@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counselling Q&A — KṬP Saikhamakawn</title>
+  
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="apple-touch-icon" href="assets/images/logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="stylesheet" href="assets/css/variables.css?v=105">
+  <link rel="stylesheet" href="assets/css/base.css?v=105">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=105">
+  <link rel="stylesheet" href="assets/css/animations.css?v=105">
+  <link rel="stylesheet" href="assets/css/components.css?v=105">
+  <link rel="stylesheet" href="assets/css/layout.css?v=105">
+  <link rel="stylesheet" href="assets/css/pages.css?v=105">
+  
+  <style>
+    .counselling-hero {
+      background: linear-gradient(135deg, var(--brand-sky) 0%, var(--brand-blue) 100%);
+      color: white;
+      text-align: center;
+      padding: var(--sp-8) var(--sp-4);
+      margin-bottom: var(--sp-6);
+      border-radius: 0 0 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .counselling-hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: var(--sp-2); }
+    .counselling-hero p { font-size: clamp(1rem, 2vw, 1.25rem); opacity: 0.9; max-width: 600px; margin: 0 auto; }
+    
+    .counselling-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sp-6);
+      max-width: 1100px;
+      margin: 0 auto var(--sp-8) auto;
+    }
+    @media (min-width: 768px) {
+      .counselling-layout {
+        grid-template-columns: 3fr 2fr;
+        gap: var(--sp-8);
+      }
+    }
+    .c-header {
+      font-weight: 300;
+      text-transform: uppercase;
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      margin-bottom: var(--sp-5);
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: var(--sp-2);
+      color: var(--color-text);
+      text-align: center;
+    }
+    .qa-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      padding: var(--sp-5);
+      margin-bottom: var(--sp-4);
+      transition: box-shadow 0.2s ease;
+    }
+    .qa-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .qa-block {
+      margin-bottom: var(--sp-4);
+    }
+    .qa-block:last-child {
+      margin-bottom: 0;
+    }
+    .qa-label {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      color: var(--color-text);
+    }
+    .qa-text {
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .qa-text-answer {
+      color: var(--color-text);
+      font-style: italic;
+    }
+    
+    .c-form-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-card);
+      color: var(--color-text);
+      margin-bottom: var(--sp-3);
+      border-radius: 0;
+      font-family: inherit;
+    }
+    .c-form-input:focus {
+      outline: none;
+      border-color: var(--brand-sky);
+    }
+    .c-submit-btn {
+      background: var(--brand-blue); 
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      border-radius: var(--radius-sm);
+    }
+    .c-submit-btn:hover {
+      background: var(--brand-sky);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="site-header" id="site-header"></header>
+
+  <main class="main-content">
+    <section class="counselling-hero">
+      <h1>Anonymous Counselling</h1>
+      <p>Ask a question or share a concern completely anonymously. Our leaders are here to help and guide you.</p>
+    </section>
+    
+    <div class="container">
+      
+      <!-- Notifications Alert Container -->
+      <div id="counselling-notifications" style="max-width: 800px; margin: 0 auto var(--sp-4) auto;"></div>
+
+      <div class="counselling-layout">
+        
+        <!-- Left Column: Public Q&A Feed -->
+        <div class="qa-feed-section reveal">
+          <h2 class="c-header">Counselling</h2>
+          <div id="qa-list" class="stagger-children">
+            <!-- Populated by JS -->
+            <div style="text-align: center; padding: 2rem; color: var(--color-text-secondary);">
+              Loading questions...
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Submission Form -->
+        <div class="reveal">
+          <h2 class="c-header">Submit Question</h2>
+          <form id="counselling-form">
+            <input type="text" id="c-name" class="c-form-input" placeholder="Name (Optional)">
+            <input type="email" id="c-email" class="c-form-input" placeholder="E-mail (Optional)">
+            <textarea id="c-question" class="c-form-input" rows="8" placeholder="Message" required style="resize: vertical;"></textarea>
+            
+            <button type="submit" class="c-submit-btn" id="c-submit-btn">
+              Submit
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <!-- Firebase & Core Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=105"></script>
+  
+  <script src="assets/js/firebase-config.js?v=105"></script>
+  <script src="assets/js/theme.js?v=105"></script>
+  <script src="assets/js/data.js?v=105"></script>
+  <script src="assets/js/auth.js?v=105"></script>
+  <script src="assets/js/db-service.js?v=105"></script>
+  <script src="assets/js/components.js?v=105"></script>
+  <script src="assets/js/app.js?v=105"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderHeader('counselling');
+      renderFooter();
+      
+      if (typeof Toast !== 'undefined') Toast.init();
+      
+      // Setup form submission
+      document.getElementById('counselling-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('c-submit-btn');
+        const questionInput = document.getElementById('c-question');
+        
+        const question = questionInput.value.trim();
+        
+        if (!question) return;
+        
+        try {
+          btn.disabled = true;
+          btn.innerHTML = 'Sending... ⏳';
+          
+          const newDoc = {
+            question,
+            status: 'unanswered',
+            createdAt: new Date().toISOString(),
+            date: new Date().toISOString().split('T')[0]
+          };
+          
+          const addedDoc = await DbService.add('counselling', newDoc);
+          
+          // Track the document ID in local storage for in-app notifications
+          const myQuestions = JSON.parse(localStorage.getItem('my_counselling_questions') || '[]');
+          myQuestions.push(addedDoc.id);
+          localStorage.setItem('my_counselling_questions', JSON.stringify(myQuestions));
+          
+          Toast.show('Your question has been submitted anonymously.', 'success');
+          questionInput.value = '';
+          
+        } catch (err) {
+          console.error('Error submitting question:', err);
+          Toast.show('Failed to submit. Please try again.', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = 'Send Question Anonymously';
+        }
+      });
+      
+      // Load public feed
+      await loadQAList();
+    });
+    
+    async function loadQAList() {
+      const container = document.getElementById('qa-list');
+      try {
+        const data = await DbService.get('counselling');
+        
+        // Check for notifications first
+        checkNotifications(data);
+        
+        // Filter only answered questions, sort by answeredAt descending
+        const answered = data
+          .filter(d => d.status === 'answered' && d.answer)
+          .sort((a, b) => new Date(b.answeredAt || b.createdAt) - new Date(a.answeredAt || a.createdAt));
+          
+        if (answered.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 3rem 1rem; background: var(--color-bg-card); border: 1px dashed var(--color-border); border-radius: var(--radius-lg);">
+              <span style="font-size: 2.5rem; display: block; margin-bottom: 1rem;">🌱</span>
+              <h3 style="margin-bottom: 0.5rem; color: var(--color-text);">No questions answered yet</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Be the first to ask a question above. Answers will appear here once reviewed.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        const formatDate = (isoString) => {
+          if (!isoString) return '';
+          const d = new Date(isoString);
+          return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        };
+        
+        container.innerHTML = answered.map(item => `
+          <div class="qa-card">
+            <div class="qa-block">
+              <div class="qa-label">ZAWHNA:</div>
+              <div class="qa-text">${escapeHTML(item.question)}</div>
+            </div>
+            
+            <div class="qa-block">
+              <div class="qa-label">CHHANA:</div>
+              <div class="qa-text qa-text-answer">${escapeHTML(item.answer)}</div>
+            </div>
+          </div>
+        `).join('');
+        
+      } catch (err) {
+        console.error('Error loading QA list:', err);
+        container.innerHTML = `<div style="text-align: center; color: var(--brand-red);">Failed to load questions. Please refresh the page.</div>`;
+      }
+    }
+    
+    function checkNotifications(data) {
+      const myQuestions = JSON.parse(localStorage.getItem('my_counselling_questions') || '[]');
+      if (myQuestions.length === 0) return;
+      
+      const notifContainer = document.getElementById('counselling-notifications');
+      let notificationsHtml = '';
+      
+      myQuestions.forEach(id => {
+        const doc = data.find(d => d.id === id);
+        if (doc && doc.status === 'answered') {
+           notificationsHtml += `
+             <div class="qa-card" style="border-left: 4px solid var(--brand-sky); display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-3); background: rgba(14,165,233,0.05);">
+               <div>
+                 <strong style="color: var(--brand-sky); display: block; margin-bottom: 4px;">🔔 Your question has been answered!</strong>
+                 <div style="font-size: 0.9rem; color: var(--color-text-secondary); max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                   "${escapeHTML(doc.question)}"
+                 </div>
+               </div>
+               <button onclick="dismissNotification('${doc.id}')" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;">Dismiss</button>
+             </div>
+           `;
+        }
+      });
+      
+      if (notificationsHtml) {
+        notifContainer.innerHTML = notificationsHtml;
+      }
+    }
+
+    function dismissNotification(id) {
+      let myQuestions = JSON.parse(localStorage.getItem('my_counselling_questions') || '[]');
+      myQuestions = myQuestions.filter(qId => qId !== id);
+      localStorage.setItem('my_counselling_questions', JSON.stringify(myQuestions));
+      
+      // Reload UI
+      location.reload();
+    }
+    
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            "'": '&#39;',
+            '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

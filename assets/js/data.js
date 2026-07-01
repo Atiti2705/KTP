@@ -219,6 +219,11 @@ const About = [
 ];
 
 // ========================
+// COUNSELLING
+// ========================
+const Counselling = [];
+
+// ========================
 // PHOTOS
 // TODO: Replace with Cloudinary + Firestore
 // Firestore: db.collection('photos').orderBy('date','desc').limit(12)
@@ -833,6 +838,9 @@ function formatDateLong(dateStr) {
       socialMedia: SocialMedia
     }));
   }
+  if (!localStorage.getItem('db_counselling')) {
+    localStorage.setItem('db_counselling', JSON.stringify(Counselling));
+  }
 
   // 2. Read live data from LocalStorage
   const storedPhotos = JSON.parse(localStorage.getItem('db_photos'));
@@ -842,6 +850,7 @@ function formatDateLong(dateStr) {
   const storedAbout = JSON.parse(localStorage.getItem('db_about'));
   const storedStatistics = JSON.parse(localStorage.getItem('db_statistics'));
   const storedSettings = JSON.parse(localStorage.getItem('db_settings'));
+  const storedCounselling = JSON.parse(localStorage.getItem('db_counselling'));
 
   // 3. Mutate static objects/arrays in-place
   if (storedPhotos) {
@@ -870,6 +879,10 @@ function formatDateLong(dateStr) {
   if (storedStatistics) {
     Statistics.length = 0;
     Statistics.push(...storedStatistics);
+  }
+  if (storedCounselling) {
+    Counselling.length = 0;
+    Counselling.push(...storedCounselling);
   }
   if (storedSettings) {
     if (storedSettings.churchInfo) {

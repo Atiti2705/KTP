@@ -503,8 +503,9 @@ function renderSidebar() {
                 currentPath.endsWith('branch-info.html') ? 'branch-info' :
                   currentPath.endsWith('about.html') ? 'about' :
                     currentPath.endsWith('announcements.html') ? 'announcements' :
-                      currentPath.endsWith('statistics.html') ? 'statistics' :
-                        currentPath.endsWith('settings.html') ? 'settings' : '';
+                      currentPath.endsWith('counselling.html') ? 'counselling' :
+                        currentPath.endsWith('statistics.html') ? 'statistics' :
+                          currentPath.endsWith('settings.html') ? 'settings' : '';
 
   const user = JSON.parse(localStorage.getItem('ktp_admin_user') || '{"name":"Admin","role":"User"}');
 
@@ -554,6 +555,9 @@ function renderSidebar() {
       </a>
       <a href="about.html" class="sidebar-link ${activePage === 'about' ? 'active' : ''}">
         <span class="link-icon">📖</span> About Us
+      </a>
+      <a href="counselling.html" class="sidebar-link ${activePage === 'counselling' ? 'active' : ''}">
+        <span class="link-icon">💬</span> Counselling Q&A
       </a>
       <a href="statistics.html" class="sidebar-link ${activePage === 'statistics' ? 'active' : ''}">
         <span class="link-icon">📊</span> Statistics
