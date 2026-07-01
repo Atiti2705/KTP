@@ -281,7 +281,43 @@
     <section class="section" style="padding-top: 0;">
       <div class="container">
         
-        <div class="contact-container">
+        <!-- Directory Section -->
+        <div class="directory-section reveal" style="margin-top: 0;">
+          <div class="section-header text-center" style="margin-bottom: 2rem;">
+            <h2>Leadership Directory</h2>
+            <p>Contact information for our Branch OBs, Groups, and Sub-Committees.</p>
+          </div>
+
+          <div class="directory-tabs">
+            <button class="directory-tab active" data-target="dir-branch">Branch OB</button>
+            <button class="directory-tab" data-target="dir-groups">Groups</button>
+            <button class="directory-tab" data-target="dir-committees">Sub-Committees</button>
+          </div>
+
+          <div class="directory-content active" id="dir-branch">
+            <div class="directory-grid" id="grid-branch">
+              <!-- Rendered via JS -->
+              <p class="text-center" style="grid-column: 1/-1;">Loading Branch OBs...</p>
+            </div>
+          </div>
+          <div class="directory-content" id="dir-groups">
+            <div class="directory-grid" id="grid-groups">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+          <div class="directory-content" id="dir-committees">
+            <div class="directory-grid" id="grid-committees">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header text-center" style="margin-top: 5rem; margin-bottom: 2rem;">
+          <h2>Send us a Message</h2>
+          <p>Or find our church location on the map below.</p>
+        </div>
+
+        <div class="contact-container" style="margin-top: 0;">
           
           <!-- Left: Map & Info -->
           <div class="contact-info-card reveal reveal-delay-2">
@@ -336,37 +372,6 @@
             </form>
           </div>
 
-        </div>
-
-        <!-- Directory Section -->
-        <div class="directory-section reveal">
-          <div class="section-header text-center" style="margin-bottom: 2rem;">
-            <h2>Leadership Directory</h2>
-            <p>Contact information for our Branch OBs, Groups, and Sub-Committees.</p>
-          </div>
-
-          <div class="directory-tabs">
-            <button class="directory-tab active" data-target="dir-branch">Branch OB</button>
-            <button class="directory-tab" data-target="dir-groups">Groups</button>
-            <button class="directory-tab" data-target="dir-committees">Sub-Committees</button>
-          </div>
-
-          <div class="directory-content active" id="dir-branch">
-            <div class="directory-grid" id="grid-branch">
-              <!-- Rendered via JS -->
-              <p class="text-center" style="grid-column: 1/-1;">Loading Branch OBs...</p>
-            </div>
-          </div>
-          <div class="directory-content" id="dir-groups">
-            <div class="directory-grid" id="grid-groups">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
-          <div class="directory-content" id="dir-committees">
-            <div class="directory-grid" id="grid-committees">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
         </div>
 
       </div>
