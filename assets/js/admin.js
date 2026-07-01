@@ -333,6 +333,7 @@ const AdminData = {
         if (Array.isArray(news)) localStorage.setItem('db_news', JSON.stringify(news));
         if (Array.isArray(lawmpuina)) localStorage.setItem('db_lawmpuina', JSON.stringify(lawmpuina));
         if (Array.isArray(sunna)) localStorage.setItem('db_sunna', JSON.stringify(sunna));
+        if (Array.isArray(contactDirectory)) localStorage.setItem('db_contact_directory', JSON.stringify(contactDirectory));
         if (settings) localStorage.setItem('db_settings', JSON.stringify(settings));
 
         console.log("✅ Sync complete!");
