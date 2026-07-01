@@ -28,9 +28,7 @@ service cloud.firestore {
     match /about/{doc} { allow read: if true; }
     match /branch-info/{doc} { allow read: if true; }
     match /statistics/{doc} { allow read: if true; }
-    match /branch_ob/{doc} { allow read: if true; }
-    match /groups/{doc} { allow read: if true; }
-    match /committees/{doc} { allow read: if true; }
+    match /contact_directory/{doc} { allow read: if true; }
     match /counselling/{doc} { 
       allow read: if true; 
       allow create: if true; // Allow anonymous question posting
