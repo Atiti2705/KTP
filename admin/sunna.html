@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Branch Info & Committees — KṬP Saikhamakawn</title>
+  <title>Manage Sunna — KṬP Saikhamakawn</title>
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
@@ -28,29 +28,13 @@
         <div class="admin-topbar-left">
           <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
           <div>
-            <h1 class="admin-page-title">Branch Info & Committees</h1>
-            <p class="admin-page-desc">Manage photos and text for all Branch Committees</p>
+            <h1 class="admin-page-title">Sunna</h1>
+            <p class="admin-page-desc">Manage sunna entries</p>
           </div>
         </div>
         <div style="display: flex; gap: var(--sp-3); align-items: center;">
           <button class="btn btn-outline" id="btn-bulk-delete" style="color: var(--brand-red); border-color: var(--brand-red); display: none;">🗑️ Delete Selected</button>
           <button class="btn btn-primary" id="btn-add-ob">➕ Add Entry</button>
-        </div>
-      </div>
-
-      <!-- Filters -->
-      <div class="data-table-wrapper" style="margin-top: var(--sp-6); margin-bottom: var(--sp-4); padding: var(--sp-4);">
-        <div style="display: flex; gap: var(--sp-3); align-items: center;">
-          <label for="admin-filter-category" style="font-size: var(--fs-sm); font-weight: var(--fw-medium);">Filter by Category:</label>
-          <select id="admin-filter-category" class="filter-select">
-            <option value="All">All Categories</option>
-            <option value="branch-ob-hlui">Branch OB lo ni tawh te</option>
-            <option value="branch-ob">Branch OB</option>
-            <option value="branch-committee">Branch Committee</option>
-            <option value="group-committee">Group Committee</option>
-            <option value="sub-committee">Sub Committee</option>
-            <option value="golden-jubilee">Golden Jubilee</option>
-          </select>
         </div>
       </div>
 
@@ -264,10 +248,7 @@
 
     function setupEvents() {
       // Filter functionality
-      document.getElementById('admin-filter-category').addEventListener('change', (e) => {
-        currentCategoryFilter = e.target.value;
-        renderOBTable();
-      });
+      // Filter removed
 
       const selectAllCb = document.getElementById('select-all-checkbox');
       const bulkDeleteBtn = document.getElementById('btn-bulk-delete');
