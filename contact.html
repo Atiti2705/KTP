@@ -470,10 +470,17 @@
 
     async function loadDirectory() {
       try {
-        const snapshot = await FirebaseConfig.db.collection('contact_directory').orderBy('orderIndex').get();
+        const snapshot = await FirebaseConfig.db.collection('contact_directory').get();
         const items = [];
         snapshot.forEach(doc => {
           items.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Sort items using orderIndex (fallback to 999999)
+        items.sort((a, b) => {
+          const idxA = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
+          const idxB = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
+          return idxA - idxB;
         });
 
         const branchObs = items.filter(i => i.type === 'branch_ob');
