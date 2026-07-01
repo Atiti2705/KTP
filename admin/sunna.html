@@ -182,7 +182,7 @@
       const tbody = document.getElementById('ob-table-body');
       if (!tbody) return;
 
-      const items = AdminData.get('branch-info') || [];
+      const items = AdminData.get(targetCollection) || [];
       
       let filtered = items;
       if (currentCategoryFilter !== 'All') {
@@ -251,7 +251,7 @@
           const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
           
           try {
-            await AdminData.reorder('branch-info', newOrderIds);
+            await AdminData.reorder(targetCollection, newOrderIds);
             AdminToast.show('Entries reordered successfully!', 'success');
           } catch (e) {
             console.error(e);
@@ -293,7 +293,7 @@
               bulkDeleteBtn.innerHTML = '⌛ Deleting...';
               
               for (const cb of selectedCbs) {
-                await AdminData.delete('branch-info', cb.value);
+                await AdminData.delete(targetCollection, cb.value);
               }
               
               AdminToast.show(`Successfully deleted ${selectedCbs.length} entry(s).`, 'success');
@@ -355,7 +355,7 @@
               imageUrl,
               orderIndex: 999
             };
-            await AdminData.add('branch-info', newItem);
+            await AdminData.add(targetCollection, newItem);
             AdminToast.show('Entry saved successfully!', 'success');
           } else {
             const updatedFields = {
@@ -365,7 +365,7 @@
               content,
               imageUrl
             };
-            await AdminData.update('branch-info', editId, updatedFields);
+            await AdminData.update(targetCollection, editId, updatedFields);
             AdminToast.show('Entry updated successfully!', 'success');
           }
 
@@ -399,7 +399,7 @@
     }
 
     window.openEditModal = function (id) {
-      const items = AdminData.get('branch-info');
+      const items = AdminData.get(targetCollection);
       const item = items.find(a => a.id === id);
       if (!item) return;
 
@@ -419,7 +419,7 @@
     window.confirmDeleteOB = async function (id) {
       if (confirm(`Are you sure you want to delete this entry?`)) {
         try {
-          await AdminData.delete('branch-info', id);
+          await AdminData.delete(targetCollection, id);
           AdminToast.show('Entry deleted.', 'info');
           renderOBTable();
         } catch (err) {
