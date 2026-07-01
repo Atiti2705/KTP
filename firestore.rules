@@ -12,6 +12,9 @@ service cloud.firestore {
     match /news/{doc} { allow read: if true; }
     match /lawmpuina/{doc} { allow read: if true; }
     match /sunna/{doc} { allow read: if true; }
+    match /kohhran-chanchin/{doc} { allow read: if true; }
+    match /kohhran-upa/{doc} { allow read: if true; }
+    match /golden-jubilee/{doc} { allow read: if true; }
     match /sermons/{doc} { allow read: if true; }
     match /lyrics/{doc} { allow read: if true; }
     match /settings/{doc} { allow read: if true; }
