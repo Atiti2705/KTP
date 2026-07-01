@@ -207,7 +207,7 @@
                 <div style="font-size: 0.8rem; color: var(--color-text-tertiary);">${new Date(item.createdAt).toLocaleString()}</div>
               </div>
             </div>
-            <div style="font-size: 1.05rem; color: var(--color-text); line-height: 1.6; white-space: pre-wrap; margin-left: 54px;">${escapeHTML(item.question)}</div>
+            <div style="font-size: 1.05rem; color: var(--color-text); line-height: 1.6; white-space: pre-wrap; margin-left: 54px; word-break: break-word; overflow-wrap: break-word;">${escapeHTML(item.question)}</div>
           </div>
           
           <!-- Reply Section (Answer) -->
@@ -222,7 +222,7 @@
                     <span style="font-weight: 600; color: var(--brand-green);">Admin Reply</span>
                     <span style="font-size: 0.75rem; color: var(--color-text-tertiary);">${new Date(item.answeredAt).toLocaleString()}</span>
                   </div>
-                  <div style="font-size: 0.95rem; color: var(--color-text); line-height: 1.6; white-space: pre-wrap;">${escapeHTML(item.answer)}</div>
+                  <div style="font-size: 0.95rem; color: var(--color-text); line-height: 1.6; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;">${escapeHTML(item.answer)}</div>
                 </div>
               </div>
             ` : `
