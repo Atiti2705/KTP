@@ -226,7 +226,7 @@ for (let i = 0; i < 36; i++) {
 // Firestore: db.collection('documents').orderBy('date','desc').limit(10)
 // Files: Firebase Storage download URL
 // ========================
-const DocumentCategories = ['All', 'Mipui Aw', 'Church Report', 'Minutes', 'Newsletter', 'Guidelines', 'Forms'];
+const DocumentCategories = ['All', 'Mipui Aw', 'Bulletin', 'Souvenir', 'Church Report', 'Minutes', 'Newsletter', 'Guidelines', 'Forms'];
 const LyricCategories = ['All'];
 
 const Documents = [
