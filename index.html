@@ -493,9 +493,15 @@
         return aIdx - bIdx;
       });
       container.innerHTML = sorted.map(ann => {
-        const tag = ann.linkUrl ? 'a' : 'div';
-        const href = ann.linkUrl ? `href="${ann.linkUrl}" target="_blank" rel="noopener"` : '';
-        const clickableStyle = ann.linkUrl ? 'cursor: pointer; text-decoration: none; color: inherit; display: block; transition: transform 0.2s; box-shadow: var(--card-shadow);' : '';
+        let defaultLink = 'news.html';
+        if (ann.isLawmpuina) defaultLink = 'lawmpuina.html';
+        else if (ann.isSunna) defaultLink = 'sunna.html';
+        
+        const finalUrl = ann.linkUrl || defaultLink;
+        const target = ann.linkUrl ? 'target="_blank" rel="noopener"' : '';
+        const tag = 'a';
+        const href = `href="${finalUrl}" ${target}`;
+        const clickableStyle = 'cursor: pointer; text-decoration: none; color: inherit; display: block; transition: transform 0.2s; box-shadow: var(--card-shadow);';
         
         let formattedUrl = '';
         if (ann.imageUrl) {
