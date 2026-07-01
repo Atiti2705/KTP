@@ -44,16 +44,14 @@
           <table>
             <thead>
               <tr>
-                <th style="width: 40px; text-align: center;">
-                  <input type="checkbox" id="select-all-checkbox" style="cursor: pointer; width: 16px; height: 16px;">
-                </th>
-                <th style="width: 40px; text-align: center;">Reorder</th>
+                <th style="width: 40px; text-align: center;"><input type="checkbox" id="select-all-checkbox" style="cursor: pointer; width: 16px; height: 16px;"></th>
+                <th style="width: 40px; text-align: center;" title="Drag to reorder">↕️</th>
                 <th>Category</th>
-                <th>Name / Title</th>
-                <th>Sort</th>
-                <th>Role / Description</th>
-                <th>Image</th>
-                <th style="width: 100px;">Actions</th>
+                <th>Term / Title</th>
+                <th>Year Filter</th>
+                <th>Text Content</th>
+                <th>Photo</th>
+                <th style="width: 120px;">Actions</th>
               </tr>
             </thead>
             <tbody id="ob-table-body">
@@ -86,7 +84,7 @@
           </div>
 
           <div class="form-group">
-            <label for="ob-year" class="form-label">Sort (e.g. 2025)</label>
+            <label for="ob-year" class="form-label">Year for Filtering (e.g. 2025)</label>
             <select id="ob-year" class="form-input"><option value="">-- Use Title --</option></select>
             <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-top: 4px;">
               If left blank, the Title will be used in the filter dropdown.

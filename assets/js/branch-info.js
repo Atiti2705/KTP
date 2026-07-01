@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <input type="text" id="ob-search" placeholder="Search by name or year..." class="form-input" style="padding-left: 36px; width: 100%;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       </div>
-      <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="display: ${dataType === 'Kohhran Upa' ? 'none' : 'flex'}; align-items: center; gap: 8px;">
         <label for="ob-year-filter" style="font-size: var(--fs-sm); color: var(--color-text-secondary); font-weight: var(--fw-medium);">Year:</label>
         <select id="ob-year-filter" class="filter-select" style="padding: 6px 12px; border-radius: var(--radius-md);">
           <option value="all">All Years</option>
