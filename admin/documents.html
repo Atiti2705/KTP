@@ -486,6 +486,7 @@
           <td>${doc.fileSize}</td>
           <td>
             <div class="table-actions">
+              <button class="btn btn-outline btn-sm" onclick="window.open('${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '#'}', '_blank')" style="padding:4px 8px; font-size:12px;" title="Preview Document" ${!doc.downloadUrl || doc.downloadUrl === '#' ? 'disabled' : ''}>👁️</button>
               <button class="btn btn-outline btn-sm" onclick="openEditModal('${doc.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Document">✏️</button>
               <button class="btn btn-outline btn-sm" onclick="confirmDeleteDoc('${doc.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Document">❌</button>
             </div>

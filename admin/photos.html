@@ -502,6 +502,7 @@
           <td>📅 ${formatDate(photo.date)}</td>
           <td>
             <div class="table-actions">
+              <button class="btn btn-outline btn-sm" onclick="window.open('${url}', '_blank')" style="padding:4px 8px; font-size:12px;" title="Preview Photo" ${!url || url === '#' ? 'disabled' : ''}>👁️</button>
               <button class="btn btn-outline btn-sm" onclick="openEditModal('${photo.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Photo">✏️</button>
               <button class="btn btn-outline btn-sm" onclick="confirmDeletePhoto('${photo.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Photo">❌</button>
             </div>
