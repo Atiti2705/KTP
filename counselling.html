@@ -39,11 +39,13 @@
       gap: var(--sp-6);
       max-width: 1100px;
       margin: 0 auto var(--sp-8) auto;
+      padding: 0 var(--sp-4);
     }
     @media (min-width: 768px) {
       .counselling-layout {
         grid-template-columns: 3fr 2fr;
         gap: var(--sp-8);
+        padding: 0;
       }
     }
     .c-header {
@@ -63,6 +65,7 @@
       padding: var(--sp-5);
       margin-bottom: var(--sp-4);
       transition: box-shadow 0.2s ease;
+      border-radius: var(--radius-sm);
     }
     .qa-card:hover {
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -70,8 +73,10 @@
     .qa-block {
       margin-bottom: var(--sp-4);
     }
-    .qa-block:last-child {
+    .qa-block-answer {
       margin-bottom: 0;
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--color-border);
     }
     .qa-label {
       font-weight: 600;
@@ -85,10 +90,15 @@
       color: var(--color-text-secondary);
       line-height: 1.6;
       white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      text-align: justify;
+      hyphens: auto;
+      -webkit-hyphens: auto;
     }
     .qa-text-answer {
       color: var(--color-text);
-      font-style: italic;
+      /* removed italic to improve readability for long paragraphs */
     }
     
     .c-form-input {
@@ -270,7 +280,7 @@
               <div class="qa-text">${escapeHTML(item.question)}</div>
             </div>
             
-            <div class="qa-block">
+            <div class="qa-block-answer">
               <div class="qa-label">CHHANA:</div>
               <div class="qa-text qa-text-answer">${escapeHTML(item.answer)}</div>
             </div>
