@@ -298,14 +298,14 @@
         const doc = data.find(d => d.id === id);
         if (doc && doc.status === 'answered') {
            notificationsHtml += `
-             <div class="qa-card" style="border-left: 4px solid var(--brand-sky); display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-3); background: rgba(14,165,233,0.05);">
-               <div>
+             <div class="qa-card" style="border-left: 4px solid var(--brand-sky); display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-3); background: rgba(14,165,233,0.05); gap: 10px;">
+               <div style="flex: 1; min-width: 0;">
                  <strong style="color: var(--brand-sky); display: block; margin-bottom: 4px;">🔔 Your question has been answered!</strong>
-                 <div style="font-size: 0.9rem; color: var(--color-text-secondary); max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                 <div style="font-size: 0.9rem; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                    "${escapeHTML(doc.question)}"
                  </div>
                </div>
-               <button onclick="dismissNotification('${doc.id}')" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;">Dismiss</button>
+               <button onclick="dismissNotification('${doc.id}')" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem; flex-shrink: 0;">Dismiss</button>
              </div>
            `;
         }
