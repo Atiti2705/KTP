@@ -473,9 +473,15 @@
           </td>
           <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
           <td>
-            <div class="file-icon file-icon-${doc.fileType.toLowerCase()}" style="width: 40px; height: 40px; font-size: 10px;">${doc.fileType}</div>
+            <a href="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '#'}" target="_blank" style="text-decoration: none; display: block;" title="Preview Document">
+              <div class="file-icon file-icon-${doc.fileType.toLowerCase()}" style="width: 40px; height: 40px; font-size: 10px;">${doc.fileType}</div>
+            </a>
           </td>
-          <td style="font-weight: var(--fw-semibold);">${doc.title}</td>
+          <td style="font-weight: var(--fw-semibold);">
+            <a href="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '#'}" target="_blank" style="text-decoration: none; color: inherit;" title="Preview Document">
+              ${doc.title}
+            </a>
+          </td>
           <td class="td-category">
             <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
               <span class="badge badge-gold">${doc.category}</span>
@@ -486,7 +492,6 @@
           <td>${doc.fileSize}</td>
           <td>
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm" onclick="window.open('${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '#'}', '_blank')" style="padding:4px 8px; font-size:12px;" title="Preview Document" ${!doc.downloadUrl || doc.downloadUrl === '#' ? 'disabled' : ''}>👁️</button>
               <button class="btn btn-outline btn-sm" onclick="openEditModal('${doc.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Document">✏️</button>
               <button class="btn btn-outline btn-sm" onclick="confirmDeleteDoc('${doc.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Document">❌</button>
             </div>

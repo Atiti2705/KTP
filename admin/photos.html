@@ -491,10 +491,14 @@
           </td>
           <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
           <td>
-            ${mediaTag}
+            <a href="${url}" target="_blank" style="text-decoration: none; display: block;" title="Preview File">
+              ${mediaTag}
+            </a>
           </td>
           <td style="font-weight: var(--fw-semibold);">
-            ${photo.title}
+            <a href="${url}" target="_blank" style="text-decoration: none; color: inherit;" title="Preview File">
+              ${photo.title}
+            </a>
             ${photo.pinnedToHomepage ? '<span class="badge badge-secondary" style="font-size:0.6rem; margin-left:4px;">📌 Pinned</span>' : ''}
           </td>
           <td><span class="badge badge-primary">${photo.category}</span></td>
@@ -502,7 +506,6 @@
           <td>📅 ${formatDate(photo.date)}</td>
           <td>
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm" onclick="window.open('${url}', '_blank')" style="padding:4px 8px; font-size:12px;" title="Preview Photo" ${!url || url === '#' ? 'disabled' : ''}>👁️</button>
               <button class="btn btn-outline btn-sm" onclick="openEditModal('${photo.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Photo">✏️</button>
               <button class="btn btn-outline btn-sm" onclick="confirmDeletePhoto('${photo.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Photo">❌</button>
             </div>
