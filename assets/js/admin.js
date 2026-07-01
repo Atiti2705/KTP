@@ -595,9 +595,7 @@ function renderSidebar() {
       <a href="announcements.html" class="sidebar-link ${activePage === 'announcements' ? 'active' : ''}">
         <span class="link-icon">📢</span> Announcements
       </a>
-      <a href="about.html" class="sidebar-link ${activePage === 'about' ? 'active' : ''}">
-        <span class="link-icon">📖</span> About Us
-      </a>
+
       <a href="counselling.html" class="sidebar-link ${activePage === 'counselling' ? 'active' : ''}">
         <span class="link-icon">💬</span> Counselling Q&A
       </a>
