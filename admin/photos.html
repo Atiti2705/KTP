@@ -45,7 +45,7 @@
           style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
           <div class="search-container" style="max-width: 350px;">
             <span class="search-icon">🔍</span>
-            <input type="text" id="admin-search-input" class="search-input" placeholder="Search photos by title...">
+            <input type="text" id="admin-search-input" class="search-input">
           </div>
           <div style="display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center;">
             <select id="admin-filter-year" class="filter-select" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
@@ -104,7 +104,7 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="photo-title" class="form-label">Photo Title</label>
-            <input type="text" id="photo-title" class="form-input" required placeholder="e.g. Youth Camp 2026 Worship">
+            <input type="text" id="photo-title" class="form-input" required>
           </div>
 
           <div class="form-group">
@@ -119,7 +119,7 @@
               <span class="category-editor-label">Add, remove, or rename categories:</span>
               <div class="category-chips-editor" id="photo-cat-chips"></div>
               <div class="cat-add-row">
-                <input type="text" id="photo-new-cat-input" placeholder="New category name…">
+                <input type="text" id="photo-new-cat-input">
                 <button type="button" id="btn-add-new-cat">➕ Add</button>
               </div>
             </div>
@@ -127,7 +127,7 @@
 
           <div class="form-group">
             <label for="photo-subcategory" class="form-label">Sub Category (Optional)</label>
-            <input type="text" id="photo-subcategory" class="form-input" placeholder="e.g. May" list="photo-subcat-list">
+            <input type="text" id="photo-subcategory" class="form-input" list="photo-subcat-list">
             <datalist id="photo-subcat-list"></datalist>
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Useful for grouping within a category (e.g. months inside a year).</small>
           </div>
@@ -168,7 +168,7 @@
 
           <div class="form-group" id="photo-url-container" style="display: none; margin-bottom: 0;">
             <label for="photo-url" class="form-label">Image Link URL</label>
-            <input type="url" id="photo-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or direct image link">
+            <input type="url" id="photo-url" class="form-input">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
               Supports Google Drive share links, Dropbox, or any direct image URL.
             </small>
@@ -210,7 +210,7 @@
               <input type="checkbox" id="bulk-enable-subcategory" style="width: 16px; height: 16px;">
               Update Sub Category
             </label>
-            <input type="text" id="bulk-photo-subcategory" class="form-input" placeholder="e.g. May, June" disabled>
+            <input type="text" id="bulk-photo-subcategory" class="form-input" disabled>
           </div>
 
           <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">

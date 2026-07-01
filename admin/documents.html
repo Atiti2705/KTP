@@ -45,7 +45,7 @@
           style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
           <div class="search-container" style="max-width: 350px;">
             <span class="search-icon">🔍</span>
-            <input type="text" id="admin-search-input" class="search-input" placeholder="Search documents by title...">
+            <input type="text" id="admin-search-input" class="search-input">
           </div>
           <div style="display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center;">
             <select id="admin-filter-category" class="filter-select" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
@@ -100,7 +100,7 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="doc-title" class="form-label">Document Title</label>
-            <input type="text" id="doc-title" class="form-input" required placeholder="e.g. Mipui Aw - July 2026">
+            <input type="text" id="doc-title" class="form-input" required>
           </div>
 
           <div class="form-group" id="group-doc-category">
@@ -115,7 +115,7 @@
               <span class="category-editor-label">Add, remove, or rename categories:</span>
               <div class="category-chips-editor" id="doc-cat-chips"></div>
               <div class="cat-add-row">
-                <input type="text" id="doc-new-cat-input" placeholder="New category name…">
+                <input type="text" id="doc-new-cat-input">
                 <button type="button" id="btn-add-new-cat">➕ Add</button>
               </div>
             </div>
@@ -123,7 +123,7 @@
 
           <div class="form-group" id="group-doc-subcategory">
             <label for="doc-subcategory" class="form-label">Category / Type (Optional)</label>
-            <input type="text" id="doc-subcategory" class="form-input" placeholder="e.g. Special Edition, Monthly" list="subcat-list">
+            <input type="text" id="doc-subcategory" class="form-input" list="subcat-list">
             <datalist id="subcat-list"></datalist>
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Use this to create custom filters inside this manager.</small>
           </div>
@@ -157,7 +157,7 @@
 
           <div class="form-group" id="doc-url-container" style="display: none; margin-bottom: 0;">
             <label for="doc-url" class="form-label">Document Link URL</label>
-            <input type="url" id="doc-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or any download link">
+            <input type="url" id="doc-url" class="form-input">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
               Paste link to Google Drive, Dropbox, or any public document URL.
             </small>
@@ -199,7 +199,7 @@
               <input type="checkbox" id="bulk-enable-subcategory" style="width: 16px; height: 16px;">
               Update Sub Category
             </label>
-            <input type="text" id="bulk-doc-subcategory" class="form-input" placeholder="e.g. May, June" disabled>
+            <input type="text" id="bulk-doc-subcategory" class="form-input" disabled>
           </div>
 
           <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">

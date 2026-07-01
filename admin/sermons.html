@@ -45,8 +45,7 @@
           style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
           <div class="search-container" style="max-width: 350px;">
             <span class="search-icon">🔍</span>
-            <input type="text" id="admin-search-input" class="search-input"
-              placeholder="Search sermons by title or speaker...">
+            <input type="text" id="admin-search-input" class="search-input">
           </div>
           <div>
             <select id="admin-filter-category" class="filter-select"
@@ -100,14 +99,12 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
             <div class="form-group">
               <label for="sermon-title" class="form-label">Sermon Title</label>
-              <input type="text" id="sermon-title" class="form-input" required
-                placeholder="e.g. Living a Life of Worship">
+              <input type="text" id="sermon-title" class="form-input" required>
             </div>
 
             <div class="form-group">
               <label for="sermon-speaker" class="form-label">Speaker</label>
-              <input type="text" id="sermon-speaker" class="form-input" required
-                placeholder="e.g. Pastor R. Lalthanmawia">
+              <input type="text" id="sermon-speaker" class="form-input" required>
             </div>
           </div>
 
@@ -124,7 +121,7 @@
                 <span class="category-editor-label">Add, remove, or rename categories:</span>
                 <div class="category-chips-editor" id="sermon-cat-chips"></div>
                 <div class="cat-add-row">
-                  <input type="text" id="sermon-new-cat-input" placeholder="New category name…">
+                  <input type="text" id="sermon-new-cat-input">
                   <button type="button" id="btn-add-new-cat">➕ Add</button>
                 </div>
               </div>
@@ -132,14 +129,13 @@
 
             <div class="form-group">
               <label for="sermon-scripture" class="form-label">Scripture Reading</label>
-              <input type="text" id="sermon-scripture" class="form-input" required placeholder="e.g. Romans 12:1-2">
+              <input type="text" id="sermon-scripture" class="form-input" required>
             </div>
           </div>
 
           <div class="form-group">
             <label for="sermon-desc" class="form-label">Sermon Outline / Description</label>
-            <textarea id="sermon-desc" class="form-input form-textarea" required
-              placeholder="Enter primary scripture points, notes, and takeaway messages..."></textarea>
+            <textarea id="sermon-desc" class="form-input form-textarea" required></textarea>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
@@ -153,7 +149,7 @@
 
             <div class="form-group">
               <label for="sermon-size" class="form-label">Estimated File Size</label>
-              <input type="text" id="sermon-size" class="form-input" required placeholder="e.g. 1.2 MB" value="1.0 MB">
+              <input type="text" id="sermon-size" class="form-input" required value="1.0 MB">
             </div>
           </div>
 
@@ -197,7 +193,7 @@
 
           <div class="form-group" id="sermon-url-container" style="display: none; margin-bottom: 0;">
             <label for="sermon-url" class="form-label">Sermon Notes Link URL</label>
-            <input type="url" id="sermon-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or any file link">
+            <input type="url" id="sermon-url" class="form-input">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
               Paste link to Google Drive, Dropbox, or any public PDF/document URL.
             </small>

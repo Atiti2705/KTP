@@ -164,11 +164,11 @@
           <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:var(--sp-3);">
             <div class="form-group" style="margin:0;">
               <label for="stat-title" class="form-label">Title</label>
-              <input type="text" id="stat-title" class="form-input" required placeholder="e.g. Branch Statistics 2026">
+              <input type="text" id="stat-title" class="form-input" required>
             </div>
             <div class="form-group" style="margin:0;">
               <label for="stat-year" class="form-label">Year</label>
-              <input type="text" id="stat-year" class="form-input" required placeholder="2026" maxlength="4">
+              <input type="text" id="stat-year" class="form-input" required maxlength="4">
             </div>
             <div class="form-group" style="margin:0;">
               <label for="stat-date" class="form-label">Entry Date</label>
@@ -178,7 +178,7 @@
 
           <div class="form-group" style="margin:0;">
             <label for="stat-desc" class="form-label">Description <span style="font-weight:normal;color:var(--color-text-secondary);">(optional)</span></label>
-            <input type="text" id="stat-desc" class="form-input" placeholder="Short summary shown on the statistics page">
+            <input type="text" id="stat-desc" class="form-input">
           </div>
 
           <!-- Overall Stats -->
@@ -189,15 +189,15 @@
             <div class="overall-row" style="padding:0.75rem;">
               <div class="form-group" style="margin:0;">
                 <label class="form-label">Total Members</label>
-                <input type="number" id="stat-total" class="form-input" min="0" placeholder="0">
+                <input type="number" id="stat-total" class="form-input" min="0">
               </div>
               <div class="form-group" style="margin:0;">
                 <label class="form-label">Men</label>
-                <input type="number" id="stat-men" class="form-input" min="0" placeholder="0">
+                <input type="number" id="stat-men" class="form-input" min="0">
               </div>
               <div class="form-group" style="margin:0;">
                 <label class="form-label">Female</label>
-                <input type="number" id="stat-female" class="form-input" min="0" placeholder="0">
+                <input type="number" id="stat-female" class="form-input" min="0">
               </div>
             </div>
           </div>
@@ -297,7 +297,7 @@
       item.className = 'group-builder-item';
       item.innerHTML = `
         <div class="group-builder-header">
-          <input type="text" data-field="name" value="${group.name || ''}" placeholder="Group name (e.g. Jeremia)"
+          <input type="text" data-field="name" value="${group.name || ''}"
             style="border:none; background:transparent; font-weight:var(--fw-semibold); font-size:var(--fs-sm); color:var(--color-text); width:100%; outline:none;">
           <button type="button" class="remove-group-btn" title="Remove group">✕</button>
         </div>
@@ -305,22 +305,22 @@
           <div class="group-counts-row">
             <div class="group-count-field">
               <label>👨 Men</label>
-              <input type="number" data-field="men" value="${group.men || ''}" min="0" placeholder="0">
+              <input type="number" data-field="men" value="${group.men || ''}" min="0">
             </div>
             <div class="group-count-field">
               <label>👩 Female</label>
-              <input type="number" data-field="female" value="${group.female || ''}" min="0" placeholder="0">
+              <input type="number" data-field="female" value="${group.female || ''}" min="0">
             </div>
             <div class="group-count-field">
               <label>👥 Total</label>
-              <input type="number" data-field="total" value="${group.total || ''}" min="0" placeholder="0">
+              <input type="number" data-field="total" value="${group.total || ''}" min="0">
             </div>
           </div>
           <div>
             <label style="font-size:var(--fs-xs); color:var(--color-text-secondary); font-weight:var(--fw-medium); display:block; margin-bottom:4px;">
               📋 Member Names <span style="font-weight:normal;">(one per line)</span>
             </label>
-            <textarea data-field="members" class="group-members-textarea" placeholder="Vanlalruata&#10;Lalthansanga&#10;Malsawmtluangi&#10;...">${membersText}</textarea>
+            <textarea data-field="members" class="group-members-textarea">${membersText}</textarea>
           </div>
         </div>
       `;

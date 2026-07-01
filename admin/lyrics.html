@@ -46,7 +46,7 @@
           style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
           <div class="search-container" style="max-width: 350px;">
             <span class="search-icon">🔍</span>
-            <input type="text" id="admin-search-input" class="search-input" placeholder="Search lyrics by title...">
+            <input type="text" id="admin-search-input" class="search-input">
           </div>
           <div>
             <select id="admin-filter-category" class="filter-select"
@@ -99,7 +99,7 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="lyric-title" class="form-label">Lyric Title</label>
-            <input type="text" id="lyric-title" class="form-input" required placeholder="e.g. Hla Lyrics - July 2026">
+            <input type="text" id="lyric-title" class="form-input" required>
           </div>
 
           <div class="form-group">
@@ -114,7 +114,7 @@
               <span class="category-editor-label">Add, remove, or rename categories:</span>
               <div class="category-chips-editor" id="lyric-cat-chips"></div>
               <div class="cat-add-row">
-                <input type="text" id="lyric-new-cat-input" placeholder="New category name…">
+                <input type="text" id="lyric-new-cat-input">
                 <button type="button" id="btn-add-new-cat">➕ Add</button>
               </div>
             </div>
@@ -122,8 +122,7 @@
 
           <div class="form-group">
             <label for="lyric-desc" class="form-label">Description / Summary</label>
-            <textarea id="lyric-desc" class="form-input form-textarea" required
-              placeholder="Provide a brief summary of what this Lyric contains..."></textarea>
+            <textarea id="lyric-desc" class="form-input form-textarea" required></textarea>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
@@ -138,7 +137,7 @@
 
             <div class="form-group">
               <label for="lyric-size" class="form-label">File Size</label>
-              <input type="text" id="lyric-size" class="form-input" required placeholder="e.g. 1.8 MB" value="1.2 MB">
+              <input type="text" id="lyric-size" class="form-input" required value="1.2 MB">
             </div>
           </div>
 
@@ -182,7 +181,7 @@
 
           <div class="form-group" id="lyric-url-container" style="display: none; margin-bottom: 0;">
             <label for="lyric-url" class="form-label">Lyric Link URL</label>
-            <input type="url" id="lyric-url" class="form-input" placeholder="e.g. https://drive.google.com/file/d/... or any download link">
+            <input type="url" id="lyric-url" class="form-input">
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
               Paste link to Google Drive, Dropbox, or any public Lyric URL.
             </small>

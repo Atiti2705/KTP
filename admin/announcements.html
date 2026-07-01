@@ -45,8 +45,7 @@
           style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
           <div class="search-container" style="max-width: 350px;">
             <span class="search-icon">🔍</span>
-            <input type="text" id="admin-search-input" class="search-input"
-              placeholder="Search notices by title or content...">
+            <input type="text" id="admin-search-input" class="search-input">
           </div>
           <div>
             <select id="admin-filter-priority" class="filter-select"
@@ -100,14 +99,12 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="ann-title" class="form-label">Notice Title</label>
-            <input type="text" id="ann-title" class="form-input" required
-              placeholder="e.g. Sunday Worship Schedule Update">
+            <input type="text" id="ann-title" class="form-input" required>
           </div>
 
           <div class="form-group">
             <label for="ann-content" class="form-label">Notice Details / Content</label>
-            <textarea id="ann-content" class="form-input form-textarea" required
-              placeholder="Write full details of the notice..." style="min-height: 140px;"></textarea>
+            <textarea id="ann-content" class="form-input form-textarea" required style="min-height: 140px;"></textarea>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
@@ -129,12 +126,12 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
             <div class="form-group">
               <label for="ann-image" class="form-label">Image URL (Optional)</label>
-              <input type="url" id="ann-image" class="form-input" placeholder="https://example.com/image.jpg">
+              <input type="url" id="ann-image" class="form-input">
             </div>
 
             <div class="form-group">
               <label for="ann-link" class="form-label">External Link (Optional)</label>
-              <input type="url" id="ann-link" class="form-input" placeholder="https://example.com/more-info">
+              <input type="url" id="ann-link" class="form-input">
             </div>
           </div>
 
