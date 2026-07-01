@@ -59,8 +59,12 @@
     <!-- ====== ANNOUNCEMENTS SECTION ====== -->
     <section class="section announcements-section" id="announcements" style="padding-top: 3rem; padding-bottom: 3rem;">
       <div class="container">
-        <div class="section-header reveal" style="position: relative; text-align: center; margin-bottom: 2rem;">
-          <h2 style="margin: 0 auto;">📢 News</h2>
+        <div class="section-header reveal" style="position: relative; text-align: center; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--brand-sky);">
+            <path d="m3 11 18-5v12L3 14v-3z"/>
+            <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>
+          </svg>
+          <h2 style="margin: 0;">News</h2>
           <div class="carousel-nav-buttons desktop-only" style="position: absolute; right: 0; bottom: 0;">
             <button class="carousel-btn prev-btn" id="announcements-prev" aria-label="Previous">&larr;</button>
             <button class="carousel-btn next-btn" id="announcements-next" aria-label="Next">&rarr;</button>
@@ -77,8 +81,14 @@
     <!-- ====== STATISTICS SECTION ====== -->
     <section class="section stats-highlight-section" id="statistics">
       <div class="container">
-        <div class="section-header reveal text-center" style="margin-bottom: 2rem;">
-          <h2 style="margin: 0 auto;">📊 Branch Statistics</h2>
+        <div class="section-header reveal text-center" style="margin-bottom: 2rem; display: flex; flex-direction: column; align-items: center;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--brand-sky);">
+              <path d="M3 3v18h18"/>
+              <path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+            <h2 style="margin: 0;">Branch Statistics</h2>
+          </div>
           <p id="stats-subtitle" style="margin-top: 0.5rem; color: var(--color-text-secondary);">Our growth in numbers.</p>
         </div>
         <div id="stats-highlight-grid" class="stats-highlight-grid stagger-children">
