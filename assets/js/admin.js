@@ -306,7 +306,7 @@ const AdminData = {
     if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
       try {
         console.log("🔄 Syncing admin databases with Firestore...");
-        const [photos, docs, sermons, announcements, lyrics, settings, about, branchObHlui, statistics, news, lawmpuina, sunna] = await Promise.all([
+        const [photos, docs, sermons, announcements, lyrics, settings, about, branchObHlui, statistics, news, lawmpuina, sunna, contactDirectory] = await Promise.all([
           DbService.get('photos'),
           DbService.get('documents'),
           DbService.get('sermons'),
@@ -318,7 +318,8 @@ const AdminData = {
           DbService.get('statistics'),
           DbService.get('news'),
           DbService.get('lawmpuina'),
-          DbService.get('sunna')
+          DbService.get('sunna'),
+          DbService.get('contact_directory')
         ]);
 
         if (Array.isArray(photos)) localStorage.setItem('db_photos', JSON.stringify(photos));
@@ -535,10 +536,12 @@ function renderSidebar() {
               currentPath.endsWith('lyrics.html') ? 'lyrics' :
                 currentPath.endsWith('branch-info.html') ? 'branch-info' :
                   currentPath.endsWith('about.html') ? 'about' :
-                    currentPath.endsWith('announcements.html') ? 'announcements' :
+                  currentPath.endsWith('announcements.html') ? 'announcements' :
                       currentPath.endsWith('counselling.html') ? 'counselling' :
                         currentPath.endsWith('statistics.html') ? 'statistics' :
-                          currentPath.endsWith('settings.html') ? 'settings' : '';
+                          currentPath.endsWith('contact-info.html') ? 'contact-info' :
+                            currentPath.endsWith('messages.html') ? 'messages' :
+                              currentPath.endsWith('settings.html') ? 'settings' : '';
 
   const user = JSON.parse(localStorage.getItem('ktp_admin_user') || '{"name":"Admin","role":"User"}');
 
@@ -605,6 +608,14 @@ function renderSidebar() {
       <a href="branch-info.html" class="sidebar-link ${activePage === 'branch-info' ? 'active' : ''}">
         <span class="link-icon">👨‍💼</span> Branch Info & Committees
       </a>
+      <div class="sidebar-divider"></div>
+      <a href="contact-info.html" class="sidebar-link ${activePage === 'contact-info' ? 'active' : ''}">
+        <span class="link-icon">📞</span> Contact Info Directory
+      </a>
+      <a href="messages.html" class="sidebar-link ${activePage === 'messages' ? 'active' : ''}">
+        <span class="link-icon">📥</span> Inbox Messages
+      </a>
+      <div class="sidebar-divider"></div>
       <a href="settings.html" class="sidebar-link ${activePage === 'settings' ? 'active' : ''}">
         <span class="link-icon">⚙️</span> Site Settings
       </a>

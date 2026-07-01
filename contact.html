@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - KTP Saikhamakawn</title>
+  <meta name="description" content="Get in touch with KTP Saikhamakawn, view branch leadership, and find our church location.">
+  <meta name="keywords" content="KTP Saikhamakawn contact, address, phone, email, branch ob, group leaders">
+  <meta property="og:title" content="Contact Us - KTP Saikhamakawn">
+  <meta property="og:description" content="Get in touch with KTP Saikhamakawn, view branch leadership, and find our church location.">
+  <meta property="og:image" content="assets/images/logo.png">
+  <meta property="og:type" content="website">
+  
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="apple-touch-icon" href="assets/images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="assets/css/variables.css?v=105">
+  <link rel="stylesheet" href="assets/css/base.css?v=105">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=105">
+  <link rel="stylesheet" href="assets/css/animations.css?v=105">
+  <link rel="stylesheet" href="assets/css/components.css?v=105">
+  <link rel="stylesheet" href="assets/css/layout.css?v=105">
+
+  <style>
+    /* ================================================
+       CONTACT PAGE STYLES
+       ================================================ */
+    .contact-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      margin-top: 2rem;
+    }
+
+    @media (min-width: 992px) {
+      .contact-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* Map & Info Card */
+    .contact-info-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map-container {
+      width: 100%;
+      height: 350px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .map-container iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .contact-details {
+      padding: 2rem;
+    }
+
+    .contact-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px dashed var(--glass-border);
+    }
+    .contact-detail-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .contact-detail-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(14, 165, 233, 0.1);
+      color: var(--brand-sky);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-detail-text h4 {
+      margin: 0 0 0.25rem 0;
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+    .contact-detail-text p, .contact-detail-text a {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      text-decoration: none;
+      font-family: var(--font-heading);
+    }
+
+    /* Contact Form */
+    .contact-form-card {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    .contact-form-card h3 {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      font-size: 1.75rem;
+      font-family: var(--font-heading);
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+    }
+    .form-input {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--brand-sky);
+      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+    }
+    textarea.form-input {
+      min-height: 150px;
+      resize: vertical;
+    }
+    
+    /* Directory Section */
+    .directory-section {
+      margin-top: 5rem;
+      margin-bottom: 3rem;
+    }
+    .directory-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .directory-tab {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      padding: 0.75rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 600;
+      font-family: var(--font-heading);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .directory-tab:hover {
+      border-color: var(--brand-sky);
+    }
+    .directory-tab.active {
+      background: var(--brand-sky);
+      color: white;
+      border-color: var(--brand-sky);
+    }
+    .directory-content {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .directory-content.active {
+      display: block;
+    }
+    
+    /* Directory Grid */
+    .directory-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .directory-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      }
+    }
+    .directory-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .directory-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-color: var(--brand-sky-light);
+    }
+    .directory-card h4 {
+      margin: 0 0 1rem 0;
+      font-size: 1.25rem;
+      color: var(--brand-sky);
+      border-bottom: 2px solid rgba(14, 165, 233, 0.2);
+      padding-bottom: 0.5rem;
+      font-family: var(--font-heading);
+    }
+    .directory-person {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 0.75rem;
+    }
+    .directory-person:last-child {
+      margin-bottom: 0;
+    }
+    .dp-role {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+    .dp-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .dp-contact {
+      font-size: 0.95rem;
+      color: var(--brand-sky);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .dp-contact:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mizo-pattern mizo-pattern-top"></div>
+  
+  <header class="site-header" id="site-header"></header>
+
+  <main class="main-content" style="padding-top: 100px;">
+    
+    <div class="page-header pattern-bg" style="text-align: center; margin-bottom: 2rem;">
+      <div class="container">
+        <h1 class="page-title reveal">Contact Us</h1>
+        <p class="page-desc reveal reveal-delay-1" style="max-width: 600px; margin: 0 auto;">
+          Get in touch with KP Saikhamakawn, find our church location, or reach out to our branch leaders.
+        </p>
+      </div>
+    </div>
+
+    <section class="section" style="padding-top: 0;">
+      <div class="container">
+        
+        <div class="contact-container">
+          
+          <!-- Left: Map & Info -->
+          <div class="contact-info-card reveal reveal-delay-2">
+            <div class="map-container">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1822.427771746271!2d92.71960249839478!3d23.71444989999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x374d95267a1fffff%3A0x89db7cb8dcfcf7d!2sSaikhamakawn%20Presbyterian%20Church!5e0!3m2!1sen!2sin!4v1717387343606!5m2!1sen!2sin" 
+                allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
+            <div class="contact-details">
+              <div class="contact-detail-item">
+                <div class="contact-detail-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                </div>
+                <div class="contact-detail-text">
+                  <h4>Church Location</h4>
+                  <p id="church-address-display">Saikhamakawn, Aizawl, Mizoram</p>
+                </div>
+              </div>
+              <div class="contact-detail-item">
+                <div class="contact-detail-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                </div>
+                <div class="contact-detail-text">
+                  <h4>Email Us</h4>
+                  <a href="mailto:ktpsaikhamakawn@gmail.com" id="church-email-display">ktpsaikhamakawn@gmail.com</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Form -->
+          <div class="contact-form-card reveal reveal-delay-3">
+            <h3>Send a Message</h3>
+            <form id="public-contact-form">
+              <div class="form-group">
+                <label class="form-label" for="contact-name">Your Name</label>
+                <input type="text" id="contact-name" class="form-input" required placeholder="e.g. Zothanpuia">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contact-email">Your Email (Optional)</label>
+                <input type="email" id="contact-email" class="form-input" placeholder="e.g. email@example.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contact-message">Message</label>
+                <textarea id="contact-message" class="form-input" required placeholder="Write your message here..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                Send Message
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- Directory Section -->
+        <div class="directory-section reveal">
+          <div class="section-header text-center" style="margin-bottom: 2rem;">
+            <h2>Leadership Directory</h2>
+            <p>Contact information for our Branch OBs, Groups, and Sub-Committees.</p>
+          </div>
+
+          <div class="directory-tabs">
+            <button class="directory-tab active" data-target="dir-branch">Branch OB</button>
+            <button class="directory-tab" data-target="dir-groups">Groups</button>
+            <button class="directory-tab" data-target="dir-committees">Sub-Committees</button>
+          </div>
+
+          <div class="directory-content active" id="dir-branch">
+            <div class="directory-grid" id="grid-branch">
+              <!-- Rendered via JS -->
+              <p class="text-center" style="grid-column: 1/-1;">Loading Branch OBs...</p>
+            </div>
+          </div>
+          <div class="directory-content" id="dir-groups">
+            <div class="directory-grid" id="grid-groups">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+          <div class="directory-content" id="dir-committees">
+            <div class="directory-grid" id="grid-committees">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=105"></script>
+
+  <!-- App Configuration -->
+  <script src="assets/js/firebase-config.js?v=105"></script>
+  <script src="assets/js/theme.js?v=105"></script>
+  <script src="assets/js/data.js?v=105"></script>
+  <script src="assets/js/auth.js?v=105"></script>
+  <script src="assets/js/db-service.js?v=105"></script>
+  <script src="assets/js/save-service.js?v=105"></script>
+  <script src="assets/js/components.js?v=105"></script>
+  <script src="assets/js/search.js?v=105"></script>
+  <script src="assets/js/app.js?v=105"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderHeader('contact');
+      renderFooter();
+      if (typeof initRevealAnimations === 'function') initRevealAnimations();
+
+      // Update Email from Settings
+      const settings = DbService.getLocal('settings');
+      if (settings && settings.length > 0 && settings[0].churchInfo) {
+        const email = settings[0].churchInfo.email;
+        if (email) {
+          const emailDisplay = document.getElementById('church-email-display');
+          emailDisplay.textContent = email;
+          emailDisplay.href = 'mailto:' + email;
+        }
+      }
+
+      // Tab Switching
+      const tabs = document.querySelectorAll('.directory-tab');
+      const contents = document.querySelectorAll('.directory-content');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          contents.forEach(c => c.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(tab.dataset.target).classList.add('active');
+        });
+      });
+
+      // Fetch and Render Directory
+      await loadDirectory();
+
+      // Form Submission
+      const contactForm = document.getElementById('public-contact-form');
+      contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Sending...';
+
+        try {
+          const name = document.getElementById('contact-name').value;
+          const email = document.getElementById('contact-email').value;
+          const message = document.getElementById('contact-message').value;
+
+          const docData = {
+            name: name,
+            email: email,
+            message: message,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          };
+
+          await FirebaseConfig.db.collection('messages').add(docData);
+          
+          contactForm.reset();
+          if (typeof Toast !== 'undefined') {
+            Toast.show('Message sent successfully!', 'success');
+          } else {
+            alert('Message sent successfully! Thank you for reaching out.');
+          }
+        } catch (err) {
+          console.error("Error sending message:", err);
+          if (typeof Toast !== 'undefined') {
+            Toast.show('Failed to send message. Please try again.', 'error');
+          } else {
+            alert('Failed to send message. Please try again.');
+          }
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      });
+    });
+
+    async function loadDirectory() {
+      try {
+        const snapshot = await FirebaseConfig.db.collection('contact_directory').orderBy('orderIndex').get();
+        const items = [];
+        snapshot.forEach(doc => {
+          items.push({ id: doc.id, ...doc.data() });
+        });
+
+        const branchObs = items.filter(i => i.type === 'branch_ob');
+        const groups = items.filter(i => i.type === 'group');
+        const committees = items.filter(i => i.type === 'committee');
+
+        renderBranchOBs(branchObs);
+        renderGroupsCommittees(groups, 'grid-groups', 'Group');
+        renderGroupsCommittees(committees, 'grid-committees', 'Committee');
+
+      } catch (e) {
+        console.error("Error loading directory:", e);
+        document.getElementById('grid-branch').innerHTML = '<p class="text-center" style="grid-column: 1/-1;">Could not load directory data.</p>';
+      }
+    }
+
+    function renderBranchOBs(data) {
+      const container = document.getElementById('grid-branch');
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p class="text-center" style="grid-column: 1/-1; color: var(--color-text-secondary);">No Branch OBs listed.</p>';
+        return;
+      }
+      container.innerHTML = data.map(item => `
+        <div class="directory-card">
+          <h4>${item.role || 'Member'}</h4>
+          <div class="directory-person">
+            <span class="dp-name">${item.name || ''}</span>
+            ${item.contact ? `<a href="tel:${item.contact}" class="dp-contact">📞 ${item.contact}</a>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderGroupsCommittees(data, containerId, typeLabel) {
+      const container = document.getElementById(containerId);
+      if (!data || data.length === 0) {
+        container.innerHTML = `<p class="text-center" style="grid-column: 1/-1; color: var(--color-text-secondary);">No ${typeLabel}s listed.</p>`;
+        return;
+      }
+      container.innerHTML = data.map(item => `
+        <div class="directory-card">
+          <h4>${item.name || 'Unnamed ' + typeLabel}</h4>
+          
+          <div class="directory-person">
+            <span class="dp-role">${typeLabel === 'Group' ? 'Leader' : 'Chairman'}</span>
+            <span class="dp-name">${item.leaderName || '-'}</span>
+            ${item.leaderContact ? `<a href="tel:${item.leaderContact}" class="dp-contact">📞 ${item.leaderContact}</a>` : ''}
+          </div>
+          
+          <div class="directory-person" style="margin-top: 1rem;">
+            <span class="dp-role">Secretary</span>
+            <span class="dp-name">${item.secretaryName || '-'}</span>
+            ${item.secretaryContact ? `<a href="tel:${item.secretaryContact}" class="dp-contact">📞 ${item.secretaryContact}</a>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
