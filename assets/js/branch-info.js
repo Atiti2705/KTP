@@ -104,24 +104,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   const modalStyles = `
     <style>
       /* Layout Overrides for Horizontal Cards */
-      .ob-grid {
+      .ob-grid:not([data-type="kohhran-upa"]) {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)) !important;
         gap: var(--sp-4) !important;
       }
       @media (max-width: 600px) {
-        .ob-grid {
+        .ob-grid:not([data-type="kohhran-upa"]) {
           grid-template-columns: 1fr !important;
         }
       }
-      .ob-card {
+      .ob-grid:not([data-type="kohhran-upa"]) .ob-card {
         cursor: pointer;
         flex-direction: row !important;
         padding: var(--sp-4);
         gap: var(--sp-4);
         align-items: center;
       }
-      .ob-image-wrapper {
+      .ob-grid:not([data-type="kohhran-upa"]) .ob-image-wrapper {
         width: 100px !important;
         height: 100px !important;
         aspect-ratio: auto !important;
@@ -129,14 +129,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         border-radius: var(--radius-md);
         background: var(--color-bg-alt);
       }
-      .ob-content-wrapper {
+      .ob-grid:not([data-type="kohhran-upa"]) .ob-content-wrapper {
         padding: 0 !important;
         flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
       }
-      .ob-title {
+      .ob-grid:not([data-type="kohhran-upa"]) .ob-title {
         font-size: var(--fs-base) !important;
         margin-bottom: 4px !important;
       }
