@@ -483,12 +483,12 @@ function renderSidebar() {
 
   const currentPath = window.location.pathname;
   const urlParams = new URLSearchParams(window.location.search);
-  const catParam = urlParams.get('cat');
+  const collectionParam = urlParams.get('collection');
   
   const activePage =
     currentPath.endsWith('dashboard.html') ? 'dashboard' :
       currentPath.endsWith('photos.html') ? 'photos' :
-        currentPath.endsWith('documents.html') ? (catParam === 'Bulletin' ? 'bulletin' : catParam === 'Souvenir' ? 'souvenir' : catParam === 'Mipui Aw' ? 'mipuiaw' : 'documents') :
+        currentPath.endsWith('documents.html') ? (collectionParam === 'bulletins' ? 'bulletin' : collectionParam === 'souvenirs' ? 'souvenir' : collectionParam === 'mipuiaw' ? 'mipuiaw' : 'documents') :
           currentPath.endsWith('sermons.html') ? 'sermons' :
               currentPath.endsWith('lyrics.html') ? 'lyrics' :
                 currentPath.endsWith('branch-info.html') ? 'branch-info' :
@@ -515,14 +515,14 @@ function renderSidebar() {
       <a href="photos.html" class="sidebar-link ${activePage === 'photos' ? 'active' : ''}">
         <span class="link-icon">📸</span> Photos Gallery
       </a>
-      <a href="documents.html?cat=Mipui Aw" class="sidebar-link ${activePage === 'mipuiaw' ? 'active' : ''}">
+      <a href="documents.html?collection=mipuiaw&title=Mipui%20Aw" class="sidebar-link ${activePage === 'mipuiaw' ? 'active' : ''}">
         <span class="link-icon">📄</span> Mipui Aw
       </a>
-      <a href="documents.html?cat=Bulletin" class="sidebar-link ${activePage === 'bulletin' ? 'active' : ''}">
+      <a href="documents.html?collection=bulletins&title=Bulletin" class="sidebar-link ${activePage === 'bulletin' ? 'active' : ''}">
         <span class="link-icon">📰</span> Bulletin
       </a>
-      <a href="documents.html?cat=Souvenir" class="sidebar-link ${activePage === 'souvenir' ? 'active' : ''}">
-        <span class="link-icon">📖</span> Souvenir
+      <a href="documents.html?collection=souvenirs&title=Souvenir" class="sidebar-link ${activePage === 'souvenir' ? 'active' : ''}">
+        <span class="link-icon">📘</span> Souvenir
       </a>
       <a href="sermons.html" class="sidebar-link ${activePage === 'sermons' ? 'active' : ''}">
         <span class="link-icon">📖</span> Sermons & Study

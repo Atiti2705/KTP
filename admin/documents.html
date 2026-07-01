@@ -238,10 +238,11 @@
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const initialCat = urlParams.get('cat');
+    const targetCollection = urlParams.get('collection') || 'documents';
+    const pageTitle = urlParams.get('title') || 'Documents';
 
     let currentSearch = '';
-    let currentCategoryFilter = initialCat || 'All';
+    let currentCategoryFilter = 'All';
     let currentSubCategoryFilter = 'All';
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -256,31 +257,17 @@
 
       populateCategoryDropdowns();
 
-      if (initialCat) {
-        document.querySelector('.admin-page-title').textContent = initialCat + ' Manager';
-        document.querySelector('.admin-page-desc').textContent = `Manage your ${initialCat} documents here.`;
-        
-        const filterCatSelect = document.getElementById('admin-filter-category');
-        if (filterCatSelect) {
-          filterCatSelect.value = initialCat;
-          filterCatSelect.disabled = true;
-          filterCatSelect.style.display = 'none';
-        }
-
-        const formCatSelect = document.getElementById('doc-category');
-        if (formCatSelect) {
-          formCatSelect.value = initialCat;
-          const formGroup = formCatSelect.closest('.form-group');
-          if (formGroup) formGroup.style.display = 'none';
-        }
+      if (targetCollection !== 'documents') {
+        document.querySelector('.admin-page-title').textContent = pageTitle + ' Manager';
+        document.querySelector('.admin-page-desc').textContent = `Manage your ${pageTitle} files here.`;
       }
 
       // Sync from Firestore before rendering
       if (typeof DbService !== 'undefined') {
         try {
-          const remoteDocs = await DbService.get('documents');
+          const remoteDocs = await DbService.get(targetCollection);
           if (remoteDocs && remoteDocs.length > 0) {
-             localStorage.setItem('db_documents', JSON.stringify(remoteDocs));
+             localStorage.setItem('db_' + targetCollection, JSON.stringify(remoteDocs));
           }
         } catch (e) {
           console.warn("Could not sync documents from Firestore:", e);
@@ -336,7 +323,7 @@
         return;
       }
 
-      const docs = AdminData.get('documents') || [];
+      const docs = AdminData.get(targetCollection) || [];
       const subcats = Array.from(
         new Set(
           docs
@@ -399,11 +386,11 @@
         saveCategorySettings();
         populateCategoryDropdowns();
         
-        const docs = AdminData.get('documents');
+        const docs = AdminData.get(targetCollection);
         for (const doc of docs) {
           if (doc.category === oldName) {
             doc.category = trimmedName;
-            await AdminData.update('documents', doc.id, { category: trimmedName });
+            await AdminData.update(targetCollection, doc.id, { category: trimmedName });
           }
         }
         
@@ -438,7 +425,7 @@
       const tbody = document.getElementById('docs-table-body');
       if (!tbody) return;
 
-      const docs = AdminData.get('documents');
+      const docs = AdminData.get(targetCollection);
 
       let filtered = docs;
       if (currentSearch.trim()) {
@@ -535,7 +522,7 @@
       // Subcategory datalist population
       document.getElementById('doc-category').addEventListener('change', (e) => {
         const cat = e.target.value;
-        const docs = AdminData.get('documents') || [];
+        const docs = AdminData.get(targetCollection) || [];
         const subcats = new Set();
         docs.filter(d => d.category === cat).forEach(d => {
           if (d.subcategory && d.subcategory.trim() !== '') {
@@ -628,7 +615,7 @@
               bulkDeleteBtn.innerHTML = '⌛ Deleting...';
               
               for (const cb of selectedCbs) {
-                await AdminData.delete('documents', cb.value);
+                await AdminData.delete(targetCollection, cb.value);
               }
               
               AdminToast.show(`Successfully deleted ${selectedCbs.length} document(s).`, 'success');
@@ -703,7 +690,7 @@
           submitBtn.innerHTML = '⌛ Applying...';
 
           for (const cb of selectedCbs) {
-            await AdminData.update('documents', cb.value, updates);
+            await AdminData.update(targetCollection, cb.value, updates);
           }
 
           AdminToast.show(`Successfully updated ${selectedCbs.length} document(s).`, 'success');
@@ -731,9 +718,9 @@
         document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
         toggleDocSource('upload');
         
-        if (initialCat) {
+        if (pageTitle !== 'Documents') {
           const catSelect = document.getElementById('doc-category');
-          catSelect.value = initialCat;
+          if(catSelect) catSelect.value = pageTitle;
         }
         
         ModalSystem.open('doc-form-modal');
@@ -753,16 +740,13 @@
 
         const title = document.getElementById('doc-title').value;
         let category = document.getElementById('doc-category').value;
-        if (initialCat) {
-          category = initialCat;
-        }
         const subcategory = document.getElementById('doc-subcategory').value.trim();
         const description = '';
         let fileType = 'PDF';
         let fileSize = 'Unknown';
         
         if (actionType === 'edit') {
-           const existingDoc = AdminData.get('documents').find(d => d.id === docId);
+           const existingDoc = AdminData.get(targetCollection).find(d => d.id === docId);
            if (existingDoc) {
              fileType = existingDoc.fileType || 'PDF';
              fileSize = existingDoc.fileSize || 'Unknown';
@@ -860,7 +844,7 @@
 
           if (actionType === 'add') {
             for (const docObj of docsToSave) {
-              await AdminData.add('documents', docObj);
+              await AdminData.add(targetCollection, docObj);
             }
             if (isFolderImport) {
               AdminToast.show(`Successfully imported ${docsToSave.length} documents from folder!`, 'success');
@@ -883,7 +867,7 @@
             } else {
               updatedFields.downloadUrl = '#';
             }
-            await AdminData.update('documents', docId, updatedFields);
+            await AdminData.update(targetCollection, docId, updatedFields);
             AdminToast.show('Document updated!', 'success');
           }
 
@@ -927,7 +911,7 @@
 
     // Exposed to onclick triggers
     window.openEditModal = function (id) {
-      const docs = AdminData.get('documents');
+      const docs = AdminData.get(targetCollection);
       const doc = docs.find(d => d.id === id);
       if (!doc) return;
 
@@ -957,13 +941,13 @@
     };
 
     window.confirmDeleteDoc = async function (id) {
-      const docs = AdminData.get('documents');
+      const docs = AdminData.get(targetCollection);
       const doc = docs.find(d => d.id === id);
       if (!doc) return;
 
       if (confirm(`Are you sure you want to delete the publication "${doc.title}"?`)) {
         try {
-          await AdminData.delete('documents', id);
+          await AdminData.delete(targetCollection, id);
           AdminToast.show('Document deleted.', 'info');
           renderDocsTable();
         } catch (err) {

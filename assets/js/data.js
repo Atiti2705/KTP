@@ -748,6 +748,15 @@ function formatDateLong(dateStr) {
   if (!localStorage.getItem('db_documents')) {
     localStorage.setItem('db_documents', JSON.stringify(Documents));
   }
+  if (!localStorage.getItem('db_mipuiaw')) {
+    localStorage.setItem('db_mipuiaw', JSON.stringify(Documents.filter(d => d.category === 'Mipui Aw')));
+  }
+  if (!localStorage.getItem('db_bulletins')) {
+    localStorage.setItem('db_bulletins', JSON.stringify(Documents.filter(d => d.category === 'Bulletin')));
+  }
+  if (!localStorage.getItem('db_souvenirs')) {
+    localStorage.setItem('db_souvenirs', JSON.stringify(Documents.filter(d => d.category === 'Souvenir')));
+  }
   if (!localStorage.getItem('db_sermons')) {
     localStorage.setItem('db_sermons', JSON.stringify(Sermons));
   }
