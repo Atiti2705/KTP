@@ -135,7 +135,7 @@ const AdminData = {
 
   get(collection) {
     this.init();
-    return JSON.parse(localStorage.getItem(`db_${collection}`));
+    return JSON.parse(localStorage.getItem(`db_${collection}`)) || [];
   },
 
   async save(collection, data) {
