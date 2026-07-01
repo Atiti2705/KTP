@@ -11,6 +11,7 @@ service cloud.firestore {
     match /souvenirs/{doc} { allow read: if true; }
     match /news/{doc} { allow read: if true; }
     match /lawmpuina/{doc} { allow read: if true; }
+    match /sunna/{doc} { allow read: if true; }
     match /sermons/{doc} { allow read: if true; }
     match /lyrics/{doc} { allow read: if true; }
     match /settings/{doc} { allow read: if true; }
