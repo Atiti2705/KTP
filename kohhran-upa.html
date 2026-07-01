@@ -98,6 +98,24 @@
       white-space: pre-line;
       overflow-wrap: anywhere;
     }
+
+    @media (max-width: 600px) {
+      .ob-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--sp-3);
+      }
+      .ob-content-wrapper {
+        padding: var(--sp-3) var(--sp-2);
+      }
+      .ob-title {
+        font-size: 1rem;
+        margin-bottom: var(--sp-1);
+      }
+      .ob-text {
+        font-size: 0.8rem;
+        line-height: 1.4;
+      }
+    }
   </style>
 </head>
 <body>
