@@ -219,13 +219,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         font-weight: var(--fw-bold);
         margin-bottom: var(--sp-3);
         color: var(--color-text-primary);
-      }
+        overflow-wrap: anywhere;
+          word-wrap: break-word;
+          word-break: break-word;
+        }
       .ob-modal-text {
         font-size: var(--fs-base);
         color: var(--color-text-secondary);
         line-height: 1.7;
         white-space: pre-line;
-      }
+        overflow-wrap: anywhere;
+          word-wrap: break-word;
+          word-break: break-word;
+        }
     </style>
   `;
   document.head.insertAdjacentHTML('beforeend', modalStyles);
