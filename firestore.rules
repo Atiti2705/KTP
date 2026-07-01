@@ -10,6 +10,7 @@ service cloud.firestore {
     match /bulletins/{doc} { allow read: if true; }
     match /souvenirs/{doc} { allow read: if true; }
     match /news/{doc} { allow read: if true; }
+    match /lawmpuina/{doc} { allow read: if true; }
     match /sermons/{doc} { allow read: if true; }
     match /lyrics/{doc} { allow read: if true; }
     match /settings/{doc} { allow read: if true; }
