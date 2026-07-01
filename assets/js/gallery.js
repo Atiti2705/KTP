@@ -61,12 +61,7 @@ function renderYearFilter() {
     new Set(Photos.map(p => p.date ? String(new Date(p.date).getFullYear()) : null).filter(Boolean))
   ).sort((a, b) => b - a); // newest first
 
-  // Hide the whole Year row if there's only 1 year (no real choice)
-  if (years.length <= 1) {
-    if (row) row.style.display = 'none';
-    currentYear = 'All';
-    return;
-  }
+  // (Removed logic that hides Year row if years.length <= 1 so it's always visible)
 
   if (row) row.style.display = 'flex';
   container.innerHTML = `
@@ -105,13 +100,7 @@ function renderCategoryChips() {
       .filter(Boolean)
   );
 
-  // Hide the whole Category row if only 1 category exists (no real choice)
-  if (presentCats.size <= 1) {
-    if (row) row.style.display = 'none';
-    currentCategory = 'All';
-    renderSubCategoryChips();
-    return;
-  }
+  // (Removed logic that hides Category row if presentCats.size <= 1 so it's always visible)
 
   if (row) row.style.display = 'flex';
   container.innerHTML = `
@@ -180,8 +169,7 @@ function renderSubCategoryChips() {
     return a.localeCompare(b);
   });
 
-  // Hide if fewer than 2 subcategories — no meaningful choice to offer
-  if (uniqueSubCats.length < 2) { hide(); return; }
+  // (Removed logic that hides subcategory if < 2 subcats so it's always visible when a category is selected)
 
   container.style.display = 'flex';
   container.innerHTML = `
