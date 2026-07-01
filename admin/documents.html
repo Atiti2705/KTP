@@ -70,8 +70,8 @@
                 <th style="width: 40px; text-align: center;" title="Drag to reorder">↕️</th>
                 <th style="width: 60px;">Type</th>
                 <th>Title</th>
-                <th>Category</th>
-                <th>Date</th>
+                <th id="th-category">Category</th>
+                <th id="th-date">Date</th>
                 <th>Size</th>
                 <th style="width: 120px;">Actions</th>
               </tr>
@@ -103,7 +103,7 @@
             <input type="text" id="doc-title" class="form-input" required placeholder="e.g. Mipui Aw - July 2026">
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="group-doc-category">
             <label for="doc-category" class="form-label">Category</label>
             <div class="category-field-row">
               <select id="doc-category" class="form-input form-select" style="flex:1;">
@@ -121,19 +121,19 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="group-doc-subcategory">
             <label for="doc-subcategory" class="form-label">Category / Type (Optional)</label>
             <input type="text" id="doc-subcategory" class="form-input" placeholder="e.g. Special Edition, Monthly" list="subcat-list">
             <datalist id="subcat-list"></datalist>
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Use this to create custom filters inside this manager.</small>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="group-doc-date">
             <label for="doc-date" class="form-label">Published Date</label>
             <input type="date" id="doc-date" class="form-input" required>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="group-doc-source">
             <label class="form-label">Document Source</label>
             <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
               <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
@@ -261,6 +261,22 @@
         document.querySelector('.admin-page-title').textContent = pageTitle + ' Manager';
         document.querySelector('.admin-page-desc').textContent = `Manage your ${pageTitle} files here.`;
       }
+      
+      // Hide Category UI for Bulletin and Souvenir
+      if (targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
+        document.getElementById('admin-filter-category').style.display = 'none';
+        document.getElementById('admin-filter-subcategory').style.display = 'none';
+        document.getElementById('group-doc-category').style.display = 'none';
+        document.getElementById('group-doc-subcategory').style.display = 'none';
+        document.getElementById('group-doc-date').style.display = 'none';
+        document.getElementById('group-doc-source').style.display = 'none';
+        document.getElementById('th-category').style.display = 'none';
+        document.getElementById('th-date').style.display = 'none';
+        
+        // Ensure inputs are not required
+        document.getElementById('doc-date').required = false;
+      }
+
 
       // Sync from Firestore before rendering
       if (typeof DbService !== 'undefined') {
@@ -460,13 +476,13 @@
             <div class="file-icon file-icon-${doc.fileType.toLowerCase()}" style="width: 40px; height: 40px; font-size: 10px;">${doc.fileType}</div>
           </td>
           <td style="font-weight: var(--fw-semibold);">${doc.title}</td>
-          <td>
+          <td class="td-category">
             <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
               <span class="badge badge-gold">${doc.category}</span>
               ${doc.subcategory ? `<span class="badge" style="background: var(--color-bg-hover); font-size: 10px;">${doc.subcategory}</span>` : ''}
             </div>
           </td>
-          <td>📅 ${formatDate(doc.date)}</td>
+          <td class="td-date">📅 ${formatDate(doc.date)}</td>
           <td>${doc.fileSize}</td>
           <td>
             <div class="table-actions">
@@ -481,6 +497,12 @@
       document.querySelectorAll('.row-checkbox').forEach(cb => {
         cb.addEventListener('change', updateBulkDeleteUI);
       });
+      
+      // Hide category elements if needed
+      if (targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
+        tbody.querySelectorAll('.td-category').forEach(td => td.style.display = 'none');
+        tbody.querySelectorAll('.td-date').forEach(td => td.style.display = 'none');
+      }
       // Reset select-all state when table re-renders
       const selectAllCb = document.getElementById('select-all-checkbox');
       if (selectAllCb) selectAllCb.checked = false;
@@ -723,6 +745,12 @@
           if(catSelect) catSelect.value = pageTitle;
         }
         
+        // Default to URL for Bulletins and Souvenirs
+        if (targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
+          document.querySelector('input[name="doc-source"][value="url"]').checked = true;
+          toggleDocSource('url');
+        }
+        
         ModalSystem.open('doc-form-modal');
       });
 
@@ -927,9 +955,9 @@
       document.getElementById('doc-date').value = doc.date;
 
       const isExternal = doc.downloadUrl && doc.downloadUrl !== '#';
-      if (isExternal) {
+      if (isExternal || targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
         document.querySelector('input[name="doc-source"][value="url"]').checked = true;
-        document.getElementById('doc-url').value = doc.downloadUrl;
+        document.getElementById('doc-url').value = doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '';
         if (window._toggleDocSource) window._toggleDocSource('url');
       } else {
         document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
