@@ -151,6 +151,52 @@ const Announcements = [
 ];
 
 // ========================
+// STATISTICS
+// Firestore: db.collection('statistics').orderBy('date','desc')
+// Structure:
+//   { id, title, year, date, description,
+//     totalMembers, men, female,
+//     groups: [{ name, men, female, total, members:[] }],
+//     orderIndex }
+// ========================
+const Statistics = [
+  {
+    id: 'stat-1',
+    title: 'Branch Statistics 2025',
+    year: '2025',
+    date: '2025-12-31',
+    description: 'Annual membership statistics for KṬP Saikhamakawn Branch for the year 2025.',
+    totalMembers: 124,
+    men: 60,
+    female: 64,
+    groups: [
+      {
+        name: 'Jeremia',
+        men: 20,
+        female: 22,
+        total: 42,
+        members: []
+      },
+      {
+        name: 'Isaia',
+        men: 18,
+        female: 20,
+        total: 38,
+        members: []
+      },
+      {
+        name: 'Daniela',
+        men: 22,
+        female: 22,
+        total: 44,
+        members: []
+      }
+    ],
+    orderIndex: 0
+  }
+];
+
+// ========================
 // ABOUT US
 // ========================
 const About = [
@@ -757,6 +803,21 @@ function formatDateLong(dateStr) {
   if (!localStorage.getItem('db_about')) {
     localStorage.setItem('db_about', JSON.stringify(About));
   }
+  // Statistics: migrate old 'items[]' format to new structured format if needed
+  const _rawStats = localStorage.getItem('db_statistics');
+  if (!_rawStats) {
+    localStorage.setItem('db_statistics', JSON.stringify(Statistics));
+  } else {
+    try {
+      const _parsed = JSON.parse(_rawStats);
+      // Old format had an 'items' array on entries — detect and reset
+      if (Array.isArray(_parsed) && _parsed.length > 0 && Array.isArray(_parsed[0].items)) {
+        localStorage.setItem('db_statistics', JSON.stringify(Statistics));
+      }
+    } catch(e) {
+      localStorage.setItem('db_statistics', JSON.stringify(Statistics));
+    }
+  }
   if (!localStorage.getItem('db_settings')) {
     localStorage.setItem('db_settings', JSON.stringify({
       churchInfo: ChurchInfo,
@@ -770,6 +831,7 @@ function formatDateLong(dateStr) {
   const storedSermons = JSON.parse(localStorage.getItem('db_sermons'));
   const storedAnnouncements = JSON.parse(localStorage.getItem('db_announcements'));
   const storedAbout = JSON.parse(localStorage.getItem('db_about'));
+  const storedStatistics = JSON.parse(localStorage.getItem('db_statistics'));
   const storedSettings = JSON.parse(localStorage.getItem('db_settings'));
 
   // 3. Mutate static objects/arrays in-place
@@ -795,6 +857,10 @@ function formatDateLong(dateStr) {
   if (storedAbout) {
     About.length = 0;
     About.push(...storedAbout);
+  }
+  if (storedStatistics) {
+    Statistics.length = 0;
+    Statistics.push(...storedStatistics);
   }
   if (storedSettings) {
     if (storedSettings.churchInfo) {

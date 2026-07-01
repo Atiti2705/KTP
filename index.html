@@ -85,7 +85,23 @@
       </div>
     </section>
 
-    <!-- ====== ABOUT US SECTION ====== -->
+    <!-- ====== STATISTICS SECTION ====== -->
+    <section class="section stats-highlight-section" id="statistics">
+      <div class="container">
+        <div class="section-header reveal text-center" style="margin-bottom: 2rem;">
+          <h2 style="margin: 0 auto;">📊 Branch Statistics</h2>
+          <p id="stats-subtitle" style="margin-top: 0.5rem; color: var(--color-text-secondary);">Our growth in numbers.</p>
+        </div>
+        <div id="stats-highlight-grid" class="stats-highlight-grid stagger-children">
+          <!-- Populated by JS -->
+        </div>
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <a href="statistic.html" class="btn btn-outline" id="stats-view-all-btn" style="display: none;">View Full Statistics →</a>
+        </div>
+      </div>
+    </section>
+
+
     <section class="section about-section" id="about">
       <div class="container">
         <div class="section-header reveal text-center" style="margin-bottom: 2rem;">
@@ -155,13 +171,14 @@
 
       // Load dynamic databases in parallel
       try {
-        const [annData, photoData, docData, sermonData, settings, aboutData] = await Promise.all([
+        const [annData, photoData, docData, sermonData, settings, aboutData, statsData] = await Promise.all([
           DbService.get('announcements').catch(() => null),
           DbService.get('photos').catch(() => null),
           DbService.get('documents').catch(() => null),
           DbService.get('sermons').catch(() => null),
           DbService.get('settings').catch(() => null),
-          DbService.get('about').catch(() => null)
+          DbService.get('about').catch(() => null),
+          DbService.get('statistics').catch(() => null)
         ]);
 
         let needsRerender = false;
@@ -194,6 +211,12 @@
           About.length = 0;
           About.push(...aboutData);
           localStorage.setItem('db_about', JSON.stringify(aboutData));
+          needsRerender = true;
+        }
+        if (statsData && Array.isArray(statsData)) {
+          Statistics.length = 0;
+          Statistics.push(...statsData);
+          localStorage.setItem('db_statistics', JSON.stringify(statsData));
           needsRerender = true;
         }
 
@@ -229,6 +252,7 @@
       // No animation for Chibai text
 
       renderAnnouncements();
+      renderStatistics();
       renderAbout();
       renderFeaturedVideo();
       renderFeaturedPhotos();
@@ -388,6 +412,73 @@
       }
 
       ModalSystem.open('about-detail-modal');
+    }
+
+    function renderStatistics() {
+      const grid = document.getElementById('stats-highlight-grid');
+      const subtitle = document.getElementById('stats-subtitle');
+      const viewAllBtn = document.getElementById('stats-view-all-btn');
+      const section = document.getElementById('statistics');
+      if (!grid) return;
+
+      if (!Statistics || Statistics.length === 0) {
+        if (section) section.style.display = 'none';
+        return;
+      }
+
+      // Pick newest / first by orderIndex
+      const sorted = [...Statistics].sort((a, b) => {
+        const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
+        const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
+        if (aIdx !== bIdx) return aIdx - bIdx;
+        return new Date(b.date) - new Date(a.date);
+      });
+      const newest = sorted[0];
+
+      if (subtitle) subtitle.textContent = newest.description || `${newest.title || 'Statistics'} — ${newest.year || ''}`;
+      if (viewAllBtn) viewAllBtn.style.display = 'inline-block';
+
+      const groups = Array.isArray(newest.groups) ? newest.groups : [];
+
+      // Build overall row + groups row
+      grid.innerHTML = `
+        <!-- Overall stats -->
+        <div class="stat-highlight-card reveal">
+          <div class="stat-highlight-icon">👥</div>
+          <div class="stat-highlight-value" data-target="${newest.totalMembers || 0}">${newest.totalMembers || 0}</div>
+          <div class="stat-highlight-label">Total Members</div>
+        </div>
+        <div class="stat-highlight-card reveal">
+          <div class="stat-highlight-icon">👨</div>
+          <div class="stat-highlight-value" data-target="${newest.men || 0}">${newest.men || 0}</div>
+          <div class="stat-highlight-label">Men</div>
+        </div>
+        <div class="stat-highlight-card reveal">
+          <div class="stat-highlight-icon">👩</div>
+          <div class="stat-highlight-value" data-target="${newest.female || 0}">${newest.female || 0}</div>
+          <div class="stat-highlight-label">Female</div>
+        </div>
+        ${groups.map(g => `
+        <div class="stat-highlight-card reveal" style="cursor:pointer; border-top: 3px solid var(--brand-gold);" onclick="window.location.href='statistic.html'">
+          <div class="stat-highlight-icon">🏷️</div>
+          <div class="stat-highlight-value" data-target="${g.total || 0}">${g.total || 0}</div>
+          <div class="stat-highlight-label">${g.name}</div>
+        </div>
+        `).join('')}
+      `;
+
+      // Animate counters
+      grid.querySelectorAll('.stat-highlight-value[data-target]').forEach(el => {
+        const target = parseInt(el.getAttribute('data-target'), 10);
+        if (isNaN(target)) return;
+        let current = 0;
+        const step = Math.max(1, Math.floor(target / 40));
+        const timer = setInterval(() => {
+          current = Math.min(current + step, target);
+          el.textContent = current;
+          if (current >= target) clearInterval(timer);
+        }, 30);
+      });
     }
 
     function renderAnnouncements() {

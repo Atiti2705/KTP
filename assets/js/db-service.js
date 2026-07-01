@@ -139,6 +139,7 @@ const DbService = {
       else if (collection === 'about') localStorage.setItem(key, JSON.stringify(About));
       else if (collection === 'lyrics') localStorage.setItem(key, JSON.stringify([]));
       else if (collection === 'branch-info') localStorage.setItem(key, JSON.stringify([]));
+      else if (collection === 'statistics') localStorage.setItem(key, JSON.stringify(Statistics));
       else if (collection === 'settings') {
         localStorage.setItem(key, JSON.stringify({
           churchInfo: ChurchInfo,

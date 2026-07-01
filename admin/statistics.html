@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Statistics — KṬP Saikhamakawn</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=105">
+  <link rel="stylesheet" href="../assets/css/base.css?v=105">
+  <link rel="stylesheet" href="../assets/css/components.css?v=105">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=105">
+
+  <style>
+    /* ---- Group Builder ---- */
+    .group-builder-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .group-builder-item {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--color-bg-alt);
+    }
+    .group-builder-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.75rem;
+      background: var(--color-bg-hover);
+      border-bottom: 1px solid var(--color-border);
+      font-weight: var(--fw-semibold);
+      font-size: var(--fs-sm);
+    }
+    .group-builder-body {
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .group-counts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .group-count-field label {
+      display: block;
+      font-size: var(--fs-xs);
+      color: var(--color-text-secondary);
+      margin-bottom: 3px;
+      font-weight: var(--fw-medium);
+    }
+    .group-count-field input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-card);
+      color: var(--color-text);
+      font-size: var(--fs-sm);
+    }
+    .group-count-field input:focus {
+      outline: none;
+      border-color: var(--brand-sky);
+    }
+    .group-members-textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-card);
+      color: var(--color-text);
+      font-size: var(--fs-sm);
+      resize: vertical;
+      min-height: 90px;
+      font-family: inherit;
+    }
+    .group-members-textarea:focus {
+      outline: none;
+      border-color: var(--brand-sky);
+    }
+    .remove-group-btn {
+      background: none;
+      border: none;
+      color: var(--brand-red);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      margin-left: auto;
+      transition: background 0.2s;
+    }
+    .remove-group-btn:hover { background: rgba(220,20,60,0.1); }
+
+    .overall-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--sp-3);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="admin-layout">
+    <aside id="admin-sidebar"></aside>
+    <main class="admin-main">
+
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+          <div>
+            <h1 class="admin-page-title">Statistics Manager</h1>
+            <p class="admin-page-desc">Manage yearly branch statistics — membership totals and group breakdowns</p>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btn-add-stat">➕ Add Statistics Entry</button>
+      </div>
+
+      <!-- Data Table -->
+      <div class="data-table-wrapper">
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Title / Year</th>
+                <th>Date</th>
+                <th>Total Members</th>
+                <th>Men / Female</th>
+                <th>Groups</th>
+                <th style="width: 100px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="stat-table-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- =============================================
+       ADD / EDIT MODAL
+       ============================================= -->
+  <div class="modal-backdrop" id="stat-form-modal">
+    <div class="modal" style="max-width: 700px;">
+      <div class="modal-header">
+        <h3 id="stat-modal-title">Add Statistics Entry</h3>
+        <button class="modal-close" id="close-stat-modal">&times;</button>
+      </div>
+      <form id="stat-crud-form" autocomplete="off">
+        <input type="hidden" id="stat-action-type" value="add">
+        <input type="hidden" id="stat-edit-id" value="">
+
+        <div class="modal-body" style="display:flex; flex-direction:column; gap: var(--sp-4);">
+
+          <!-- Basic Info -->
+          <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:var(--sp-3);">
+            <div class="form-group" style="margin:0;">
+              <label for="stat-title" class="form-label">Title</label>
+              <input type="text" id="stat-title" class="form-input" required placeholder="e.g. Branch Statistics 2026">
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label for="stat-year" class="form-label">Year</label>
+              <input type="text" id="stat-year" class="form-input" required placeholder="2026" maxlength="4">
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label for="stat-date" class="form-label">Entry Date</label>
+              <input type="date" id="stat-date" class="form-input" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin:0;">
+            <label for="stat-desc" class="form-label">Description <span style="font-weight:normal;color:var(--color-text-secondary);">(optional)</span></label>
+            <input type="text" id="stat-desc" class="form-input" placeholder="Short summary shown on the statistics page">
+          </div>
+
+          <!-- Overall Stats -->
+          <div style="border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow:hidden;">
+            <div style="padding:0.6rem 1rem; background:var(--color-bg-hover); font-weight:var(--fw-semibold); font-size:var(--fs-sm); border-bottom:1px solid var(--color-border);">
+              👥 Overall Membership
+            </div>
+            <div class="overall-row" style="padding:0.75rem;">
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">Total Members</label>
+                <input type="number" id="stat-total" class="form-input" min="0" placeholder="0">
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">Men</label>
+                <input type="number" id="stat-men" class="form-input" min="0" placeholder="0">
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">Female</label>
+                <input type="number" id="stat-female" class="form-input" min="0" placeholder="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- Groups -->
+          <div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
+              <div style="font-weight:var(--fw-semibold); font-size:var(--fs-sm);">🏷️ Groups</div>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-add-group" style="padding:4px 12px; font-size:12px;">+ Add Group</button>
+            </div>
+            <div id="group-builder-list" class="group-builder-list">
+              <!-- Groups rendered here -->
+            </div>
+            <p style="font-size:var(--fs-xs); color:var(--color-text-secondary); margin-top:0.5rem;">
+              Enter member names one per line in the Members box. Leave empty if not listing members.
+            </p>
+          </div>
+
+        </div><!-- /modal-body -->
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-stat-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Entry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=105"></script>
+  <script src="../assets/js/firebase-config.js?v=105"></script>
+  <script src="../assets/js/theme.js?v=105"></script>
+  <script src="../assets/js/data.js?v=105"></script>
+  <script src="../assets/js/auth.js?v=105"></script>
+  <script src="../assets/js/db-service.js?v=105"></script>
+  <script src="../assets/js/components.js?v=105"></script>
+  <script src="../assets/js/admin.js?v=105"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof Toast !== 'undefined') Toast.init();
+      renderStatTable();
+      setupEvents();
+    });
+
+    // =============================================
+    // TABLE
+    // =============================================
+    function renderStatTable() {
+      const tbody = document.getElementById('stat-table-body');
+      const stats = AdminData.get('statistics') || [];
+
+      if (stats.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--color-text-secondary); padding:var(--sp-6);">No statistics entries yet.</td></tr>`;
+        return;
+      }
+
+      const sorted = [...stats].sort((a, b) => {
+        const ai = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
+        const bi = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
+        if (ai !== bi) return ai - bi;
+        return new Date(b.date) - new Date(a.date);
+      });
+
+      tbody.innerHTML = sorted.map((stat, i) => {
+        const groups = Array.isArray(stat.groups) ? stat.groups : [];
+        const groupNames = groups.map(g => g.name).join(', ') || '—';
+        return `
+          <tr data-id="${stat.id}">
+            <td>
+              <div style="font-weight:var(--fw-semibold);">${stat.title || '—'}</div>
+              ${i === 0 ? '<span class="badge badge-primary" style="font-size:0.65rem;">⭐ Shown on Homepage</span>' : ''}
+            </td>
+            <td>📅 ${formatDate(stat.date)}</td>
+            <td style="font-weight:bold; color:var(--brand-sky);">${stat.totalMembers || 0}</td>
+            <td style="font-size:var(--fs-xs);">👨 ${stat.men || 0} &nbsp; 👩 ${stat.female || 0}</td>
+            <td style="font-size:var(--fs-xs); color:var(--color-text-secondary);">${groupNames}</td>
+            <td>
+              <div class="table-actions">
+                <button class="btn btn-outline btn-sm" onclick="openStatEdit('${stat.id}')" style="padding:4px 8px; font-size:12px;">✏️</button>
+                <button class="btn btn-outline btn-sm" onclick="confirmDeleteStat('${stat.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);">❌</button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    // =============================================
+    // GROUP BUILDER HELPERS
+    // =============================================
+    function addGroupRow(group = { name: '', men: '', female: '', total: '', members: [] }) {
+      const list = document.getElementById('group-builder-list');
+      const membersText = Array.isArray(group.members) ? group.members.join('\n') : '';
+      const item = document.createElement('div');
+      item.className = 'group-builder-item';
+      item.innerHTML = `
+        <div class="group-builder-header">
+          <input type="text" data-field="name" value="${group.name || ''}" placeholder="Group name (e.g. Jeremia)"
+            style="border:none; background:transparent; font-weight:var(--fw-semibold); font-size:var(--fs-sm); color:var(--color-text); width:100%; outline:none;">
+          <button type="button" class="remove-group-btn" title="Remove group">✕</button>
+        </div>
+        <div class="group-builder-body">
+          <div class="group-counts-row">
+            <div class="group-count-field">
+              <label>👨 Men</label>
+              <input type="number" data-field="men" value="${group.men || ''}" min="0" placeholder="0">
+            </div>
+            <div class="group-count-field">
+              <label>👩 Female</label>
+              <input type="number" data-field="female" value="${group.female || ''}" min="0" placeholder="0">
+            </div>
+            <div class="group-count-field">
+              <label>👥 Total</label>
+              <input type="number" data-field="total" value="${group.total || ''}" min="0" placeholder="0">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:var(--fs-xs); color:var(--color-text-secondary); font-weight:var(--fw-medium); display:block; margin-bottom:4px;">
+              📋 Member Names <span style="font-weight:normal;">(one per line)</span>
+            </label>
+            <textarea data-field="members" class="group-members-textarea" placeholder="Vanlalruata&#10;Lalthansanga&#10;Malsawmtluangi&#10;...">${membersText}</textarea>
+          </div>
+        </div>
+      `;
+      item.querySelector('.remove-group-btn').addEventListener('click', () => item.remove());
+      // Auto-fill total when men/female change
+      const menInput = item.querySelector('[data-field="men"]');
+      const femaleInput = item.querySelector('[data-field="female"]');
+      const totalInput = item.querySelector('[data-field="total"]');
+      const autoTotal = () => {
+        const m = parseInt(menInput.value) || 0;
+        const f = parseInt(femaleInput.value) || 0;
+        if (m > 0 || f > 0) totalInput.value = m + f;
+      };
+      menInput.addEventListener('input', autoTotal);
+      femaleInput.addEventListener('input', autoTotal);
+
+      list.appendChild(item);
+    }
+
+    function getGroupRows() {
+      return Array.from(document.querySelectorAll('#group-builder-list .group-builder-item')).map(item => {
+        const name = item.querySelector('[data-field="name"]').value.trim();
+        const men = parseInt(item.querySelector('[data-field="men"]').value) || 0;
+        const female = parseInt(item.querySelector('[data-field="female"]').value) || 0;
+        const total = parseInt(item.querySelector('[data-field="total"]').value) || (men + female);
+        const membersRaw = item.querySelector('[data-field="members"]').value;
+        const members = membersRaw.split('\n').map(m => m.trim()).filter(Boolean);
+        return { name, men, female, total, members };
+      }).filter(g => g.name);
+    }
+
+    function clearGroupRows() {
+      document.getElementById('group-builder-list').innerHTML = '';
+    }
+
+    // =============================================
+    // EVENTS
+    // =============================================
+    function setupEvents() {
+      document.getElementById('btn-add-group').addEventListener('click', () => addGroupRow());
+
+      document.getElementById('btn-add-stat').addEventListener('click', () => {
+        document.getElementById('stat-crud-form').reset();
+        document.getElementById('stat-action-type').value = 'add';
+        document.getElementById('stat-edit-id').value = '';
+        document.getElementById('stat-modal-title').textContent = 'Add Statistics Entry';
+        document.getElementById('stat-date').value = new Date().toISOString().split('T')[0];
+        clearGroupRows();
+        // Default three groups
+        ['Jeremia', 'Isaia', 'Daniela'].forEach(name => addGroupRow({ name, men: '', female: '', total: '', members: [] }));
+        ModalSystem.open('stat-form-modal');
+      });
+
+      const closeModal = () => ModalSystem.close('stat-form-modal');
+      document.getElementById('close-stat-modal').addEventListener('click', closeModal);
+      document.getElementById('btn-cancel-stat-modal').addEventListener('click', closeModal);
+
+      document.getElementById('stat-crud-form').addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const actionType = document.getElementById('stat-action-type').value;
+        const statId = document.getElementById('stat-edit-id').value;
+
+        const payload = {
+          title: document.getElementById('stat-title').value.trim(),
+          year: document.getElementById('stat-year').value.trim(),
+          date: document.getElementById('stat-date').value,
+          description: document.getElementById('stat-desc').value.trim(),
+          totalMembers: parseInt(document.getElementById('stat-total').value) || 0,
+          men: parseInt(document.getElementById('stat-men').value) || 0,
+          female: parseInt(document.getElementById('stat-female').value) || 0,
+          groups: getGroupRows()
+        };
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const origText = submitBtn.innerHTML;
+        try {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⌛ Saving...';
+          if (actionType === 'add') {
+            await AdminData.add('statistics', payload);
+            AdminToast.show('Statistics entry added!', 'success');
+          } else {
+            await AdminData.update('statistics', statId, payload);
+            AdminToast.show('Statistics entry updated!', 'success');
+          }
+          closeModal();
+          renderStatTable();
+        } catch (err) {
+          AdminToast.show('Error: ' + (err.message || 'Permission denied'), 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origText;
+        }
+      });
+    }
+
+    // =============================================
+    // EXPOSED (onclick)
+    // =============================================
+    window.openStatEdit = function(id) {
+      const stats = AdminData.get('statistics') || [];
+      const stat = stats.find(s => s.id === id);
+      if (!stat) return;
+
+      document.getElementById('stat-action-type').value = 'edit';
+      document.getElementById('stat-edit-id').value = id;
+      document.getElementById('stat-modal-title').textContent = 'Edit Statistics Entry';
+      document.getElementById('stat-title').value = stat.title || '';
+      document.getElementById('stat-year').value = stat.year || '';
+      document.getElementById('stat-date').value = stat.date || '';
+      document.getElementById('stat-desc').value = stat.description || '';
+      document.getElementById('stat-total').value = stat.totalMembers || '';
+      document.getElementById('stat-men').value = stat.men || '';
+      document.getElementById('stat-female').value = stat.female || '';
+
+      clearGroupRows();
+      const groups = Array.isArray(stat.groups) ? stat.groups : [];
+      if (groups.length > 0) {
+        groups.forEach(g => addGroupRow(g));
+      } else {
+        ['Jeremia', 'Isaia', 'Daniela'].forEach(name => addGroupRow({ name, men: '', female: '', total: '', members: [] }));
+      }
+
+      ModalSystem.open('stat-form-modal');
+    };
+
+    window.confirmDeleteStat = async function(id) {
+      const stats = AdminData.get('statistics') || [];
+      const stat = stats.find(s => s.id === id);
+      if (!stat) return;
+      if (confirm(`Delete "${stat.title || stat.year}"? This cannot be undone.`)) {
+        try {
+          await AdminData.delete('statistics', id);
+          AdminToast.show('Deleted.', 'info');
+          renderStatTable();
+        } catch (err) {
+          AdminToast.show('Error: ' + (err.message || 'Permission denied'), 'error');
+        }
+      }
+    };
+  </script>
+</body>
+</html>
