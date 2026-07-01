@@ -54,9 +54,19 @@ function renderHeader(activePage = '') {
             News <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div class="nav-dropdown-menu" id="nav-news-menu">
-            <a href="news.html" class="nav-dropdown-item ${activePage === 'news' ? 'active' : ''}">News</a>
+            <a href="news.html" class="nav-dropdown-item ${activePage === 'news' ? 'active' : ''}">Branch Thuchhuak</a>
             <a href="lawmpuina.html" class="nav-dropdown-item ${activePage === 'lawmpuina' ? 'active' : ''}">Lawmpuina</a>
             <a href="sunna.html" class="nav-dropdown-item ${activePage === 'sunna' ? 'active' : ''}">Sunna</a>
+          </div>
+        </div>
+        <div class="nav-dropdown" id="nav-history-dropdown">
+          <button class="nav-link nav-dropdown-trigger ${['kohhran-chanchin','kohhran-upa','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="nav-history-btn" aria-expanded="false" aria-haspopup="true">
+            Kohhran <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="nav-dropdown-menu" id="nav-history-menu">
+            <a href="kohhran-chanchin.html" class="nav-dropdown-item ${activePage === 'kohhran-chanchin' ? 'active' : ''}">Kohhran Chanchin</a>
+            <a href="kohhran-upa.html" class="nav-dropdown-item ${activePage === 'kohhran-upa' ? 'active' : ''}">Kohhran Upa</a>
+            <a href="golden-jubilee.html" class="nav-dropdown-item ${activePage === 'golden-jubilee' ? 'active' : ''}">Golden Jubilee</a>
           </div>
         </div>
         <div class="nav-dropdown" id="nav-about-dropdown">
@@ -178,13 +188,30 @@ function renderHeader(activePage = '') {
       </button>
       <div class="nav-mobile-subnav" id="mobile-news-subnav" style="display:none;">
         <a href="news.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'news' ? 'active' : ''}">
-          News
+          Branch Thuchhuak
         </a>
         <a href="lawmpuina.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'lawmpuina' ? 'active' : ''}">
           Lawmpuina
         </a>
         <a href="sunna.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'sunna' ? 'active' : ''}">
           Sunna
+        </a>
+      </div>
+    </div>
+    <div class="nav-mobile-group">
+      <button class="nav-mobile-link nav-mobile-group-trigger ${['kohhran-chanchin','kohhran-upa','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-history-trigger">
+        <span class="nav-icon">📜</span> Kohhran
+        <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="nav-mobile-subnav" id="mobile-history-subnav" style="display:none;">
+        <a href="kohhran-chanchin.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'kohhran-chanchin' ? 'active' : ''}">
+          Kohhran Chanchin
+        </a>
+        <a href="kohhran-upa.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'kohhran-upa' ? 'active' : ''}">
+          Kohhran Upa
+        </a>
+        <a href="golden-jubilee.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'golden-jubilee' ? 'active' : ''}">
+          Golden Jubilee
         </a>
       </div>
     </div>
@@ -619,7 +646,8 @@ function setupNavDropdowns() {
     { dropdown: 'nav-about-dropdown', btn: 'nav-about-btn', menu: 'nav-about-menu' },
     { dropdown: 'nav-chanchin-dropdown', btn: 'nav-chanchin-btn', menu: 'nav-chanchin-menu' },
     { dropdown: 'nav-docs-dropdown', btn: 'nav-docs-btn', menu: 'nav-docs-menu' },
-    { dropdown: 'nav-news-dropdown', btn: 'nav-news-btn', menu: 'nav-news-menu' }
+    { dropdown: 'nav-news-dropdown', btn: 'nav-news-btn', menu: 'nav-news-menu' },
+    { dropdown: 'nav-history-dropdown', btn: 'nav-history-btn', menu: 'nav-history-menu' }
   ];
 
   desktopDropdowns.forEach(({ dropdown: dropId, btn: btnId, menu: menuId }) => {
@@ -663,7 +691,8 @@ function setupNavDropdowns() {
     { trigger: 'mobile-about-trigger', subnav: 'mobile-about-subnav' },
     { trigger: 'mobile-chanchin-trigger', subnav: 'mobile-chanchin-subnav' },
     { trigger: 'mobile-docs-trigger', subnav: 'mobile-docs-subnav' },
-    { trigger: 'mobile-news-trigger', subnav: 'mobile-news-subnav' }
+    { trigger: 'mobile-news-trigger', subnav: 'mobile-news-subnav' },
+    { trigger: 'mobile-history-trigger', subnav: 'mobile-history-subnav' }
   ];
 
   mobileGroups.forEach(({ trigger: trigId, subnav: subId }) => {

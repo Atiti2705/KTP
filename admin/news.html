@@ -85,7 +85,7 @@
 
           <div class="form-group">
             <label for="ob-year" class="form-label">Year for Filtering (e.g. 2025)</label>
-            <input type="text" id="ob-year" class="form-input" placeholder="Optional: Enter a specific year for the filter dropdown">
+            <select id="ob-year" class="form-input"><option value="">-- Use Title --</option></select>
             <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-top: 4px;">
               If left blank, the News Title will be used in the filter dropdown.
             </div>
@@ -103,6 +103,11 @@
             <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-top: 4px;">
               Make sure the photo is set to <strong>"Anyone with the link"</strong> on Google Drive.
             </div>
+          </div>
+
+          <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">
+            <input type="checkbox" id="ob-pinned" style="width: 18px; height: 18px; cursor: pointer;">
+            <label for="ob-pinned" class="form-label" style="margin: 0; cursor: pointer;">📌 Pin to Homepage News Section</label>
           </div>
         </div>
         <div class="modal-footer">
@@ -196,7 +201,10 @@
             </td>
             <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
             <td><span class="badge badge-primary">${formatCategoryName(item.category)}</span></td>
-            <td style="font-weight: bold; max-width: 200px;">${item.title || 'Untitled'}</td>
+            <td style="font-weight: bold; max-width: 200px;">
+              ${item.title || 'Untitled'}
+              ${item.pinnedToHomepage ? '<span class="badge badge-secondary" style="font-size:0.6rem; margin-left:4px;">📌 Pinned</span>' : ''}
+            </td>
             <td><span class="badge badge-secondary">${item.year || '-'}</span></td>
             <td style="color:var(--color-text-secondary); max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${contentSnippet}</td>
             <td>${imgDisplay}</td>
@@ -296,6 +304,7 @@
         document.getElementById('ob-crud-form').reset();
         document.getElementById('ob-action-type').value = 'add';
         document.getElementById('modal-form-title').textContent = 'Add New Entry';
+        document.getElementById('ob-pinned').checked = false;
         
         // Auto-select category if filtered
         if (currentCategoryFilter !== 'All') {
@@ -320,6 +329,7 @@
         const year = document.getElementById('ob-year').value;
         const content = document.getElementById('ob-content').value;
         const imageUrl = document.getElementById('ob-image').value;
+        const pinnedToHomepage = document.getElementById('ob-pinned').checked;
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -335,7 +345,9 @@
               year,
               content,
               imageUrl,
-              orderIndex: 999
+              pinnedToHomepage,
+              orderIndex: 999,
+              date: new Date().toISOString()
             };
             await AdminData.add(targetCollection, newItem);
             AdminToast.show('Entry saved successfully!', 'success');
@@ -345,7 +357,8 @@
               title,
               year,
               content,
-              imageUrl
+              imageUrl,
+              pinnedToHomepage
             };
             await AdminData.update(targetCollection, editId, updatedFields);
             AdminToast.show('Entry updated successfully!', 'success');
@@ -394,6 +407,7 @@
       document.getElementById('ob-year').value = item.year || '';
       document.getElementById('ob-content').value = item.content || '';
       document.getElementById('ob-image').value = item.imageUrl || '';
+      document.getElementById('ob-pinned').checked = !!item.pinnedToHomepage;
 
       ModalSystem.open('ob-form-modal');
     };

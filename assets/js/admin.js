@@ -112,6 +112,18 @@ const AdminData = {
     if (!localStorage.getItem('db_about')) {
       localStorage.setItem('db_about', JSON.stringify(About));
     }
+    // Kohhran Chanchin
+    if (!localStorage.getItem('db_kohhran-chanchin')) {
+      localStorage.setItem('db_kohhran-chanchin', JSON.stringify([]));
+    }
+    // Kohhran Upa
+    if (!localStorage.getItem('db_kohhran-upa')) {
+      localStorage.setItem('db_kohhran-upa', JSON.stringify([]));
+    }
+    // Golden Jubilee
+    if (!localStorage.getItem('db_golden-jubilee')) {
+      localStorage.setItem('db_golden-jubilee', JSON.stringify([]));
+    }
     // Statistics
     if (!localStorage.getItem('db_statistics')) {
       localStorage.setItem('db_statistics', JSON.stringify(Statistics));
@@ -388,6 +400,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Run background Firestore sync
   AdminData.syncFirestore();
+
+  // Populate ob-year dropdown if it exists
+  const obYearSelect = document.getElementById('ob-year');
+  if (obYearSelect && obYearSelect.tagName === 'SELECT') {
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear + 10; y >= 1950; y--) {
+      const option = document.createElement('option');
+      option.value = y.toString();
+      option.textContent = y.toString();
+      obYearSelect.appendChild(option);
+    }
+  }
 });
 
 function setupLoginPage() {
@@ -502,8 +526,11 @@ function renderSidebar() {
       currentPath.endsWith('news.html') ? 'news' :
         currentPath.endsWith('lawmpuina.html') ? 'lawmpuina' :
           currentPath.endsWith('sunna.html') ? 'sunna' :
-            currentPath.endsWith('photos.html') ? 'photos' :
-        currentPath.endsWith('documents.html') ? (collectionParam === 'bulletins' ? 'bulletin' : collectionParam === 'souvenirs' ? 'souvenir' : collectionParam === 'mipuiaw' ? 'mipuiaw' : 'documents') :
+            currentPath.endsWith('kohhran-chanchin.html') ? 'kohhran-chanchin' :
+              currentPath.endsWith('kohhran-upa.html') ? 'kohhran-upa' :
+                currentPath.endsWith('golden-jubilee.html') ? 'golden-jubilee' :
+                  currentPath.endsWith('photos.html') ? 'photos' :
+          currentPath.endsWith('documents.html') ? (collectionParam === 'bulletins' ? 'bulletin' : collectionParam === 'souvenirs' ? 'souvenir' : collectionParam === 'mipuiaw' ? 'mipuiaw' : 'documents') :
           currentPath.endsWith('sermons.html') ? 'sermons' :
               currentPath.endsWith('lyrics.html') ? 'lyrics' :
                 currentPath.endsWith('branch-info.html') ? 'branch-info' :
@@ -537,6 +564,15 @@ function renderSidebar() {
       </a>
       <a href="sunna.html" class="sidebar-link ${activePage === 'sunna' ? 'active' : ''}">
         <span class="link-icon">🕯️</span> Sunna
+      </a>
+      <a href="kohhran-chanchin.html" class="sidebar-link ${activePage === 'kohhran-chanchin' ? 'active' : ''}">
+        <span class="link-icon">📜</span> Kohhran Chanchin
+      </a>
+      <a href="kohhran-upa.html" class="sidebar-link ${activePage === 'kohhran-upa' ? 'active' : ''}">
+        <span class="link-icon">👨🏽‍🦳</span> Kohhran Upa
+      </a>
+      <a href="golden-jubilee.html" class="sidebar-link ${activePage === 'golden-jubilee' ? 'active' : ''}">
+        <span class="link-icon">🌟</span> Golden Jubilee
       </a>
       <a href="photos.html" class="sidebar-link ${activePage === 'photos' ? 'active' : ''}">
         <span class="link-icon">📸</span> Photos Gallery

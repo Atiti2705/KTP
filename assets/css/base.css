@@ -215,6 +215,21 @@ table {
 
 .section-header h2 {
   margin-bottom: var(--sp-3);
+  display: inline-block;
+  position: relative;
+  padding-bottom: var(--sp-2);
+}
+
+.section-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--brand-sky), var(--brand-gold));
 }
 
 .section-header p {
