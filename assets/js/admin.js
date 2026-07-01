@@ -487,7 +487,10 @@ function renderSidebar() {
   
   const activePage =
     currentPath.endsWith('dashboard.html') ? 'dashboard' :
-      currentPath.endsWith('photos.html') ? 'photos' :
+      currentPath.endsWith('news.html') ? 'news' :
+        currentPath.endsWith('lawmpuina.html') ? 'lawmpuina' :
+          currentPath.endsWith('sunna.html') ? 'sunna' :
+            currentPath.endsWith('photos.html') ? 'photos' :
         currentPath.endsWith('documents.html') ? (collectionParam === 'bulletins' ? 'bulletin' : collectionParam === 'souvenirs' ? 'souvenir' : collectionParam === 'mipuiaw' ? 'mipuiaw' : 'documents') :
           currentPath.endsWith('sermons.html') ? 'sermons' :
               currentPath.endsWith('lyrics.html') ? 'lyrics' :
@@ -511,6 +514,15 @@ function renderSidebar() {
       <div class="sidebar-label">Navigation</div>
       <a href="dashboard.html" class="sidebar-link ${activePage === 'dashboard' ? 'active' : ''}">
         <span class="link-icon">📊</span> Dashboard
+      </a>
+      <a href="news.html" class="sidebar-link ${activePage === 'news' ? 'active' : ''}">
+        <span class="link-icon">📰</span> News
+      </a>
+      <a href="lawmpuina.html" class="sidebar-link ${activePage === 'lawmpuina' ? 'active' : ''}">
+        <span class="link-icon">🎉</span> Lawmpuina
+      </a>
+      <a href="sunna.html" class="sidebar-link ${activePage === 'sunna' ? 'active' : ''}">
+        <span class="link-icon">🕯️</span> Sunna
       </a>
       <a href="photos.html" class="sidebar-link ${activePage === 'photos' ? 'active' : ''}">
         <span class="link-icon">📸</span> Photos Gallery
