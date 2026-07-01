@@ -294,7 +294,7 @@ const AdminData = {
     if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
       try {
         console.log("🔄 Syncing admin databases with Firestore...");
-        const [photos, docs, sermons, announcements, lyrics, settings, about, branchObHlui, statistics] = await Promise.all([
+        const [photos, docs, sermons, announcements, lyrics, settings, about, branchObHlui, statistics, news, lawmpuina, sunna] = await Promise.all([
           DbService.get('photos'),
           DbService.get('documents'),
           DbService.get('sermons'),
@@ -303,7 +303,10 @@ const AdminData = {
           DbService.get('settings'),
           DbService.get('about'),
           DbService.get('branch-info'),
-          DbService.get('statistics')
+          DbService.get('statistics'),
+          DbService.get('news'),
+          DbService.get('lawmpuina'),
+          DbService.get('sunna')
         ]);
 
         if (Array.isArray(photos)) localStorage.setItem('db_photos', JSON.stringify(photos));
@@ -314,6 +317,9 @@ const AdminData = {
         if (Array.isArray(lyrics)) localStorage.setItem('db_lyrics', JSON.stringify(lyrics));
         if (Array.isArray(branchObHlui)) localStorage.setItem('db_branch-info', JSON.stringify(branchObHlui));
         if (Array.isArray(statistics)) localStorage.setItem('db_statistics', JSON.stringify(statistics));
+        if (Array.isArray(news)) localStorage.setItem('db_news', JSON.stringify(news));
+        if (Array.isArray(lawmpuina)) localStorage.setItem('db_lawmpuina', JSON.stringify(lawmpuina));
+        if (Array.isArray(sunna)) localStorage.setItem('db_sunna', JSON.stringify(sunna));
         if (settings) localStorage.setItem('db_settings', JSON.stringify(settings));
 
         console.log("✅ Sync complete!");
