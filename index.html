@@ -91,6 +91,27 @@
     </section>
 
 
+    <!-- ====== GALLERY SECTION ====== -->
+    <section class="section gallery-section bg-light" id="gallery" style="padding-top: 3rem; padding-bottom: 3rem; display: none;">
+      <div class="container">
+        <div class="section-header reveal" style="position: relative; text-align: center; margin-bottom: 2rem;">
+          <h2 style="margin: 0 auto;">🖼️ Gallery</h2>
+          <div class="carousel-nav-buttons desktop-only" style="position: absolute; right: 0; bottom: 0;">
+            <button class="carousel-btn prev-btn" id="gallery-prev" aria-label="Previous">&larr;</button>
+            <button class="carousel-btn next-btn" id="gallery-next" aria-label="Next">&rarr;</button>
+          </div>
+        </div>
+        <div class="carousel-container" style="position: relative;">
+          <div class="announcements-scroll no-scrollbar stagger-children" id="gallery-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="text-center" style="margin-top: 2rem;">
+          <a href="photos.html" class="btn btn-outline" style="background: transparent; border-color: var(--brand-sky); color: var(--brand-sky);">View All Photos &rarr;</a>
+        </div>
+      </div>
+    </section>
+
     <section class="section about-section" id="about">
       <div class="container">
         <div class="section-header reveal text-center" style="margin-bottom: 2rem;">
@@ -564,22 +585,60 @@
     }
 
     function renderFeaturedPhotos() {
-      const container = document.getElementById('featured-photos');
-      if (!container) return;
+      const section = document.getElementById('gallery');
+      const container = document.getElementById('gallery-list');
+      if (!section || !container) return;
 
-      const featured = Photos.filter(p => p.featured).slice(0, 6);
-      container.innerHTML = featured.map(photo => `
-        <a href="photos.html" class="featured-card reveal">
-          <img src="${photo.imageUrl}" alt="${photo.title}" class="featured-card-image" loading="lazy">
-          <div class="featured-card-overlay">
-            <span class="badge badge-primary" style="padding: 2px 8px;">${photo.category}</span>
-          </div>
-          <div class="featured-card-body">
-            <h4 class="featured-card-title">${photo.title}</h4>
-            <span class="featured-card-meta">📅 ${formatDate(photo.date)}</span>
-          </div>
-        </a>
-      `).join('');
+      const pinnedPhotos = Photos.filter(p => p.pinnedToHomepage).sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      if (pinnedPhotos.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      
+      section.style.display = 'block';
+      
+      container.innerHTML = pinnedPhotos.map(photo => {
+        let formattedUrl = photo.imageUrl;
+        const match = formattedUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
+        if (match && match[1]) {
+          formattedUrl = `https://lh3.googleusercontent.com/d/${match[1]}`;
+        }
+        
+        return `
+          <a href="photos.html" class="announcement-card reveal" style="cursor: pointer; text-decoration: none; color: inherit; display: flex; flex-direction: column; background: var(--color-bg-card); overflow: hidden; box-shadow: var(--card-shadow); transition: transform 0.2s;">
+            <div style="height: 140px; position: relative; overflow: hidden; border-bottom: 1px solid var(--color-border-light); background: #000;">
+              <div style="position: absolute; inset: -20px; background-image: url('${formattedUrl}'); background-size: cover; background-position: center; filter: blur(15px); opacity: 0.5;"></div>
+              <div style="position: absolute; inset: 0; background-image: url('${formattedUrl}'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+            </div>
+            <div style="padding: var(--sp-3); flex: 1; display: flex; flex-direction: column; justify-content: center;">
+              <div class="announcement-date" style="color: var(--brand-sky); font-size: var(--fs-xs); margin-bottom: var(--sp-1);">
+                📌 ${formatDate(photo.date)}
+                <span class="badge badge-primary" style="margin-left: 8px; font-size: 0.65rem;">${photo.category}</span>
+              </div>
+              <h3 style="font-size: var(--fs-base); margin: 0; line-height: 1.4;">${photo.title}</h3>
+            </div>
+          </a>
+        `;
+      }).join('');
+
+      // Setup Carousel Scrolling
+      const prevBtn = document.getElementById('gallery-prev');
+      const nextBtn = document.getElementById('gallery-next');
+      if (prevBtn && nextBtn) {
+        // Remove old listeners to prevent duplication if re-rendered
+        const newPrev = prevBtn.cloneNode(true);
+        const newNext = nextBtn.cloneNode(true);
+        prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+        nextBtn.parentNode.replaceChild(newNext, nextBtn);
+        
+        newPrev.addEventListener('click', () => {
+          container.scrollBy({ left: -280, behavior: 'smooth' });
+        });
+        newNext.addEventListener('click', () => {
+          container.scrollBy({ left: 280, behavior: 'smooth' });
+        });
+      }
     }
 
     function renderFeaturedDocs() {
