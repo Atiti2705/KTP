@@ -259,12 +259,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   const modalTextElem = document.getElementById('ob-modal-text');
   const modalImgContainer = document.getElementById('ob-modal-img-container');
 
-  function closeModal() {
+  function closeModal(fromHistory = false) {
     detailModal.classList.remove('active');
     document.body.style.overflow = '';
+    if (!fromHistory && history.state && history.state.modalId === 'ob-detail-modal') {
+      history.back();
+    }
   }
 
-  closeBtn.addEventListener('click', closeModal);
+  window.addEventListener('popstate', (e) => {
+    if (detailModal.classList.contains('active')) {
+      closeModal(true);
+    }
+  });
+
+  closeBtn.addEventListener('click', () => closeModal());
   detailModal.addEventListener('click', (e) => {
     if (e.target === detailModal) closeModal();
   });
@@ -289,6 +298,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     detailModal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    history.pushState({ modalId: 'ob-detail-modal' }, '', '#ob-detail-modal');
   });
 
   try {
