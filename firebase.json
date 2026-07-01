@@ -6,7 +6,6 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "site": "saikhamakawnktp",
     "public": ".",
     "ignore": [
       "firebase.json",

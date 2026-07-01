@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Photos Gallery — KṬP Saikhamakawn</title>
+  <title>Gallery — KṬP Saikhamakawn</title>
   <meta name="description" content="Browse through the photo gallery of KṬP Saikhamakawn church activities, worship services, choir performances, and community celebrations.">
   <meta name="keywords" content="KTP Saikhamakawn photos, gallery, church gallery, Mizo church photos">
 
@@ -22,13 +22,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=103">
-  <link rel="stylesheet" href="assets/css/base.css?v=103">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=103">
-  <link rel="stylesheet" href="assets/css/animations.css?v=103">
-  <link rel="stylesheet" href="assets/css/components.css?v=103">
-  <link rel="stylesheet" href="assets/css/layout.css?v=103">
-  <link rel="stylesheet" href="assets/css/pages.css?v=103">
+  <link rel="stylesheet" href="assets/css/variables.css?v=105">
+  <link rel="stylesheet" href="assets/css/base.css?v=105">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=105">
+  <link rel="stylesheet" href="assets/css/animations.css?v=105">
+  <link rel="stylesheet" href="assets/css/components.css?v=105">
+  <link rel="stylesheet" href="assets/css/layout.css?v=105">
+  <link rel="stylesheet" href="assets/css/pages.css?v=105">
 </head>
 <body>
   <!-- Header -->
@@ -40,7 +40,7 @@
     <!-- Page Header -->
     <section class="page-title-section mizo-pattern-subtle" style="padding: var(--sp-6) 0 var(--sp-3) 0;">
       <div class="container">
-        <h1 class="reveal" style="font-size: clamp(1.8rem, 4vw, 2.2rem); margin-bottom: 0;">📸 Photos Gallery</h1>
+        <h1 class="reveal" style="font-size: clamp(1.8rem, 4vw, 2.2rem); margin-bottom: 0;">📸 Gallery</h1>
       </div>
     </section>
 
@@ -92,7 +92,7 @@
 
           <!-- Results count/info and Sort -->
           <div class="results-info">
-            <span class="results-count" id="gallery-count">Loading photos...</span>
+            <span class="results-count" id="gallery-count">Loading gallery...</span>
             <div style="display: flex; align-items: center; gap: 6px;">
               <label for="gallery-sort" style="font-size: 12px; color: var(--color-text-tertiary); font-weight: var(--fw-medium);">Sort:</label>
               <select id="gallery-sort" class="filter-select" style="padding: 4px 8px; padding-right: 24px; font-size: 13px; height: 30px; border-radius: var(--radius-md); background-position: right 8px center; background-size: 12px; border: 1px solid var(--color-border); background-color: var(--color-bg-card); cursor: pointer;">
@@ -114,7 +114,7 @@
 
         <!-- Load More Button -->
         <button id="load-more-btn" class="btn btn-outline load-more-btn reveal" style="display: none;">
-          🔄 Load More Photos
+          🔄 Load More
         </button>
 
       </div>
@@ -136,25 +136,25 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=103"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=105"></script>
 
   <!-- JSZip & FileSaver for Bulk Downloads -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=103"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=103"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=105"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=105"></script>
 
   <!-- App Configuration & Services -->
-  <script src="assets/js/firebase-config.js?v=103"></script>
-  <script src="assets/js/theme.js?v=103"></script>
-  <script src="assets/js/data.js?v=103"></script>
-  <script src="assets/js/auth.js?v=103"></script>
-  <script src="assets/js/db-service.js?v=103"></script>
-  <script src="assets/js/save-service.js?v=103"></script>
-  <script src="assets/js/components.js?v=103"></script>
-  <script src="assets/js/search.js?v=103"></script>
-  <script src="assets/js/gallery.js?v=103"></script>
-  <script src="assets/js/app.js?v=103"></script>
+  <script src="assets/js/firebase-config.js?v=105"></script>
+  <script src="assets/js/theme.js?v=105"></script>
+  <script src="assets/js/data.js?v=105"></script>
+  <script src="assets/js/auth.js?v=105"></script>
+  <script src="assets/js/db-service.js?v=105"></script>
+  <script src="assets/js/save-service.js?v=105"></script>
+  <script src="assets/js/components.js?v=105"></script>
+  <script src="assets/js/search.js?v=105"></script>
+  <script src="assets/js/gallery.js?v=105"></script>
+  <script src="assets/js/app.js?v=105"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('photos');

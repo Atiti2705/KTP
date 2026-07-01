@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hla Lyrics — KṬP Saikhamakawn</title>
-  <meta name="description" content="Access and download church newsletters, announcements, meeting minutes, annual reports, and other publications of KṬP Saikhamakawn.">
-  <meta name="keywords" content="Hla Lyrics, KTP Saikhamakawn newsletter, Mizo church documents, minutes">
+  <title>Souvenir — KṬP Saikhamakawn</title>
+  <meta name="description" content="Access and download church souvenirs and other publications of KṬP Saikhamakawn.">
+  <meta name="keywords" content="Souvenir, KTP Saikhamakawn, Mizo church documents">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Hla Lyrics — KṬP Saikhamakawn">
+  <meta property="og:title" content="Souvenir — KṬP Saikhamakawn">
   <meta property="og:description" content="Access and download church newsletters and publications.">
   <meta property="og:image" content="assets/images/logo.png">
   <meta property="og:type" content="website">
@@ -40,7 +40,7 @@
     <!-- Page Header -->
     <section class="page-title-section mizo-pattern-subtle" style="padding: var(--sp-3) 0 var(--sp-2) 0;">
       <div class="container">
-        <h1 class="reveal" style="font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: 0;">🎵 Hla Lyrics</h1>
+        <h1 class="reveal" style="font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: 0;">📖 Souvenir</h1>
       </div>
     </section>
 
@@ -51,29 +51,23 @@
           
           <!-- Search input -->
           <div style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
-            <div class="search-container" style="width: 100%; max-width: 100%;">
+            <div class="search-container">
               <span class="search-icon">🔍</span>
-              <input type="text" id="doc-search" class="search-input" placeholder="Search lyrics by title...">
+              <input type="text" id="doc-search" class="search-input" placeholder="Search documents by title or description...">
               <span class="search-clear" id="search-clear-btn" role="button" aria-label="Clear search">&times;</span>
             </div>
           </div>
 
-          <!-- Alphabet Filter -->
-          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2);">
-            <label for="alphabet-select" style="font-size: var(--fs-sm); color: var(--color-text-secondary); font-weight: var(--fw-medium);">Alphabet Filter:</label>
-            <select id="alphabet-select" class="filter-select" style="flex: 1; min-width: 150px; max-width: 100%;">
-              <!-- Populated by JS -->
-            </select>
-          </div>
+
 
           <!-- Selection Toolbar for Bulk Download -->
           <div id="selection-toolbar" class="floating-selection-toolbar" style="display: none;">
             <div style="display: flex; align-items: center; gap: var(--sp-3);">
               <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm); font-weight: var(--fw-medium);">
-                <input type="checkbox" id="select-all-cb" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--brand-sky);">
+                <input type="checkbox" id="select-all-cb" style="width: 16px; height: 16px; cursor: pointer;">
                 Select All
               </label>
-              <span id="selected-count" style="font-size: var(--fs-xs); color: var(--brand-sky); background: rgba(56, 189, 248, 0.15); padding: 2px 8px; border-radius: 12px; font-weight: var(--fw-bold);">0</span>
+              <span id="selected-count" style="font-size: var(--fs-xs); color: var(--color-text-secondary); background: var(--color-bg-hover); padding: 2px 8px; border-radius: 12px; font-weight: var(--fw-bold);">0</span>
             </div>
             <div style="display: flex; gap: var(--sp-1); align-items: center;">
               <button id="btn-bulk-save" class="btn-icon" disabled title="Save Selected" style="opacity: 0.5; transition: opacity var(--transition-base); padding: 6px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: #ffffff; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6)); cursor: pointer;">
@@ -85,25 +79,21 @@
             </div>
           </div>
 
-          <!-- Results count/info -->
-          <div class="results-info" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--sp-3); border-bottom: 1px solid var(--color-border); padding-bottom: var(--sp-3); margin-bottom: var(--sp-2);">
-            <span class="results-count" id="doc-count">Loading lyrics...</span>
-            <div style="display: flex; align-items: center; gap: var(--sp-2); max-width: 100%;">
-              <label for="lyric-sort" style="font-size: var(--fs-xs); color: var(--color-text-secondary); font-weight: var(--fw-medium);">Sort:</label>
-              <select id="lyric-sort" class="filter-select" style="max-width: 180px; text-overflow: ellipsis;">
-                <option value="a-z" selected>Mizo Alphabetical (A-Z)</option>
-                <option value="z-a">Mizo Alphabetical (Z-A)</option>
-                <option value="manual">Manual Order</option>
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
+          <!-- Results count/info and Sort -->
+          <div class="results-info" style="margin-bottom: var(--sp-2);">
+            <span class="results-count" id="doc-count">Loading documents...</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label for="doc-year" style="font-size: 12px; color: var(--color-text-tertiary); font-weight: var(--fw-medium);">Year:</label>
+              <select id="doc-year" class="filter-select" style="padding: 4px 8px; padding-right: 24px; font-size: 13px; height: 30px; border-radius: var(--radius-md); background-position: right 8px center; background-size: 12px; border: 1px solid var(--color-border); background-color: var(--color-bg-card); cursor: pointer;">
+                <option value="All">All Years</option>
               </select>
             </div>
           </div>
 
         </div>
 
-        <!-- Documents List (1-column on mobile, 2-column or 3-column styled as a stack) -->
-        <div class="content-grid" id="lyrics-list" style="grid-template-columns: 1fr;">
+        <!-- Documents List (1 column on mobile, auto on desktop) -->
+        <div class="content-grid" id="documents-list" style="gap: var(--sp-3);">
           <!-- Populated by JS -->
         </div>
 
@@ -148,11 +138,12 @@
   <script src="assets/js/save-service.js?v=105"></script>
   <script src="assets/js/components.js?v=105"></script>
   <script src="assets/js/search.js?v=105"></script>
-  <script src="assets/js/lyrics.js?v=105"></script>
+  <script>window.FIXED_CATEGORY = 'Souvenir';</script>
+  <script src="assets/js/documents.js?v=105"></script>
   <script src="assets/js/app.js?v=105"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      renderHeader('hla-lyrics');
+      renderHeader('souvenir');
       renderFooter();
     });
   </script>

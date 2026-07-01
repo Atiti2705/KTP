@@ -8,10 +8,10 @@
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/variables.css?v=103">
-  <link rel="stylesheet" href="../assets/css/base.css?v=103">
-  <link rel="stylesheet" href="../assets/css/components.css?v=103">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=103">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=105">
+  <link rel="stylesheet" href="../assets/css/base.css?v=105">
+  <link rel="stylesheet" href="../assets/css/components.css?v=105">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=105">
 </head>
 
 <body>
@@ -28,7 +28,7 @@
         <div class="admin-topbar-left">
           <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
           <div>
-            <h1 class="admin-page-title">Mipui Aw Publications Manager</h1>
+            <h1 class="admin-page-title">Documents Manager</h1>
             <p class="admin-page-desc">Add, edit, or delete newsletters, templates, and reports</p>
           </div>
         </div>
@@ -48,13 +48,12 @@
             <input type="text" id="admin-search-input" class="search-input" placeholder="Search documents by title...">
           </div>
           <div style="display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center;">
-            <select id="admin-filter-category" class="filter-select"
-              style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
+            <select id="admin-filter-category" class="filter-select" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
               <option value="All">All Categories</option>
               <!-- Populated via JS -->
             </select>
             <select id="admin-filter-subcategory" class="filter-select" style="padding-top: var(--sp-2); padding-bottom: var(--sp-2); display: none;">
-              <option value="All">All Sub-categories</option>
+              <option value="All">All Types</option>
               <!-- Populated via JS -->
             </select>
           </div>
@@ -107,7 +106,7 @@
           <div class="form-group">
             <label for="doc-category" class="form-label">Category</label>
             <div class="category-field-row">
-              <select id="doc-category" class="form-input form-select" required style="flex:1;">
+              <select id="doc-category" class="form-input form-select" style="flex:1;">
                 <!-- Populated via JS -->
               </select>
               <button type="button" class="btn-edit-cats" id="btn-toggle-cat-editor">✏️ Edit</button>
@@ -123,10 +122,10 @@
           </div>
 
           <div class="form-group">
-            <label for="doc-subcategory" class="form-label">Sub Category (Optional)</label>
-            <input type="text" id="doc-subcategory" class="form-input" placeholder="e.g. May" list="subcat-list">
+            <label for="doc-subcategory" class="form-label">Category / Type (Optional)</label>
+            <input type="text" id="doc-subcategory" class="form-input" placeholder="e.g. Special Edition, Monthly" list="subcat-list">
             <datalist id="subcat-list"></datalist>
-            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Useful for grouping within a category (e.g. months inside a year).</small>
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">Use this to create custom filters inside this manager.</small>
           </div>
 
           <div class="form-group">
@@ -241,28 +240,31 @@
 
   <!-- Scripts -->
   <!-- SortableJS for drag-and-drop -->
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=103"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=105"></script>
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=103"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=105"></script>
 
   <!-- App Configuration & Services -->
-  <script src="../assets/js/firebase-config.js?v=103"></script>
-  <script src="../assets/js/theme.js?v=103"></script>
-  <script src="../assets/js/data.js?v=103"></script>
-  <script src="../assets/js/auth.js?v=103"></script>
-  <script src="../assets/js/db-service.js?v=103"></script>
-  <script src="../assets/js/components.js?v=103"></script>
-  <script src="../assets/js/search.js?v=103"></script>
-  <script src="../assets/js/admin.js?v=103"></script>
+  <script src="../assets/js/firebase-config.js?v=105"></script>
+  <script src="../assets/js/theme.js?v=105"></script>
+  <script src="../assets/js/data.js?v=105"></script>
+  <script src="../assets/js/auth.js?v=105"></script>
+  <script src="../assets/js/db-service.js?v=105"></script>
+  <script src="../assets/js/components.js?v=105"></script>
+  <script src="../assets/js/search.js?v=105"></script>
+  <script src="../assets/js/admin.js?v=105"></script>
 
   <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialCat = urlParams.get('cat');
+
     let currentSearch = '';
-    let currentCategoryFilter = 'All';
+    let currentCategoryFilter = initialCat || 'All';
     let currentSubCategoryFilter = 'All';
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       if (typeof Toast !== 'undefined') Toast.init();
 
       // Load settings to fetch customized category list synchronously from localStorage cache
@@ -273,6 +275,38 @@
       }
 
       populateCategoryDropdowns();
+
+      if (initialCat) {
+        document.querySelector('.admin-page-title').textContent = initialCat + ' Manager';
+        document.querySelector('.admin-page-desc').textContent = `Manage your ${initialCat} documents here.`;
+        
+        const filterCatSelect = document.getElementById('admin-filter-category');
+        if (filterCatSelect) {
+          filterCatSelect.value = initialCat;
+          filterCatSelect.disabled = true;
+          filterCatSelect.style.display = 'none';
+        }
+
+        const formCatSelect = document.getElementById('doc-category');
+        if (formCatSelect) {
+          formCatSelect.value = initialCat;
+          const formGroup = formCatSelect.closest('.form-group');
+          if (formGroup) formGroup.style.display = 'none';
+        }
+      }
+
+      // Sync from Firestore before rendering
+      if (typeof DbService !== 'undefined') {
+        try {
+          const remoteDocs = await DbService.get('documents');
+          if (remoteDocs && remoteDocs.length > 0) {
+             localStorage.setItem('db_documents', JSON.stringify(remoteDocs));
+          }
+        } catch (e) {
+          console.warn("Could not sync documents from Firestore:", e);
+        }
+      }
+
       renderDocsTable();
       setupEvents();
       initSortable();
@@ -339,7 +373,7 @@
       }
 
       subSel.style.display = '';
-      subSel.innerHTML = '<option value="All">All Sub-categories</option>';
+      subSel.innerHTML = '<option value="All">All Types</option>';
       subcats.forEach(s => {
         const o = document.createElement('option');
         o.value = s;
@@ -432,10 +466,10 @@
         filtered = filtered.filter(d => d.title.toLowerCase().includes(q) || d.description.toLowerCase().includes(q));
       }
       if (currentCategoryFilter !== 'All') {
-        filtered = filtered.filter(d => d.category === currentCategoryFilter);
+        filtered = filtered.filter(d => d.category && d.category.trim().toLowerCase() === currentCategoryFilter.trim().toLowerCase());
       }
       if (currentSubCategoryFilter !== 'All') {
-        filtered = filtered.filter(d => d.subcategory === currentSubCategoryFilter);
+        filtered = filtered.filter(d => d.subcategory && d.subcategory.trim().toLowerCase() === currentSubCategoryFilter.trim().toLowerCase());
       }
 
       if (filtered.length === 0) {
@@ -716,6 +750,12 @@
         document.getElementById('doc-date').value = new Date().toISOString().split('T')[0];
         document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
         toggleDocSource('upload');
+        
+        if (initialCat) {
+          const catSelect = document.getElementById('doc-category');
+          catSelect.value = initialCat;
+        }
+        
         ModalSystem.open('doc-form-modal');
       });
 
@@ -732,11 +772,35 @@
         const docId = document.getElementById('doc-edit-id').value;
 
         const title = document.getElementById('doc-title').value;
-        const category = document.getElementById('doc-category').value;
+        let category = document.getElementById('doc-category').value;
+        if (initialCat) {
+          category = initialCat;
+        }
         const subcategory = document.getElementById('doc-subcategory').value.trim();
         const description = '';
-        const fileType = document.getElementById('doc-type').value;
-        const fileSize = document.getElementById('doc-size').value;
+        let fileType = 'PDF';
+        let fileSize = 'Unknown';
+        
+        if (actionType === 'edit') {
+           const existingDoc = AdminData.get('documents').find(d => d.id === docId);
+           if (existingDoc) {
+             fileType = existingDoc.fileType || 'PDF';
+             fileSize = existingDoc.fileSize || 'Unknown';
+           }
+        }
+        
+        if (document.querySelector('input[name="doc-source"]:checked').value === 'upload') {
+          const fileInput = document.getElementById('doc-file');
+          if (fileInput && fileInput.files && fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const ext = file.name.split('.').pop().toUpperCase();
+            if (['PDF', 'DOCX', 'DOC', 'XLSX', 'PPTX', 'TXT', 'ZIP'].includes(ext)) {
+              fileType = ext;
+            }
+            const mb = file.size / (1024 * 1024);
+            fileSize = mb >= 1 ? `${mb.toFixed(1)} MB` : `${(file.size / 1024).toFixed(0)} KB`;
+          }
+        }
         const date = document.getElementById('doc-date').value;
         const featured = false;
 

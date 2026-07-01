@@ -42,7 +42,13 @@ const DbService = {
         items.sort((a, b) => {
           const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : 999999;
           const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : 999999;
-          if (aIdx === bIdx) return new Date(b.date || 0) - new Date(a.date || 0);
+          if (aIdx === bIdx) {
+            const timeA = new Date(a.date || 0).getTime();
+            const timeB = new Date(b.date || 0).getTime();
+            const valA = isNaN(timeA) ? 0 : timeA;
+            const valB = isNaN(timeB) ? 0 : timeB;
+            return valB - valA;
+          }
           return aIdx - bIdx;
         });
         
@@ -130,7 +136,9 @@ const DbService = {
       else if (collection === 'documents') localStorage.setItem(key, JSON.stringify(Documents));
       else if (collection === 'sermons') localStorage.setItem(key, JSON.stringify(Sermons));
       else if (collection === 'announcements') localStorage.setItem(key, JSON.stringify(Announcements));
+      else if (collection === 'about') localStorage.setItem(key, JSON.stringify(About));
       else if (collection === 'lyrics') localStorage.setItem(key, JSON.stringify([]));
+      else if (collection === 'branch-info') localStorage.setItem(key, JSON.stringify([]));
       else if (collection === 'settings') {
         localStorage.setItem(key, JSON.stringify({
           churchInfo: ChurchInfo,

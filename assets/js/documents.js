@@ -4,10 +4,10 @@
    and details preview modal.
    ============================================ */
 
-let currentCategory = 'All';
+let currentCategory = window.FIXED_CATEGORY || 'All';
 let currentSubCategory = 'All';
 let searchQuery = '';
-let currentSort = 'newest';
+let currentYearFilter = 'All';
 let currentPage = 1;
 const itemsPerPage = 1000;
 
@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error("Error loading documents database:", error);
   }
 
+  populateYearDropdown();
   renderDocuments();
 });
 
@@ -51,6 +52,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 function renderCategoryChips() {
   const container = document.getElementById('category-chips');
   if (!container) return;
+
+  // If the page is locked to a specific category, hide the category chips
+  if (window.FIXED_CATEGORY) {
+    container.style.display = 'none';
+    renderSubCategoryChips();
+    return;
+  }
 
   container.innerHTML = DocumentCategories.map(cat => `
     <button class="filter-chip ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
@@ -65,7 +73,9 @@ function renderCategoryChips() {
       btn.classList.add('active');
       currentCategory = btn.dataset.category;
       currentSubCategory = 'All'; // Reset subcategory when category changes
+      currentYearFilter = 'All'; // Reset year filter when category changes
       currentPage = 1; // Reset to page 1 on filter change
+      populateYearDropdown();
       renderSubCategoryChips();
       renderDocuments();
     });
@@ -157,11 +167,11 @@ function renderSubCategoryChips() {
 }
 
 // ========================
-// SETUP SEARCH AND SORT
+// SETUP SEARCH AND YEAR FILTER
 // ========================
 function setupSearchAndSort() {
   const searchInput = document.getElementById('doc-search');
-  const sortSelect = document.getElementById('doc-sort');
+  const yearSelect = document.getElementById('doc-year');
   const clearBtn = document.getElementById('search-clear-btn');
 
   if (searchInput) {
@@ -185,12 +195,40 @@ function setupSearchAndSort() {
     });
   }
 
-  if (sortSelect) {
-    sortSelect.addEventListener('change', (e) => {
-      currentSort = e.target.value;
+  if (yearSelect) {
+    yearSelect.addEventListener('change', (e) => {
+      currentYearFilter = e.target.value;
       currentPage = 1;
       renderDocuments();
     });
+  }
+}
+
+function populateYearDropdown() {
+  const yearSelect = document.getElementById('doc-year');
+  if (!yearSelect) return;
+  
+  const docs = currentCategory === 'All' ? Documents : Documents.filter(d => d.category === currentCategory);
+  const years = new Set();
+  docs.forEach(d => {
+    if (d.date) {
+      const year = d.date.split('-')[0];
+      if (year && year.length === 4) years.add(year);
+    }
+  });
+  
+  const sortedYears = Array.from(years).sort((a, b) => b - a);
+  
+  const wasSelected = yearSelect.value;
+  yearSelect.innerHTML = '<option value="All">All Years</option>' + 
+    sortedYears.map(y => `<option value="${y}">${y}</option>`).join('');
+    
+  if (wasSelected && sortedYears.includes(wasSelected)) {
+    yearSelect.value = wasSelected;
+    currentYearFilter = wasSelected;
+  } else {
+    yearSelect.value = 'All';
+    currentYearFilter = 'All';
   }
 }
 
@@ -208,13 +246,17 @@ function renderDocuments() {
   let filtered = SearchEngine.filter(Documents, {
     query: searchQuery,
     category: currentCategory,
-    sort: currentSort,
+    sort: 'newest',
     searchFields: ['title', 'description', 'category'],
     categoryField: 'category'
   });
 
   if (currentSubCategory !== 'All') {
     filtered = filtered.filter(d => d.subcategory === currentSubCategory);
+  }
+
+  if (currentYearFilter !== 'All') {
+    filtered = filtered.filter(d => d.date && d.date.startsWith(currentYearFilter));
   }
 
   // 2. Paginate items
@@ -241,14 +283,38 @@ function renderDocuments() {
   }
 
   listContainer.innerHTML = paginationData.items.map(doc => {
+    let fileId = '';
+    const downloadUrl = doc.downloadUrl || doc.fileUrl;
+    if (downloadUrl && downloadUrl !== '#') {
+      const fileIdMatch = downloadUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        fileId = fileIdMatch[1];
+      } else {
+        const idMatch = downloadUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (idMatch && idMatch[1]) fileId = idMatch[1];
+      }
+    }
+    
+    let thumbHtml = '';
+    if (fileId) {
+      thumbHtml = `<img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w400-h400" alt="Preview" loading="lazy" class="gdrive-thumbnail">`;
+    } else {
+      thumbHtml = `<div class="gdrive-no-preview"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>`;
+    }
+
     return `
-    <div class="modern-doc-card selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${String(doc.fileType||'PDF').toLowerCase()}">
-      <div class="modern-doc-icon">PDF</div>
-      <div class="modern-doc-content">
-        <h3 class="modern-doc-title">${doc.title}</h3>
+    <div class="gdrive-card selectable-item" data-id="${doc.id}" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${String(doc.fileType||'PDF').toLowerCase()}">
+      <div class="gdrive-header">
+        <div class="gdrive-icon-wrapper">
+          <span class="gdrive-pdf-badge">PDF</span>
+        </div>
+        <div class="gdrive-title" title="${doc.title}">${doc.title}</div>
+        <div class="gdrive-menu" title="More Actions">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg>
+        </div>
       </div>
-      <div class="modern-doc-action">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+      <div class="gdrive-preview-container">
+        ${thumbHtml}
       </div>
     </div>
     `;

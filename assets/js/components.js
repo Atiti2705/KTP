@@ -23,12 +23,52 @@ function renderHeader(activePage = '') {
 
       <nav class="nav-desktop" aria-label="Main navigation">
         <a href="index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}" id="nav-home">Home</a>
-        <a href="photos.html" class="nav-link ${activePage === 'photos' ? 'active' : ''}" id="nav-photos">Photos</a>
-        <a href="mipui-aw.html" class="nav-link ${activePage === 'mipui-aw' ? 'active' : ''}" id="nav-mipui-aw">Mipui Aw</a>
-        <a href="sermons.html" class="nav-link ${activePage === 'sermons' ? 'active' : ''}" id="nav-sermons">Documents</a>
-        <a href="hla-lyrics.html" class="nav-link ${activePage === 'hla-lyrics' ? 'active' : ''}" id="nav-hla-lyrics">Hla Lyrics</a>
-        <a href="saved.html" class="nav-link ${activePage === 'saved' ? 'active' : ''}" id="nav-saved">Saved</a>
-        <a href="admin/index.html" class="nav-link ${activePage === 'admin' ? 'active' : ''}" id="nav-admin">Admin</a>
+        <a href="photos.html" class="nav-link ${activePage === 'photos' ? 'active' : ''}" id="nav-photos">Gallery</a>
+        <div class="nav-dropdown" id="nav-chanchin-dropdown">
+          <button class="nav-link nav-dropdown-trigger ${['branch-ob-hlui','branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="nav-chanchin-btn" aria-expanded="false" aria-haspopup="true">
+            Branch Chanchin <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="nav-dropdown-menu" id="nav-chanchin-menu">
+            <a href="branch-ob-hlui.html" class="nav-dropdown-item ${activePage === 'branch-ob-hlui' ? 'active' : ''}">Branch OB lo ni tawh te</a>
+            <a href="branch-ob.html" class="nav-dropdown-item ${activePage === 'branch-ob' ? 'active' : ''}">Branch OB</a>
+            <a href="branch-committee.html" class="nav-dropdown-item ${activePage === 'branch-committee' ? 'active' : ''}">Branch Committee</a>
+            <a href="group-committee.html" class="nav-dropdown-item ${activePage === 'group-committee' ? 'active' : ''}">Group Committee</a>
+            <a href="sub-committee.html" class="nav-dropdown-item ${activePage === 'sub-committee' ? 'active' : ''}">Sub Committee</a>
+            <a href="golden-jubilee.html" class="nav-dropdown-item ${activePage === 'golden-jubilee' ? 'active' : ''}">Golden Jubilee</a>
+          </div>
+        </div>
+        <div class="nav-dropdown" id="nav-docs-dropdown">
+          <button class="nav-link nav-dropdown-trigger ${['sermons','mipui-aw','hla-lyrics','bulletin','souvenir'].includes(activePage) ? 'active' : ''}" id="nav-docs-btn" aria-expanded="false" aria-haspopup="true">
+            Documents <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="nav-dropdown-menu" id="nav-docs-menu">
+            <a href="mipui-aw.html" class="nav-dropdown-item ${activePage === 'mipui-aw' ? 'active' : ''}">Mipui Aw</a>
+            <a href="sermons.html" class="nav-dropdown-item ${activePage === 'sermons' ? 'active' : ''}">Articles & Sermon</a>
+            <a href="bulletin.html" class="nav-dropdown-item ${activePage === 'bulletin' ? 'active' : ''}">Bulletin</a>
+            <a href="souvenir.html" class="nav-dropdown-item ${activePage === 'souvenir' ? 'active' : ''}">Souvenir</a>
+            <a href="hla-lyrics.html" class="nav-dropdown-item ${activePage === 'hla-lyrics' ? 'active' : ''}">Hla Lyrics</a>
+          </div>
+        </div>
+        <div class="nav-dropdown" id="nav-news-dropdown">
+          <button class="nav-link nav-dropdown-trigger ${['news','lawmpuina','sunna'].includes(activePage) ? 'active' : ''}" id="nav-news-btn" aria-expanded="false" aria-haspopup="true">
+            News <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="nav-dropdown-menu" id="nav-news-menu">
+            <a href="news.html" class="nav-dropdown-item ${activePage === 'news' ? 'active' : ''}">News</a>
+            <a href="lawmpuina.html" class="nav-dropdown-item ${activePage === 'lawmpuina' ? 'active' : ''}">Lawmpuina</a>
+            <a href="sunna.html" class="nav-dropdown-item ${activePage === 'sunna' ? 'active' : ''}">Sunna</a>
+          </div>
+        </div>
+        <div class="nav-dropdown" id="nav-about-dropdown">
+          <button class="nav-link nav-dropdown-trigger ${['statistic','contact'].includes(activePage) ? 'active' : ''}" id="nav-about-btn" aria-expanded="false" aria-haspopup="true">
+            About Us <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="nav-dropdown-menu" id="nav-about-menu">
+            <a href="statistic.html" class="nav-dropdown-item ${activePage === 'statistic' ? 'active' : ''}">Statistic</a>
+            <a href="contact.html" class="nav-dropdown-item ${activePage === 'contact' ? 'active' : ''}">Contact</a>
+          </div>
+        </div>
+        <a href="counselling.html" class="nav-link ${activePage === 'counselling' ? 'active' : ''}" id="nav-counselling">Counselling</a>
       </nav>
 
       <div class="header-actions">
@@ -80,16 +120,90 @@ function renderHeader(activePage = '') {
       <span class="nav-icon">🏠</span> Home
     </a>
     <a href="photos.html" class="nav-mobile-link ${activePage === 'photos' ? 'active' : ''}">
-      <span class="nav-icon">📸</span> Photos
+      <span class="nav-icon">📸</span> Gallery
     </a>
-    <a href="mipui-aw.html" class="nav-mobile-link ${activePage === 'mipui-aw' ? 'active' : ''}">
-      <span class="nav-icon">📄</span> Mipui Aw
-    </a>
-    <a href="sermons.html" class="nav-mobile-link ${activePage === 'sermons' ? 'active' : ''}">
-      <span class="nav-icon">📖</span> Documents
-    </a>
-    <a href="hla-lyrics.html" class="nav-mobile-link ${activePage === 'hla-lyrics' ? 'active' : ''}">
-      <span class="nav-icon">🎵</span> Hla Lyrics
+    <div class="nav-mobile-group">
+      <button class="nav-mobile-link nav-mobile-group-trigger ${['branch-ob-hlui','branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-chanchin-trigger">
+        <span class="nav-icon">📚</span> Branch Chanchin
+        <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="nav-mobile-subnav" id="mobile-chanchin-subnav" style="display:none;">
+        <a href="branch-ob-hlui.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'branch-ob-hlui' ? 'active' : ''}">
+          Branch OB lo ni tawh te
+        </a>
+        <a href="branch-ob.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'branch-ob' ? 'active' : ''}">
+          Branch OB
+        </a>
+        <a href="branch-committee.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'branch-committee' ? 'active' : ''}">
+          Branch Committee
+        </a>
+        <a href="group-committee.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'group-committee' ? 'active' : ''}">
+          Group Committee
+        </a>
+        <a href="sub-committee.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'sub-committee' ? 'active' : ''}">
+          Sub Committee
+        </a>
+        <a href="golden-jubilee.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'golden-jubilee' ? 'active' : ''}">
+          Golden Jubilee
+        </a>
+      </div>
+    </div>
+    <div class="nav-mobile-group">
+      <button class="nav-mobile-link nav-mobile-group-trigger ${['sermons','mipui-aw','hla-lyrics','bulletin','souvenir'].includes(activePage) ? 'active' : ''}" id="mobile-docs-trigger">
+        <span class="nav-icon">📖</span> Documents
+        <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="nav-mobile-subnav" id="mobile-docs-subnav" style="display:none;">
+        <a href="mipui-aw.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'mipui-aw' ? 'active' : ''}">
+          Mipui Aw
+        </a>
+        <a href="sermons.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'sermons' ? 'active' : ''}">
+          Articles & Sermon
+        </a>
+        <a href="bulletin.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'bulletin' ? 'active' : ''}">
+          Bulletin
+        </a>
+        <a href="souvenir.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'souvenir' ? 'active' : ''}">
+          Souvenir
+        </a>
+        <a href="hla-lyrics.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'hla-lyrics' ? 'active' : ''}">
+          Hla Lyrics
+        </a>
+      </div>
+    </div>
+    <div class="nav-mobile-group">
+      <button class="nav-mobile-link nav-mobile-group-trigger ${['news','lawmpuina','sunna'].includes(activePage) ? 'active' : ''}" id="mobile-news-trigger">
+        <span class="nav-icon">📰</span> News
+        <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="nav-mobile-subnav" id="mobile-news-subnav" style="display:none;">
+        <a href="news.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'news' ? 'active' : ''}">
+          News
+        </a>
+        <a href="lawmpuina.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'lawmpuina' ? 'active' : ''}">
+          Lawmpuina
+        </a>
+        <a href="sunna.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'sunna' ? 'active' : ''}">
+          Sunna
+        </a>
+      </div>
+    </div>
+    <div class="nav-mobile-group">
+      <button class="nav-mobile-link nav-mobile-group-trigger ${['statistic','contact'].includes(activePage) ? 'active' : ''}" id="mobile-about-trigger">
+        <span class="nav-icon">ℹ️</span> About Us
+        <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="nav-mobile-subnav" id="mobile-about-subnav" style="display:none;">
+        <a href="statistic.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'statistic' ? 'active' : ''}">
+          Statistic
+        </a>
+        <a href="contact.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'contact' ? 'active' : ''}">
+          Contact
+        </a>
+      </div>
+    </div>
+    <a href="counselling.html" class="nav-mobile-link ${activePage === 'counselling' ? 'active' : ''}">
+      <span class="nav-icon">🤝</span> Counselling
     </a>
     <a href="saved.html" class="nav-mobile-link ${activePage === 'saved' ? 'active' : ''}">
       <span class="nav-icon" style="display: inline-flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></span> Saved
@@ -117,10 +231,6 @@ function renderHeader(activePage = '') {
     <!-- Mobile User Widget Section -->
     <div id="mobile-user-widget"></div>
 
-    <a href="admin/index.html" class="nav-mobile-link ${activePage === 'admin' ? 'active' : ''}">
-      <span class="nav-icon">⚙️</span> Admin
-    </a>
-
   `;
   document.body.appendChild(mobileNav);
 
@@ -128,6 +238,8 @@ function renderHeader(activePage = '') {
   setupMobileMenu();
   // Setup header scroll effect
   setupHeaderScroll();
+  // Setup nav dropdowns
+  setupNavDropdowns();
 
   // Run theme toggle binding now that elements are rendered
   if (typeof ThemeManager !== 'undefined' && ThemeManager.setupToggle) {
@@ -447,8 +559,9 @@ function setupMobileMenu() {
     document.body.classList.toggle('modal-open', isOpen);
   });
 
-  // Close on nav link click
+  // Close on nav link click (but NOT the dropdown trigger)
   nav.querySelectorAll('.nav-mobile-link').forEach(link => {
+    if (link.classList.contains('nav-mobile-group-trigger')) return;
     link.addEventListener('click', () => {
       nav.classList.remove('open');
       btn.classList.remove('open');
@@ -495,6 +608,85 @@ function setupHeaderScroll() {
     header.classList.toggle('scrolled', currentScroll > 20);
     lastScroll = currentScroll;
   }, { passive: true });
+}
+
+// ========================
+// NAV DROPDOWNS
+// ========================
+function setupNavDropdowns() {
+  // Generic desktop dropdown setup
+  const desktopDropdowns = [
+    { dropdown: 'nav-about-dropdown', btn: 'nav-about-btn', menu: 'nav-about-menu' },
+    { dropdown: 'nav-chanchin-dropdown', btn: 'nav-chanchin-btn', menu: 'nav-chanchin-menu' },
+    { dropdown: 'nav-docs-dropdown', btn: 'nav-docs-btn', menu: 'nav-docs-menu' },
+    { dropdown: 'nav-news-dropdown', btn: 'nav-news-btn', menu: 'nav-news-menu' }
+  ];
+
+  desktopDropdowns.forEach(({ dropdown: dropId, btn: btnId, menu: menuId }) => {
+    const dropdown = document.getElementById(dropId);
+    const dropdownBtn = document.getElementById(btnId);
+    const dropdownMenu = document.getElementById(menuId);
+    if (!dropdown || !dropdownBtn || !dropdownMenu) return;
+
+    dropdown.addEventListener('mouseenter', () => {
+      dropdownMenu.classList.add('active');
+      dropdownBtn.setAttribute('aria-expanded', 'true');
+    });
+    dropdown.addEventListener('mouseleave', () => {
+      dropdownMenu.classList.remove('active');
+      dropdownBtn.setAttribute('aria-expanded', 'false');
+    });
+    dropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Close other desktop dropdowns
+      desktopDropdowns.forEach(other => {
+        if (other.menu !== menuId) {
+          const otherMenu = document.getElementById(other.menu);
+          const otherBtn = document.getElementById(other.btn);
+          if (otherMenu) otherMenu.classList.remove('active');
+          if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+      const isOpen = dropdownMenu.classList.toggle('active');
+      dropdownBtn.setAttribute('aria-expanded', isOpen);
+    });
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdownMenu.classList.remove('active');
+        dropdownBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  // Generic mobile expandable setup
+  const mobileGroups = [
+    { trigger: 'mobile-about-trigger', subnav: 'mobile-about-subnav' },
+    { trigger: 'mobile-chanchin-trigger', subnav: 'mobile-chanchin-subnav' },
+    { trigger: 'mobile-docs-trigger', subnav: 'mobile-docs-subnav' },
+    { trigger: 'mobile-news-trigger', subnav: 'mobile-news-subnav' }
+  ];
+
+  mobileGroups.forEach(({ trigger: trigId, subnav: subId }) => {
+    const mobileTrigger = document.getElementById(trigId);
+    const mobileSubnav = document.getElementById(subId);
+    if (!mobileTrigger || !mobileSubnav) return;
+
+    // Auto-expand if currently on a sub-page
+    if (mobileTrigger.classList.contains('active')) {
+      mobileSubnav.style.display = 'block';
+      const chevron = mobileTrigger.querySelector('.nav-mobile-chevron');
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+    }
+
+    mobileTrigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const isOpen = mobileSubnav.style.display === 'block';
+      mobileSubnav.style.display = isOpen ? 'none' : 'block';
+      const chevron = mobileTrigger.querySelector('.nav-mobile-chevron');
+      if (chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+  });
 }
 
 // ========================
@@ -660,8 +852,9 @@ function renderFooter() {
       </div>
 
       <!-- Footer Bottom -->
-      <div class="footer-bottom">
+      <div class="footer-bottom" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <p class="footer-copyright">© ${new Date().getFullYear()} ${ChurchInfo.name}. All rights reserved. Est. ${ChurchInfo.established}.</p>
+        <a href="admin/index.html" style="color: var(--color-text-secondary); text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 4px; transition: color 0.2s;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Admin Login</a>
       </div>
 
       <!-- AdSense Placeholder -->

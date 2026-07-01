@@ -8,10 +8,10 @@
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/variables.css?v=103">
-  <link rel="stylesheet" href="../assets/css/base.css?v=103">
-  <link rel="stylesheet" href="../assets/css/components.css?v=103">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=103">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=105">
+  <link rel="stylesheet" href="../assets/css/base.css?v=105">
+  <link rel="stylesheet" href="../assets/css/components.css?v=105">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=105">
 </head>
 
 <body>
@@ -145,6 +145,24 @@
           </div>
         </div>
 
+        <!-- Homepage Content Card -->
+        <div class="data-table-wrapper" style="padding: var(--sp-6);">
+          <h2
+            style="font-size: var(--fs-lg); margin-bottom: var(--sp-4); font-weight: var(--fw-semibold); border-bottom: 1px solid var(--color-border-light); padding-bottom: var(--sp-2);">
+            🏠 Homepage Content
+          </h2>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: var(--sp-4); margin-bottom: 0;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="featured-videos" class="form-label">Featured Video URLs</label>
+              <textarea class="form-input form-textarea" id="featured-videos" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/watch?v=..." style="min-height: 100px;"></textarea>
+              <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+                Enter one video URL or ID per line. These will be displayed in a grid on the homepage.
+              </small>
+            </div>
+          </div>
+        </div>
+
         <!-- Integration & AdSense Card -->
         <div class="data-table-wrapper" style="padding: var(--sp-6);">
           <h2
@@ -161,6 +179,61 @@
             <div class="form-group" style="margin-bottom: 0;">
               <label for="adsense-slot" class="form-label">Ad Unit Slot ID</label>
               <input type="text" class="form-input" id="adsense-slot" placeholder="e.g. 1234567890" value="9876543210">
+            </div>
+          </div>
+        </div>
+
+        <!-- API Keys & Configuration Card -->
+        <div class="data-table-wrapper" style="padding: var(--sp-6);">
+          <h2
+            style="font-size: var(--fs-lg); margin-bottom: var(--sp-4); font-weight: var(--fw-semibold); border-bottom: 1px solid var(--color-border-light); padding-bottom: var(--sp-2);">
+            🔑 API Keys & Configuration
+          </h2>
+          <p style="font-size: var(--fs-sm); color: var(--color-text-secondary); margin-bottom: var(--sp-4);">
+            Warning: Changing these keys will change the database your website connects to.
+          </p>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: var(--sp-4); margin-bottom: var(--sp-4);">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="drive-api-key" class="form-label">Google Drive API Key</label>
+              <input type="text" class="form-input" id="drive-api-key" placeholder="AIzaSy...">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-bottom: var(--sp-4);">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="firebase-api-key" class="form-label">Firebase API Key</label>
+              <input type="text" class="form-input" id="firebase-api-key" placeholder="AIzaSy...">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="firebase-auth-domain" class="form-label">Firebase Auth Domain</label>
+              <input type="text" class="form-input" id="firebase-auth-domain" placeholder="project.firebaseapp.com">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-bottom: var(--sp-4);">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="firebase-project-id" class="form-label">Firebase Project ID</label>
+              <input type="text" class="form-input" id="firebase-project-id" placeholder="project-id">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="firebase-storage-bucket" class="form-label">Firebase Storage Bucket</label>
+              <input type="text" class="form-input" id="firebase-storage-bucket" placeholder="project.firebasestorage.app">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--sp-4); margin-bottom: 0;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="firebase-messaging-id" class="form-label">Messaging Sender ID</label>
+              <input type="text" class="form-input" id="firebase-messaging-id" placeholder="123456789">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="firebase-app-id" class="form-label">Firebase App ID</label>
+              <input type="text" class="form-input" id="firebase-app-id" placeholder="1:123456789:web:abcdef">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="firebase-measurement-id" class="form-label">Measurement ID</label>
+              <input type="text" class="form-input" id="firebase-measurement-id" placeholder="G-XXXXXX">
             </div>
           </div>
         </div>
@@ -216,18 +289,18 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=103"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=103"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=105"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=105"></script>
 
   <!-- App Configuration & Services -->
-  <script src="../assets/js/firebase-config.js?v=103"></script>
-  <script src="../assets/js/theme.js?v=103"></script>
-  <script src="../assets/js/data.js?v=103"></script>
-  <script src="../assets/js/auth.js?v=103"></script>
-  <script src="../assets/js/db-service.js?v=103"></script>
-  <script src="../assets/js/components.js?v=103"></script>
-  <script src="../assets/js/admin.js?v=103"></script>
+  <script src="../assets/js/firebase-config.js?v=105"></script>
+  <script src="../assets/js/theme.js?v=105"></script>
+  <script src="../assets/js/data.js?v=105"></script>
+  <script src="../assets/js/auth.js?v=105"></script>
+  <script src="../assets/js/db-service.js?v=105"></script>
+  <script src="../assets/js/components.js?v=105"></script>
+  <script src="../assets/js/admin.js?v=105"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -270,6 +343,22 @@
       document.getElementById('settings-photo-categories').value = photoCats.join(', ');
       document.getElementById('settings-doc-categories').value = docCats.join(', ');
       document.getElementById('settings-sermon-categories').value = sermonCats.join(', ');
+
+      // Populate API Keys
+      const apiKeys = settings.apiKeys || {};
+      const fbConfig = apiKeys.firebaseConfig || {};
+      document.getElementById('drive-api-key').value = apiKeys.googleDriveApiKey || '';
+      document.getElementById('firebase-api-key').value = fbConfig.apiKey || '';
+      document.getElementById('firebase-auth-domain').value = fbConfig.authDomain || '';
+      document.getElementById('firebase-project-id').value = fbConfig.projectId || '';
+      document.getElementById('firebase-storage-bucket').value = fbConfig.storageBucket || '';
+      document.getElementById('firebase-messaging-id').value = fbConfig.messagingSenderId || '';
+      document.getElementById('firebase-app-id').value = fbConfig.appId || '';
+      document.getElementById('firebase-measurement-id').value = fbConfig.measurementId || '';
+
+      // Populate Homepage Content
+      const featuredVideos = settings.featuredVideos || (settings.featuredVideoUrl ? [settings.featuredVideoUrl] : []);
+      document.getElementById('featured-videos').value = featuredVideos.join('\n');
     }
 
     function setupEvents() {
@@ -321,9 +410,22 @@
               label: 'YouTube'
             }
           },
-          photoCategories: photoCats,
+            photoCategories: photoCats,
           documentCategories: docCats,
-          sermonCategories: sermonCats
+          sermonCategories: sermonCats,
+          featuredVideos: document.getElementById('featured-videos').value.split('\n').map(s => s.trim()).filter(Boolean),
+          apiKeys: {
+            googleDriveApiKey: document.getElementById('drive-api-key').value,
+            firebaseConfig: {
+              apiKey: document.getElementById('firebase-api-key').value,
+              authDomain: document.getElementById('firebase-auth-domain').value,
+              projectId: document.getElementById('firebase-project-id').value,
+              storageBucket: document.getElementById('firebase-storage-bucket').value,
+              messagingSenderId: document.getElementById('firebase-messaging-id').value,
+              appId: document.getElementById('firebase-app-id').value,
+              measurementId: document.getElementById('firebase-measurement-id').value
+            }
+          }
         };
 
         try {
