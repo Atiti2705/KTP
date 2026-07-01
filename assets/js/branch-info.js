@@ -286,7 +286,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   try {
-    const items = await DbService.get('branch-info') || [];
+    const collectionName = container.getAttribute('data-collection') || 'branch-info';
+    const items = await DbService.get(collectionName) || [];
     
     // Filter by the current page's data-type
     baseItems = items.filter(item => item.category === dataType);
@@ -310,7 +311,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     yearSelect.addEventListener('change', applyFilters);
     
   } catch (error) {
-    console.error(`Error loading Branch Info for ${dataType}:`, error);
+    console.error(`Error loading ${collectionName} for ${dataType}:`, error);
     container.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--brand-red); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--brand-red);">
         <p>⚠️ Failed to load records. Please try again later.</p>
