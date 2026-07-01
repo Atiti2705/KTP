@@ -220,6 +220,17 @@
             </label>
             <input type="date" id="bulk-photo-date" class="form-input" disabled>
           </div>
+
+          <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
+            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-weight: bold; margin-bottom: var(--sp-2);">
+              <input type="checkbox" id="bulk-enable-pinned" style="width: 16px; height: 16px;">
+              Update Pin to Homepage
+            </label>
+            <select id="bulk-photo-pinned" class="form-input form-select" disabled>
+              <option value="true">📌 Pinned (Yes)</option>
+              <option value="false">Unpinned (No)</option>
+            </select>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="btn-cancel-bulk-modal">Cancel</button>
@@ -679,13 +690,14 @@
           document.getElementById('bulk-photo-category').disabled = true;
           document.getElementById('bulk-photo-subcategory').disabled = true;
           document.getElementById('bulk-photo-date').disabled = true;
+          document.getElementById('bulk-photo-pinned').disabled = true;
 
           ModalSystem.open('bulk-edit-modal');
         });
       }
 
-      // Bulk Edit field toggles
-      ['category', 'subcategory', 'date'].forEach(field => {
+      // Bulk action checkbox toggles
+      ['category', 'subcategory', 'date', 'pinned'].forEach(field => {
         const checkbox = document.getElementById(`bulk-enable-${field}`);
         const input = document.getElementById(`bulk-photo-${field}`);
         if (checkbox && input) {
@@ -705,8 +717,9 @@
         const enableCat = document.getElementById('bulk-enable-category').checked;
         const enableSubcat = document.getElementById('bulk-enable-subcategory').checked;
         const enableDate = document.getElementById('bulk-enable-date').checked;
+        const enablePinned = document.getElementById('bulk-enable-pinned').checked;
 
-        if (!enableCat && !enableSubcat && !enableDate) {
+        if (!enableCat && !enableSubcat && !enableDate && !enablePinned) {
           AdminToast.show('No fields selected for update.', 'error');
           return;
         }
@@ -715,6 +728,7 @@
         if (enableCat) updates.category = document.getElementById('bulk-photo-category').value;
         if (enableSubcat) updates.subcategory = document.getElementById('bulk-photo-subcategory').value.trim();
         if (enableDate) updates.date = document.getElementById('bulk-photo-date').value;
+        if (enablePinned) updates.pinnedToHomepage = document.getElementById('bulk-photo-pinned').value === 'true';
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
