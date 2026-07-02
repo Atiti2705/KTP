@@ -216,96 +216,118 @@
 .stat-highlight-card {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 2rem 1.5rem;
-  background: var(--color-bg-alt);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 4px solid var(--brand-sky);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 3rem 1.5rem;
+  background: rgba(10, 15, 30, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px;
+  border: 1px solid rgba(135, 206, 235, 0.15);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 0 20px rgba(135, 206, 235, 0.05);
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
   z-index: 1;
 }
 
 [data-theme="light"] .stat-highlight-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-left: 4px solid var(--brand-sky);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(135, 206, 235, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05), inset 0 0 20px rgba(135, 206, 235, 0.1);
 }
 
-/* Subtle chart-like area in the background */
+/* Futuristic grid/dot overlay inside the card */
+.stat-highlight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(135, 206, 235, 0.15) 1px, transparent 1px);
+  background-size: 16px 16px;
+  opacity: 0.6;
+  z-index: 0;
+  pointer-events: none;
+}
+
+[data-theme="light"] .stat-highlight-card::before {
+  background-image: radial-gradient(rgba(135, 206, 235, 0.4) 1px, transparent 1px);
+}
+
+/* Glowing chart/data line at the bottom */
 .stat-highlight-card::after {
   content: '';
   position: absolute;
-  bottom: 0; left: 0; right: 0; height: 45%;
-  background: 
-    linear-gradient(to top, rgba(135, 206, 235, 0.08), transparent),
-    url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,20 L0,12 L20,16 L40,8 L60,15 L80,4 L100,10 L100,20 Z" fill="rgba(135,206,235,0.06)"/></svg>');
-  background-size: 100% 100%;
-  background-position: bottom;
-  background-repeat: no-repeat;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-}
-
-[data-theme="light"] .stat-highlight-card::after {
-  background: 
-    linear-gradient(to top, rgba(135, 206, 235, 0.15), transparent),
-    url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,20 L0,12 L20,16 L40,8 L60,15 L80,4 L100,10 L100,20 Z" fill="rgba(135,206,235,0.1)"/></svg>');
+  bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--brand-sky), var(--brand-gold), transparent);
+  box-shadow: 0 -2px 15px var(--brand-sky);
+  opacity: 0.7;
+  transition: opacity 0.3s ease, height 0.3s ease;
 }
 
 .stat-highlight-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(-6px);
+  background: rgba(15, 25, 45, 0.85);
+  border-color: rgba(135, 206, 235, 0.4);
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(135, 206, 235, 0.2),
+    inset 0 0 30px rgba(135, 206, 235, 0.15);
 }
 
 [data-theme="light"] .stat-highlight-card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 1);
+  border-color: var(--brand-sky);
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.1),
+    0 0 30px rgba(135, 206, 235, 0.3),
+    inset 0 0 30px rgba(135, 206, 235, 0.2);
 }
 
 .stat-highlight-card:hover::after {
+  height: 5px;
   opacity: 1;
+  box-shadow: 0 -4px 25px var(--brand-sky);
 }
 
 .stat-highlight-value {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: clamp(2.2rem, 5vw, 3rem);
-  font-weight: 700;
-  color: var(--color-text);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: clamp(2.5rem, 6vw, 3.8rem);
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.5),
+    0 0 20px var(--brand-sky),
+    0 0 40px var(--brand-sky);
   line-height: 1;
   margin-bottom: 0.75rem;
   z-index: 1;
   position: relative;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+}
+
+[data-theme="light"] .stat-highlight-value {
+  color: var(--brand-sky-dark);
+  text-shadow: 0 0 20px rgba(135, 206, 235, 0.4);
 }
 
 .stat-highlight-label {
   font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
+  font-weight: 700;
+  color: var(--brand-sky-light);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 4px;
   z-index: 1;
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  text-shadow: 0 0 10px rgba(135, 206, 235, 0.3);
 }
 
-/* Dashboard status/trend dot */
-.stat-highlight-label::before {
-  content: '';
-  display: inline-block;
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background-color: var(--brand-sky);
-  box-shadow: 0 0 8px rgba(135, 206, 235, 0.6);
+[data-theme="light"] .stat-highlight-label {
+  color: var(--color-text-secondary);
+  text-shadow: none;
 }
 
 [data-theme="light"] .stat-highlight-label {
