@@ -44,7 +44,6 @@
           <label for="admin-filter-category" style="font-size: var(--fs-sm); font-weight: var(--fw-medium);">Filter by Category:</label>
           <select id="admin-filter-category" class="filter-select">
             <option value="All">All Categories</option>
-            <option value="branch-ob-hlui">Branch OB lo ni tawh te</option>
             <option value="branch-ob">Branch OB</option>
             <option value="branch-committee">Branch Committee</option>
             <option value="group-committee">Group Committee</option>
@@ -96,7 +95,6 @@
             <label for="ob-category" class="form-label">Category</label>
             <select id="ob-category" class="form-input form-select" required>
               <option value="" disabled selected>Select category...</option>
-              <option value="branch-ob-hlui">Branch OB lo ni tawh te</option>
               <option value="branch-ob">Branch OB</option>
               <option value="branch-committee">Branch Committee</option>
               <option value="group-committee">Group Committee</option>
@@ -178,7 +176,6 @@
 
     function formatCategoryName(cat) {
       const names = {
-        'branch-ob-hlui': 'Branch OB Hlui',
         'branch-ob': 'Branch OB',
         'branch-committee': 'Branch Committee',
         'group-committee': 'Group Committee',

@@ -76,7 +76,7 @@ const ChurchInfo = {
   established: 1975,
   address: 'Saikhamakawn, Mizoram',
   phone: '+91 XXXXX XXXXX',
-  email: 'ktp.saikhamakawn@gmail.com',
+  email: 'ktpskk1975@gmail.com',
   tagline: 'Rawngbawl Tura Chhandam',
   description: 'Kristian Ṭhalai Pawl (KṬP) Saikhamakawn — serving the community through faith, fellowship, and service since 1975.'
 };

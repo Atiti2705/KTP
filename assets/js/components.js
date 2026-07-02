@@ -25,12 +25,11 @@ function renderHeader(activePage = '') {
         <a href="index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}" id="nav-home">Home</a>
         <a href="photos.html" class="nav-link ${activePage === 'photos' ? 'active' : ''}" id="nav-photos">Gallery</a>
         <div class="nav-dropdown" id="nav-chanchin-dropdown">
-          <button class="nav-link nav-dropdown-trigger ${['branch-ob-hlui','branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="nav-chanchin-btn" aria-expanded="false" aria-haspopup="true">
+          <button class="nav-link nav-dropdown-trigger ${['branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="nav-chanchin-btn" aria-expanded="false" aria-haspopup="true">
             Branch Chanchin <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div class="nav-dropdown-menu" id="nav-chanchin-menu">
-            <a href="branch-ob-hlui.html" class="nav-dropdown-item ${activePage === 'branch-ob-hlui' ? 'active' : ''}">Branch OB lo ni tawh te</a>
-            <a href="branch-ob.html" class="nav-dropdown-item ${activePage === 'branch-ob' ? 'active' : ''}">Branch OB</a>
+            <a href="branch-ob.html" class="nav-dropdown-item ${activePage === 'branch-ob' ? 'active' : ''}">Branch OB te</a>
             <a href="branch-committee.html" class="nav-dropdown-item ${activePage === 'branch-committee' ? 'active' : ''}">Branch Committee</a>
             <a href="group-committee.html" class="nav-dropdown-item ${activePage === 'group-committee' ? 'active' : ''}">Group Committee</a>
             <a href="sub-committee.html" class="nav-dropdown-item ${activePage === 'sub-committee' ? 'active' : ''}">Sub Committee</a>
@@ -133,16 +132,13 @@ function renderHeader(activePage = '') {
       <span class="nav-icon">📸</span> Gallery
     </a>
     <div class="nav-mobile-group">
-      <button class="nav-mobile-link nav-mobile-group-trigger ${['branch-ob-hlui','branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-chanchin-trigger">
+      <button class="nav-mobile-link nav-mobile-group-trigger ${['branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-chanchin-trigger">
         <span class="nav-icon">📚</span> Branch Chanchin
         <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
       <div class="nav-mobile-subnav" id="mobile-chanchin-subnav" style="display:none;">
-        <a href="branch-ob-hlui.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'branch-ob-hlui' ? 'active' : ''}">
-          Branch OB lo ni tawh te
-        </a>
         <a href="branch-ob.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'branch-ob' ? 'active' : ''}">
-          Branch OB
+          Branch OB te
         </a>
         <a href="branch-committee.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'branch-committee' ? 'active' : ''}">
           Branch Committee

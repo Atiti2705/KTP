@@ -339,7 +339,7 @@ const AuthService = {
     // Allow ending with ktpsaikhamakawn.org or specific admins
     if (email.endsWith('@ktpsaikhamakawn.org') || 
         email === 'admin@ktpsaikhamakawn.org' || 
-        email === 'ktp.saikhamakawn@gmail.com' || 
+        email === 'ktpskk1975@gmail.com' || 
         email === 'papuiarenthlei365@gmail.com') {
       return 'admin';
     }
