@@ -115,27 +115,27 @@
   --color-bg-input: #ffffff;
   --color-bg-overlay: rgba(0, 0, 0, 0.5);
 
-  --color-text: #1e293b;
-  --color-text-secondary: #475569;
+  --color-text: #0f172a;
+  --color-text-secondary: #334155;
   --color-text-tertiary: #64748b;
   --color-text-inverse: #ffffff;
-  --color-text-link: var(--brand-sky-dark);
+  --color-text-link: #026AA2; /* Deep blue for high contrast */
 
-  --color-primary: var(--brand-sky);
-  --color-primary-hover: var(--brand-sky-dark);
-  --color-primary-text: #1e293b;
-  --color-secondary: var(--brand-gold);
-  --color-secondary-hover: var(--brand-gold-dark);
-  --color-accent: var(--brand-red);
+  --color-primary: #026AA2; /* Deeper sky blue for better contrast on white */
+  --color-primary-hover: #034873;
+  --color-primary-text: #ffffff;
+  --color-secondary: var(--brand-gold-dark); /* Darker gold for better contrast */
+  --color-secondary-hover: #b38500;
+  --color-accent: var(--brand-red-dark);
 
-  --color-border: #e2e8f0;
-  --color-border-light: #f1f5f9;
+  --color-border: #cbd5e1; /* Slightly darker border for visibility */
+  --color-border-light: #e2e8f0;
   --color-divider: #e2e8f0;
 
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: var(--brand-sky);
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+  --color-info: #026AA2;
 
   --header-bg: rgba(255, 255, 255, 0.85);
   --header-border: rgba(0, 0, 0, 0.06);
