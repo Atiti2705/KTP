@@ -299,8 +299,12 @@
             localStorage.setItem('db_settings', newString);
             if (settings.churchInfo) Object.assign(ChurchInfo, settings.churchInfo);
             if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
-            renderHeader('home');
-            renderFooter();
+            
+            // Do not destroy the header/menu if the user is currently interacting with it
+            if (!document.body.classList.contains('mobile-menu-open')) {
+              renderHeader('home');
+              renderFooter();
+            }
             needsRerender = true;
           }
         }
