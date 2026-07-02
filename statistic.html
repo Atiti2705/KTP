@@ -30,117 +30,77 @@
 
     /* ─── Entry Card ─────────────────────────────── */
     .stat-entry {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      box-shadow: 0 4px 24px rgba(0,0,0,.07);
+      background: #1a202c; /* Dark slate */
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
       overflow: hidden;
-      transition: box-shadow .35s ease, transform .35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
-    .stat-entry:hover {
-      box-shadow: 0 14px 45px rgba(0,0,0,.15), 0 0 20px rgba(14,165,233,.08);
-      transform: translateY(-4px);
-    }
-
+    
     /* ─── Header Banner ──────────────────────────── */
     .stat-entry-header {
-      position: relative;
       display: flex;
       align-items: center;
-      gap: 1.25rem;
-      padding: 1.5rem 2rem;
-      background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0.03) 100%);
-      border-bottom: 1px solid var(--color-border-light);
-      overflow: hidden;
+      padding: 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      gap: 1.2rem;
     }
     .stat-entry-year-bubble {
-      position: relative;
-      z-index: 1;
-      background: rgba(14, 165, 233, 0.08);
-      border: 1px solid rgba(14, 165, 233, 0.15);
-      border-radius: 14px;
-      padding: .5rem 1rem;
+      background: transparent;
+      border: 1px solid rgba(59, 130, 246, 0.3); /* Blue border */
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
       text-align: center;
       flex-shrink: 0;
     }
     .stat-entry-year-text {
       display: block;
-      font-size: 2.2rem;
-      font-weight: 900;
+      font-size: 1.8rem;
+      font-weight: 800;
       line-height: 1;
-      letter-spacing: -1px;
-      background: linear-gradient(135deg, var(--brand-sky), var(--brand-sky-light, #a8d8ea));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #7dd3fc; /* Light blue */
     }
     .stat-entry-year-label {
       display: block;
-      font-size: .6rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--color-text-secondary);
-      margin-top: 2px;
-      font-weight: 700;
-    }
-    .stat-entry-meta {
-      position: relative;
-      z-index: 1;
-      flex: 1;
-      min-width: 0;
-    }
-    .stat-entry-title {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--color-text);
-      margin: 0 0 .3rem;
-      line-height: 1.3;
-    }
-    .stat-entry-desc {
-      font-size: .85rem;
-      color: var(--color-text-secondary);
-      margin: 0;
-      line-height: 1.5;
-    }
-    .stat-latest-badge {
-      position: relative;
-      z-index: 1;
-      font-size: .6rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--brand-sky), #1e5fa8);
-      color: #fff;
-      border-radius: 20px;
-      padding: 4px 12px;
+      font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 1px;
-      white-space: nowrap;
-      flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(14,165,233,.25);
+      color: #94a3b8; /* Slate 400 */
+      margin-top: 4px;
+      font-weight: 700;
+    }
+    .stat-entry-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+      flex: 1;
+      text-transform: capitalize;
+    }
+    .stat-latest-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      background: #3b82f6; /* Blue */
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 6px 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
     }
 
     /* ─── Overall Stats Row ──────────────────────── */
     .stat-overall-section {
-      padding: 1.75rem 2rem;
-      border-bottom: 1px solid var(--color-border-light);
+      padding: 1.5rem 1.5rem;
     }
     .stat-section-label {
-      font-size: .65rem;
-      font-weight: 700;
+      font-size: 0.7rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: var(--color-text-secondary);
-      margin: 0 0 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-    }
-    .stat-section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--color-border-light);
+      letter-spacing: 1px;
+      color: #cbd5e1; /* lighter gray */
+      margin: 0 0 1rem;
     }
     .stat-overall-grid {
       display: grid;
@@ -151,157 +111,101 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: .4rem;
-      padding: 1.5rem .75rem;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
+      gap: 0.3rem;
+      padding: 1.2rem 0.5rem;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
       text-align: center;
-      transition: transform .35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow .3s ease;
-    }
-    .stat-overall-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(14,165,233,.15), 0 0 15px rgba(135, 206, 235, 0.1);
     }
     .stat-overall-value {
-      font-size: clamp(2rem, 5vw, 2.8rem);
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--brand-sky), var(--brand-sky-light, #a8d8ea));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #7dd3fc;
       line-height: 1;
-      font-variant-numeric: tabular-nums;
     }
     .stat-overall-label {
-      font-size: .75rem;
+      font-size: 0.65rem;
       font-weight: 700;
-      color: var(--color-text-secondary);
+      color: #e2e8f0;
       text-transform: uppercase;
-      letter-spacing: .8px;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
     }
 
     /* ─── Groups Section ─────────────────────────── */
     .stat-groups-section {
-      padding: 1.75rem 2rem;
+      padding: 0 1.5rem 1.5rem;
     }
     .stat-groups-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
-      gap: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
     }
     .stat-group-card {
-      position: relative;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: .6rem;
-      padding: 1.5rem 1rem;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      gap: 1rem;
       cursor: pointer;
-      transition: transform .35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow .3s ease, border-color .3s ease;
-      text-align: center;
-      overflow: hidden;
-    }
-    .stat-group-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--brand-sky), var(--brand-gold));
-      opacity: 0;
-      transition: opacity .3s;
+      transition: background 0.2s, border-color 0.2s;
     }
     .stat-group-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 14px 35px rgba(14,165,233,.2), 0 0 20px rgba(135, 206, 235, 0.1);
-      border-color: rgba(14,165,233,.35);
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.15);
     }
-    .stat-group-card:hover::before { opacity: 1; }
-
     .stat-group-name {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 800;
-      color: var(--color-text);
-      letter-spacing: -0.01em;
+      color: #ffffff;
+      min-width: 70px;
     }
-
-    /* Men / Female split row inside group card */
     .stat-group-split {
       display: flex;
-      gap: 0;
-      width: 100%;
-      border: 1px solid var(--color-border-light);
-      border-radius: 12px;
-      overflow: hidden;
-      margin: .15rem 0;
-    }
-    .stat-group-split-cell {
+      align-items: baseline;
+      gap: 12px;
       flex: 1;
+    }
+    .stat-group-split-item {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: .65rem .25rem;
-    }
-    .stat-group-split-cell:first-child {
-      border-right: 1px solid var(--color-border-light);
-      background: rgba(99,102,241,.06);
-    }
-    .stat-group-split-cell:last-child {
-      background: rgba(236,72,153,.06);
+      align-items: baseline;
+      gap: 4px;
     }
     .stat-group-split-value {
-      font-size: 1.35rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--brand-sky), var(--brand-sky-light, #a8d8ea));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #7dd3fc;
     }
     .stat-group-split-label {
-      font-size: .62rem;
+      font-size: 0.65rem;
       font-weight: 700;
+      color: #e2e8f0;
       text-transform: uppercase;
-      letter-spacing: .8px;
-      color: var(--color-text-secondary);
-      margin-top: 3px;
     }
-
     .stat-group-total-badge {
-      font-size: .75rem;
-      font-weight: 800;
-      color: var(--brand-sky);
-      background: rgba(14,165,233,.08);
-      border: 1px solid rgba(14,165,233,.15);
-      border-radius: 20px;
-      padding: 4px 14px;
-      letter-spacing: .3px;
-    }
-    .stat-group-hint {
       display: flex;
       align-items: center;
       gap: 4px;
-      font-size: .68rem;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      border-radius: 20px;
+      padding: 4px 12px;
+      color: #7dd3fc;
+      font-size: 0.75rem;
       font-weight: 700;
-      color: var(--brand-sky);
-      opacity: .9;
-      transition: opacity .2s;
     }
-    .stat-group-card:hover .stat-group-hint {
-      opacity: 1;
+    .stat-group-total-badge span {
+      font-size: 0.85rem;
     }
-    .stat-group-no-members {
-      font-size: .65rem;
-      color: var(--color-text-secondary);
-      opacity: .6;
+    .stat-group-hint {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      text-align: center;
+      min-width: 90px;
+      line-height: 1.2;
     }
 
     /* ─── Empty State ────────────────────────────── */
@@ -650,31 +554,25 @@
       .stat-groups-grid { 
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
+        gap: 0.6rem;
       }
       .stat-group-card { 
         flex-direction: row; 
-        padding: 0.5rem 0.75rem; 
+        padding: 0.75rem 0.75rem; 
         gap: 0.5rem; 
-        border-radius: 10px;
+        border-radius: 8px;
         align-items: center;
-        justify-content: space-between;
+        flex-wrap: wrap;
       }
-      .stat-group-card::before { display: none; }
       
-      .stat-group-name { font-size: 0.95rem; margin: 0; flex: 1; text-align: left; }
+      .stat-group-name { font-size: 0.95rem; margin: 0; min-width: 60px; }
       
       .stat-group-split { 
         width: auto; 
         margin: 0; 
-        border: none; 
-        background: transparent;
-        gap: 0.4rem;
+        gap: 8px;
       }
-      .stat-group-split-cell { 
-        padding: 0; 
-        background: transparent !important; 
-        border: none !important; 
+      .stat-group-split-item { 
         flex-direction: row;
         align-items: baseline;
         gap: 2px;
@@ -729,35 +627,22 @@
 
   <footer class="site-footer" id="site-footer"></footer>
 
-  <!-- ── GROUP MEMBERS MODAL ─────────────────────── -->
-  <div class="group-modal-backdrop" id="group-modal" role="dialog" aria-modal="true" aria-labelledby="group-modal-title-text">
-    <div class="group-modal-sheet">
-      <div class="group-modal-handle"></div>
-
-      <!-- Header -->
-      <div class="group-modal-header">
-        <div class="group-modal-avatar" id="group-modal-avatar">J</div>
-        <div class="group-modal-title-wrap">
-          <h2 class="group-modal-title" id="group-modal-title-text"></h2>
-          <p class="group-modal-subtitle" id="group-modal-subtitle"></p>
-        </div>
-        <button class="group-modal-close" id="group-modal-close" aria-label="Close">✕</button>
+  <!-- ── PDF VIEWER MODAL ─────────────────────── -->
+  <div class="modal-backdrop lightbox-modal" id="doc-modal" style="background: rgba(0,0,0,0.95); padding: 0;">
+    <div style="position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(0,0,0,0.5); z-index: 10;">
+         <h3 id="modal-doc-title" style="color: white; margin: 0; font-size: 1.2rem; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Group PDF</h3>
+         <div style="display: flex; gap: 16px; align-items: center;">
+           <a href="#" id="modal-doc-download" target="_blank" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 8px;" title="Open in New Tab">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+           </a>
+           <button id="close-doc-modal" aria-label="Close" style="background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+           </button>
+         </div>
       </div>
-
-      <!-- Stat pills -->
-      <div class="group-modal-stats" id="group-modal-stats"></div>
-
-      <div class="group-modal-divider"></div>
-
-      <!-- Scrollable body -->
-      <div class="group-modal-body">
-        <div class="member-search-wrap">
-          <input type="text" class="member-search-input" id="member-search" autocomplete="off" style="padding-left: 1.25rem;">
-        </div>
-        <p class="member-count-label">
-          <span id="member-count-label">Members</span>
-        </p>
-        <ul class="member-list" id="member-list"></ul>
+      <div style="flex: 1; position: relative; width: 100%; height: 100%; background: #fff;">
+        <iframe id="modal-doc-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
       </div>
     </div>
   </div>
@@ -867,30 +752,31 @@
             <p class="stat-section-label">Groups</p>
             <div class="stat-groups-grid">
               ${groups.map((g, gi) => {
-                const hasMembers = Array.isArray(g.members) && g.members.length > 0;
-                const initial = (g.name || '?').charAt(0).toUpperCase();
+                const hasPdf = !!g.pdfUrl;
                 return `
                   <div class="stat-group-card"
-                       onclick="openGroupModal('${stat.id}', ${gi})"
+                       onclick="${hasPdf ? `openPdfModal('${g.pdfUrl}', '${g.name.replace(/'/g, "\\'")}')` : `if(typeof Toast !== 'undefined') Toast.show('No PDF link available for this group.', 'error'); else alert('No PDF available for this group.');`}"
                        role="button"
                        tabindex="0"
-                       aria-label="View ${g.name} group members"
-                       onkeydown="if(event.key==='Enter')openGroupModal('${stat.id}',${gi})">
+                       aria-label="View ${g.name} group PDF"
+                       onkeydown="if(event.key==='Enter') ${hasPdf ? `openPdfModal('${g.pdfUrl}', '${g.name.replace(/'/g, "\\'")}')` : `alert('No PDF available for this group.')`}">
                     <div class="stat-group-name">${g.name}</div>
                     <div class="stat-group-split">
-                      <div class="stat-group-split-cell">
+                      <div class="stat-group-split-item">
+                        <span class="stat-group-split-label">MIPA</span>
                         <span class="stat-group-split-value" data-target="${g.men || 0}">${g.men || 0}</span>
-                        <span class="stat-group-split-label">Men</span>
                       </div>
-                      <div class="stat-group-split-cell">
+                      <div class="stat-group-split-item">
+                        <span class="stat-group-split-label">HMEICHHIA</span>
                         <span class="stat-group-split-value" data-target="${g.female || 0}">${g.female || 0}</span>
-                        <span class="stat-group-split-label">Female</span>
                       </div>
                     </div>
-                    <span class="stat-group-total-badge">Total: ${g.total || (g.men||0)+(g.female||0)}</span>
-                    ${hasMembers
-                      ? `<div class="stat-group-hint">View ${g.members.length} members →</div>`
-                      : `<div class="stat-group-no-members">No member list yet</div>`}
+                    <div class="stat-group-total-badge">
+                      Total: <span data-target="${g.total || (g.men||0)+(g.female||0)}">${g.total || (g.men||0)+(g.female||0)}</span>
+                    </div>
+                    <div class="stat-group-hint">
+                      ${hasPdf ? 'View PDF' : 'No PDF<br>available'}
+                    </div>
                   </div>`;
               }).join('')}
             </div>
@@ -905,10 +791,7 @@
                 <span class="stat-entry-year-text">${stat.year || '—'}</span>
                 <span class="stat-entry-year-label">Year</span>
               </div>
-              <div class="stat-entry-meta">
-                <h2 class="stat-entry-title">${stat.title || 'Statistics'}</h2>
-                ${stat.description ? `<p class="stat-entry-desc">${stat.description}</p>` : ''}
-              </div>
+              <h2 class="stat-entry-title">${stat.title || 'Branch Statistics'}</h2>
               ${isLatest ? '<span class="stat-latest-badge">Latest</span>' : ''}
             </div>
 
@@ -917,16 +800,16 @@
               <p class="stat-section-label">Overall Membership</p>
               <div class="stat-overall-grid">
                 <div class="stat-overall-card">
-                  <span class="stat-overall-value" data-target="${stat.totalMembers || 0}">${stat.totalMembers || 0}</span>
                   <span class="stat-overall-label">Total Members</span>
+                  <span class="stat-overall-value" data-target="${stat.totalMembers || 0}">${stat.totalMembers || 0}</span>
                 </div>
                 <div class="stat-overall-card">
+                  <span class="stat-overall-label">Mipa</span>
                   <span class="stat-overall-value" data-target="${stat.men || 0}">${stat.men || 0}</span>
-                  <span class="stat-overall-label">Men</span>
                 </div>
                 <div class="stat-overall-card">
+                  <span class="stat-overall-label">Hmeichhia</span>
                   <span class="stat-overall-value" data-target="${stat.female || 0}">${stat.female || 0}</span>
-                  <span class="stat-overall-label">Female</span>
                 </div>
               </div>
             </div>
@@ -965,106 +848,55 @@
     }
 
     /* ================================================
-       GROUP MODAL
+       GROUP PDF MODAL
        ================================================ */
-    let _currentMembers = [];
-    let _currentGroup   = null;
-
     function setupModal() {
-      const backdrop   = document.getElementById('group-modal');
-      const closeBtn   = document.getElementById('group-modal-close');
-      const searchInput = document.getElementById('member-search');
-
-      closeBtn.addEventListener('click', closeGroupModal);
-      backdrop.addEventListener('click', e => { if (e.target === backdrop) closeGroupModal(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGroupModal(); });
-      searchInput.addEventListener('input', () => filterMemberList(searchInput.value.trim().toLowerCase()));
+      const closeBtn = document.getElementById('close-doc-modal');
+      const closeAction = () => {
+        const iframe = document.getElementById('modal-doc-iframe');
+        if (iframe) iframe.src = '';
+        if (typeof ModalSystem !== 'undefined') ModalSystem.close('doc-modal');
+      };
+      if (closeBtn) closeBtn.addEventListener('click', closeAction);
     }
 
-    function openGroupModal(statId, groupIndex) {
-      const stat  = Statistics.find(s => s.id === statId);
-      if (!stat) return;
-      const group = (stat.groups || [])[groupIndex];
-      if (!group) return;
+    function openPdfModal(pdfUrl, groupName) {
+      if (!pdfUrl) return;
 
-      _currentMembers = Array.isArray(group.members) ? group.members : [];
-      _currentGroup   = group;
+      const modalTitle = document.getElementById('modal-doc-title');
+      const modalDownload = document.getElementById('modal-doc-download');
+      const modalIframe = document.getElementById('modal-doc-iframe');
 
-      const initial = (group.name || '?').charAt(0).toUpperCase();
+      if (modalTitle) modalTitle.textContent = groupName + ' PDF';
 
-      // Avatar
-      document.getElementById('group-modal-avatar').textContent = initial;
-
-      // Header text
-      document.getElementById('group-modal-title-text').textContent = `${group.name} Group`;
-      document.getElementById('group-modal-subtitle').textContent    = stat.title || stat.year || '';
-
-      // Stat pills
-      const total = group.total || (group.men||0) + (group.female||0);
-      document.getElementById('group-modal-stats').innerHTML = `
-        <div class="group-modal-stat-pill pill-men">
-          <span class="group-modal-stat-value">${group.men || 0}</span>
-          <span class="group-modal-stat-label">Men</span>
-        </div>
-        <div class="group-modal-stat-pill pill-female">
-          <span class="group-modal-stat-value">${group.female || 0}</span>
-          <span class="group-modal-stat-label">Female</span>
-        </div>
-        <div class="group-modal-stat-pill pill-total">
-          <span class="group-modal-stat-value">${total}</span>
-          <span class="group-modal-stat-label">Total</span>
-        </div>`;
-
-      // Reset search
-      document.getElementById('member-search').value = '';
-      renderMemberList(_currentMembers);
-
-      document.getElementById('group-modal').classList.add('active');
-      document.body.classList.add('modal-open');
-      if (_currentMembers.length > 0) {
-        setTimeout(() => document.getElementById('member-search').focus(), 100);
-      }
-    }
-
-    function closeGroupModal() {
-      document.getElementById('group-modal').classList.remove('active');
-      document.body.classList.remove('modal-open');
-    }
-
-    function filterMemberList(query) {
-      const filtered = query
-        ? _currentMembers.filter(m => m.toLowerCase().includes(query))
-        : _currentMembers;
-      renderMemberList(filtered, query);
-    }
-
-    function renderMemberList(members, highlight = '') {
-      const list  = document.getElementById('member-list');
-      const label = document.getElementById('member-count-label');
-
-      if (!members || members.length === 0) {
-        if (label) label.textContent = 'Members';
-        list.innerHTML = `<li class="member-empty">
-          ${highlight ? 'No members match your search.' : 'No member names added yet.'}
-        </li>`;
-        return;
+      let fileId = '';
+      if (pdfUrl && pdfUrl !== '#') {
+        if (pdfUrl.includes('/file/d/')) {
+          const parts = pdfUrl.split('/file/d/');
+          if (parts.length > 1) {
+            fileId = parts[1].split('/')[0];
+          }
+        } else if (pdfUrl.includes('id=')) {
+          try {
+            const urlObj = new URL(pdfUrl);
+            fileId = urlObj.searchParams.get('id');
+          } catch(e) {}
+        }
       }
 
-      if (label) label.textContent = `${members.length} Member${members.length !== 1 ? 's' : ''}`;
+      if (modalIframe) {
+        if (fileId) {
+          modalIframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
+        } else {
+          modalIframe.src = pdfUrl;
+        }
+      }
 
-      list.innerHTML = members.map((name, i) => {
-        const initial     = name.trim().charAt(0).toUpperCase() || '?';
-        const displayName = highlight
-          ? name.replace(new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'),
-              '<mark style="background:rgba(14,165,233,.18);border-radius:3px;padding:0 2px;">$1</mark>')
-          : name;
-        return `
-          <li class="member-list-item">
-            <span class="member-number">${i + 1}.</span>
-            <div class="member-avatar">${initial}</div>
-            <span class="member-name">${displayName}</span>
-          </li>`;
-      }).join('');
+      if (modalDownload) {
+        modalDownload.href = pdfUrl;
+      }
+
+      if (typeof ModalSystem !== 'undefined') ModalSystem.open('doc-modal');
     }
   </script>
 </body>

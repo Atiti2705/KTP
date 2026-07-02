@@ -491,16 +491,16 @@
       grid.innerHTML = `
         <!-- Overall stats -->
         <div class="stat-highlight-card reveal">
-          <div class="stat-highlight-value" data-target="${newest.totalMembers || 0}">${newest.totalMembers || 0}</div>
           <div class="stat-highlight-label">Total Members</div>
+          <div class="stat-highlight-value" data-target="${newest.totalMembers || 0}">${newest.totalMembers || 0}</div>
         </div>
         <div class="stat-highlight-card reveal">
+          <div class="stat-highlight-label">Mipa</div>
           <div class="stat-highlight-value" data-target="${newest.men || 0}">${newest.men || 0}</div>
-          <div class="stat-highlight-label">Men</div>
         </div>
         <div class="stat-highlight-card reveal">
+          <div class="stat-highlight-label">Hmeichhia</div>
           <div class="stat-highlight-value" data-target="${newest.female || 0}">${newest.female || 0}</div>
-          <div class="stat-highlight-label">Female</div>
         </div>
         ${groups.map(g => `
         <div class="stat-highlight-card reveal" style="cursor:pointer;" onclick="window.location.href='statistic.html'">

@@ -175,21 +175,24 @@ const Statistics = [
         men: 20,
         female: 22,
         total: 42,
-        members: []
+        members: [],
+        pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
       },
       {
         name: 'Isaia',
         men: 18,
         female: 20,
         total: 38,
-        members: []
+        members: [],
+        pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
       },
       {
         name: 'Daniela',
         men: 22,
         female: 22,
         total: 44,
-        members: []
+        members: [],
+        pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
       }
     ],
     orderIndex: 0

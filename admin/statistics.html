@@ -130,7 +130,7 @@
                 <th>Title / Year</th>
                 <th>Date</th>
                 <th>Total Members</th>
-                <th>Men / Female</th>
+                <th>Mipa / Hmeichhia</th>
                 <th>Groups</th>
                 <th style="width: 100px;">Actions</th>
               </tr>
@@ -192,11 +192,11 @@
                 <input type="number" id="stat-total" class="form-input" min="0">
               </div>
               <div class="form-group" style="margin:0;">
-                <label class="form-label">Men</label>
+                <label class="form-label">Mipa</label>
                 <input type="number" id="stat-men" class="form-input" min="0">
               </div>
               <div class="form-group" style="margin:0;">
-                <label class="form-label">Female</label>
+                <label class="form-label">Hmeichhia</label>
                 <input type="number" id="stat-female" class="form-input" min="0">
               </div>
             </div>
@@ -212,7 +212,7 @@
               <!-- Groups rendered here -->
             </div>
             <p style="font-size:var(--fs-xs); color:var(--color-text-secondary); margin-top:0.5rem;">
-              Enter member names one per line in the Members box. Leave empty if not listing members.
+              Provide a PDF link for each group. When clicked on the statistics page, it will open the PDF.
             </p>
           </div>
 
@@ -298,17 +298,17 @@
       item.innerHTML = `
         <div class="group-builder-header">
           <input type="text" data-field="name" value="${group.name || ''}"
-            style="border:none; background:transparent; font-weight:var(--fw-semibold); font-size:var(--fs-sm); color:var(--color-text); width:100%; outline:none;">
+            style="border:none; background:transparent; font-weight:var(--fw-semibold); font-size:var(--fs-sm); color:var(--color-text); width:100%; outline:none;" placeholder="Group Name">
           <button type="button" class="remove-group-btn" title="Remove group">✕</button>
         </div>
         <div class="group-builder-body">
           <div class="group-counts-row">
             <div class="group-count-field">
-              <label>👨 Men</label>
+              <label>👨 Mipa</label>
               <input type="number" data-field="men" value="${group.men || ''}" min="0">
             </div>
             <div class="group-count-field">
-              <label>👩 Female</label>
+              <label>👩 Hmeichhia</label>
               <input type="number" data-field="female" value="${group.female || ''}" min="0">
             </div>
             <div class="group-count-field">
@@ -317,6 +317,12 @@
             </div>
           </div>
           <div>
+            <label style="font-size:var(--fs-xs); color:var(--color-text-secondary); font-weight:var(--fw-medium); display:block; margin-bottom:4px;">
+              🔗 PDF Link
+            </label>
+            <input type="url" data-field="pdfUrl" value="${group.pdfUrl || ''}" placeholder="https://drive.google.com/..." style="width:100%; box-sizing:border-box; padding:0.4rem 0.6rem; border:1px solid var(--color-border); border-radius:var(--radius-sm); background:var(--color-bg-card); color:var(--color-text); font-size:var(--fs-sm);">
+          </div>
+          <div style="display:none;">
             <label style="font-size:var(--fs-xs); color:var(--color-text-secondary); font-weight:var(--fw-medium); display:block; margin-bottom:4px;">
               📋 Member Names <span style="font-weight:normal;">(one per line)</span>
             </label>
@@ -346,9 +352,10 @@
         const men = parseInt(item.querySelector('[data-field="men"]').value) || 0;
         const female = parseInt(item.querySelector('[data-field="female"]').value) || 0;
         const total = parseInt(item.querySelector('[data-field="total"]').value) || (men + female);
+        const pdfUrl = item.querySelector('[data-field="pdfUrl"]').value.trim();
         const membersRaw = item.querySelector('[data-field="members"]').value;
         const members = membersRaw.split('\n').map(m => m.trim()).filter(Boolean);
-        return { name, men, female, total, members };
+        return { name, men, female, total, members, pdfUrl };
       }).filter(g => g.name);
     }
 
@@ -370,7 +377,7 @@
         document.getElementById('stat-date').value = new Date().toISOString().split('T')[0];
         clearGroupRows();
         // Default three groups
-        ['Jeremia', 'Isaia', 'Daniela'].forEach(name => addGroupRow({ name, men: '', female: '', total: '', members: [] }));
+        ['Jeremia', 'Isaia', 'Daniela'].forEach(name => addGroupRow({ name, men: '', female: '', total: '', members: [], pdfUrl: '' }));
         ModalSystem.open('stat-form-modal');
       });
 
@@ -442,7 +449,7 @@
       if (groups.length > 0) {
         groups.forEach(g => addGroupRow(g));
       } else {
-        ['Jeremia', 'Isaia', 'Daniela'].forEach(name => addGroupRow({ name, men: '', female: '', total: '', members: [] }));
+        ['Jeremia', 'Isaia', 'Daniela'].forEach(name => addGroupRow({ name, men: '', female: '', total: '', members: [], pdfUrl: '' }));
       }
 
       ModalSystem.open('stat-form-modal');
