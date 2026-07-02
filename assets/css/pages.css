@@ -8,28 +8,22 @@
    ======================== */
 .hero {
   position: relative;
-  min-height: auto;
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   overflow: hidden;
-  background-color: var(--color-bg);
-  background-image: 
-    linear-gradient(to bottom, rgba(248, 250, 252, 0.6), rgba(248, 250, 252, 0.95)),
-    url('../images/hero-bg.jpeg');
-  background-size: cover;
-  background-position: top center;
+  background: linear-gradient(135deg, #0c1222 0%, #1a1a3e 40%, #0f2027 100%);
 }
 
-[data-theme="dark"] .hero {
-  background-image: 
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.95)),
-    url('../images/hero-bg.jpeg');
+[data-theme="light"] .hero {
+  background: linear-gradient(135deg, #e8f4fd 0%, #f0f4ff 40%, #fdf6e3 100%);
 }
 
+/* Animated gradient mesh overlay */
 .hero-bg-decoration {
   position: absolute;
   inset: 0;
@@ -40,167 +34,158 @@
 .hero-bg-decoration::before {
   content: '';
   position: absolute;
-  top: -30%;
-  right: -20%;
-  width: 500px;
-  height: 500px;
+  top: -40%;
+  right: -30%;
+  width: 80vmax;
+  height: 80vmax;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(135, 206, 235, 0.18), transparent 70%);
-  animation: hero-orb-drift 8s ease-in-out infinite alternate;
+  background: radial-gradient(circle, rgba(135, 206, 235, 0.25) 0%, transparent 60%);
+  animation: hero-mesh-1 12s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 .hero-bg-decoration::after {
   content: '';
   position: absolute;
-  bottom: -20%;
-  left: -10%;
-  width: 400px;
-  height: 400px;
+  bottom: -35%;
+  left: -25%;
+  width: 70vmax;
+  height: 70vmax;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.12), transparent 70%);
-  animation: hero-orb-drift 10s ease-in-out infinite alternate-reverse;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%);
+  animation: hero-mesh-2 14s ease-in-out infinite alternate-reverse;
+  will-change: transform;
 }
 
-@keyframes hero-orb-drift {
-  0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
-  50%  { transform: translate(30px, -20px) scale(1.08); opacity: 1; }
-  100% { transform: translate(-20px, 15px) scale(0.95); opacity: 0.8; }
+[data-theme="light"] .hero-bg-decoration::before {
+  background: radial-gradient(circle, rgba(135, 206, 235, 0.35) 0%, transparent 55%);
+}
+
+[data-theme="light"] .hero-bg-decoration::after {
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 55%);
+}
+
+@keyframes hero-mesh-1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(40px, -30px) scale(1.1); }
+  100% { transform: translate(-30px, 20px) scale(0.95); }
+}
+
+@keyframes hero-mesh-2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-35px, 25px) scale(1.12); }
+  100% { transform: translate(25px, -15px) scale(0.9); }
+}
+
+/* Noise texture for depth */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 1;
+}
+
+[data-theme="light"] .hero::after {
+  opacity: 0.15;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  padding: var(--sp-8) var(--sp-4);
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: clamp(2rem, 6vh, 5rem) var(--sp-4);
+  max-width: 750px;
+  animation: hero-fade-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Stunning Floating Logo with Shadow */
-.hero-logo-wrapper {
-  position: relative;
-  margin-bottom: clamp(1rem, 3vh, 2rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+@keyframes hero-fade-in {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .hero-logo {
   height: auto;
-  width: clamp(90px, 16vh, 220px);
-  animation: float-logo 5s ease-in-out infinite;
-  filter: drop-shadow(0 15px 35px rgba(14, 165, 233, 0.35));
-  z-index: 2;
+  width: auto;
+  margin: 0 auto var(--sp-4);
+  animation: hero-logo-float 5s ease-in-out infinite;
+  filter: drop-shadow(0 15px 40px rgba(135, 206, 235, 0.35));
 }
 
-.hero-logo-shadow {
-  position: absolute;
-  bottom: -15px;
-  width: 60%;
-  height: 15px;
-  background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.5) 0%, transparent 70%);
-  border-radius: 50%;
-  filter: blur(8px);
-  animation: pulse-shadow 5s ease-in-out infinite;
-  z-index: 1;
+@keyframes hero-logo-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
 }
 
-@keyframes float-logo {
-  0%   { transform: translateY(0); }
-  50%  { transform: translateY(-15px); }
-  100% { transform: translateY(0); }
+@media (min-width: 768px) {
+  .hero-logo {
+    height: 160px;
+    width: auto;
+  }
 }
 
-@keyframes pulse-shadow {
-  0%   { transform: scale(1); opacity: 0.8; }
-  50%  { transform: scale(0.7); opacity: 0.3; }
-  100% { transform: scale(1); opacity: 0.8; }
-}
-
-/* Modern Pill Badge */
-.hero-badge {
-  font-size: clamp(0.75rem, 2vh, 0.95rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-primary);
-  background: rgba(14, 165, 233, 0.1);
-  padding: 0.5rem 1.25rem;
-  border-radius: 100px;
-  margin-bottom: clamp(1rem, 2vh, 1.5rem);
-  border: 1px solid rgba(14, 165, 233, 0.2);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.05);
-  transform: translateZ(0);
-}
-
-/* Massive Gradient Title */
-/* Massive Gradient Title */
 .hero-title {
-  font-size: clamp(2rem, 6vw, 4rem);
+  font-size: var(--fs-4xl);
   font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
-  text-align: center;
+  margin-bottom: var(--sp-2);
   letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--color-text) 0%, var(--color-primary) 100%);
+  line-height: 1.1;
+  background: linear-gradient(180deg, #ffffff 20%, rgba(255,255,255,0.7) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.05));
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
 }
 
-[data-theme="dark"] .hero-title {
-  background: linear-gradient(to right, #ffffff, #93c5fd);
+[data-theme="light"] .hero-title {
+  background: linear-gradient(180deg, #1a1a3e 20%, #2d3a5c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4));
+  filter: none;
 }
 
-/* Sleek Glassmorphism Verse Card */
-.hero-verse-card {
-  position: relative;
-  max-width: 650px;
-  padding: clamp(1.5rem, 4vh, 2.5rem);
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 1.5rem;
-  box-shadow: 
-    0 10px 40px -10px rgba(0,0,0,0.05),
-    inset 0 0 0 1px rgba(255,255,255,0.4);
-  transform: translateZ(0);
-  will-change: transform;
+.hero-title .highlight {
+  background: linear-gradient(135deg, var(--brand-sky), var(--brand-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-[data-theme="dark"] .hero-verse-card {
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 
-    0 20px 50px -10px rgba(0,0,0,0.4),
-    inset 0 0 0 1px rgba(255,255,255,0.05);
+.hero-subtitle {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  display: inline-block;
+  padding: 0.4em 1.2em;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--brand-gold-light);
+  letter-spacing: 1.5px;
+  margin-bottom: var(--sp-4);
+}
+
+[data-theme="light"] .hero-subtitle {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(135, 206, 235, 0.3);
+  color: var(--brand-sky-dark);
+  -webkit-text-fill-color: unset;
 }
 
 .hero-description {
-  font-size: clamp(0.9rem, 2.5vw, 1.15rem);
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-  font-style: italic;
-  margin: 0 0 1rem 0;
-  font-weight: 500;
+  font-size: var(--fs-md);
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 550px;
+  margin: 0 auto var(--sp-4);
+  line-height: 1.7;
 }
 
-.hero-verse-ref {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+[data-theme="light"] .hero-description {
+  color: var(--color-text-secondary);
 }
 
 .hero-actions {
@@ -224,25 +209,34 @@
     bottom: var(--sp-6);
     left: 50%;
     transform: translateX(-50%);
-    animation: scroll-bounce 2s ease-in-out infinite;
-    color: var(--color-text-tertiary);
+    animation: scroll-bounce 2.5s ease-in-out infinite;
+    color: rgba(255, 255, 255, 0.4);
     font-size: var(--fs-xs);
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     text-transform: uppercase;
+    z-index: 2;
+  }
+
+  [data-theme="light"] .hero-scroll-indicator {
+    color: var(--color-text-tertiary);
   }
 }
 
 .hero-scroll-arrow {
   width: 20px;
   height: 20px;
-  border-right: 2px solid var(--color-text-tertiary);
-  border-bottom: 2px solid var(--color-text-tertiary);
+  border-right: 2px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.4);
   transform: rotate(45deg);
+}
+
+[data-theme="light"] .hero-scroll-arrow {
+  border-color: var(--color-text-tertiary);
 }
 
 @keyframes scroll-bounce {
   0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
-  50%      { transform: translateX(-50%) translateY(8px); opacity: 0.5; }
+  50%      { transform: translateX(-50%) translateY(10px); opacity: 0.4; }
 }
 
 /* ========================
