@@ -56,8 +56,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     container.innerHTML = itemsToRender.map(item => {
-      const imgHtml = item.imageUrl 
-        ? `<img src="${formatDriveImageLink(item.imageUrl)}" alt="${item.title || 'Photo'}" loading="lazy">` 
+      const primaryImage = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
+      const imgHtml = primaryImage 
+        ? `<img src="${formatDriveImageLink(primaryImage)}" alt="${item.title || 'Photo'}" loading="lazy">` 
         : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: var(--fs-xs);">No Image Provided</div>`;
       
       const titleHtml = item.title ? `<h3 class="ob-title">${item.title}</h3>` : '';
@@ -205,10 +206,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       .ob-modal-image {
         width: 100%;
         height: auto;
-        max-height: 300px;
+        max-height: 400px;
         object-fit: contain;
         display: block;
         background: var(--color-bg-hover);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      }
+      .ob-modal-image.stacked {
+        border-radius: 0;
+        border-bottom: 1px solid var(--color-bg-alt);
+      }
+      .ob-modal-image.stacked:first-child {
         border-radius: var(--radius-lg) var(--radius-lg) 0 0;
       }
       .ob-modal-body {
@@ -290,7 +298,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     modalTitleElem.textContent = item.title || '';
     modalTextElem.textContent = item.content || '';
     
-    if (item.imageUrl) {
+    if (item.imageUrls && item.imageUrls.length > 0) {
+      modalImgContainer.innerHTML = item.imageUrls.map((url, idx) => `<img src="${formatDriveImageLink(url)}" class="ob-modal-image ${item.imageUrls.length > 1 ? 'stacked' : ''}" alt="${item.title || 'Photo'}">`).join('');
+    } else if (item.imageUrl) {
       modalImgContainer.innerHTML = `<img src="${formatDriveImageLink(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
     } else {
       modalImgContainer.innerHTML = '';

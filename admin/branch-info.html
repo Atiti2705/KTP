@@ -122,10 +122,10 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="ob-image">Google Drive Photo Link</label>
+            <label class="form-label" for="ob-image">Google Drive Photo Link(s) (Comma separated)</label>
             <input type="text" class="form-input" id="ob-image">
             <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-top: 4px;">
-              Make sure the photo is set to <strong>"Anyone with the link"</strong> on Google Drive.
+              Make sure the photo(s) are set to <strong>"Anyone with the link"</strong> on Google Drive. Separate multiple links with commas.
             </div>
           </div>
         </div>
@@ -344,7 +344,9 @@
         const title = document.getElementById('ob-title').value;
         const year = document.getElementById('ob-year').value;
         const content = document.getElementById('ob-content').value;
-        const imageUrl = document.getElementById('ob-image').value;
+        const imageInput = document.getElementById('ob-image').value;
+        const imageUrls = imageInput ? imageInput.split(',').map(s => s.trim()).filter(s => s) : [];
+        const imageUrl = imageUrls.length > 0 ? imageUrls[0] : '';
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -360,7 +362,9 @@
               year,
               content,
               imageUrl,
-              orderIndex: 999
+              imageUrls,
+              orderIndex: 0,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             await AdminData.add('branch-info', newItem);
             AdminToast.show('Entry saved successfully!', 'success');
@@ -370,7 +374,8 @@
               title,
               year,
               content,
-              imageUrl
+              imageUrl,
+              imageUrls
             };
             await AdminData.update('branch-info', editId, updatedFields);
             AdminToast.show('Entry updated successfully!', 'success');
@@ -412,13 +417,13 @@
 
       document.getElementById('ob-action-type').value = 'edit';
       document.getElementById('ob-edit-id').value = id;
-      document.getElementById('modal-form-title').textContent = 'Edit Entry';
+      document.getElementById('modal-form-title').innerText = 'Edit Entry';
 
       document.getElementById('ob-category').value = item.category || '';
       document.getElementById('ob-title').value = item.title || '';
       document.getElementById('ob-year').value = item.year || '';
       document.getElementById('ob-content').value = item.content || '';
-      document.getElementById('ob-image').value = item.imageUrl || '';
+      document.getElementById('ob-image').value = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls.join(', ') : (item.imageUrl || '');
 
       ModalSystem.open('ob-form-modal');
     };
