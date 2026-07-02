@@ -301,7 +301,8 @@
             if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
             
             // Do not destroy the header/menu if the user is currently interacting with it
-            if (!document.body.classList.contains('mobile-menu-open')) {
+            const navMobile = document.getElementById('nav-mobile');
+            if (!navMobile || !navMobile.classList.contains('open')) {
               renderHeader('home');
               renderFooter();
             }
