@@ -172,14 +172,11 @@
    ======================== */
 .stats-highlight-section {
   position: relative;
-  background-color: var(--color-bg-alt); /* Better base for neumorphism */
-  border-top: 1px solid rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  background: transparent;
 }
 
 [data-theme="light"] .stats-highlight-section {
-  background-color: #e2e8f0;
-  border: none;
+  background: transparent;
 }
 
 .stats-highlight-section::before {
@@ -221,64 +218,100 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2.5rem 1rem;
-  background: var(--color-bg-alt);
-  border-radius: 2rem;
-  /* Dark mode neumorphic shadow */
-  box-shadow: 
-    -8px -8px 20px rgba(255, 255, 255, 0.04),
-    8px 8px 20px rgba(0, 0, 0, 0.5);
-  border: none;
+  padding: 3rem 1.5rem;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.5);
   text-align: center;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+  overflow: hidden;
   z-index: 1;
 }
 
+/* Subtle inner top highlight */
+.stat-highlight-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  opacity: 0.5;
+  transition: opacity 0.4s ease;
+}
+
 [data-theme="light"] .stat-highlight-card {
-  background: #e2e8f0;
-  box-shadow: 
-    -10px -10px 20px #ffffff,
-    10px 10px 20px #cbd5e1;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .stat-highlight-card::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 1), transparent);
 }
 
 .stat-highlight-card:hover {
-  transform: scale(0.98);
-  /* Pressed inward effect */
-  box-shadow: 
-    inset -8px -8px 20px rgba(255, 255, 255, 0.04),
-    inset 8px 8px 20px rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px) scale(1.01);
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(135, 206, 235, 0.2);
+}
+
+.stat-highlight-card:hover::before {
+  opacity: 1;
+  background: linear-gradient(90deg, transparent, var(--brand-sky), transparent);
 }
 
 [data-theme="light"] .stat-highlight-card:hover {
-  box-shadow: 
-    inset -10px -10px 20px #ffffff,
-    inset 10px 10px 20px #cbd5e1;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(135, 206, 235, 0.2);
 }
 
 .stat-highlight-value {
-  font-size: clamp(2.5rem, 7vw, 3.8rem);
-  font-weight: 900;
-  color: var(--brand-sky);
-  line-height: 1.1;
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
-  margin-bottom: 0.5rem;
-  /* subtle glow */
-  text-shadow: 0 0 15px rgba(135, 206, 235, 0.3);
+  margin-bottom: 0.75rem;
+  transition: all 0.4s ease;
+}
+
+.stat-highlight-card:hover .stat-highlight-value {
+  background: linear-gradient(135deg, #ffffff 30%, var(--brand-sky) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 [data-theme="light"] .stat-highlight-value {
-  color: var(--brand-sky-dark);
-  text-shadow: none;
+  background: linear-gradient(135deg, #0f172a 30%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="light"] .stat-highlight-card:hover .stat-highlight-value {
+  background: linear-gradient(135deg, #0f172a 30%, var(--brand-sky-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .stat-highlight-label {
-  font-size: clamp(0.75rem, 2.5vw, 0.9rem);
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 [data-theme="light"] .stat-highlight-label {
