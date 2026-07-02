@@ -273,7 +273,13 @@
    ======================== */
 .announcements-section {
   position: relative;
-  background: var(--color-bg-alt);
+  background-color: var(--color-bg-alt);
+  background-image: 
+    radial-gradient(circle at top right, rgba(135, 206, 235, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at bottom left, rgba(255, 215, 0, 0.04) 0%, transparent 60%),
+    linear-gradient(145deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
 }
 
 .announcements-section::before {
