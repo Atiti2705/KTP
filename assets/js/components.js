@@ -126,14 +126,14 @@ function renderHeader(activePage = '') {
   mobileNav.setAttribute('aria-label', 'Mobile navigation');
   mobileNav.innerHTML = `
     <a href="index.html" class="nav-mobile-link ${activePage === 'home' ? 'active' : ''}">
-      <span class="nav-icon">🏠</span> Home
+      <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Home
     </a>
     <a href="photos.html" class="nav-mobile-link ${activePage === 'photos' ? 'active' : ''}">
-      <span class="nav-icon">📸</span> Gallery
+      <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span> Gallery
     </a>
     <div class="nav-mobile-group">
       <button class="nav-mobile-link nav-mobile-group-trigger ${['branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-chanchin-trigger">
-        <span class="nav-icon">📚</span> Branch Chanchin
+        <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></span> Branch Chanchin
         <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
       <div class="nav-mobile-subnav" id="mobile-chanchin-subnav" style="display:none;">
@@ -156,7 +156,7 @@ function renderHeader(activePage = '') {
     </div>
     <div class="nav-mobile-group">
       <button class="nav-mobile-link nav-mobile-group-trigger ${['sermons','mipui-aw','hla-lyrics','bulletin','souvenir'].includes(activePage) ? 'active' : ''}" id="mobile-docs-trigger">
-        <span class="nav-icon">📖</span> Documents
+        <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> Documents
         <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
       <div class="nav-mobile-subnav" id="mobile-docs-subnav" style="display:none;">
@@ -179,7 +179,7 @@ function renderHeader(activePage = '') {
     </div>
     <div class="nav-mobile-group">
       <button class="nav-mobile-link nav-mobile-group-trigger ${['news','lawmpuina','sunna'].includes(activePage) ? 'active' : ''}" id="mobile-news-trigger">
-        <span class="nav-icon">📰</span> News
+        <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg></span> News
         <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
       <div class="nav-mobile-subnav" id="mobile-news-subnav" style="display:none;">
@@ -196,7 +196,7 @@ function renderHeader(activePage = '') {
     </div>
     <div class="nav-mobile-group">
       <button class="nav-mobile-link nav-mobile-group-trigger ${['kohhran-chanchin','kohhran-upa','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-history-trigger">
-        <span class="nav-icon">📜</span> Kohhran
+        <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg></span> Kohhran
         <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
       <div class="nav-mobile-subnav" id="mobile-history-subnav" style="display:none;">
@@ -213,7 +213,7 @@ function renderHeader(activePage = '') {
     </div>
     <div class="nav-mobile-group">
       <button class="nav-mobile-link nav-mobile-group-trigger ${['statistic','contact'].includes(activePage) ? 'active' : ''}" id="mobile-about-trigger">
-        <span class="nav-icon">ℹ️</span> About Us
+        <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span> About Us
         <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
       <div class="nav-mobile-subnav" id="mobile-about-subnav" style="display:none;">
@@ -226,7 +226,7 @@ function renderHeader(activePage = '') {
       </div>
     </div>
     <a href="counselling.html" class="nav-mobile-link ${activePage === 'counselling' ? 'active' : ''}">
-      <span class="nav-icon">🤝</span> Counselling
+      <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span> Counselling
     </a>
     <a href="saved.html" class="nav-mobile-link ${activePage === 'saved' ? 'active' : ''}">
       <span class="nav-icon" style="display: inline-flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></span> Saved
@@ -383,11 +383,11 @@ function renderUserWidgets(user) {
         <div style="display:flex; gap:8px; padding:8px 12px; width: 100%; box-sizing: border-box;">
           ${user.role === 'admin' ? `
             <a href="admin/dashboard.html" class="nav-mobile-link" style="flex:1 1 0%; width:100%; font-size:14px; padding:10px 12px; background:var(--color-bg-hover); border-radius:var(--radius-lg); text-align:center; justify-content:center; white-space:nowrap;">
-              ⚙️ Control Panel
+              <svg width="18" height="18" style="margin-right:4px; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Control Panel
             </a>
           ` : ''}
           <a href="#" id="mobile-logout-btn" class="nav-mobile-link" style="flex:1 1 0%; width:100%; font-size:14px; padding:10px 12px; color:#fff; background:var(--brand-red); border-radius:var(--radius-lg); text-align:center; justify-content:center; white-space:nowrap; display:flex;">
-            🚪 Sign Out
+            <svg width="18" height="18" style="margin-right:4px; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out
           </a>
         </div>
       `;
