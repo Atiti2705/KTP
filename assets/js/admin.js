@@ -633,7 +633,9 @@ function renderSidebar() {
           <div class="sidebar-user-name">${user.name}</div>
           <div class="sidebar-user-role">${user.role}</div>
         </div>
-        <button id="logout-btn" style="background:transparent; border:none; cursor:pointer; font-size:16px;" title="Logout">🚪</button>
+        <button id="logout-btn" style="background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.2); color: #ef4444; border-radius: 8px; cursor:pointer; font-size:16px; padding: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Logout">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
       </div>
     </div>
   `;
