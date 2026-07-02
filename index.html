@@ -234,52 +234,75 @@
             ...(sunnaData || []).filter(item => item.pinnedToHomepage).map(item => ({...item, isSunna: true}))
           ];
 
-          Announcements.length = 0;
-          Announcements.push(...combinedPinned);
-          // Just using db_announcements localstorage key to persist the pinned feed
-          localStorage.setItem('db_announcements', JSON.stringify(combinedPinned));
-          needsRerender = true;
+          const newString = JSON.stringify(combinedPinned);
+          if (newString !== localStorage.getItem('db_announcements')) {
+            Announcements.length = 0;
+            Announcements.push(...combinedPinned);
+            localStorage.setItem('db_announcements', newString);
+            needsRerender = true;
+          }
         }
+        
         if (photoData && Array.isArray(photoData)) {
-          Photos.length = 0;
-          Photos.push(...photoData);
-          localStorage.setItem('db_photos', JSON.stringify(photoData));
-          needsRerender = true;
+          const newString = JSON.stringify(photoData);
+          if (newString !== localStorage.getItem('db_photos')) {
+            Photos.length = 0;
+            Photos.push(...photoData);
+            localStorage.setItem('db_photos', newString);
+            needsRerender = true;
+          }
         }
+        
         if (docData && Array.isArray(docData)) {
-          Documents.length = 0;
-          Documents.push(...docData);
-          localStorage.setItem('db_documents', JSON.stringify(docData));
-          needsRerender = true;
+          const newString = JSON.stringify(docData);
+          if (newString !== localStorage.getItem('db_documents')) {
+            Documents.length = 0;
+            Documents.push(...docData);
+            localStorage.setItem('db_documents', newString);
+            needsRerender = true;
+          }
         }
+        
         if (sermonData && Array.isArray(sermonData)) {
-          Sermons.length = 0;
-          Sermons.push(...sermonData);
-          localStorage.setItem('db_sermons', JSON.stringify(sermonData));
-          needsRerender = true;
+          const newString = JSON.stringify(sermonData);
+          if (newString !== localStorage.getItem('db_sermons')) {
+            Sermons.length = 0;
+            Sermons.push(...sermonData);
+            localStorage.setItem('db_sermons', newString);
+            needsRerender = true;
+          }
         }
+        
         if (aboutData && Array.isArray(aboutData)) {
-          About.length = 0;
-          About.push(...aboutData);
-          localStorage.setItem('db_about', JSON.stringify(aboutData));
-          needsRerender = true;
+          const newString = JSON.stringify(aboutData);
+          if (newString !== localStorage.getItem('db_about')) {
+            About.length = 0;
+            About.push(...aboutData);
+            localStorage.setItem('db_about', newString);
+            needsRerender = true;
+          }
         }
+        
         if (statsData && Array.isArray(statsData)) {
-          Statistics.length = 0;
-          Statistics.push(...statsData);
-          localStorage.setItem('db_statistics', JSON.stringify(statsData));
-          needsRerender = true;
+          const newString = JSON.stringify(statsData);
+          if (newString !== localStorage.getItem('db_statistics')) {
+            Statistics.length = 0;
+            Statistics.push(...statsData);
+            localStorage.setItem('db_statistics', newString);
+            needsRerender = true;
+          }
         }
 
         if (settings) {
-          localStorage.setItem('db_settings', JSON.stringify(settings));
-          if (settings.churchInfo) Object.assign(ChurchInfo, settings.churchInfo);
-          if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
-          
-          // Re-render header/footer if settings were fetched from DB
-          renderHeader('home');
-          renderFooter();
-          needsRerender = true;
+          const newString = JSON.stringify(settings);
+          if (newString !== localStorage.getItem('db_settings')) {
+            localStorage.setItem('db_settings', newString);
+            if (settings.churchInfo) Object.assign(ChurchInfo, settings.churchInfo);
+            if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
+            renderHeader('home');
+            renderFooter();
+            needsRerender = true;
+          }
         }
 
         if (needsRerender) {
