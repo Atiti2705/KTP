@@ -636,6 +636,26 @@
 }
 
 /* ========================
+   FEATURED VIDEO SECTION
+   ======================== */
+.video-section {
+  background: var(--color-bg-alt);
+  position: relative;
+}
+
+.video-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(80%, 600px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--brand-sky), var(--brand-gold), transparent);
+  border-radius: 2px;
+}
+
+/* ========================
    SOCIAL SECTION (Homepage)
    ======================== */
 .social-section {
