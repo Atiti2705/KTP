@@ -380,13 +380,13 @@ function renderUserWidgets(user) {
             <div style="font-size:11px; color:var(--color-text-tertiary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${user.email}</div>
           </div>
         </div>
-        <div style="display:flex; gap:8px; padding:8px 12px;">
+        <div style="display:flex; gap:8px; padding:8px 12px; width: 100%; box-sizing: border-box;">
           ${user.role === 'admin' ? `
-            <a href="admin/dashboard.html" class="nav-mobile-link" style="flex:1; font-size:14px; padding:8px 12px; background:var(--color-bg-hover); border-radius:var(--radius-lg); text-align:center; justify-content:center;">
+            <a href="admin/dashboard.html" class="nav-mobile-link" style="flex:1 1 0%; width:100%; font-size:14px; padding:10px 12px; background:var(--color-bg-hover); border-radius:var(--radius-lg); text-align:center; justify-content:center; white-space:nowrap;">
               ⚙️ Control Panel
             </a>
           ` : ''}
-          <a href="#" id="mobile-logout-btn" class="nav-mobile-link" style="flex:1; font-size:14px; padding:8px 12px; color:#fff; background:var(--brand-red); border-radius:var(--radius-lg); text-align:center; justify-content:center;">
+          <a href="#" id="mobile-logout-btn" class="nav-mobile-link" style="flex:1 1 0%; width:100%; font-size:14px; padding:10px 12px; color:#fff; background:var(--brand-red); border-radius:var(--radius-lg); text-align:center; justify-content:center; white-space:nowrap; display:flex;">
             🚪 Sign Out
           </a>
         </div>
