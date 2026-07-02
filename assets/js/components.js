@@ -371,23 +371,25 @@ function renderUserWidgets(user) {
 
     if (mobileWidget) {
       mobileWidget.innerHTML = `
-        <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); margin:12px 0;">
-          <div style="width:40px; height:40px; border-radius:50%; background:var(--brand-sky); color:white; font-weight:bold; display:flex; align-items:center; justify-content:center; font-size:18px; border: 2px solid var(--brand-sky-dark); overflow: hidden;">
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-top: 1px solid var(--color-border); margin-top:8px;">
+          <div style="width:32px; height:32px; border-radius:50%; background:var(--brand-sky); color:white; font-weight:bold; display:flex; align-items:center; justify-content:center; font-size:14px; border: 2px solid var(--brand-sky-dark); overflow: hidden; flex-shrink:0;">
             ${user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" style="width:100%; height:100%; object-fit:cover;">` : firstLetter}
           </div>
           <div style="flex:1; min-width:0;">
-            <div style="font-weight:bold; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--color-text);">${user.displayName}</div>
-            <div style="font-size:12px; color:var(--color-text-tertiary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${user.email}</div>
+            <div style="font-weight:bold; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--color-text);">${user.displayName}</div>
+            <div style="font-size:11px; color:var(--color-text-tertiary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${user.email}</div>
           </div>
         </div>
-        ${user.role === 'admin' ? `
-          <a href="admin/dashboard.html" class="nav-mobile-link" style="margin-bottom:8px;">
-            <span class="nav-icon">⚙️</span> Control Panel
+        <div style="display:flex; gap:8px; padding:8px 12px;">
+          ${user.role === 'admin' ? `
+            <a href="admin/dashboard.html" class="nav-mobile-link" style="flex:1; font-size:14px; padding:8px 12px; background:var(--color-bg-hover); border-radius:var(--radius-lg); text-align:center; justify-content:center;">
+              ⚙️ Control Panel
+            </a>
+          ` : ''}
+          <a href="#" id="mobile-logout-btn" class="nav-mobile-link" style="flex:1; font-size:14px; padding:8px 12px; color:#fff; background:var(--brand-red); border-radius:var(--radius-lg); text-align:center; justify-content:center;">
+            🚪 Sign Out
           </a>
-        ` : ''}
-        <a href="#" id="mobile-logout-btn" class="nav-mobile-link" style="color: #fff; background: var(--brand-red); border-radius: var(--radius-lg); margin: 4px 0 8px; text-align: center; justify-content: center;">
-          <span class="nav-icon">🚪</span> Sign Out
-        </a>
+        </div>
       `;
 
       document.getElementById('mobile-logout-btn').addEventListener('click', async (e) => {
