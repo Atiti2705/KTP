@@ -13,7 +13,7 @@ for root, _, files in os.walk(directory):
                 content = f.read()
             
             # Bump ALL CSS and JS files to ?v=105
-            new_content = re.sub(r'(\.js|\.css)\?v=\d+', r'\1?v=108', content)
+            new_content = re.sub(r'(\.js|\.css)\?v=\d+', r'\1?v=109', content)
             
             if new_content != content:
                 with open(filepath, 'w', encoding='utf-8') as f:
