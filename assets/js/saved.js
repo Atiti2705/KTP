@@ -242,7 +242,7 @@ function renderSavedItems() {
       } else {
         photosGrid.innerHTML += `
           <div class="masonry-item gallery-item selectable-item" data-id="${photo.id}" data-url="${photo.imageUrl}" data-name="${photo.title || 'photo'}.jpg" style="position: relative;">
-            <img src="${photo.imageUrl}" alt="${photo.title}" class="gallery-image" loading="lazy" style="width:100%; border-radius: var(--radius-lg); display:block; object-fit:cover;">
+            <img loading="lazy" src="${photo.imageUrl}" alt="${photo.title}" class="gallery-image" loading="lazy" style="width:100%; border-radius: var(--radius-lg); display:block; object-fit:cover;">
             <button class="save-btn" onclick="handleSavedPageRemove(event, 'photos', '${photo.id}')" title="Remove from Saved" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); border: none; cursor: pointer; padding: 6px; border-radius: 50%; color: var(--brand-sky); display: flex; align-items: center; justify-content: center; z-index: 5; transition: transform 0.2s, background 0.2s;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
             </button>
@@ -448,7 +448,7 @@ function setupPhotoModal() {
         <a id="modal-download" href="#" download style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); text-decoration: none; transition: background 0.2s;" title="Download"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a>
         <button id="modal-prev" class="lightbox-nav-btn" aria-label="Previous" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❮</button>
         <button id="modal-next" class="lightbox-nav-btn" aria-label="Next" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❯</button>
-        <img src="" alt="" id="modal-image" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
+        <img loading="lazy" src="" alt="" id="modal-image" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
       </div>
     </div>
   `;

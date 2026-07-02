@@ -14,7 +14,7 @@ function renderHeader(activePage = '') {
   header.innerHTML = `
     <div class="header-inner">
       <a href="index.html" class="header-logo" aria-label="${ChurchInfo.name} Home">
-        <img src="assets/images/logo.png" alt="${ChurchInfo.name} Logo" width="53" height="40">
+        <img loading="lazy" src="assets/images/logo.png" alt="${ChurchInfo.name} Logo" width="53" height="40">
         <div class="header-logo-text">
           ${ChurchInfo.name}
           <small>Est. ${ChurchInfo.established}</small>
@@ -328,7 +328,7 @@ function renderUserWidgets(user) {
       headerWidget.style.position = 'relative';
       headerWidget.innerHTML = `
         <button class="theme-btn" id="user-dropdown-btn" style="border-radius: var(--radius-full); background: var(--color-bg-hover); font-weight: bold; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border: 2px solid var(--brand-sky); padding: 0; overflow: hidden;" aria-label="User menu">
-          ${user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : firstLetter}
+          ${user.photoURL ? `<img loading="lazy" src="${user.photoURL}" alt="${user.displayName}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : firstLetter}
         </button>
         <div class="theme-dropdown" id="user-dropdown" style="min-width: 200px;">
           <div style="padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid var(--color-border-light); margin-bottom: var(--sp-1);">
@@ -373,7 +373,7 @@ function renderUserWidgets(user) {
       mobileWidget.innerHTML = `
         <div style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-top: 1px solid var(--color-border); margin-top:8px;">
           <div style="width:32px; height:32px; border-radius:50%; background:var(--brand-sky); color:white; font-weight:bold; display:flex; align-items:center; justify-content:center; font-size:14px; border: 2px solid var(--brand-sky-dark); overflow: hidden; flex-shrink:0;">
-            ${user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" style="width:100%; height:100%; object-fit:cover;">` : firstLetter}
+            ${user.photoURL ? `<img loading="lazy" src="${user.photoURL}" alt="${user.displayName}" style="width:100%; height:100%; object-fit:cover;">` : firstLetter}
           </div>
           <div style="flex:1; min-width:0;">
             <div style="font-weight:bold; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color: var(--color-text);">${user.displayName}</div>
@@ -847,7 +847,7 @@ function renderFooter() {
         <!-- Brand -->
         <div class="footer-brand">
           <div class="footer-logo">
-            <img src="assets/images/logo.png" alt="${ChurchInfo.name}" width="64" height="48">
+            <img loading="lazy" src="assets/images/logo.png" alt="${ChurchInfo.name}" width="64" height="48">
             <div class="footer-logo-text">
               ${ChurchInfo.name}
               <small>${ChurchInfo.tagline}</small>

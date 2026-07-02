@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     container.innerHTML = itemsToRender.map(item => {
       const primaryImage = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
       const imgHtml = primaryImage 
-        ? `<img src="${formatDriveImageLink(primaryImage)}" alt="${item.title || 'Photo'}" loading="lazy">` 
+        ? `<img loading="lazy" src="${formatDriveImageLink(primaryImage)}" alt="${item.title || 'Photo'}" loading="lazy">` 
         : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: var(--fs-xs);">No Image Provided</div>`;
       
       const titleHtml = item.title ? `<h3 class="ob-title">${item.title}</h3>` : '';
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="ob-modal-slider" id="ob-modal-slider">
             ${item.imageUrls.map((url, i) => `
               <div class="ob-modal-slide">
-                <img src="${formatDriveImageLink(url)}" alt="${item.title || 'Photo'}">
+                <img loading="lazy" src="${formatDriveImageLink(url)}" alt="${item.title || 'Photo'}">
               </div>
             `).join('')}
           </div>
@@ -374,9 +374,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       
     } else if (item.imageUrls && item.imageUrls.length === 1) {
-      modalImgContainer.innerHTML = `<img src="${formatDriveImageLink(item.imageUrls[0])}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${formatDriveImageLink(item.imageUrls[0])}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
     } else if (item.imageUrl) {
-      modalImgContainer.innerHTML = `<img src="${formatDriveImageLink(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${formatDriveImageLink(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
     } else {
       modalImgContainer.innerHTML = '';
     }

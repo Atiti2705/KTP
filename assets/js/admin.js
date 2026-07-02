@@ -549,7 +549,7 @@ function renderSidebar() {
   sidebar.className = 'admin-sidebar';
   sidebar.innerHTML = `
     <div class="sidebar-header">
-      <img src="../assets/images/logo.png" alt="Logo">
+      <img loading="lazy" src="../assets/images/logo.png" alt="Logo">
       <div class="sidebar-header-text">
         KṬP Saikhamakawn
         <small>Control Panel</small>

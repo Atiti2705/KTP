@@ -23,6 +23,10 @@
   <!-- Preconnect for Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Preconnect for Firebase to speed up data and image loading -->
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com">
+  <link rel="preconnect" href="https://firestore.googleapis.com">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="assets/css/variables.css?v=117">
@@ -181,20 +185,20 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=117"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=117"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=117"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=117"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=117"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=117"></script>
 
   <!-- App Configuration & Services -->
-  <script src="assets/js/firebase-config.js?v=117"></script>
-  <script src="assets/js/theme.js?v=117"></script>
-  <script src="assets/js/data.js?v=117"></script>
-  <script src="assets/js/auth.js?v=117"></script>
-  <script src="assets/js/db-service.js?v=117"></script>
-  <script src="assets/js/save-service.js?v=117"></script>
-  <script src="assets/js/components.js?v=117"></script>
-  <script src="assets/js/search.js?v=117"></script>
-  <script src="assets/js/app.js?v=117"></script>
+  <script defer src="assets/js/firebase-config.js?v=117"></script>
+  <script defer src="assets/js/theme.js?v=117"></script>
+  <script defer src="assets/js/data.js?v=117"></script>
+  <script defer src="assets/js/auth.js?v=117"></script>
+  <script defer src="assets/js/db-service.js?v=117"></script>
+  <script defer src="assets/js/save-service.js?v=117"></script>
+  <script defer src="assets/js/components.js?v=117"></script>
+  <script defer src="assets/js/search.js?v=117"></script>
+  <script defer src="assets/js/app.js?v=117"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // Render static header and footer immediately for fast visual load

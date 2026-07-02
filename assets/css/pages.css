@@ -230,6 +230,9 @@
   position: relative;
   overflow: hidden;
   z-index: 1;
+  /* Hardware acceleration for smooth scrolling */
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
 }
 
 [data-theme="light"] .stat-highlight-card {
@@ -446,6 +449,8 @@
   border: 1px solid var(--color-border-light);
   box-shadow: var(--card-shadow);
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
 }
 
 .poster-card {
