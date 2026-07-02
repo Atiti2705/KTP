@@ -272,8 +272,8 @@
    ANNOUNCEMENTS SECTION
    ======================== */
 .announcements-section {
-  background: var(--color-bg-alt);
   position: relative;
+  background: transparent;
 }
 
 .announcements-section::before {
