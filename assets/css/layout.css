@@ -78,7 +78,7 @@
 }
 
 .nav-link {
-  padding: var(--sp-2) var(--sp-3);
+  padding: var(--sp-2);
   font-family: var(--font-heading);
   font-size: 0.95rem;
   font-weight: var(--fw-medium);
@@ -114,6 +114,9 @@
 
 .nav-dropdown-trigger svg {
   transition: transform 0.2s ease;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
 }
 
 .nav-dropdown-menu.active + .nav-dropdown-trigger svg,
