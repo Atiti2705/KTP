@@ -30,10 +30,10 @@ body {
   color: var(--color-text);
   background-color: var(--color-bg);
   background-image: 
-    radial-gradient(at 0% 0%, var(--bg-gradient-1) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, var(--bg-gradient-2) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, var(--bg-gradient-1) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, var(--bg-gradient-3) 0px, transparent 50%);
+    radial-gradient(ellipse at top, var(--bg-glow), transparent 60%),
+    linear-gradient(to right, var(--bg-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--bg-grid-color) 1px, transparent 1px);
+  background-size: 100% 100%, 30px 30px, 30px 30px;
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

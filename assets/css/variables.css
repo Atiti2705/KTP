@@ -120,9 +120,8 @@
   --color-text: #0f172a;
   --color-text-secondary: #334155;
   
-  --bg-gradient-1: rgba(135, 206, 235, 0.15);
-  --bg-gradient-2: rgba(255, 215, 0, 0.1);
-  --bg-gradient-3: rgba(220, 20, 60, 0.05);
+  --bg-grid-color: rgba(0, 0, 0, 0.04);
+  --bg-glow: rgba(135, 206, 235, 0.15);
   --color-text-tertiary: #64748b;
   --color-text-inverse: #ffffff;
   --color-text-link: #026AA2; /* Deep blue for high contrast */
@@ -169,9 +168,8 @@
   --color-bg-input: #1e293b;
   --color-bg-overlay: rgba(0, 0, 0, 0.7);
 
-  --bg-gradient-1: rgba(135, 206, 235, 0.04);
-  --bg-gradient-2: rgba(255, 215, 0, 0.02);
-  --bg-gradient-3: rgba(220, 20, 60, 0.02);
+  --bg-grid-color: rgba(255, 255, 255, 0.03);
+  --bg-glow: rgba(135, 206, 235, 0.08);
 
   --color-text: #f1f5f9;
   --color-text-secondary: #cbd5e1;
