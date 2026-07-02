@@ -171,8 +171,8 @@
    STATISTICS HIGHLIGHT (Homepage)
    ======================== */
 .stats-highlight-section {
-  background: var(--color-bg-alt);
   position: relative;
+  background: transparent;
 }
 
 .stats-highlight-section::before {
@@ -273,7 +273,7 @@
    ======================== */
 .announcements-section {
   position: relative;
-  background: transparent;
+  background: var(--color-bg-alt);
 }
 
 .announcements-section::before {
@@ -636,11 +636,31 @@
 }
 
 /* ========================
+   GALLERY SECTION
+   ======================== */
+.gallery-section {
+  background: var(--color-bg-alt);
+  position: relative;
+}
+
+.gallery-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(80%, 600px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--brand-sky), var(--brand-gold), transparent);
+  border-radius: 2px;
+}
+
+/* ========================
    FEATURED VIDEO SECTION
    ======================== */
 .video-section {
-  background: var(--color-bg-alt);
   position: relative;
+  background: transparent;
 }
 
 .video-section::before {
@@ -661,6 +681,7 @@
 .social-section {
   text-align: center;
   position: relative;
+  background: var(--color-bg-alt);
 }
 
 .social-section::before {
