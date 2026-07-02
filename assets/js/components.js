@@ -26,7 +26,7 @@ function renderHeader(activePage = '') {
         <a href="photos.html" class="nav-link ${activePage === 'photos' ? 'active' : ''}" id="nav-photos">Gallery</a>
         <div class="nav-dropdown" id="nav-chanchin-dropdown">
           <button class="nav-link nav-dropdown-trigger ${['branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="nav-chanchin-btn" aria-expanded="false" aria-haspopup="true">
-            Branch Chanchin <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            Branch Chanchin <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div class="nav-dropdown-menu" id="nav-chanchin-menu">
             <a href="branch-ob.html" class="nav-dropdown-item ${activePage === 'branch-ob' ? 'active' : ''}">Branch OB te</a>
@@ -38,7 +38,7 @@ function renderHeader(activePage = '') {
         </div>
         <div class="nav-dropdown" id="nav-docs-dropdown">
           <button class="nav-link nav-dropdown-trigger ${['sermons','mipui-aw','hla-lyrics','bulletin','souvenir'].includes(activePage) ? 'active' : ''}" id="nav-docs-btn" aria-expanded="false" aria-haspopup="true">
-            Documents <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            Documents <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div class="nav-dropdown-menu" id="nav-docs-menu">
             <a href="mipui-aw.html" class="nav-dropdown-item ${activePage === 'mipui-aw' ? 'active' : ''}">Mipui Aw</a>
@@ -50,7 +50,7 @@ function renderHeader(activePage = '') {
         </div>
         <div class="nav-dropdown" id="nav-news-dropdown">
           <button class="nav-link nav-dropdown-trigger ${['news','lawmpuina','sunna'].includes(activePage) ? 'active' : ''}" id="nav-news-btn" aria-expanded="false" aria-haspopup="true">
-            News <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            News <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div class="nav-dropdown-menu" id="nav-news-menu">
             <a href="news.html" class="nav-dropdown-item ${activePage === 'news' ? 'active' : ''}">Branch Thuchhuak</a>
@@ -60,7 +60,7 @@ function renderHeader(activePage = '') {
         </div>
         <div class="nav-dropdown" id="nav-history-dropdown">
           <button class="nav-link nav-dropdown-trigger ${['kohhran-chanchin','kohhran-upa','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="nav-history-btn" aria-expanded="false" aria-haspopup="true">
-            Kohhran <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            Kohhran <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div class="nav-dropdown-menu" id="nav-history-menu">
             <a href="kohhran-chanchin.html" class="nav-dropdown-item ${activePage === 'kohhran-chanchin' ? 'active' : ''}">Kohhran Chanchin</a>
@@ -70,7 +70,7 @@ function renderHeader(activePage = '') {
         </div>
         <div class="nav-dropdown" id="nav-about-dropdown">
           <button class="nav-link nav-dropdown-trigger ${['statistic','contact'].includes(activePage) ? 'active' : ''}" id="nav-about-btn" aria-expanded="false" aria-haspopup="true">
-            About Us <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            About Us <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div class="nav-dropdown-menu" id="nav-about-menu">
             <a href="statistic.html" class="nav-dropdown-item ${activePage === 'statistic' ? 'active' : ''}">Statistic</a>
