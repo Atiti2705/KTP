@@ -108,8 +108,10 @@
    ======================== */
 [data-theme="light"], :root[data-theme="light"] {
   --color-bg: #f8fafc;
+  --color-bg-rgb: 248, 250, 252;
   --color-bg-alt: #ffffff;
   --color-bg-card: #ffffff;
+  --color-bg-card-rgb: 255, 255, 255;
   --color-bg-elevated: #ffffff;
   --color-bg-hover: #f1f5f9;
   --color-bg-input: #ffffff;
@@ -154,8 +156,10 @@
    ======================== */
 [data-theme="dark"], :root[data-theme="dark"], :root {
   --color-bg: #0f172a;
+  --color-bg-rgb: 15, 23, 42;
   --color-bg-alt: #1e293b;
   --color-bg-card: #1e293b;
+  --color-bg-card-rgb: 30, 41, 59;
   --color-bg-elevated: #273549;
   --color-bg-hover: #334155;
   --color-bg-input: #1e293b;
