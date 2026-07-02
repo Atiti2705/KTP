@@ -8,9 +8,8 @@
    ======================== */
 .hero {
   position: relative;
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding: 0;
+  min-height: auto;
+  padding: clamp(5rem, 12vh, 8rem) 0 clamp(3rem, 8vh, 5rem);
   display: flex;
   align-items: center;
   justify-content: center;
