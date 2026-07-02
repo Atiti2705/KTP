@@ -385,7 +385,7 @@ function renderUserWidgets(user) {
             <span class="nav-icon">⚙️</span> Control Panel
           </a>
         ` : ''}
-        <a href="#" id="mobile-logout-btn" class="nav-mobile-link" style="color:var(--brand-red); margin-bottom: 8px;">
+        <a href="#" id="mobile-logout-btn" class="nav-mobile-link" style="color: #fff; background: var(--brand-red); border-radius: var(--radius-lg); margin: 4px 0 8px; text-align: center; justify-content: center;">
           <span class="nav-icon">🚪</span> Sign Out
         </a>
       `;
