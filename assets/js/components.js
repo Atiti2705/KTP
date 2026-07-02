@@ -42,7 +42,7 @@ function renderHeader(activePage = '') {
           </button>
           <div class="nav-dropdown-menu" id="nav-docs-menu">
             <a href="mipui-aw.html" class="nav-dropdown-item ${activePage === 'mipui-aw' ? 'active' : ''}">Mipui Aw</a>
-            <a href="sermons.html" class="nav-dropdown-item ${activePage === 'sermons' ? 'active' : ''}">Articles & Sermon</a>
+            <a href="sermons.html" class="nav-dropdown-item ${activePage === 'sermons' ? 'active' : ''}">Articles & Sermons</a>
             <a href="bulletin.html" class="nav-dropdown-item ${activePage === 'bulletin' ? 'active' : ''}">Bulletin</a>
             <a href="souvenir.html" class="nav-dropdown-item ${activePage === 'souvenir' ? 'active' : ''}">Souvenir</a>
             <a href="hla-lyrics.html" class="nav-dropdown-item ${activePage === 'hla-lyrics' ? 'active' : ''}">Hla Lyrics</a>
@@ -164,7 +164,7 @@ function renderHeader(activePage = '') {
           Mipui Aw
         </a>
         <a href="sermons.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'sermons' ? 'active' : ''}">
-          Articles & Sermon
+          Articles & Sermons
         </a>
         <a href="bulletin.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'bulletin' ? 'active' : ''}">
           Bulletin
