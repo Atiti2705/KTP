@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         visibility: visible;
       }
       .ob-modal-content {
-        background: var(--color-bg-primary);
+        background: var(--color-bg-card);
         width: 100%;
         max-width: 600px;
         max-height: 90vh;
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         position: absolute;
         top: var(--sp-3);
         right: var(--sp-3);
-        background: var(--color-bg-secondary);
+        background: var(--color-bg-hover);
         border: none;
         width: 32px;
         height: 32px;
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         justify-content: center;
         cursor: pointer;
         z-index: 10;
-        color: var(--color-text-primary);
+        color: var(--color-text);
         box-shadow: var(--shadow-sm);
       }
       .ob-modal-image {
@@ -218,11 +218,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         font-size: var(--fs-xl);
         font-weight: var(--fw-bold);
         margin-bottom: var(--sp-3);
-        color: var(--color-text-primary);
+        color: var(--color-text);
         overflow-wrap: anywhere;
-          word-wrap: break-word;
-          word-break: break-word;
-        }
+        word-wrap: break-word;
+        word-break: break-word;
+      }
       .ob-modal-text {
         font-size: var(--fs-base);
         color: var(--color-text-secondary);
