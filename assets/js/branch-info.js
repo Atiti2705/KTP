@@ -212,12 +212,58 @@ document.addEventListener('DOMContentLoaded', async () => {
         background: var(--color-bg-hover);
         border-radius: var(--radius-lg) var(--radius-lg) 0 0;
       }
-      .ob-modal-image.stacked {
-        border-radius: 0;
-        border-bottom: 1px solid var(--color-bg-alt);
-      }
-      .ob-modal-image.stacked:first-child {
+      .ob-modal-slider-wrapper {
+        position: relative;
+        width: 100%;
+        background: var(--color-bg-hover);
         border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        overflow: hidden;
+      }
+      .ob-modal-slider {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+      .ob-modal-slider::-webkit-scrollbar {
+        display: none;
+      }
+      .ob-modal-slide {
+        flex-shrink: 0;
+        width: 100%;
+        max-height: 400px;
+        scroll-snap-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .ob-modal-slide img {
+        width: 100%;
+        height: auto;
+        max-height: 400px;
+        object-fit: contain;
+      }
+      .ob-modal-dots {
+        position: absolute;
+        bottom: 12px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        z-index: 5;
+      }
+      .ob-modal-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.5);
+        transition: background 0.3s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      }
+      .ob-modal-dot.active {
+        background: #fff;
+        transform: scale(1.2);
       }
       .ob-modal-body {
         padding: var(--sp-5);
@@ -298,8 +344,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     modalTitleElem.textContent = item.title || '';
     modalTextElem.textContent = item.content || '';
     
-    if (item.imageUrls && item.imageUrls.length > 0) {
-      modalImgContainer.innerHTML = item.imageUrls.map((url, idx) => `<img src="${formatDriveImageLink(url)}" class="ob-modal-image ${item.imageUrls.length > 1 ? 'stacked' : ''}" alt="${item.title || 'Photo'}">`).join('');
+    if (item.imageUrls && item.imageUrls.length > 1) {
+      modalImgContainer.innerHTML = `
+        <div class="ob-modal-slider-wrapper">
+          <div class="ob-modal-slider" id="ob-modal-slider">
+            ${item.imageUrls.map((url, i) => `
+              <div class="ob-modal-slide">
+                <img src="${formatDriveImageLink(url)}" alt="${item.title || 'Photo'}">
+              </div>
+            `).join('')}
+          </div>
+          <div class="ob-modal-dots" id="ob-modal-dots">
+            ${item.imageUrls.map((_, i) => `
+              <div class="ob-modal-dot ${i === 0 ? 'active' : ''}"></div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      
+      const slider = document.getElementById('ob-modal-slider');
+      const dots = document.getElementById('ob-modal-dots').querySelectorAll('.ob-modal-dot');
+      
+      slider.addEventListener('scroll', () => {
+        const index = Math.round(slider.scrollLeft / slider.clientWidth);
+        dots.forEach((dot, i) => {
+          if (i === index) dot.classList.add('active');
+          else dot.classList.remove('active');
+        });
+      });
+      
+    } else if (item.imageUrls && item.imageUrls.length === 1) {
+      modalImgContainer.innerHTML = `<img src="${formatDriveImageLink(item.imageUrls[0])}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
     } else if (item.imageUrl) {
       modalImgContainer.innerHTML = `<img src="${formatDriveImageLink(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
     } else {
