@@ -104,6 +104,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Add Modal & Layout CSS
   const modalStyles = `
     <style>
+      .ob-card {
+        cursor: pointer;
+      }
       /* Layout Overrides for Horizontal Cards */
       .ob-grid:not([data-type="Kohhran Upa"]):not([data-type="branch-ob"]):not([data-type="branch-committee"]):not([data-type="group-committee"]):not([data-type="sub-committee"]) {
         display: grid;
