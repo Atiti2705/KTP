@@ -366,8 +366,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 150);
     biLightboxImage.style.transition = 'opacity 0.2s ease-in-out';
     
-    biLightboxTitle.textContent = item.title || '';
-    biLightboxText.textContent = item.content || '';
+    if (dataType === 'Kohhran Upa') {
+      biLightboxTitle.style.display = 'none';
+      biLightboxText.style.display = 'none';
+    } else {
+      biLightboxTitle.style.display = 'block';
+      biLightboxText.style.display = 'block';
+      biLightboxTitle.textContent = item.title || '';
+      biLightboxText.textContent = item.content || '';
+    }
     
     const docsContainer = document.getElementById('bi-lightbox-docs');
     if (docsContainer) {
