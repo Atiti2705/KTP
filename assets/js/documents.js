@@ -288,7 +288,7 @@ function renderDocuments() {
     
     let thumbHtml = '';
     if (fileId) {
-      thumbHtml = `<img loading="lazy" src="https://drive.google.com/thumbnail?id=${fileId}&sz=w400-h400" alt="Preview" loading="lazy" class="gdrive-thumbnail">`;
+      thumbHtml = `<img loading="lazy" src="https://drive.google.com/thumbnail?id=${fileId}&sz=w400-h400" alt="Preview" class="gdrive-thumbnail">`;
     } else {
       thumbHtml = `<div class="gdrive-no-preview"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>`;
     }
@@ -343,8 +343,8 @@ function setupPreviewModal() {
              </button>
           </div>
         </div>
-        <div style="flex: 1; position: relative; width: 100%; height: 100%; background: #fff;">
-          <iframe id="modal-doc-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+        <div style="flex: 1; position: relative; width: 100%; height: 100%; background: #fff; -webkit-overflow-scrolling: touch; overflow: auto;">
+          <iframe id="modal-doc-iframe" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
         </div>
       </div>
     </div>

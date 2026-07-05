@@ -21,20 +21,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=117">
-  <link rel="stylesheet" href="assets/css/base.css?v=117">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=117">
-  <link rel="stylesheet" href="assets/css/animations.css?v=117">
-  <link rel="stylesheet" href="assets/css/components.css?v=117">
-  <link rel="stylesheet" href="assets/css/layout.css?v=117">
-  <link rel="stylesheet" href="assets/css/pages.css?v=117">
+  <link rel="stylesheet" href="assets/css/variables.css?v=152">
+  <link rel="stylesheet" href="assets/css/base.css?v=152">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=152">
+  <link rel="stylesheet" href="assets/css/animations.css?v=152">
+  <link rel="stylesheet" href="assets/css/components.css?v=152">
+  <link rel="stylesheet" href="assets/css/layout.css?v=152">
+  <link rel="stylesheet" href="assets/css/pages.css?v=152">
   
-  <style>
+    <style>
     .ob-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: var(--sp-5);
-      margin-top: var(--sp-4);
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--sp-6);
+      margin-top: var(--sp-5);
     }
     
     .ob-card {
@@ -49,8 +49,8 @@
     }
     
     .ob-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
+      transform: translateY(-6px);
+      box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1);
     }
     
     .ob-image-wrapper {
@@ -75,24 +75,46 @@
     }
     
     .ob-content-wrapper {
-      padding: var(--sp-4);
+      padding: var(--sp-5) var(--sp-4);
       flex: 1;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
     
     .ob-title {
-      font-size: var(--fs-lg);
-      font-weight: var(--fw-bold);
+      font-size: 1.35rem;
+      font-weight: 700;
       margin-bottom: var(--sp-2);
       color: var(--color-text);
+      overflow-wrap: anywhere;
     }
     
     .ob-text {
       color: var(--color-text-secondary);
-      font-size: var(--fs-base);
+      font-size: 0.95rem;
       line-height: 1.6;
       white-space: pre-line;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 600px) {
+      .ob-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--sp-3);
+      }
+      .ob-content-wrapper {
+        padding: var(--sp-3) var(--sp-2);
+      }
+      .ob-title {
+        font-size: 1rem;
+        margin-bottom: var(--sp-1);
+      }
+      .ob-text {
+        font-size: 0.8rem;
+        line-height: 1.4;
+      }
     }
   </style>
 </head>
@@ -127,19 +149,19 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=117"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=117"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=117"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=152"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=152"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=152"></script>
 
   <!-- App Configuration & Services -->
-  <script defer src="assets/js/firebase-config.js?v=117"></script>
-  <script defer src="assets/js/theme.js?v=117"></script>
-  <script defer src="assets/js/data.js?v=117"></script>
-  <script defer src="assets/js/auth.js?v=117"></script>
-  <script defer src="assets/js/db-service.js?v=117"></script>
-  <script defer src="assets/js/components.js?v=117"></script>
-  <script defer src="assets/js/app.js?v=117"></script>
-  <script defer src="assets/js/branch-info.js?v=117"></script>
+  <script defer src="assets/js/firebase-config.js?v=152"></script>
+  <script defer src="assets/js/theme.js?v=152"></script>
+  <script defer src="assets/js/data.js?v=152"></script>
+  <script defer src="assets/js/auth.js?v=152"></script>
+  <script defer src="assets/js/db-service.js?v=152"></script>
+  <script defer src="assets/js/components.js?v=152"></script>
+  <script defer src="assets/js/app.js?v=152"></script>
+  <script defer src="assets/js/branch-info.js?v=152"></script>
   
   <script>
     document.addEventListener('DOMContentLoaded', () => {

@@ -116,13 +116,21 @@ const AdminData = {
     if (!localStorage.getItem('db_kohhran-chanchin')) {
       localStorage.setItem('db_kohhran-chanchin', JSON.stringify([]));
     }
+    // Branch Chanchin
+    if (!localStorage.getItem('db_branch-chanchin')) {
+      localStorage.setItem('db_branch-chanchin', JSON.stringify([]));
+    }
     // Kohhran Upa
     if (!localStorage.getItem('db_kohhran-upa')) {
       localStorage.setItem('db_kohhran-upa', JSON.stringify([]));
     }
-    // Golden Jubilee
+    // Golden Jubilee (Branch)
     if (!localStorage.getItem('db_golden-jubilee')) {
       localStorage.setItem('db_golden-jubilee', JSON.stringify([]));
+    }
+    // Kohhran Golden Jubilee
+    if (!localStorage.getItem('db_kohhran-golden-jubilee')) {
+      localStorage.setItem('db_kohhran-golden-jubilee', JSON.stringify([]));
     }
     // Statistics
     if (!localStorage.getItem('db_statistics')) {
@@ -229,6 +237,21 @@ const AdminData = {
     }
   },
 
+  async forceSync(collection) {
+    if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
+      try {
+        const data = await DbService.get(collection);
+        if (data) {
+          localStorage.setItem(`db_${collection}`, JSON.stringify(data));
+          return true;
+        }
+      } catch (err) {
+        console.error("Force sync failed:", err);
+      }
+    }
+    return false;
+  },
+
   // Local backups
   addLocal(collection, item) {
     const list = this.get(collection);
@@ -306,7 +329,7 @@ const AdminData = {
     if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
       try {
         console.log("🔄 Syncing admin databases with Firestore...");
-        const [photos, docs, sermons, announcements, lyrics, settings, about, branchObHlui, statistics, news, lawmpuina, sunna, contactDirectory] = await Promise.all([
+        const [photos, docs, sermons, announcements, lyrics, settings, about, branchObHlui, statistics, news, lawmpuina, sunna, contactDirectory, kc, ku, gj, kgj, mipuiaw, bulletins, souvenirs, counselling, messages, branchChanchin] = await Promise.all([
           DbService.get('photos'),
           DbService.get('documents'),
           DbService.get('sermons'),
@@ -319,7 +342,17 @@ const AdminData = {
           DbService.get('news'),
           DbService.get('lawmpuina'),
           DbService.get('sunna'),
-          DbService.get('contact_directory')
+          DbService.get('contact_directory'),
+          DbService.get('Kohhran Chanchin'),
+          DbService.get('Kohhran Upa'),
+          DbService.get('Golden Jubilee'),
+          DbService.get('Kohhran Golden Jubilee'),
+          DbService.get('mipuiaw'),
+          DbService.get('bulletins'),
+          DbService.get('souvenirs'),
+          DbService.get('counselling'),
+          DbService.get('messages'),
+          DbService.get('branch-chanchin')
         ]);
 
         if (Array.isArray(photos)) localStorage.setItem('db_photos', JSON.stringify(photos));
@@ -334,6 +367,18 @@ const AdminData = {
         if (Array.isArray(lawmpuina)) localStorage.setItem('db_lawmpuina', JSON.stringify(lawmpuina));
         if (Array.isArray(sunna)) localStorage.setItem('db_sunna', JSON.stringify(sunna));
         if (Array.isArray(contactDirectory)) localStorage.setItem('db_contact_directory', JSON.stringify(contactDirectory));
+        
+        if (Array.isArray(kc)) localStorage.setItem('db_Kohhran Chanchin', JSON.stringify(kc));
+        if (Array.isArray(ku)) localStorage.setItem('db_Kohhran Upa', JSON.stringify(ku));
+        if (Array.isArray(gj)) localStorage.setItem('db_Golden Jubilee', JSON.stringify(gj));
+        if (Array.isArray(kgj)) localStorage.setItem('db_Kohhran Golden Jubilee', JSON.stringify(kgj));
+        if (Array.isArray(mipuiaw)) localStorage.setItem('db_mipuiaw', JSON.stringify(mipuiaw));
+        if (Array.isArray(bulletins)) localStorage.setItem('db_bulletins', JSON.stringify(bulletins));
+        if (Array.isArray(souvenirs)) localStorage.setItem('db_souvenirs', JSON.stringify(souvenirs));
+        if (Array.isArray(counselling)) localStorage.setItem('db_counselling', JSON.stringify(counselling));
+        if (Array.isArray(messages)) localStorage.setItem('db_messages', JSON.stringify(messages));
+        if (Array.isArray(branchChanchin)) localStorage.setItem('db_branch-chanchin', JSON.stringify(branchChanchin));
+
         if (settings) localStorage.setItem('db_settings', JSON.stringify(settings));
 
         console.log("✅ Sync complete!");
@@ -364,6 +409,30 @@ const AdminData = {
           LyricCategories.length = 0;
           LyricCategories.push('All', ...settings.LyricCategories.filter(c => c !== 'All'));
         }
+        if (settings.branchChanchinCategories && typeof BranchChanchinCategories !== 'undefined') {
+          BranchChanchinCategories.length = 0;
+          BranchChanchinCategories.push('All', ...settings.branchChanchinCategories.filter(c => c !== 'All'));
+        }
+        
+        if (typeof GoldenJubileeCategories !== 'undefined') {
+          // Re-populate GoldenJubileeCategories
+          const urlParams = new URLSearchParams(window.location.search);
+          const gjType = urlParams.get('type') || 'branch';
+          const settingsKey = gjType === 'kohhran' ? 'kohhranJubileeFolders' : 'goldenJubileeFolders';
+          const defaultCat = gjType === 'kohhran' ? 'Kohhran Golden Jubilee' : 'Branch Golden Jubilee';
+          
+          if (settings[settingsKey] && Array.isArray(settings[settingsKey])) {
+            GoldenJubileeCategories.length = 0;
+            GoldenJubileeCategories.push({ name: defaultCat, style: 'default' });
+            
+            const loaded = settings[settingsKey].map(c => {
+               if (typeof c === 'string') return { name: c, style: 'default' };
+               return c;
+            }).filter(c => c.name !== defaultCat);
+            
+            GoldenJubileeCategories.push(...loaded);
+          }
+        }
       }
 
       if (typeof populateCategoryDropdowns === 'function') populateCategoryDropdowns();
@@ -371,6 +440,8 @@ const AdminData = {
       if (typeof renderPhotosTable === 'function') renderPhotosTable();
       if (typeof renderDocsTable === 'function') renderDocsTable();
       if (typeof renderSermonsTable === 'function') renderSermonsTable();
+      if (typeof renderBranchChanchinTable === 'function') renderBranchChanchinTable();
+      if (typeof renderOBTable === 'function') renderOBTable();
       if (typeof loadDashboardStats === 'function') loadDashboardStats();
     } catch (e) {
       console.error("Error refreshing page table:", e);
@@ -529,8 +600,9 @@ function renderSidebar() {
         currentPath.endsWith('lawmpuina.html') ? 'lawmpuina' :
           currentPath.endsWith('sunna.html') ? 'sunna' :
             currentPath.endsWith('kohhran-chanchin.html') ? 'kohhran-chanchin' :
-              currentPath.endsWith('kohhran-upa.html') ? 'kohhran-upa' :
-                currentPath.endsWith('golden-jubilee.html') ? 'golden-jubilee' :
+              currentPath.endsWith('branch-chanchin.html') ? 'branch-chanchin' :
+                currentPath.endsWith('kohhran-upa.html') ? 'kohhran-upa' :
+                  currentPath.endsWith('golden-jubilee.html') ? 'golden-jubilee' :
                   currentPath.endsWith('photos.html') ? 'photos' :
           currentPath.endsWith('documents.html') ? (collectionParam === 'bulletins' ? 'bulletin' : collectionParam === 'souvenirs' ? 'souvenir' : collectionParam === 'mipuiaw' ? 'mipuiaw' : 'documents') :
           currentPath.endsWith('sermons.html') ? 'sermons' :
@@ -575,8 +647,14 @@ function renderSidebar() {
       <a href="kohhran-upa.html" class="sidebar-link ${activePage === 'kohhran-upa' ? 'active' : ''}">
         <span class="link-icon">👨🏽‍🦳</span> Kohhran Upa
       </a>
-      <a href="golden-jubilee.html" class="sidebar-link ${activePage === 'golden-jubilee' ? 'active' : ''}">
-        <span class="link-icon">🌟</span> Golden Jubilee
+      <a href="branch-chanchin.html" class="sidebar-link ${activePage === 'branch-chanchin' ? 'active' : ''}">
+        <span class="link-icon">✍️</span> Branch Chanchin
+      </a>
+      <a href="golden-jubilee.html?type=branch" class="sidebar-link ${activePage === 'golden-jubilee' && window.location.search.includes('type=branch') ? 'active' : ''}">
+        <span class="link-icon">🌟</span> Branch Golden Jubilee
+      </a>
+      <a href="golden-jubilee.html?type=kohhran" class="sidebar-link ${activePage === 'golden-jubilee' && window.location.search.includes('type=kohhran') ? 'active' : ''}">
+        <span class="link-icon">🌟</span> Kohhran Golden Jubilee
       </a>
       <a href="photos.html" class="sidebar-link ${activePage === 'photos' ? 'active' : ''}">
         <span class="link-icon">📸</span> Photos Gallery
@@ -622,6 +700,9 @@ function renderSidebar() {
       </a>
       
       <div class="sidebar-label" style="margin-top: 15px;">Actions</div>
+      <a href="#" class="sidebar-link" id="btn-sync-cloud">
+        <span class="link-icon">🔄</span> Sync from Cloud
+      </a>
       <a href="../index.html" class="sidebar-link" target="_blank">
         <span class="link-icon">🌐</span> View Website
       </a>
@@ -644,6 +725,55 @@ function renderSidebar() {
   document.getElementById('logout-btn').addEventListener('click', () => {
     AdminAuth.logout();
   });
+
+  // Attach sync handler
+  const syncBtn = document.getElementById('btn-sync-cloud');
+  if (syncBtn) {
+    syncBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      
+      const confirmSync = confirm("This will fetch the latest data from the cloud and overwrite your local browser cache for the current page. Proceed?");
+      if (!confirmSync) return;
+      
+      syncBtn.style.pointerEvents = 'none';
+      syncBtn.style.opacity = '0.5';
+      syncBtn.innerHTML = '<span class="link-icon">⏳</span> Syncing...';
+      
+      try {
+        let currentTarget = undefined;
+        try {
+          if (typeof targetCollection !== 'undefined') currentTarget = targetCollection;
+        } catch(e) {}
+        
+        if (currentTarget) {
+          // Sync just this page's collection
+          await AdminData.forceSync(currentTarget);
+          AdminToast.show('Data successfully synced from cloud!', 'success');
+          setTimeout(() => location.reload(), 1000);
+        } else {
+          // If on dashboard or page without targetCollection, sync everything
+          const collections = [
+            'photos', 'documents', 'mipuiaw', 'bulletins', 'souvenirs', 
+            'sermons', 'announcements', 'lyrics', 'Kohhran Chanchin', 
+            'Kohhran Upa', 'Golden Jubilee', 'Kohhran Golden Jubilee', 
+            'branch-info', 'statistics', 'settings', 'news', 'lawmpuina', 
+            'sunna', 'counselling', 'messages', 'branch-chanchin'
+          ];
+          for (const col of collections) {
+            await AdminData.forceSync(col);
+          }
+          AdminToast.show('All collections synced from cloud!', 'success');
+          setTimeout(() => location.reload(), 1500);
+        }
+      } catch (err) {
+        console.error(err);
+        AdminToast.show('Failed to sync from cloud', 'error');
+        syncBtn.style.pointerEvents = 'auto';
+        syncBtn.style.opacity = '1';
+        syncBtn.innerHTML = '<span class="link-icon">🔄</span> Sync from Cloud';
+      }
+    });
+  }
 }
 
 function setupSidebarToggle() {

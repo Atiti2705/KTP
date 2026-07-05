@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Articles & Sermons — KṬP Saikhamakawn</title>
-  <meta name="description" content="Access sermon notes, Bible study materials, and spiritual messages shared at KṬP Saikhamakawn church services and youth fellowships.">
-  <meta name="keywords" content="KTP Saikhamakawn sermons, Bible study, Christian sermon notes, Mizo message guidelines">
+  <title>Branch Chanchin — KṬP Saikhamakawn</title>
+  <meta name="description" content="Access branch-chanchin notes, Bible study materials, and spiritual messages shared at KṬP Saikhamakawn church services and youth fellowships.">
+  <meta name="keywords" content="KTP Saikhamakawn branch-chanchin, Bible study, Christian branch-chanchin notes, Mizo message guidelines">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Sermons — KṬP Saikhamakawn">
-  <meta property="og:description" content="Access sermon notes, Bible study materials, and spiritual messages.">
+  <meta property="og:title" content="Branch Chanchin — KṬP Saikhamakawn">
+  <meta property="og:description" content="Access branch-chanchin notes, Bible study materials, and spiritual messages.">
   <meta property="og:image" content="assets/images/logo.png">
   <meta property="og:type" content="website">
 
@@ -40,7 +40,7 @@
     <!-- Page Header -->
     <section class="page-title-section mizo-pattern-subtle" style="padding: var(--sp-3) 0 var(--sp-2) 0;">
       <div class="container">
-        <h1 class="reveal" style="font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: 0;">📖 Articles & Sermons</h1>
+        <h1 class="reveal" style="font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: 0;">📖 Branch Chanchin</h1>
       </div>
     </section>
 
@@ -53,7 +53,7 @@
           <div style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
             <div class="search-container">
               <span class="search-icon">🔍</span>
-              <input type="text" id="sermon-search" class="search-input">
+              <input type="text" id="branch-chanchin-search" class="search-input">
               <span class="search-clear" id="search-clear-btn" role="button" aria-label="Clear search">&times;</span>
             </div>
           </div>
@@ -87,10 +87,10 @@
 
           <!-- Results count/info and Sort -->
           <div class="results-info" style="margin-bottom: var(--sp-2);">
-            <span class="results-count" id="sermon-count">Loading sermons...</span>
+            <span class="results-count" id="branch-chanchin-count">Loading branch-chanchin...</span>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <label for="sermon-sort" style="font-size: 12px; color: var(--color-text-tertiary); font-weight: var(--fw-medium);">Sort:</label>
-              <select id="sermon-sort" class="filter-select" style="padding: 4px 8px; padding-right: 24px; font-size: 13px; height: 30px; border-radius: var(--radius-md); background-position: right 8px center; background-size: 12px; border: 1px solid var(--color-border); background-color: var(--color-bg-card); cursor: pointer;">
+              <label for="branch-chanchin-sort" style="font-size: 12px; color: var(--color-text-tertiary); font-weight: var(--fw-medium);">Sort:</label>
+              <select id="branch-chanchin-sort" class="filter-select" style="padding: 4px 8px; padding-right: 24px; font-size: 13px; height: 30px; border-radius: var(--radius-md); background-position: right 8px center; background-size: 12px; border: 1px solid var(--color-border); background-color: var(--color-bg-card); cursor: pointer;">
                 <option value="manual">Manual</option>
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
@@ -102,8 +102,8 @@
 
         </div>
 
-        <!-- Sermons List (1-column layout) -->
-        <div class="content-grid" id="sermons-list" style="grid-template-columns: 1fr; gap: var(--sp-2);">
+        <!-- Branch Chanchin List (1-column layout) -->
+        <div class="content-grid" id="branch-chanchin-list" style="grid-template-columns: 1fr; gap: var(--sp-2);">
           <!-- Populated by JS -->
         </div>
 
@@ -148,11 +148,11 @@
   <script defer src="assets/js/save-service.js?v=152"></script>
   <script defer src="assets/js/components.js?v=152"></script>
   <script defer src="assets/js/search.js?v=152"></script>
-  <script defer src="assets/js/sermons.js?v=152"></script>
+  <script defer src="assets/js/branch-chanchin.js?v=152"></script>
   <script defer src="assets/js/app.js?v=152"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      renderHeader('sermons');
+      renderHeader('branch-chanchin');
       renderFooter();
     });
   </script>

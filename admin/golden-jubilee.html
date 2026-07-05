@@ -8,10 +8,10 @@
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/variables.css?v=117">
-  <link rel="stylesheet" href="../assets/css/base.css?v=117">
-  <link rel="stylesheet" href="../assets/css/components.css?v=117">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=117">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=152">
+  <link rel="stylesheet" href="../assets/css/base.css?v=152">
+  <link rel="stylesheet" href="../assets/css/components.css?v=152">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=152">
 </head>
 
 <body>
@@ -28,13 +28,14 @@
         <div class="admin-topbar-left">
           <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
           <div>
-            <h1 class="admin-page-title">Golden Jubilee</h1>
-            <p class="admin-page-desc">Manage Golden Jubilee entries</p>
+            <h1 class="admin-page-title" id="admin-page-title">Golden Jubilee</h1>
+            <p class="admin-page-desc" id="admin-page-desc">Manage folders and entries</p>
           </div>
         </div>
         <div style="display: flex; gap: var(--sp-3); align-items: center;">
+          <button class="btn btn-outline" id="btn-add-folder" style="color: var(--brand-sky); border-color: var(--brand-sky);">➕ Add Folder</button>
           <button class="btn btn-outline" id="btn-bulk-delete" style="color: var(--brand-red); border-color: var(--brand-red); display: none;">🗑️ Delete Selected</button>
-          <button class="btn btn-primary" id="btn-add-ob">➕ Add Entry</button>
+          <button class="btn btn-primary" id="btn-add-ob" style="display: none;">➕ Add Entry</button>
         </div>
       </div>
 
@@ -76,7 +77,12 @@
         <input type="hidden" id="ob-edit-id" value="">
 
         <div class="modal-body">
-          <input type="hidden" id="ob-category" value="Golden Jubilee">
+          <div class="form-group" id="group-ob-category">
+            <label for="ob-category" class="form-label">Folder</label>
+            <select id="ob-category" class="form-input form-select" required>
+              <!-- Populated via JS -->
+            </select>
+          </div>
 
           <div class="form-group">
             <label for="ob-title" class="form-label">Title (e.g. June 2025 Updates)</label>
@@ -97,10 +103,10 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="ob-image">Google Drive Photo Link(s) (Comma separated)</label>
+            <label class="form-label" for="ob-image">Google Drive Photo or Folder Link</label>
             <input type="text" class="form-input" id="ob-image">
             <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-top: 4px;">
-              Make sure the photo(s) are set to <strong>"Anyone with the link"</strong> on Google Drive. Separate multiple links with commas.
+              You can paste a link to a <strong>single photo</strong>, multiple photos (comma separated), or an entire <strong>Google Drive Folder</strong> (it will automatically import all images inside as a gallery). Make sure the files/folder are set to <strong>"Anyone with the link"</strong>.
             </div>
           </div>
 
@@ -117,34 +123,204 @@
     </div>
   </div>
 
+  <!-- Folder Modal -->
+  <div class="modal-backdrop" id="folder-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="folder-modal-title">Add Folder</h3>
+        <button class="modal-close" id="close-folder-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="folder-form">
+        <input type="hidden" id="folder-action-type" value="add">
+        <input type="hidden" id="folder-old-name" value="">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="folder-name" class="form-label">Folder Name</label>
+            <input type="text" id="folder-name" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="folder-style" class="form-label">View Style</label>
+            <select id="folder-style" class="form-input form-select" required>
+              <option value="default">Default (Cards & Modal)</option>
+              <option value="gallery">Gallery (Photo Album)</option>
+              <option value="list">List (Document Style)</option>
+            </select>
+            <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-top: 4px;">
+              This dictates how files inside this folder are displayed on the public website.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-folder-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Folder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <!-- SortableJS for drag-and-drop -->
-  <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=117"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=152"></script>
   <!-- Firebase SDK Compat -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=117"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=117"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=117"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=152"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=152"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=152"></script>
 
   <!-- App Configuration & Services -->
-  <script defer src="../assets/js/firebase-config.js?v=117"></script>
-  <script defer src="../assets/js/theme.js?v=117"></script>
-  <script defer src="../assets/js/data.js?v=117"></script>
-  <script defer src="../assets/js/auth.js?v=117"></script>
-  <script defer src="../assets/js/db-service.js?v=117"></script>
-  <script defer src="../assets/js/components.js?v=117"></script>
-  <script defer src="../assets/js/admin.js?v=117"></script>
+  <script defer src="../assets/js/firebase-config.js?v=152"></script>
+  <script defer src="../assets/js/theme.js?v=152"></script>
+  <script defer src="../assets/js/data.js?v=152"></script>
+  <script defer src="../assets/js/auth.js?v=152"></script>
+  <script defer src="../assets/js/db-service.js?v=152"></script>
+  <script defer src="../assets/js/components.js?v=152"></script>
+  <script defer src="../assets/js/admin.js?v=152"></script>
 
   <script>
-    const targetCollection = 'Golden Jubilee';
+    const urlParams = new URLSearchParams(window.location.search);
+    const gjType = urlParams.get('type') || 'branch';
+    const targetCollection = gjType === 'kohhran' ? 'Kohhran Golden Jubilee' : 'Golden Jubilee';
+    const settingsFolderKey = gjType === 'kohhran' ? 'kohhranJubileeFolders' : 'goldenJubileeFolders';
+    const defaultCategoryName = gjType === 'kohhran' ? 'Kohhran Golden Jubilee' : 'Branch Golden Jubilee';
+
+    let GoldenJubileeCategories = [{ name: defaultCategoryName, style: 'default' }]; // Default
     let currentCategoryFilter = 'All';
 
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof Toast !== 'undefined') Toast.init();
+      
+      document.getElementById('admin-page-title').textContent = defaultCategoryName;
+
+      // Load settings to fetch customized category list synchronously from localStorage cache
+      const settings = AdminData.get('settings');
+      if (settings && settings[settingsFolderKey] && Array.isArray(settings[settingsFolderKey])) {
+        GoldenJubileeCategories.length = 0;
+        GoldenJubileeCategories.push({ name: defaultCategoryName, style: 'default' });
+        
+        const loadedFolders = settings[settingsFolderKey].map(c => {
+           if (typeof c === 'string') return { name: c, style: 'default' };
+           return c;
+        }).filter(c => c.name !== defaultCategoryName);
+        
+        GoldenJubileeCategories.push(...loadedFolders);
+      }
+
+      populateCategoryDropdowns();
 
       renderOBTable();
       setupEvents();
       initSortable();
     });
+
+    function populateCategoryDropdowns() {
+      const formSelect = document.getElementById('ob-category');
+      if (!formSelect) return;
+
+      formSelect.innerHTML = '<option value="" disabled selected>Select folder...</option>';
+
+      GoldenJubileeCategories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.name;
+        opt.textContent = cat.name === defaultCategoryName ? 'Uncategorized (Root)' : cat.name;
+        formSelect.appendChild(opt);
+      });
+    }
+
+    /* --- Folder Management --- */
+    window.openFolderModal = function(action, oldName = '') {
+      document.getElementById('folder-form').reset();
+      document.getElementById('folder-action-type').value = action;
+      
+      if (action === 'edit') {
+        const folder = GoldenJubileeCategories.find(c => c.name === oldName);
+        if (!folder) return;
+        document.getElementById('folder-modal-title').textContent = 'Edit Folder';
+        document.getElementById('folder-old-name').value = oldName;
+        document.getElementById('folder-name').value = folder.name;
+        document.getElementById('folder-style').value = folder.style || 'default';
+      } else {
+        document.getElementById('folder-modal-title').textContent = 'Add Folder';
+        document.getElementById('folder-old-name').value = '';
+        document.getElementById('folder-style').value = 'default';
+      }
+      
+      ModalSystem.open('folder-modal');
+    };
+
+    const closeFolderModal = () => ModalSystem.close('folder-modal');
+    document.getElementById('close-folder-modal').addEventListener('click', closeFolderModal);
+    document.getElementById('btn-cancel-folder-modal').addEventListener('click', closeFolderModal);
+
+    document.getElementById('folder-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const action = document.getElementById('folder-action-type').value;
+      const oldName = document.getElementById('folder-old-name').value;
+      const newName = document.getElementById('folder-name').value.trim();
+      const style = document.getElementById('folder-style').value;
+      
+      if (!newName) return;
+      
+      if (action === 'add') {
+        if (GoldenJubileeCategories.some(c => c.name === newName)) {
+          alert(`Folder '${newName}' already exists.`);
+          return;
+        }
+        GoldenJubileeCategories.push({ name: newName, style });
+      } else if (action === 'edit') {
+        if (newName !== oldName && GoldenJubileeCategories.some(c => c.name === newName)) {
+          alert(`Folder '${newName}' already exists.`);
+          return;
+        }
+        
+        const idx = GoldenJubileeCategories.findIndex(c => c.name === oldName);
+        if (idx > -1) {
+          GoldenJubileeCategories[idx] = { name: newName, style };
+          
+          if (newName !== oldName) {
+            // Update items if name changed
+            const items = AdminData.get(targetCollection);
+            for (const item of items) {
+              if (item.category === oldName) {
+                item.category = newName;
+                await AdminData.update(targetCollection, item.id, { category: newName });
+              }
+            }
+          }
+        }
+      }
+      
+      saveCategorySettings();
+      populateCategoryDropdowns();
+      renderOBTable();
+      closeFolderModal();
+    });
+
+    window.removeCategoryAndSave = async function(catName, e) {
+      if (e) e.stopPropagation();
+      const items = AdminData.get(targetCollection) || [];
+      const itemsInCat = items.filter(i => i.category === catName);
+      
+      if (itemsInCat.length > 0) {
+        alert(`Cannot delete folder '${catName}' because it contains ${itemsInCat.length} items. Please delete or move the items first.`);
+        return;
+      }
+      
+      if (confirm(`Are you sure you want to delete the folder '${catName}'?`)) {
+        const idx = GoldenJubileeCategories.findIndex(c => c.name === catName);
+        if (idx > -1) {
+          GoldenJubileeCategories.splice(idx, 1);
+          saveCategorySettings();
+          populateCategoryDropdowns();
+          renderOBTable();
+        }
+      }
+    }
+
+    function saveCategorySettings() {
+      const settings = AdminData.get('settings') || {};
+      settings[settingsFolderKey] = GoldenJubileeCategories.filter(c => c.name !== defaultCategoryName);
+      AdminData.save('settings', settings);
+    }
 
     function formatDriveImageLink(url) {
       if (!url) return '';
@@ -166,31 +342,148 @@
       return names[cat] || cat;
     }
 
-    function renderOBTable() {
+    window.openFolder = function(folderName) {
+      currentCategoryFilter = folderName;
+      renderOBTable();
+    };
+
+    window.backToFolders = function() {
+      currentCategoryFilter = 'All';
+      renderOBTable();
+    };
+
+    window.renderOBTable = function renderOBTable() {
       const tbody = document.getElementById('ob-table-body');
       if (!tbody) return;
 
       const items = AdminData.get(targetCollection) || [];
       
-      let filtered = items;
-      if (currentCategoryFilter !== 'All') {
-        filtered = items.filter(i => i.category === currentCategoryFilter);
+      // Auto-recover missing folders from items (in case settings gets wiped)
+      let missingFoldersFound = false;
+      items.forEach(item => {
+        if (item.category && !GoldenJubileeCategories.some(c => c.name === item.category)) {
+          GoldenJubileeCategories.push({ name: item.category, style: 'default' });
+          missingFoldersFound = true;
+        }
+      });
+      if (missingFoldersFound) {
+        saveCategorySettings();
+        if (typeof populateCategoryDropdowns === 'function') populateCategoryDropdowns();
       }
 
+      const titleElem = document.getElementById('admin-page-title');
+      const descElem = document.getElementById('admin-page-desc');
+      const btnAddFolder = document.getElementById('btn-add-folder');
+      const btnAddEntry = document.getElementById('btn-add-ob');
+
+      if (currentCategoryFilter === 'All') {
+        titleElem.textContent = 'Golden Jubilee Folders';
+        descElem.textContent = 'Manage your folders. Click a folder to view its contents.';
+        btnAddFolder.style.display = 'inline-flex';
+        btnAddEntry.style.display = 'none';
+
+        // Include the root category but rename it for display purposes
+        const folders = [...GoldenJubileeCategories];
+        
+        if (folders.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+                No folders found. Click "Add Folder" to create one.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        const formatStyleName = (s) => {
+          if (s === 'gallery') return 'Photo Album';
+          if (s === 'list') return 'Document List';
+          return 'Cards (Default)';
+        };
+
+        tbody.innerHTML = folders.map((folder, index) => {
+          const itemsInFolderArray = items.filter(i => i.category === folder.name);
+          let itemsInFolder = 0;
+          itemsInFolderArray.forEach(i => {
+            const numImages = (i.imageUrls && i.imageUrls.length > 0) ? i.imageUrls.length : (i.imageUrl ? 1 : 0);
+            const numDocs = (i.documentFiles && i.documentFiles.length > 0) ? i.documentFiles.length : 0;
+            const total = numImages + numDocs;
+            itemsInFolder += total > 0 ? total : 1;
+          });
+
+          const isRoot = folder.name === defaultCategoryName;
+          const displayName = isRoot ? 'Uncategorized (Root)' : folder.name;
+          
+          return `
+            <tr style="cursor: pointer;" onclick="openFolder('${folder.name}')" data-folder-name="${folder.name}">
+              <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder" onclick="event.stopPropagation()">☰</td>
+              <td style="text-align: center; color: var(--brand-sky); font-size: 24px;">📁</td>
+              <td colspan="4" style="font-weight: bold; font-size: var(--fs-md);">
+                ${displayName}
+                ${!isRoot ? `<span class="badge badge-secondary" style="margin-left: 8px; font-weight: normal; font-size: 0.7rem;">${formatStyleName(folder.style)}</span>` : ''}
+              </td>
+              <td style="color: var(--color-text-secondary);">${itemsInFolder} items</td>
+              <td>
+                <div class="table-actions">
+                  ${!isRoot ? `<button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openFolderModal('edit', '${folder.name}')" style="padding:4px 8px; font-size:12px;" title="Edit">✏️</button>
+                  <button class="btn btn-outline btn-sm" onclick="removeCategoryAndSave('${folder.name}', event)" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete">❌</button>` : ''}
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+        
+        updateBulkDeleteUI();
+        return;
+      }
+      
+      // Render items inside a specific folder
+      // Render items inside a specific folder
+      const isRootView = currentCategoryFilter === defaultCategoryName;
+      titleElem.textContent = `📁 ${isRootView ? 'Uncategorized (Root)' : currentCategoryFilter}`;
+      descElem.textContent = `Managing files in ${isRootView ? 'Uncategorized (Root)' : currentCategoryFilter}`;
+      btnAddFolder.style.display = 'none';
+      btnAddEntry.style.display = 'inline-flex';
+      
+      const filtered = items.filter(i => i.category === currentCategoryFilter);
+
+      let html = `
+        <tr style="cursor: pointer; background: var(--color-bg-alt);" onclick="backToFolders()">
+          <td colspan="8" style="font-weight: bold; padding: 12px 16px;">
+            🔙 Back to Folders
+          </td>
+        </tr>
+      `;
+
       if (filtered.length === 0) {
-        tbody.innerHTML = `
+        html += `
           <tr>
-            <td colspan="7" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
-              No entries found.
+            <td colspan="8" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+              Folder is empty. Click "Add Entry" to add files.
             </td>
           </tr>
         `;
+        tbody.innerHTML = html;
+        updateBulkDeleteUI();
         return;
       }
 
-      tbody.innerHTML = filtered.map(item => {
+      html += filtered.map(item => {
         const contentSnippet = (item.content || '').length > 50 ? `${(item.content || '').substring(0, 50)}...` : (item.content || '<em>No Text</em>');
-        const imgDisplay = item.imageUrl ? `<img src="${formatDriveImageLink(item.imageUrl)}" style="max-height: 40px; border-radius: 4px;">` : '<em>No Image</em>';
+        
+        let imgDisplay = '<em>No Image</em>';
+        const images = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls : (item.imageUrl ? [item.imageUrl] : []);
+        if (images.length > 0) {
+            if (images.length === 1) {
+                imgDisplay = `<img src="${formatDriveImageLink(images[0])}" style="max-height: 40px; border-radius: 4px;">`;
+            } else {
+                imgDisplay = `<div style="display:flex; gap:4px; flex-wrap:wrap; max-width: 150px;">
+                  ${images.slice(0, 4).map(img => `<img src="${formatDriveImageLink(img)}" style="height: 30px; width: 30px; object-fit: cover; border-radius: 2px;">`).join('')}
+                  ${images.length > 4 ? `<div style="height:30px; width:30px; display:flex; align-items:center; justify-content:center; background:var(--color-bg-hover); font-size:10px; border-radius:2px; color:var(--color-text);">+${images.length-4}</div>` : ''}
+                </div>`;
+            }
+        }
 
         return `
           <tr data-id="${item.id}">
@@ -215,6 +508,8 @@
           </tr>
         `;
       }).join('');
+      
+      tbody.innerHTML = html;
 
       document.querySelectorAll('.row-checkbox').forEach(cb => {
         cb.addEventListener('change', updateBulkDeleteUI);
@@ -232,9 +527,26 @@
         animation: 150,
         handle: '.drag-handle',
         onEnd: async function () {
-          if (currentCategoryFilter !== 'All') {
-            AdminToast.show('Cannot reorder while filtered. Please view All Categories.', 'error');
-            renderOBTable(); // Revert
+          if (currentCategoryFilter === 'All') {
+            const rows = tbody.querySelectorAll('tr[data-folder-name]');
+            const newNames = Array.from(rows).map(row => row.getAttribute('data-folder-name'));
+            
+            const newCategories = [];
+            for (const name of newNames) {
+                const cat = GoldenJubileeCategories.find(c => c.name === name);
+                if (cat) newCategories.push(cat);
+            }
+            
+            // Add any missing folders (like Uncategorized if it wasn't rendered but should be)
+            for (const cat of GoldenJubileeCategories) {
+                if (!newCategories.includes(cat)) {
+                    newCategories.push(cat);
+                }
+            }
+            
+            GoldenJubileeCategories = newCategories;
+            saveCategorySettings();
+            AdminToast.show('Folders reordered successfully!', 'success');
             return;
           }
 
@@ -254,6 +566,11 @@
     }
 
     function setupEvents() {
+      // Add Folder
+      document.getElementById('btn-add-folder')?.addEventListener('click', () => {
+        openFolderModal('add');
+      });
+
       // Filter functionality
       // Filter removed
 
@@ -327,8 +644,6 @@
         const year = document.getElementById('ob-year').value;
         const content = document.getElementById('ob-content').value;
         const imageInput = document.getElementById('ob-image').value;
-        const imageUrls = imageInput ? imageInput.split(',').map(s => s.trim()).filter(s => s) : [];
-        const imageUrl = imageUrls.length > 0 ? imageUrls[0] : '';
         const pinnedToHomepage = document.getElementById('ob-pinned').checked;
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -338,6 +653,41 @@
           submitBtn.disabled = true;
           submitBtn.innerHTML = '⌛ Saving...';
 
+          let imageUrls = [];
+          let documentFiles = [];
+          const folderIdMatch = imageInput.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+
+          if (folderIdMatch && folderIdMatch[1]) {
+            submitBtn.innerHTML = '⌛ Importing Folder...';
+            const folderId = folderIdMatch[1];
+            if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
+              throw new Error("Google Drive API key is missing in firebase-config.js!");
+            }
+            // Removed mimeType filter to fetch all files
+            const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&includeItemsFromAllDrives=true&supportsAllDrives=true&pageSize=1000&fields=files(id,name,mimeType)&key=${googleDriveApiKey}`;
+            
+            const res = await fetch(apiEndpoint);
+            if (!res.ok) throw new Error("Failed to fetch folder. Is the folder shared as 'Anyone with the link'?");
+            const data = await res.json();
+            if (data.files && data.files.length > 0) {
+              data.files.forEach(file => {
+                if (file.mimeType && file.mimeType.includes('image/')) {
+                  imageUrls.push(`https://lh3.googleusercontent.com/d/${file.id}`);
+                } else if (file.mimeType !== 'application/vnd.google-apps.folder') {
+                  documentFiles.push({
+                    name: file.name,
+                    url: `https://drive.google.com/file/d/${file.id}/view`
+                  });
+                }
+              });
+            } else {
+              throw new Error("No files found in this Google Drive folder!");
+            }
+          } else {
+            imageUrls = imageInput ? imageInput.split(',').map(s => s.trim()).filter(s => s) : [];
+          }
+          const imageUrl = imageUrls.length > 0 ? imageUrls[0] : '';
+
           if (actionType === 'add') {
             const newItem = {
               category,
@@ -346,6 +696,7 @@
               content,
               imageUrl,
               imageUrls,
+              documentFiles,
               pinnedToHomepage,
               orderIndex: 999,
               date: new Date().toISOString()
@@ -360,6 +711,7 @@
               content,
               imageUrl,
               imageUrls,
+              documentFiles,
               pinnedToHomepage
             };
             await AdminData.update(targetCollection, editId, updatedFields);

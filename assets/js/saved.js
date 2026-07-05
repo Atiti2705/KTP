@@ -332,8 +332,8 @@ function setupDocModal() {
              </button>
           </div>
         </div>
-        <div style="flex: 1; position: relative; width: 100%; height: 100%; background: #fff;">
-          <iframe id="modal-doc-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+        <div style="flex: 1; position: relative; width: 100%; height: 100%; background: #fff; -webkit-overflow-scrolling: touch; overflow: auto;">
+          <iframe id="modal-doc-iframe" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
         </div>
       </div>
     </div>

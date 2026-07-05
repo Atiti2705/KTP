@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Sermons — KṬP Saikhamakawn</title>
+  <title>Manage Branch Chanchin — KṬP Saikhamakawn</title>
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="../assets/css/base.css?v=152">
   <link rel="stylesheet" href="../assets/css/components.css?v=152">
   <link rel="stylesheet" href="../assets/css/admin.css?v=152">
+  <!-- Quill Rich Text Editor -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>
 
 <body>
@@ -28,14 +30,14 @@
         <div class="admin-topbar-left">
           <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
           <div>
-            <h1 class="admin-page-title">Sermons & Studies Manager</h1>
-            <p class="admin-page-desc">Create, edit, or delete sermon outlines and notes</p>
+            <h1 class="admin-page-title">Branch Chanchin Manager</h1>
+            <p class="admin-page-desc">Create, edit, or delete branch updates</p>
           </div>
         </div>
         <div style="display: flex; gap: var(--sp-3); align-items: center;">
           <button class="btn btn-outline" id="btn-bulk-edit" style="color: var(--brand-sky); border-color: var(--brand-sky); display: none;">✏️ Edit Selected</button>
           <button class="btn btn-outline" id="btn-bulk-delete" style="color: var(--brand-red); border-color: var(--brand-red); display: none;">🗑️ Delete Selected</button>
-          <button class="btn btn-primary" id="btn-add-sermon">➕ Add Sermon</button>
+          <button class="btn btn-primary" id="btn-add-branch-chanchin">➕ Add Entry</button>
         </div>
       </div>
 
@@ -74,7 +76,7 @@
                 <th style="width: 120px;">Actions</th>
               </tr>
             </thead>
-            <tbody id="sermons-table-body">
+            <tbody id="branch-chanchin-table-body">
               <!-- Rendered via JS -->
             </tbody>
           </table>
@@ -85,123 +87,75 @@
   </div>
 
   <!-- Edit/Add Modal -->
-  <div class="modal-backdrop" id="sermon-form-modal">
+  <div class="modal-backdrop" id="branch-chanchin-form-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="modal-form-title">Add New Sermon Notes</h3>
-        <button class="modal-close" id="close-sermon-modal" aria-label="Close modal">&times;</button>
+        <h3 id="modal-form-title">Add New Branch Chanchin Notes</h3>
+        <button class="modal-close" id="close-branch-chanchin-modal" aria-label="Close modal">&times;</button>
       </div>
-      <form id="sermon-crud-form">
-        <input type="hidden" id="sermon-action-type" value="add">
-        <input type="hidden" id="sermon-edit-id" value="">
+      <form id="branch-chanchin-crud-form">
+        <input type="hidden" id="branch-chanchin-action-type" value="add">
+        <input type="hidden" id="branch-chanchin-edit-id" value="">
 
         <div class="modal-body">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
-            <div class="form-group">
-              <label for="sermon-title" class="form-label">Sermon Title</label>
-              <input type="text" id="sermon-title" class="form-input" required>
-            </div>
-
-            <div class="form-group">
-              <label for="sermon-speaker" class="form-label">Speaker</label>
-              <input type="text" id="sermon-speaker" class="form-input" required>
-            </div>
+          <div class="form-group">
+            <label for="branch-chanchin-title" class="form-label">Branch Chanchin Title</label>
+            <input type="text" id="branch-chanchin-title" class="form-input" required>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
             <div class="form-group">
-              <label for="sermon-topic" class="form-label">Topic / Category</label>
+              <label for="branch-chanchin-topic" class="form-label">Topic / Category</label>
               <div class="category-field-row">
-                <select id="sermon-topic" class="form-input form-select" required style="flex:1;">
+                <select id="branch-chanchin-topic" class="form-input form-select" required style="flex:1;">
                   <!-- Populated via JS -->
                 </select>
                 <button type="button" class="btn-edit-cats" id="btn-toggle-cat-editor">✏️ Edit</button>
               </div>
-              <div class="category-editor" id="sermon-cat-editor">
+              <div class="category-editor" id="branch-chanchin-cat-editor">
                 <span class="category-editor-label">Add, remove, or rename categories:</span>
-                <div class="category-chips-editor" id="sermon-cat-chips"></div>
+                <div class="category-chips-editor" id="branch-chanchin-cat-chips"></div>
                 <div class="cat-add-row">
-                  <input type="text" id="sermon-new-cat-input">
+                  <input type="text" id="branch-chanchin-new-cat-input">
                   <button type="button" id="btn-add-new-cat">➕ Add</button>
                 </div>
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="sermon-scripture" class="form-label">Scripture Reading</label>
-              <input type="text" id="sermon-scripture" class="form-input" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="sermon-desc" class="form-label">Sermon Outline / Description</label>
-            <textarea id="sermon-desc" class="form-input form-textarea" required></textarea>
-          </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
             <div class="form-group">
-              <label for="sermon-type" class="form-label">Document Format</label>
-              <select id="sermon-type" class="form-input form-select" required>
-                <option value="PDF">PDF File</option>
-                <option value="DOCX">Word File (DOCX)</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="sermon-size" class="form-label">Estimated File Size</label>
-              <input type="text" id="sermon-size" class="form-input" required value="1.0 MB">
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
-            <div class="form-group">
-              <label for="sermon-date" class="form-label">Delivery Date</label>
-              <input type="date" id="sermon-date" class="form-input" required>
+              <label for="branch-chanchin-date" class="form-label">Delivery Date</label>
+              <input type="date" id="branch-chanchin-date" class="form-input" required>
             </div>
 
             <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
               <span class="form-label">Options</span>
               <label
                 style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="checkbox" id="sermon-featured" style="width: 16px; height: 16px;">
+                <input type="checkbox" id="branch-chanchin-featured" style="width: 16px; height: 16px;">
                 Feature on Homepage
               </label>
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Sermon Notes Source</label>
-            <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
-              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="sermon-source" value="upload" checked style="width: 16px; height: 16px;">
-                Upload File (Mock)
-              </label>
-              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="sermon-source" value="url" style="width: 16px; height: 16px;">
-                External Link (Google Drive / others)
-              </label>
+          <div class="form-group" style="display: flex; flex-direction: column; flex-grow: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--sp-2);">
+              <label class="form-label" style="margin-bottom: 0;">Branch Chanchin Notes Content</label>
+              <button type="button" class="btn btn-sm btn-outline" id="btn-fix-mizo-text" title="Fix legacy Mizo characters (converts \ to ṭ)" style="padding: 4px 8px; font-size: 12px;">✨ Fix Legacy Text ( \ to ṭ )</button>
             </div>
-          </div>
-
-          <div class="form-group" id="sermon-upload-container">
-            <label for="sermon-file" class="form-label">Notes Attachment File (Mock)</label>
-            <input type="file" id="sermon-file" class="form-input">
-            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Firebase Storage attachment point. PDF download simulation is automated.
-            </small>
-          </div>
-
-          <div class="form-group" id="sermon-url-container" style="display: none; margin-bottom: 0;">
-            <label for="sermon-url" class="form-label">Sermon Notes Link URL</label>
-            <input type="url" id="sermon-url" class="form-input">
-            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Paste link to Google Drive, Dropbox, or any public PDF/document URL.
-            </small>
+            <style>
+              #editor-container .ql-editor {
+                font-family: 'Times New Roman', Times, Arial, serif;
+                font-size: 1.1rem;
+                line-height: 1.7;
+              }
+            </style>
+            <div id="editor-container" style="height: 300px; background: var(--color-bg-primary); border-radius: 0 0 var(--radius-md) var(--radius-md);"></div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">💾 Save Sermon</button>
+          <button type="submit" class="btn btn-primary">💾 Save Branch Chanchin</button>
         </div>
       </form>
     </div>
@@ -211,13 +165,13 @@
   <div class="modal-backdrop" id="bulk-edit-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3>Bulk Edit Sermons</h3>
+        <h3>Bulk Edit Branch Chanchin</h3>
         <button class="modal-close" id="close-bulk-edit-modal" aria-label="Close modal">&times;</button>
       </div>
       <form id="bulk-edit-form">
         <div class="modal-body">
           <p style="margin-bottom: var(--sp-4); font-size: var(--fs-sm); color: var(--color-text-secondary);">
-            Select the fields you want to update for <strong id="bulk-edit-count">0</strong> selected sermons. Unchecked fields will remain unchanged.
+            Select the fields you want to update for <strong id="bulk-edit-count">0</strong> selected branchChanchin. Unchecked fields will remain unchanged.
           </p>
 
           <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
@@ -225,7 +179,7 @@
               <input type="checkbox" id="bulk-enable-topic" style="width: 16px; height: 16px;">
               Update Topic / Category
             </label>
-            <select id="bulk-sermon-topic" class="form-input form-select" disabled>
+            <select id="bulk-branch-chanchin-topic" class="form-input form-select" disabled>
               <!-- Populated via JS -->
             </select>
           </div>
@@ -235,7 +189,7 @@
               <input type="checkbox" id="bulk-enable-date" style="width: 16px; height: 16px;">
               Update Delivery Date
             </label>
-            <input type="date" id="bulk-sermon-date" class="form-input" disabled>
+            <input type="date" id="bulk-branch-chanchin-date" class="form-input" disabled>
           </div>
 
           <div class="form-group" style="border: 1px solid var(--color-border); padding: var(--sp-3); border-radius: var(--radius-md);">
@@ -243,7 +197,7 @@
               <input type="checkbox" id="bulk-enable-featured" style="width: 16px; height: 16px;">
               Update Featured Status
             </label>
-            <select id="bulk-sermon-featured" class="form-input form-select" disabled>
+            <select id="bulk-branch-chanchin-featured" class="form-input form-select" disabled>
               <option value="true">Yes, feature on Homepage</option>
               <option value="false">No, remove from Homepage</option>
             </select>
@@ -258,6 +212,9 @@
   </div>
 
   <!-- Scripts -->
+  <!-- Quill JS -->
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
   <!-- SortableJS for drag-and-drop -->
   <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=152"></script>
   <!-- Firebase SDK Compat -->
@@ -284,28 +241,28 @@
 
       // Load settings to fetch customized category list synchronously from localStorage cache
       const settings = AdminData.get('settings');
-      if (settings && settings.sermonCategories && Array.isArray(settings.sermonCategories)) {
-        SermonCategories.length = 0;
-        SermonCategories.push('All', ...settings.sermonCategories.filter(c => c !== 'All'));
+      if (settings && settings.branchChanchinCategories && Array.isArray(settings.branchChanchinCategories)) {
+        BranchChanchinCategories.length = 0;
+        BranchChanchinCategories.push('All', ...settings.branchChanchinCategories.filter(c => c !== 'All'));
       }
 
       populateCategoryDropdowns();
-      renderSermonsTable();
+      renderBranchChanchinTable();
       setupEvents();
       initSortable();
     });
 
     function populateCategoryDropdowns() {
       const filterSelect = document.getElementById('admin-filter-category');
-      const formSelect = document.getElementById('sermon-topic');
-      const bulkSelect = document.getElementById('bulk-sermon-topic');
+      const formSelect = document.getElementById('branch-chanchin-topic');
+      const bulkSelect = document.getElementById('bulk-branch-chanchin-topic');
       if (!filterSelect || !formSelect) return;
 
       filterSelect.innerHTML = '<option value="All">All Topics</option>';
       formSelect.innerHTML = '<option value="" disabled selected>Select topic...</option>';
       if (bulkSelect) bulkSelect.innerHTML = '<option value="" disabled selected>Select topic...</option>';
 
-      SermonCategories.forEach(cat => {
+      BranchChanchinCategories.forEach(cat => {
         if (cat !== 'All') {
           const opt1 = document.createElement('option');
           opt1.value = cat;
@@ -331,9 +288,9 @@
 
     /* --- Inline Category Editor --- */
     function renderCatEditorChips() {
-      const container = document.getElementById('sermon-cat-chips');
+      const container = document.getElementById('branch-chanchin-cat-chips');
       if (!container) return;
-      const cats = SermonCategories.filter(c => c !== 'All');
+      const cats = BranchChanchinCategories.filter(c => c !== 'All');
       container.innerHTML = cats.map(cat => `
         <span class="cat-chip" style="display:inline-flex; align-items:center; gap:4px;">
           ${cat}
@@ -354,33 +311,33 @@
       if (!newName || newName.trim() === '' || newName === oldName) return;
       
       const trimmedName = newName.trim();
-      const idx = SermonCategories.indexOf(oldName);
+      const idx = BranchChanchinCategories.indexOf(oldName);
       if (idx > -1) {
-        if (SermonCategories.includes(trimmedName)) {
+        if (BranchChanchinCategories.includes(trimmedName)) {
           alert(`Category '${trimmedName}' already exists.`);
           return;
         }
         
-        SermonCategories[idx] = trimmedName;
+        BranchChanchinCategories[idx] = trimmedName;
         saveCategorySettings();
         populateCategoryDropdowns();
         
-        const sermons = AdminData.get('sermons');
-        for (const sermon of sermons) {
-          if (sermon.topic === oldName) {
-            sermon.topic = trimmedName;
-            await AdminData.update('sermons', sermon.id, { topic: trimmedName });
+        const branchChanchins = AdminData.get('branch-chanchin');
+        for (const branchChanchin of branchChanchins) {
+          if (branchChanchin.topic === oldName) {
+            branchChanchin.topic = trimmedName;
+            await AdminData.update('branch-chanchin', branchChanchin.id, { topic: trimmedName });
           }
         }
         
-        renderSermonsTable();
+        renderBranchChanchinTable();
       }
     }
 
     function removeCategoryAndSave(catName) {
-      const idx = SermonCategories.indexOf(catName);
+      const idx = BranchChanchinCategories.indexOf(catName);
       if (idx > -1) {
-        SermonCategories.splice(idx, 1);
+        BranchChanchinCategories.splice(idx, 1);
         saveCategorySettings();
         populateCategoryDropdowns();
       }
@@ -388,25 +345,25 @@
 
     function addCategoryAndSave(catName) {
       const name = catName.trim();
-      if (!name || SermonCategories.includes(name)) return;
-      SermonCategories.push(name);
+      if (!name || BranchChanchinCategories.includes(name)) return;
+      BranchChanchinCategories.push(name);
       saveCategorySettings();
       populateCategoryDropdowns();
     }
 
     function saveCategorySettings() {
       const settings = AdminData.get('settings') || {};
-      settings.sermonCategories = SermonCategories.filter(c => c !== 'All');
+      settings.branchChanchinCategories = BranchChanchinCategories.filter(c => c !== 'All');
       AdminData.save('settings', settings);
     }
 
-    function renderSermonsTable() {
-      const tbody = document.getElementById('sermons-table-body');
+    function renderBranchChanchinTable() {
+      const tbody = document.getElementById('branch-chanchin-table-body');
       if (!tbody) return;
 
-      const sermons = AdminData.get('sermons');
+      const branchChanchins = AdminData.get('branch-chanchin');
 
-      let filtered = sermons;
+      let filtered = branchChanchins;
       if (currentSearch.trim()) {
         const q = currentSearch.toLowerCase();
         filtered = filtered.filter(s => s.title.toLowerCase().includes(q) || s.speaker.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
@@ -419,29 +376,29 @@
         tbody.innerHTML = `
           <tr>
             <td colspan="7" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
-              No sermons found matching filters.
+              No branch-chanchin found matching filters.
             </td>
           </tr>
         `;
         return;
       }
 
-      tbody.innerHTML = filtered.map(sermon => `
-        <tr data-id="${sermon.id}">
+      tbody.innerHTML = filtered.map(branchChanchin => `
+        <tr data-id="${branchChanchin.id}">
           <td style="text-align: center;">
-            <input type="checkbox" class="row-checkbox" value="${sermon.id}" style="cursor: pointer; width: 16px; height: 16px;">
+            <input type="checkbox" class="row-checkbox" value="${branchChanchin.id}" style="cursor: pointer; width: 16px; height: 16px;">
           </td>
           <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
-          <td style="font-weight: var(--fw-semibold);">${sermon.title}</td>
-          <td>🎙️ ${sermon.speaker}</td>
-          <td><span class="badge badge-gold">${sermon.topic}</span></td>
-          <td style="font-family: monospace; font-size:12px;">${sermon.scripture}</td>
-          <td>📅 ${formatDate(sermon.date)}</td>
-          <td>${sermon.featured ? '⭐ Yes' : 'No'}</td>
+          <td style="font-weight: var(--fw-semibold);">${branchChanchin.title}</td>
+          <td>🎙️ ${branchChanchin.speaker}</td>
+          <td><span class="badge badge-gold">${branchChanchin.topic}</span></td>
+          <td style="font-family: monospace; font-size:12px;">${branchChanchin.scripture}</td>
+          <td>📅 ${formatDate(branchChanchin.date)}</td>
+          <td>${branchChanchin.featured ? '⭐ Yes' : 'No'}</td>
           <td>
             <div class="table-actions">
-              <button class="btn btn-outline btn-sm" onclick="openEditModal('${sermon.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Sermon">✏️</button>
-              <button class="btn btn-outline btn-sm" onclick="confirmDeleteSermon('${sermon.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Sermon">❌</button>
+              <button class="btn btn-outline btn-sm" onclick="openEditModal('${branchChanchin.id}')" style="padding:4px 8px; font-size:12px;" title="Edit Branch Chanchin">✏️</button>
+              <button class="btn btn-outline btn-sm" onclick="confirmDeleteBranchChanchin('${branchChanchin.id}')" style="padding:4px 8px; font-size:12px; color:var(--brand-red);" title="Delete Branch Chanchin">❌</button>
             </div>
           </td>
         </tr>
@@ -458,7 +415,7 @@
     }
 
     function initSortable() {
-      const tbody = document.getElementById('sermons-table-body');
+      const tbody = document.getElementById('branch-chanchin-table-body');
       if (typeof Sortable === 'undefined' || !tbody) return;
 
       new Sortable(tbody, {
@@ -469,7 +426,7 @@
           // (it would mess up global ordering unexpectedly)
           if (currentSearch.trim() || currentCategoryFilter !== 'All') {
             AdminToast.show('Cannot reorder items while search or filter is active. Please clear filters first.', 'error');
-            renderSermonsTable(); // Reset table
+            renderBranchChanchinTable(); // Reset table
             return;
           }
 
@@ -477,12 +434,12 @@
           const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
           
           try {
-            await AdminData.reorder('sermons', newOrderIds);
-            AdminToast.show('Sermons reordered successfully!', 'success');
+            await AdminData.reorder('branch-chanchin', newOrderIds);
+            AdminToast.show('Branch Chanchin reordered successfully!', 'success');
           } catch (e) {
             console.error(e);
             AdminToast.show('Failed to save new order.', 'error');
-            renderSermonsTable(); // Revert
+            renderBranchChanchinTable(); // Revert
           }
         }
       });
@@ -491,48 +448,56 @@
     function setupEvents() {
       // Category editor toggle
       document.getElementById('btn-toggle-cat-editor').addEventListener('click', () => {
-        document.getElementById('sermon-cat-editor').classList.toggle('open');
+        document.getElementById('branch-chanchin-cat-editor').classList.toggle('open');
       });
       document.getElementById('btn-add-new-cat').addEventListener('click', () => {
-        const input = document.getElementById('sermon-new-cat-input');
+        const input = document.getElementById('branch-chanchin-new-cat-input');
         addCategoryAndSave(input.value);
         input.value = '';
       });
-      document.getElementById('sermon-new-cat-input').addEventListener('keydown', (e) => {
+      document.getElementById('branch-chanchin-new-cat-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-new-cat').click(); }
       });
 
-      // Toggle source
-      const sermonSourceRadios = document.getElementsByName('sermon-source');
-      const uploadContainer = document.getElementById('sermon-upload-container');
-      const urlContainer = document.getElementById('sermon-url-container');
-      
-      const toggleSermonSource = (source) => {
-        if (source === 'upload') {
-          uploadContainer.style.display = 'block';
-          urlContainer.style.display = 'none';
-          document.getElementById('sermon-url').required = false;
-        } else {
-          uploadContainer.style.display = 'none';
-          urlContainer.style.display = 'block';
-          document.getElementById('sermon-url').required = true;
+      // Initialize Quill Editor
+      window.quillEditor = new Quill('#editor-container', {
+        theme: 'snow',
+        placeholder: 'Type your Branch Chanchin updates here...',
+        modules: {
+          toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'align': [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link', 'clean']
+          ]
         }
-      };
+      });
 
-      sermonSourceRadios.forEach(radio => {
-        radio.addEventListener('change', (e) => toggleSermonSource(e.target.value));
+      // Fix legacy Mizo text
+      document.getElementById('btn-fix-mizo-text').addEventListener('click', () => {
+        if (!window.quillEditor) return;
+        const currentHtml = window.quillEditor.root.innerHTML;
+        const fixedHtml = currentHtml.replace(/\\/g, 'ṭ').replace(/\|/g, 'Ṭ');
+        
+        if (currentHtml !== fixedHtml) {
+          window.quillEditor.root.innerHTML = fixedHtml;
+          AdminToast.show('Legacy Mizo text converted successfully!', 'success');
+        } else {
+          AdminToast.show('No legacy characters (\\ or |) found to fix.', 'info');
+        }
       });
 
       // Search
       document.getElementById('admin-search-input').addEventListener('input', (e) => {
         currentSearch = e.target.value;
-        renderSermonsTable();
+        renderBranchChanchinTable();
       });
 
       // Category filter dropdown
       document.getElementById('admin-filter-category').addEventListener('change', (e) => {
         currentCategoryFilter = e.target.value;
-        renderSermonsTable();
+        renderBranchChanchinTable();
       });
 
       // Bulk Delete Selection Logic
@@ -555,19 +520,19 @@
           const selectedCbs = document.querySelectorAll('.row-checkbox:checked');
           if (selectedCbs.length === 0) return;
 
-          if (confirm(`Are you sure you want to delete the ${selectedCbs.length} selected sermon(s)? This cannot be undone.`)) {
+          if (confirm(`Are you sure you want to delete the ${selectedCbs.length} selected branch-chanchin(s)? This cannot be undone.`)) {
             try {
               bulkDeleteBtn.disabled = true;
               bulkDeleteBtn.innerHTML = '⌛ Deleting...';
               
               for (const cb of selectedCbs) {
-                await AdminData.delete('sermons', cb.value);
+                await AdminData.delete('branch-chanchin', cb.value);
               }
               
-              AdminToast.show(`Successfully deleted ${selectedCbs.length} sermon(s).`, 'success');
-              renderSermonsTable();
+              AdminToast.show(`Successfully deleted ${selectedCbs.length} branch-chanchin(s).`, 'success');
+              renderBranchChanchinTable();
             } catch (err) {
-              console.error("Error deleting sermons:", err);
+              console.error("Error deleting branch-chanchin:", err);
               AdminToast.show('Error during bulk deletion: ' + (err.message || 'Permission denied'), 'error');
             } finally {
               bulkDeleteBtn.disabled = false;
@@ -588,9 +553,9 @@
           document.getElementById('bulk-edit-form').reset();
           
           // Disable all inputs by default
-          document.getElementById('bulk-sermon-topic').disabled = true;
-          document.getElementById('bulk-sermon-date').disabled = true;
-          document.getElementById('bulk-sermon-featured').disabled = true;
+          document.getElementById('bulk-branch-chanchin-topic').disabled = true;
+          document.getElementById('bulk-branch-chanchin-date').disabled = true;
+          document.getElementById('bulk-branch-chanchin-featured').disabled = true;
 
           ModalSystem.open('bulk-edit-modal');
         });
@@ -599,7 +564,7 @@
       // Bulk Edit field toggles
       ['topic', 'date', 'featured'].forEach(field => {
         const checkbox = document.getElementById(`bulk-enable-${field}`);
-        const input = document.getElementById(`bulk-sermon-${field}`);
+        const input = document.getElementById(`bulk-branch-chanchin-${field}`);
         if (checkbox && input) {
           checkbox.addEventListener('change', (e) => {
             input.disabled = !e.target.checked;
@@ -624,9 +589,9 @@
         }
 
         const updates = {};
-        if (enableTopic) updates.topic = document.getElementById('bulk-sermon-topic').value;
-        if (enableDate) updates.date = document.getElementById('bulk-sermon-date').value;
-        if (enableFeat) updates.featured = document.getElementById('bulk-sermon-featured').value === 'true';
+        if (enableTopic) updates.topic = document.getElementById('bulk-branch-chanchin-topic').value;
+        if (enableDate) updates.date = document.getElementById('bulk-branch-chanchin-date').value;
+        if (enableFeat) updates.featured = document.getElementById('bulk-branch-chanchin-featured').value === 'true';
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -636,14 +601,14 @@
           submitBtn.innerHTML = '⌛ Applying...';
 
           for (const cb of selectedCbs) {
-            await AdminData.update('sermons', cb.value, updates);
+            await AdminData.update('branch-chanchin', cb.value, updates);
           }
 
-          AdminToast.show(`Successfully updated ${selectedCbs.length} sermon(s).`, 'success');
+          AdminToast.show(`Successfully updated ${selectedCbs.length} branch-chanchin(s).`, 'success');
           ModalSystem.close('bulk-edit-modal');
-          renderSermonsTable();
+          renderBranchChanchinTable();
         } catch (err) {
-          console.error("Error bulk updating sermons:", err);
+          console.error("Error bulk updating branch-chanchin:", err);
           AdminToast.show('Error during bulk update: ' + (err.message || 'Permission denied'), 'error');
         } finally {
           submitBtn.disabled = false;
@@ -656,40 +621,43 @@
       document.getElementById('btn-cancel-bulk-modal')?.addEventListener('click', closeBulkModal);
 
       // Show Add Modal
-      document.getElementById('btn-add-sermon').addEventListener('click', () => {
-        document.getElementById('sermon-crud-form').reset();
-        document.getElementById('sermon-action-type').value = 'add';
-        document.getElementById('modal-form-title').textContent = 'Add New Sermon Notes';
-        document.getElementById('sermon-date').value = new Date().toISOString().split('T')[0];
-        document.querySelector('input[name="sermon-source"][value="upload"]').checked = true;
-        toggleSermonSource('upload');
-        ModalSystem.open('sermon-form-modal');
+      document.getElementById('btn-add-branch-chanchin').addEventListener('click', () => {
+        document.getElementById('branch-chanchin-crud-form').reset();
+        document.getElementById('branch-chanchin-action-type').value = 'add';
+        document.getElementById('modal-form-title').textContent = 'Add New Branch Chanchin Notes';
+        document.getElementById('branch-chanchin-date').value = new Date().toISOString().split('T')[0];
+        
+        if (window.quillEditor) {
+          window.quillEditor.root.innerHTML = '';
+        }
+        
+        ModalSystem.open('branch-chanchin-form-modal');
       });
 
       // Close modal actions
-      const closeModal = () => ModalSystem.close('sermon-form-modal');
-      document.getElementById('close-sermon-modal').addEventListener('click', closeModal);
+      const closeModal = () => ModalSystem.close('branch-chanchin-form-modal');
+      document.getElementById('close-branch-chanchin-modal').addEventListener('click', closeModal);
       document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
 
       // Form Submit (Save/Update)
-      document.getElementById('sermon-crud-form').addEventListener('submit', async (e) => {
+      document.getElementById('branch-chanchin-crud-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const actionType = document.getElementById('sermon-action-type').value;
-        const sermonId = document.getElementById('sermon-edit-id').value;
+        const actionType = document.getElementById('branch-chanchin-action-type').value;
+        const branchChanchinId = document.getElementById('branch-chanchin-edit-id').value;
 
-        const title = document.getElementById('sermon-title').value;
-        const speaker = document.getElementById('sermon-speaker').value;
-        const topic = document.getElementById('sermon-topic').value;
-        const scripture = document.getElementById('sermon-scripture').value;
-        const description = document.getElementById('sermon-desc').value;
-        const fileType = document.getElementById('sermon-type').value;
-        const fileSize = document.getElementById('sermon-size').value;
-        const date = document.getElementById('sermon-date').value;
-        const featured = document.getElementById('sermon-featured').checked;
-
-        const source = document.querySelector('input[name="sermon-source"]:checked').value;
-        const urlInput = document.getElementById('sermon-url');
+        const title = document.getElementById('branch-chanchin-title').value.trim();
+        const topic = document.getElementById('branch-chanchin-topic').value;
+        const speaker = ''; // Kept for backwards compatibility if needed
+        const scripture = ''; // Kept for backwards compatibility if needed
+        
+        // Get content from Quill
+        const description = window.quillEditor ? window.quillEditor.root.innerHTML : '';
+        
+        const fileType = 'HTML';
+        const fileSize = 'N/A';
+        const date = document.getElementById('branch-chanchin-date').value;
+        const featured = document.getElementById('branch-chanchin-featured').checked;
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -698,114 +666,30 @@
           submitBtn.disabled = true;
           submitBtn.innerHTML = '⌛ Saving...';
 
-          let isFolderImport = false;
-          let sermonsToSave = [];
-
-          if (source === 'url') {
-            const urlVal = urlInput.value.trim();
-            const folderIdMatch = urlVal.match(/(?:\/folders\/|\/drive\/folders\/)([a-zA-Z0-9_-]+)/);
-
-            if (folderIdMatch && folderIdMatch[1] && actionType === 'add') {
-              isFolderImport = true;
-              submitBtn.innerHTML = '⌛ Importing Folder...';
-              const folderId = folderIdMatch[1];
-              
-              if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
-                throw new Error("Google Drive API key is missing in firebase-config.js!");
-              }
-
-              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType!='application/vnd.google-apps.folder'&includeItemsFromAllDrives=true&supportsAllDrives=true&pageSize=1000&fields=files(id,name,size,mimeType)&key=${googleDriveApiKey}`;
-              
-              const res = await fetch(apiEndpoint);
-              if (!res.ok) {
-                throw new Error("Failed to fetch folder from Google Drive. Ensure the folder is public ('Anyone with the link').");
-              }
-              const data = await res.json();
-              if (data.files && data.files.length > 0) {
-                data.files.forEach(file => {
-                  let fType = 'PDF';
-                  if (file.mimeType.includes('wordprocessingml') || file.mimeType.includes('msword')) fType = 'DOCX';
-                  
-                  let fSizeStr = 'Unknown';
-                  if (file.size) {
-                    const mb = parseInt(file.size) / (1024 * 1024);
-                    fSizeStr = mb >= 1 ? `${mb.toFixed(1)} MB` : `${(parseInt(file.size) / 1024).toFixed(0)} KB`;
-                  }
-                  
-                  let cleanTitle = file.name.replace(/\.[^/.]+$/, "");
-                  
-                  sermonsToSave.push({
-                    title: cleanTitle,
-                    speaker,
-                    topic,
-                    scripture,
-                    description,
-                    fileType: fType,
-                    fileSize: fSizeStr,
-                    date,
-                    featured,
-                    downloadUrl: convertDriveUrl(`https://drive.google.com/file/d/${file.id}/view`, 'file')
-                  });
-                });
-              } else {
-                throw new Error("No files found in this Google Drive folder!");
-              }
-            } else {
-              sermonsToSave.push({
-                title, speaker, topic, scripture, description, fileType, fileSize, date, featured,
-                downloadUrl: convertDriveUrl(urlVal, 'file')
-              });
-            }
-          } else {
-            sermonsToSave.push({
-              title, speaker, topic, scripture, description, fileType, fileSize, date, featured,
-              downloadUrl: '#'
-            });
-          }
+          const srmObj = {
+            title, speaker, topic, scripture, description, fileType, fileSize, date, featured,
+            downloadUrl: '#'
+          };
 
           if (actionType === 'add') {
-            for (const srmObj of sermonsToSave) {
-              await AdminData.add('sermons', srmObj);
-            }
-            if (isFolderImport) {
-              AdminToast.show(`Successfully imported ${sermonsToSave.length} sermons from folder!`, 'success');
-            } else {
-              AdminToast.show('Sermon notes saved!', 'success');
-            }
+            await AdminData.add('branch-chanchin', srmObj);
+            AdminToast.show('Branch Chanchin notes saved!', 'success');
           } else {
-            const updatedFields = {
-              title,
-              speaker,
-              topic,
-              scripture,
-              description,
-              fileType,
-              fileSize,
-              date,
-              featured
-            };
-            if (source === 'url') {
-              updatedFields.downloadUrl = sermonsToSave[0].downloadUrl;
-            } else {
-              updatedFields.downloadUrl = '#';
-            }
-            await AdminData.update('sermons', sermonId, updatedFields);
-            AdminToast.show('Sermon notes updated!', 'success');
+            await AdminData.update('branch-chanchin', branchChanchinId, srmObj);
+            AdminToast.show('Branch Chanchin notes updated!', 'success');
           }
 
           closeModal();
-          renderSermonsTable();
+          renderBranchChanchinTable();
         } catch (err) {
-          console.error("Error saving sermon:", err);
-          AdminToast.show('Error saving sermon: ' + (err.message || 'Permission denied'), 'error');
+          console.error("Error saving branch-chanchin:", err);
+          AdminToast.show('Error saving branch-chanchin: ' + (err.message || 'Permission denied'), 'error');
         } finally {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalBtnText;
         }
       });
 
-      // Expose toggle internally for edit modal
-      window._toggleSermonSource = toggleSermonSource;
     }
 
     function updateBulkDeleteUI() {
@@ -833,51 +717,41 @@
 
     // Exposed to onclick triggers
     window.openEditModal = function (id) {
-      const sermons = AdminData.get('sermons');
-      const sermon = sermons.find(s => s.id === id);
-      if (!sermon) return;
+      const branchChanchins = AdminData.get('branch-chanchin');
+      const branchChanchin = branchChanchins.find(s => s.id === id);
+      if (!branchChanchin) return;
 
-      document.getElementById('sermon-action-type').value = 'edit';
-      document.getElementById('sermon-edit-id').value = id;
-      document.getElementById('modal-form-title').textContent = 'Edit Sermon Notes';
+      document.getElementById('branch-chanchin-action-type').value = 'edit';
+      document.getElementById('branch-chanchin-edit-id').value = id;
+      document.getElementById('modal-form-title').textContent = 'Edit Branch Chanchin Notes';
 
-      document.getElementById('sermon-title').value = sermon.title;
-      document.getElementById('sermon-speaker').value = sermon.speaker;
-      document.getElementById('sermon-topic').value = sermon.topic;
-      document.getElementById('sermon-scripture').value = sermon.scripture;
-      document.getElementById('sermon-desc').value = sermon.description;
-      document.getElementById('sermon-type').value = sermon.fileType;
-      document.getElementById('sermon-size').value = sermon.fileSize;
-      document.getElementById('sermon-date').value = sermon.date;
-      document.getElementById('sermon-featured').checked = sermon.featured;
-
-      const isExternal = sermon.downloadUrl && sermon.downloadUrl !== '#';
-      if (isExternal) {
-        document.querySelector('input[name="sermon-source"][value="url"]').checked = true;
-        document.getElementById('sermon-url').value = sermon.downloadUrl;
-        if (window._toggleSermonSource) window._toggleSermonSource('url');
-      } else {
-        document.querySelector('input[name="sermon-source"][value="upload"]').checked = true;
-        document.getElementById('sermon-url').value = '';
-        if (window._toggleSermonSource) window._toggleSermonSource('upload');
+      document.getElementById('branch-chanchin-title').value = branchChanchin.title || '';
+      document.getElementById('branch-chanchin-topic').value = branchChanchin.topic || '';
+      
+      if (window.quillEditor) {
+        window.quillEditor.root.innerHTML = branchChanchin.description || '';
       }
+      
 
-      ModalSystem.open('sermon-form-modal');
+      document.getElementById('branch-chanchin-date').value = branchChanchin.date || '';
+      document.getElementById('branch-chanchin-featured').checked = branchChanchin.featured || false;
+
+      ModalSystem.open('branch-chanchin-form-modal');
     };
 
-    window.confirmDeleteSermon = async function (id) {
-      const sermons = AdminData.get('sermons');
-      const sermon = sermons.find(s => s.id === id);
-      if (!sermon) return;
+    window.confirmDeleteBranchChanchin = async function (id) {
+      const branchChanchins = AdminData.get('branch-chanchin');
+      const branchChanchin = branchChanchins.find(s => s.id === id);
+      if (!branchChanchin) return;
 
-      if (confirm(`Are you sure you want to delete the sermon notes for "${sermon.title}"?`)) {
+      if (confirm(`Are you sure you want to delete the branch-chanchin notes for "${branchChanchin.title}"?`)) {
         try {
-          await AdminData.delete('sermons', id);
-          AdminToast.show('Sermon deleted.', 'info');
-          renderSermonsTable();
+          await AdminData.delete('branch-chanchin', id);
+          AdminToast.show('Branch Chanchin deleted.', 'info');
+          renderBranchChanchinTable();
         } catch (err) {
-          console.error("Error deleting sermon:", err);
-          AdminToast.show('Error deleting sermon: ' + (err.message || 'Permission denied'), 'error');
+          console.error("Error deleting branch-chanchin:", err);
+          AdminToast.show('Error deleting branch-chanchin: ' + (err.message || 'Permission denied'), 'error');
         }
       }
     };

@@ -1,5 +1,5 @@
 /* ============================================
-   KṬP Saikhamakawn — Sermons Page Logic
+   KṬP Saikhamakawn — BranchChanchin Page Logic
    Handles filtering, sorting, pagination,
    and reading notes preview modal.
    ============================================ */
@@ -13,12 +13,12 @@ const itemsPerPage = 1000;
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const settings = await DbService.get('settings');
-    if (settings && settings.sermonCategories && Array.isArray(settings.sermonCategories)) {
-      SermonCategories.length = 0;
-      SermonCategories.push('All', ...settings.sermonCategories.filter(c => c !== 'All'));
+    if (settings && settings.branchChanchinCategories && Array.isArray(settings.branchChanchinCategories)) {
+      BranchChanchinCategories.length = 0;
+      BranchChanchinCategories.push('All', ...settings.branchChanchinCategories.filter(c => c !== 'All'));
     }
   } catch (err) {
-    console.error("Error loading custom SermonCategories:", err);
+    console.error("Error loading custom BranchChanchinCategories:", err);
   }
 
   renderCategoryChips();
@@ -26,19 +26,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupPreviewModal();
 
   try {
-    const data = await DbService.get('sermons');
+    const data = await DbService.get('branch-chanchin');
     if (data && Array.isArray(data)) {
-      Sermons.length = 0;
-      Sermons.push(...data.map(s => {
+      BranchChanchin.length = 0;
+      BranchChanchin.push(...data.map(s => {
         if (s.downloadUrl) s.downloadUrl = convertDriveUrl(s.downloadUrl, 'file');
         return s;
       }));
     }
   } catch (error) {
-    console.error("Error loading sermons database:", error);
+    console.error("Error loading branch-chanchin database:", error);
   }
 
-  renderSermons();
+  renderBranchChanchin();
 });
 
 // ========================
@@ -48,7 +48,7 @@ function renderCategoryChips() {
   const container = document.getElementById('category-chips');
   if (!container) return;
 
-  container.innerHTML = SermonCategories.map(cat => `
+  container.innerHTML = BranchChanchinCategories.map(cat => `
     <button class="filter-chip ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
       ${cat}
     </button>
@@ -61,7 +61,7 @@ function renderCategoryChips() {
       btn.classList.add('active');
       currentCategory = btn.dataset.category;
       currentPage = 1; // Reset to page 1 on filter change
-      renderSermons();
+      renderBranchChanchin();
     });
   });
 }
@@ -70,8 +70,8 @@ function renderCategoryChips() {
 // SETUP SEARCH AND SORT
 // ========================
 function setupSearchAndSort() {
-  const searchInput = document.getElementById('sermon-search');
-  const sortSelect = document.getElementById('sermon-sort');
+  const searchInput = document.getElementById('branch-chanchin-search');
+  const sortSelect = document.getElementById('branch-chanchin-sort');
   const clearBtn = document.getElementById('search-clear-btn');
 
   if (searchInput) {
@@ -81,7 +81,7 @@ function setupSearchAndSort() {
       timeout = setTimeout(() => {
         searchQuery = e.target.value;
         currentPage = 1;
-        renderSermons();
+        renderBranchChanchin();
       }, 300);
     });
   }
@@ -91,7 +91,7 @@ function setupSearchAndSort() {
       searchInput.value = '';
       searchQuery = '';
       currentPage = 1;
-      renderSermons();
+      renderBranchChanchin();
     });
   }
 
@@ -99,7 +99,7 @@ function setupSearchAndSort() {
     sortSelect.addEventListener('change', (e) => {
       currentSort = e.target.value;
       currentPage = 1;
-      renderSermons();
+      renderBranchChanchin();
     });
   }
 }
@@ -107,15 +107,15 @@ function setupSearchAndSort() {
 // ========================
 // RENDER SERMONS LIST
 // ========================
-function renderSermons() {
-  const listContainer = document.getElementById('sermons-list');
+function renderBranchChanchin() {
+  const listContainer = document.getElementById('branch-chanchin-list');
   const paginationContainer = document.getElementById('pagination-container');
-  const countContainer = document.getElementById('sermon-count');
+  const countContainer = document.getElementById('branch-chanchin-count');
 
   if (!listContainer) return;
 
   // 1. Get filtered items
-  const filtered = SearchEngine.filter(Sermons, {
+  const filtered = SearchEngine.filter(BranchChanchin, {
     query: searchQuery,
     category: currentCategory,
     sort: currentSort,
@@ -138,7 +138,7 @@ function renderSermons() {
     listContainer.innerHTML = `
       <div class="empty-state" style="grid-column: 1 / -1; width: 100%;">
         <div class="empty-state-icon">📖</div>
-        <h3>No Sermons Found</h3>
+        <h3>No BranchChanchin Found</h3>
         <p>Try adjusting your search or topic filters.</p>
       </div>
     `;
@@ -146,21 +146,21 @@ function renderSermons() {
     return;
   }
 
-  listContainer.innerHTML = paginationData.items.map(sermon => {
-    const safeTitle = (sermon.title || '').replace(/<[^>]*>?/gm, '').trim();
+  listContainer.innerHTML = paginationData.items.map(branchChanchin => {
+    const safeTitle = (branchChanchin.title || '').replace(/<[^>]*>?/gm, '').trim();
     return `
-    <div class="modern-doc-card selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${safeTitle}.${String(sermon.fileType||'PDF').toLowerCase()}">
-      ${sermon.topic ? `
+    <div class="modern-doc-card selectable-item" data-id="${branchChanchin.id}" data-url="${branchChanchin.fileUrl && branchChanchin.fileUrl !== '#' ? branchChanchin.fileUrl : ''}" data-name="${safeTitle}.${String(branchChanchin.fileType||'PDF').toLowerCase()}">
+      ${branchChanchin.topic ? `
       <div class="modern-doc-header">
-        <span class="modern-doc-badge">${sermon.topic}</span>
+        <span class="modern-doc-badge">${branchChanchin.topic}</span>
       </div>
       ` : ''}
       <div class="modern-doc-content">
         <h3 class="modern-doc-title" title="${safeTitle}">${safeTitle}</h3>
-        ${sermon.description ? `<div class="modern-doc-desc">${sermon.description.replace(/<[^>]*>?/gm, '').trim()}</div>` : ''}
+        ${branchChanchin.description ? `<div class="modern-doc-desc">${branchChanchin.description.replace(/<[^>]*>?/gm, '').trim()}</div>` : ''}
         <div class="modern-doc-meta">
-          ${sermon.speaker ? `<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${sermon.speaker}</span>` : ''}
-          ${sermon.scripture ? `<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> ${sermon.scripture}</span>` : ''}
+          ${branchChanchin.speaker ? `<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${branchChanchin.speaker}</span>` : ''}
+          ${branchChanchin.scripture ? `<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> ${branchChanchin.scripture}</span>` : ''}
         </div>
       </div>
     </div>
@@ -173,9 +173,9 @@ function renderSermons() {
   // Render pagination buttons
   SearchEngine.renderPagination(paginationContainer, paginationData, (newPage) => {
     currentPage = newPage;
-    renderSermons();
+    renderBranchChanchin();
     // Scroll smoothly to top of results
-    document.getElementById('sermons-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('branch-chanchin-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
 
@@ -183,24 +183,24 @@ function renderSermons() {
 // PREVIEW MODAL LOGIC
 // ========================
 function setupPreviewModal() {
-  if (document.getElementById('sermon-modal')) return;
+  if (document.getElementById('branch-chanchin-modal')) return;
+
+
 
   const modalMarkup = `
-    <div class="modal-backdrop lightbox-modal" id="sermon-modal" style="background: rgba(0,0,0,0.95); padding: 0;">
-      <div style="position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; padding: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(0,0,0,0.5); z-index: 10;">
-          <h3 id="modal-sermon-title" style="color: white; margin: 0; font-size: 1.2rem; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Sermon Notes</h3>
-          <div style="display: flex; gap: 16px; align-items: center;">
-             <a href="#" id="modal-sermon-download" download style="color: white; text-decoration: none; display: flex; align-items: center; gap: 8px;" title="Download">
-               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+    <div class="modal-backdrop" id="branch-chanchin-modal">
+      <div class="modal" style="max-width: 700px; max-height: 85vh; display: flex; flex-direction: column;">
+        <div class="modal-header">
+          <h3 id="modal-branch-chanchin-title" style="margin: 0; font-size: var(--fs-lg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Branch Chanchin Notes</h3>
+          <div style="display: flex; gap: var(--sp-2); align-items: center;">
+             <a href="#" id="modal-branch-chanchin-download" download style="color: var(--color-text-secondary); display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast);" title="Download" onmouseover="this.style.background='var(--color-bg-hover)'; this.style.color='var(--color-text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--color-text-secondary)'">
+               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
              </a>
-             <button id="close-sermon-modal" aria-label="Close" style="background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-             </button>
+             <button class="modal-close" id="close-branch-chanchin-modal" aria-label="Close modal">&times;</button>
           </div>
         </div>
-        <div style="flex: 1; position: relative; width: 100%; height: 100%; background: #fff; -webkit-overflow-scrolling: touch; overflow: auto;">
-          <iframe id="modal-sermon-iframe" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
+        <div class="modal-body" style="flex: 1; overflow-y: auto; padding: var(--sp-5);">
+          <div id="modal-branch-chanchin-content" style="line-height: 1.7; font-size: 1.1rem; color: var(--color-text); word-wrap: break-word; text-align: justify; font-family: 'Times New Roman', Times, Arial, serif;"></div>
         </div>
       </div>
     </div>
@@ -210,73 +210,38 @@ function setupPreviewModal() {
   div.innerHTML = modalMarkup;
   document.body.appendChild(div.firstElementChild);
 
-  const closeBtn = document.getElementById('close-sermon-modal');
+  const closeBtn = document.getElementById('close-branch-chanchin-modal');
   const closeAction = () => {
-    const iframe = document.getElementById('modal-sermon-iframe');
-    if (iframe) iframe.src = '';
-    ModalSystem.close('sermon-modal');
+    const contentDiv = document.getElementById('modal-branch-chanchin-content');
+    if (contentDiv) contentDiv.innerHTML = '';
+    ModalSystem.close('branch-chanchin-modal');
   };
 
   if (closeBtn) closeBtn.addEventListener('click', closeAction);
 }
 
-function openPreviewModal(sermonId) {
-  const sermon = Sermons.find(s => s.id === sermonId);
-  if (!sermon) return;
+function openPreviewModal(branchChanchinId) {
+  const branchChanchin = BranchChanchin.find(s => s.id === branchChanchinId);
+  if (!branchChanchin) return;
 
-  const modalTitle = document.getElementById('modal-sermon-title');
-  const modalDownload = document.getElementById('modal-sermon-download');
-  const modalIframe = document.getElementById('modal-sermon-iframe');
+  const modalTitle = document.getElementById('modal-branch-chanchin-title');
+  const modalDownload = document.getElementById('modal-branch-chanchin-download');
+  const modalContent = document.getElementById('modal-branch-chanchin-content');
 
-  if (modalTitle) modalTitle.textContent = sermon.title;
+  if (modalTitle) modalTitle.textContent = branchChanchin.title;
 
-  let fileId = '';
-  const downloadUrl = sermon.downloadUrl || sermon.fileUrl;
-  
-  if (downloadUrl && downloadUrl !== '#') {
-    const fileIdMatch = downloadUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-    if (fileIdMatch && fileIdMatch[1]) {
-      fileId = fileIdMatch[1];
-    } else {
-      const idMatch = downloadUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-      if (idMatch && idMatch[1]) fileId = idMatch[1];
-    }
+  if (modalContent) {
+    modalContent.innerHTML = branchChanchin.description || '<p style="text-align: center; color: #777;">No content available.</p>';
   }
 
-  if (modalIframe) {
-    if (fileId) {
-      modalIframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
-    } else if (downloadUrl && downloadUrl !== '#') {
-      modalIframe.src = downloadUrl;
-    } else {
-      modalIframe.src = 'about:blank';
-    }
-  }
+  if (modalDownload) modalDownload.style.display = 'none';
 
-  if (modalDownload) {
-    if (downloadUrl && downloadUrl !== '#') {
-      modalDownload.style.display = 'flex';
-      modalDownload.href = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : downloadUrl;
-      modalDownload.onclick = () => {
-        Toast.show(`Downloading ${sermon.title}...`, 'success');
-      };
-    } else {
-      modalDownload.style.display = 'flex';
-      modalDownload.href = '#';
-      modalDownload.removeAttribute('target');
-      modalDownload.onclick = (e) => {
-        e.preventDefault();
-        Toast.show(`Downloading notes: ${sermon.title} (Simulated)...`, 'success');
-      };
-    }
-  }
-
-  ModalSystem.open('sermon-modal');
+  ModalSystem.open('branch-chanchin-modal');
 }
 
 // BULK DOWNLOAD LOGIC
 // ========================
-let sermonSelectionManager = null;
+let branchChanchinSelectionManager = null;
 
 function setupBulkDownload() {
   const selectAllCb = document.getElementById('select-all-cb');
@@ -286,8 +251,8 @@ function setupBulkDownload() {
   
   if (!selectAllCb || (!btnDownload && !btnSave)) return;
 
-  sermonSelectionManager = new SelectionManager(
-    'sermons-list',
+  branchChanchinSelectionManager = new SelectionManager(
+    'branch-chanchin-list',
     '.selectable-item',
     (selectedItems) => {
       countSpan.textContent = selectedItems.size;
@@ -295,7 +260,7 @@ function setupBulkDownload() {
       if (btnDownload) { btnDownload.disabled = !hasSel; btnDownload.style.opacity = hasSel ? '1' : '0.5'; }
       if (btnSave) { btnSave.disabled = !hasSel; btnSave.style.opacity = hasSel ? '1' : '0.5'; }
       
-      const totalItems = document.querySelectorAll('#sermons-list .selectable-item[data-url]:not([data-url=""])').length;
+      const totalItems = document.querySelectorAll('#branch-chanchin-list .selectable-item[data-url]:not([data-url=""])').length;
       selectAllCb.checked = (hasSel && selectedItems.size === totalItems && totalItems > 0);
     },
     (id) => {
@@ -306,23 +271,23 @@ function setupBulkDownload() {
   // Handle Select All
   selectAllCb.addEventListener('change', (e) => {
     if (e.target.checked) {
-      sermonSelectionManager.selectAll();
+      branchChanchinSelectionManager.selectAll();
     } else {
-      sermonSelectionManager.clearSelection();
+      branchChanchinSelectionManager.clearSelection();
     }
   });
 
   // Handle Download Button — downloads each file individually
   btnDownload.addEventListener('click', async () => {
-    const selectedSermons = sermonSelectionManager.selectedItems;
-    if (selectedSermons.size === 0) return;
+    const selectedBranchChanchin = branchChanchinSelectionManager.selectedItems;
+    if (selectedBranchChanchin.size === 0) return;
     
     const originalText = btnDownload.innerHTML;
     btnDownload.innerHTML = '⏳ Downloading...';
     btnDownload.disabled = true;
     
     try {
-      const files = Array.from(selectedSermons).map(item => JSON.parse(item));
+      const files = Array.from(selectedBranchChanchin).map(item => JSON.parse(item));
       
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -354,14 +319,14 @@ function setupBulkDownload() {
       btnDownload.innerHTML = originalText;
       btnDownload.disabled = false;
       
-      sermonSelectionManager.clearSelection();
+      branchChanchinSelectionManager.clearSelection();
       selectAllCb.checked = false;
     }
   });
 
   if (btnSave) {
     btnSave.addEventListener('click', async () => {
-      const selectedDocs = sermonSelectionManager.selectedItems;
+      const selectedDocs = branchChanchinSelectionManager.selectedItems;
       if (selectedDocs.size === 0) return;
       
       const originalHtml = btnSave.innerHTML;
@@ -370,12 +335,12 @@ function setupBulkDownload() {
       
       try {
         if (window.SaveService) {
-          const selectedNodes = document.querySelectorAll('#sermons-list .selectable-item.selected');
+          const selectedNodes = document.querySelectorAll('#branch-chanchin-list .selectable-item.selected');
           const promises = Array.from(selectedNodes).map(node => {
              const id = node.dataset.id;
-             const docObj = Sermons.find(d => d.id === id) || { id, fileUrl: node.dataset.url, title: node.dataset.name };
-             return SaveService.saveItem('sermons', docObj.id, {
-               title: docObj.title || 'Sermon',
+             const docObj = BranchChanchin.find(d => d.id === id) || { id, fileUrl: node.dataset.url, title: node.dataset.name };
+             return SaveService.saveItem('branch-chanchin', docObj.id, {
+               title: docObj.title || 'BranchChanchin',
                url: docObj.fileUrl || docObj.url,
                date: docObj.date || new Date().toISOString()
              });
@@ -388,7 +353,7 @@ function setupBulkDownload() {
       } finally {
         btnSave.innerHTML = originalHtml;
         btnSave.disabled = false;
-        sermonSelectionManager.clearSelection();
+        branchChanchinSelectionManager.clearSelection();
         selectAllCb.checked = false;
       }
     });

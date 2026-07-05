@@ -25,7 +25,7 @@ const firebaseConfig = {
 };
 
 // Google Drive API Key for folder imports
-const googleDriveApiKey = customSettings?.apiKeys?.googleDriveApiKey || "AIzaSyAXV2QBWS3K8YUR7eFtE1jN07jCJohJvCo";
+const googleDriveApiKey = customSettings?.apiKeys?.googleDriveApiKey || "AIzaSyDCwWaSh_RsIW94JkE6rjW2qi1uP8waj2c";
 
 let db = null;
 let auth = null;

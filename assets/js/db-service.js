@@ -54,7 +54,9 @@ const DbService = {
         
         // Dynamic settings mapping
         if (collection === 'settings' && items.length > 0) {
-          return items[0]; // settings is a single doc
+          // In case there are multiple settings docs due to past errors, find the one with goldenJubileeFolders or churchInfo
+          const validDoc = items.find(i => i.goldenJubileeFolders || i.churchInfo) || items[0];
+          return validDoc;
         }
         
         return items;

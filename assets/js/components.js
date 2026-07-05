@@ -25,15 +25,16 @@ function renderHeader(activePage = '') {
         <a href="index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}" id="nav-home">Home</a>
         <a href="photos.html" class="nav-link ${activePage === 'photos' ? 'active' : ''}" id="nav-photos">Gallery</a>
         <div class="nav-dropdown" id="nav-chanchin-dropdown">
-          <button class="nav-link nav-dropdown-trigger ${['branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="nav-chanchin-btn" aria-expanded="false" aria-haspopup="true">
-            Branch Chanchin <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;transition:transform 0.2s;opacity:0.8;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <button class="nav-link nav-dropdown-trigger ${['branch-chanchin','branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="nav-chanchin-btn" aria-expanded="false" aria-haspopup="true">
+            Branch <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;transition:transform 0.2s;opacity:0.8;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div class="nav-dropdown-menu" id="nav-chanchin-menu">
+            <a href="branch-chanchin.html" class="nav-dropdown-item ${activePage === 'branch-chanchin' ? 'active' : ''}">Branch Chanchin</a>
             <a href="branch-ob.html" class="nav-dropdown-item ${activePage === 'branch-ob' ? 'active' : ''}">Branch OB te</a>
             <a href="branch-committee.html" class="nav-dropdown-item ${activePage === 'branch-committee' ? 'active' : ''}">Branch Committee</a>
             <a href="group-committee.html" class="nav-dropdown-item ${activePage === 'group-committee' ? 'active' : ''}">Group Committee</a>
             <a href="sub-committee.html" class="nav-dropdown-item ${activePage === 'sub-committee' ? 'active' : ''}">Sub Committee</a>
-            <a href="golden-jubilee.html" class="nav-dropdown-item ${activePage === 'golden-jubilee' ? 'active' : ''}">Golden Jubilee</a>
+            <a href="golden-jubilee.html?type=branch" class="nav-dropdown-item ${activePage === 'golden-jubilee' && window.location.search.includes('type=branch') ? 'active' : ''}">Golden Jubilee</a>
           </div>
         </div>
         <div class="nav-dropdown" id="nav-docs-dropdown">
@@ -65,7 +66,7 @@ function renderHeader(activePage = '') {
           <div class="nav-dropdown-menu" id="nav-history-menu">
             <a href="kohhran-chanchin.html" class="nav-dropdown-item ${activePage === 'kohhran-chanchin' ? 'active' : ''}">Kohhran Chanchin</a>
             <a href="kohhran-upa.html" class="nav-dropdown-item ${activePage === 'kohhran-upa' ? 'active' : ''}">Kohhran Upa</a>
-            <a href="golden-jubilee.html" class="nav-dropdown-item ${activePage === 'golden-jubilee' ? 'active' : ''}">Golden Jubilee</a>
+            <a href="golden-jubilee.html?type=kohhran" class="nav-dropdown-item ${activePage === 'golden-jubilee' && window.location.search.includes('type=kohhran') ? 'active' : ''}">Golden Jubilee</a>
           </div>
         </div>
         <div class="nav-dropdown" id="nav-about-dropdown">
@@ -132,11 +133,14 @@ function renderHeader(activePage = '') {
       <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span> Gallery
     </a>
     <div class="nav-mobile-group">
-      <button class="nav-mobile-link nav-mobile-group-trigger ${['branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-chanchin-trigger">
-        <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></span> Branch Chanchin
+      <button class="nav-mobile-link nav-mobile-group-trigger ${['branch-chanchin','branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-chanchin-trigger">
+        <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></span> Branch
         <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
       <div class="nav-mobile-subnav" id="mobile-chanchin-subnav" style="display:none;">
+        <a href="branch-chanchin.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'branch-chanchin' ? 'active' : ''}">
+          Branch Chanchin
+        </a>
         <a href="branch-ob.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'branch-ob' ? 'active' : ''}">
           Branch OB te
         </a>
@@ -149,7 +153,7 @@ function renderHeader(activePage = '') {
         <a href="sub-committee.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'sub-committee' ? 'active' : ''}">
           Sub Committee
         </a>
-        <a href="golden-jubilee.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'golden-jubilee' ? 'active' : ''}">
+        <a href="golden-jubilee.html?type=branch" class="nav-mobile-link nav-mobile-sublink ${activePage === 'golden-jubilee' && window.location.search.includes('type=branch') ? 'active' : ''}">
           Golden Jubilee
         </a>
       </div>
@@ -206,7 +210,7 @@ function renderHeader(activePage = '') {
         <a href="kohhran-upa.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'kohhran-upa' ? 'active' : ''}">
           Kohhran Upa
         </a>
-        <a href="golden-jubilee.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'golden-jubilee' ? 'active' : ''}">
+        <a href="golden-jubilee.html?type=kohhran" class="nav-mobile-link nav-mobile-sublink ${activePage === 'golden-jubilee' && window.location.search.includes('type=kohhran') ? 'active' : ''}">
           Golden Jubilee
         </a>
       </div>

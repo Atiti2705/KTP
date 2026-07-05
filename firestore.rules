@@ -14,13 +14,19 @@ service cloud.firestore {
     match /sunna/{doc} { allow read: if true; }
     match /kohhran-chanchin/{doc} { allow read: if true; }
     match /kohhran-upa/{doc} { allow read: if true; }
+    match /branch-chanchin/{doc} { allow read: if true; }
     match /golden-jubilee/{doc} { allow read: if true; }
+    match /kohhran-golden-jubilee/{doc} { allow read: if true; }
     
     // Support exact names with spaces
     match /{collection}/{doc} {
       allow read: if collection == 'Kohhran Chanchin' || 
                        collection == 'Kohhran Upa' || 
-                       collection == 'Golden Jubilee';
+                       collection == 'news' || 
+                       collection == 'lawmpuina' || 
+                       collection == 'sunna' || 
+                       collection == 'Golden Jubilee' ||
+                       collection == 'Kohhran Golden Jubilee';
     }
     match /sermons/{doc} { allow read: if true; }
     match /lyrics/{doc} { allow read: if true; }

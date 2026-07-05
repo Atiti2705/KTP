@@ -282,6 +282,8 @@ for (let i = 0; i < 36; i++) {
 // ========================
 const DocumentCategories = ['All', 'Mipui Aw', 'Bulletin', 'Souvenir', 'Church Report', 'Minutes', 'Newsletter', 'Guidelines', 'Forms'];
 const LyricCategories = ['All'];
+const BranchChanchinCategories = ['All', 'General', 'Report'];
+const BranchChanchin = [];
 
 const Documents = [
   {
@@ -906,6 +908,11 @@ function formatDateLong(dateStr) {
     if (storedSettings.sermonCategories && Array.isArray(storedSettings.sermonCategories)) {
       SermonCategories.length = 0;
       SermonCategories.push('All', ...storedSettings.sermonCategories.filter(c => c !== 'All'));
+    }
+    
+    if (storedSettings.branchChanchinCategories && Array.isArray(storedSettings.branchChanchinCategories)) {
+      BranchChanchinCategories.length = 0;
+      BranchChanchinCategories.push('All', ...storedSettings.branchChanchinCategories.filter(c => c !== 'All'));
     }
   }
 })();
