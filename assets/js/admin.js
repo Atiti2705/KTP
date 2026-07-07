@@ -633,7 +633,7 @@ function renderSidebar() {
         <span class="link-icon">📊</span> Dashboard
       </a>
       <a href="news.html" class="sidebar-link ${activePage === 'news' ? 'active' : ''}">
-        <span class="link-icon">📰</span> News
+        <span class="link-icon">📰</span> Branch Thuchhuak
       </a>
       <a href="lawmpuina.html" class="sidebar-link ${activePage === 'lawmpuina' ? 'active' : ''}">
         <span class="link-icon">🎉</span> Lawmpuina
@@ -657,7 +657,7 @@ function renderSidebar() {
         <span class="link-icon">🌟</span> Kohhran Golden Jubilee
       </a>
       <a href="photos.html" class="sidebar-link ${activePage === 'photos' ? 'active' : ''}">
-        <span class="link-icon">📸</span> Photos Gallery
+        <span class="link-icon">📸</span> Gallery
       </a>
       <a href="documents.html?collection=mipuiaw&title=Mipui%20Aw" class="sidebar-link ${activePage === 'mipuiaw' ? 'active' : ''}">
         <span class="link-icon">📄</span> Mipui Aw
@@ -669,7 +669,7 @@ function renderSidebar() {
         <span class="link-icon">📘</span> Souvenir
       </a>
       <a href="sermons.html" class="sidebar-link ${activePage === 'sermons' ? 'active' : ''}">
-        <span class="link-icon">📖</span> Sermons & Study
+        <span class="link-icon">📖</span> Articles & Sermons
       </a>
       <a href="lyrics.html" class="sidebar-link ${activePage === 'lyrics' ? 'active' : ''}">
         <span class="link-icon">🎵</span> Hla Lyrics

@@ -142,6 +142,16 @@
   transform-origin: top center;
 }
 
+.nav-dropdown-menu::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 0;
+  right: 0;
+  height: 15px;
+  background: transparent;
+}
+
 @supports (backdrop-filter: blur(16px)) {
   .nav-dropdown-menu {
     background: rgba(var(--color-bg-card-rgb, 10, 15, 25), 0.85);

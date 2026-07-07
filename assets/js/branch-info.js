@@ -8,14 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  function formatDriveImageLink(url) {
-    if (!url) return '';
-    const match = url.trim().match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
-    if (match && match[1]) {
-      return `https://lh3.googleusercontent.com/d/${match[1]}`;
-    }
-    return url.trim();
-  }
+
 
   // Inject Toolbar (Search & Filter) above the grid
   const toolbarHtml = `
@@ -58,19 +51,44 @@ document.addEventListener('DOMContentLoaded', async () => {
     container.innerHTML = itemsToRender.map(item => {
       const primaryImage = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
       const imgHtml = primaryImage 
-        ? `<img loading="lazy" src="${formatDriveImageLink(primaryImage)}" alt="${item.title || 'Photo'}" loading="lazy">` 
+        ? `<img loading="lazy" src="${convertDriveUrl(primaryImage)}" alt="${item.title || 'Photo'}" loading="lazy">` 
         : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: var(--fs-xs);">No Image Provided</div>`;
       
+      let photoCountBadge = '';
+      if (item.imageUrls && item.imageUrls.length > 1) {
+        photoCountBadge = `
+          <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 500; display: flex; align-items: center; gap: 4px; backdrop-filter: blur(4px); z-index: 2; pointer-events: none;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            ${item.imageUrls.length}
+          </div>
+        `;
+      }
+      
       const titleHtml = item.title ? `<h3 class="ob-title">${item.title}</h3>` : '';
+      let dateHtml = '';
+      if (item.date && !['Kohhran Upa', 'branch-ob', 'branch-committee', 'group-committee', 'sub-committee'].includes(dataType)) {
+        const dateObj = new Date(item.date);
+        if (!isNaN(dateObj)) {
+          const formattedDate = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+          dateHtml = `
+            <div style="display: inline-flex; align-items: center; gap: 6px; background: var(--color-bg-hover); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: var(--sp-2); font-weight: 500; align-self: flex-start; border: 1px solid var(--color-border);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              ${formattedDate}
+            </div>
+          `;
+        }
+      }
       const textHtml = item.content ? `<div class="ob-text ob-text-clamped">${item.content}</div>` : '';
 
       return `
         <div class="ob-card" data-id="${item.id}">
-          <div class="ob-image-wrapper">
+          <div class="ob-image-wrapper" style="position: relative;">
             ${imgHtml}
+            ${photoCountBadge}
           </div>
           <div class="ob-content-wrapper">
             ${titleHtml}
+            ${dateHtml}
             ${textHtml}
           </div>
         </div>
@@ -293,6 +311,47 @@ document.addEventListener('DOMContentLoaded', async () => {
   `;
   document.head.insertAdjacentHTML('beforeend', modalStyles);
 
+  // Global download handler for card buttons
+  window.downloadBiCardImage = async function(btn, imgUrl, titleStr, e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    if (!imgUrl) return;
+
+    let url = convertDriveUrl(imgUrl);
+    if (url.includes('lh3.googleusercontent.com') && !url.includes('=s0')) {
+      url += '=s0';
+    }
+
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span style="font-size: 14px;">⏳ Downloading...</span>';
+    btn.disabled = true;
+
+    try {
+      const response = await fetch(url, { mode: 'cors' });
+      if (!response.ok) throw new Error('Network response was not ok');
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      
+      let safeTitle = (titleStr || 'photo').replace(/[^a-zA-Z0-9_-]/g, '_');
+      a.download = `${safeTitle}.jpg`;
+      
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error('Download failed', err);
+      window.open(url, '_blank');
+    }
+    
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  };
+
   // Add Modal HTML
   const modalHtml = `
     <div class="ob-modal-overlay" id="ob-detail-modal">
@@ -317,6 +376,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         <button id="bi-lightbox-close" aria-label="Back" style="position: absolute; top: 16px; left: 16px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); transition: background 0.2s;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         </button>
+        
+        <div id="bi-lightbox-counter" style="position: absolute; top: 16px; left: 64px; background: rgba(255,255,255,0.15); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; z-index: 10; backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center;"></div>
         
         <div style="position: absolute; top: 16px; right: 16px; display: flex; gap: 12px; z-index: 10;">
           <a id="bi-lightbox-download" href="#" style="background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); text-decoration: none; transition: background 0.2s;" title="Download">
@@ -357,7 +418,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const item = currentLightboxItems[currentLightboxIndex];
     const primaryImage = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
-    const finalUrl = primaryImage ? formatDriveImageLink(primaryImage) : '';
+    const finalUrl = primaryImage ? convertDriveUrl(primaryImage) : '';
     
     biLightboxImage.style.opacity = '0';
     setTimeout(() => {
@@ -366,7 +427,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 150);
     biLightboxImage.style.transition = 'opacity 0.2s ease-in-out';
     
-    if (['Kohhran Upa', 'branch-ob', 'branch-committee', 'group-committee', 'sub-committee'].includes(dataType)) {
+    const counter = document.getElementById('bi-lightbox-counter');
+    if (counter) {
+      const currentId = item.id;
+      const sameItemPhotos = currentLightboxItems.filter(i => i.id === currentId);
+      const firstIndexOfId = currentLightboxItems.findIndex(i => i.id === currentId);
+      const relativeIndex = currentLightboxIndex - firstIndexOfId + 1;
+      
+      if (sameItemPhotos.length > 1) {
+        counter.textContent = `${relativeIndex} / ${sameItemPhotos.length}`;
+        counter.style.display = 'flex';
+      } else {
+        counter.style.display = 'none';
+      }
+    }
+    
+    if (['Kohhran Upa', 'branch-ob', 'branch-committee', 'group-committee', 'sub-committee', 'lawmpuina', 'sunna', 'news'].includes(dataType)) {
       biLightboxTitle.style.display = 'none';
       biLightboxText.style.display = 'none';
     } else {
@@ -389,12 +465,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         docsContainer.innerHTML = '';
       }
     }    
-    let fileId = '';
-    if (primaryImage) {
-      const match = primaryImage.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
-      if (match) fileId = match[1];
-    }
-    biLightboxDownload.href = fileId ? `https://lh3.googleusercontent.com/d/${fileId}` : (primaryImage || '#');
+    biLightboxDownload.href = finalUrl || '#';
   }
 
   function closeBiLightbox(fromHistory = false) {
@@ -423,21 +494,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateBiLightboxImage();
   });
 
-  if (biLightboxDownload) {
-    biLightboxDownload.addEventListener('click', async (e) => {
+  const downloadHandler = async (e) => {
       e.stopPropagation();
       e.preventDefault();
-      const url = biLightboxDownload.href;
+      let url = biLightboxDownload.href;
       if (!url || url === '#') return;
-      const prevHtml = biLightboxDownload.innerHTML;
-      biLightboxDownload.innerHTML = '<span style="font-size: 14px;">⏳</span>';
+      if (url.includes('lh3.googleusercontent.com') && !url.includes('=s0')) {
+        url += '=s0';
+      }
+      
+      const targetBtn = e.currentTarget;
+      const prevHtml = targetBtn.innerHTML;
+      targetBtn.innerHTML = '<span style="font-size: 14px;">⏳ Downloading...</span>';
+      
       try {
         const response = await fetch(url, { mode: 'cors' });
         const blob = await response.blob();
         const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = blobUrl;
-        a.download = 'photo.jpg';
+        
+        let titleStr = 'photo';
+        if (currentLightboxItems && currentLightboxItems[currentLightboxIndex]) {
+            const curItem = currentLightboxItems[currentLightboxIndex];
+            titleStr = curItem.title || 'photo';
+            if (curItem.id) titleStr += `_${curItem.id}`;
+        }
+        let safeTitle = titleStr.replace(/[^a-zA-Z0-9_-]/g, '_');
+        a.download = `${safeTitle}.jpg`;
+        
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -445,9 +530,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       } catch {
         window.open(url, '_blank');
       }
-      biLightboxDownload.innerHTML = prevHtml;
-    });
-  }
+      
+      targetBtn.innerHTML = prevHtml;
+  };
+
+  if (biLightboxDownload) biLightboxDownload.addEventListener('click', downloadHandler);
 
   // Set up Touch Zoom
   if (biLightboxImage && typeof TouchZoomHandler !== 'undefined') {
@@ -496,6 +583,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Event delegation for opening the modal
   container.addEventListener('click', (e) => {
+    // Don't open lightbox if clicking the download button
+    if (e.target.closest('button')) return;
+
     const card = e.target.closest('.ob-card');
     if (!card) return;
     
@@ -503,11 +593,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     const item = baseItems.find(i => i.id === id);
     if (!item) return;
 
-    const isPhotoOnlyModal = ['Kohhran Upa', 'branch-ob', 'branch-committee', 'group-committee', 'sub-committee'].includes(dataType);
+    const isPhotoOnlyModal = ['Kohhran Upa', 'branch-ob', 'branch-committee', 'group-committee', 'sub-committee', 'lawmpuina', 'sunna', 'news'].includes(dataType);
 
     if (isPhotoOnlyModal) {
-      currentLightboxItems = baseItems;
-      currentLightboxIndex = baseItems.findIndex(i => i.id === id);
+      let flatGallery = [];
+      baseItems.forEach(bItem => {
+        if (bItem.imageUrls && bItem.imageUrls.length > 0) {
+          bItem.imageUrls.forEach(url => {
+            flatGallery.push({
+              ...bItem,
+              imageUrl: url,
+              imageUrls: [] // Clear this so updateBiLightboxImage uses imageUrl
+            });
+          });
+        } else if (bItem.imageUrl) {
+          flatGallery.push(bItem);
+        } else {
+          flatGallery.push(bItem);
+        }
+      });
+      
+      currentLightboxItems = flatGallery;
+      currentLightboxIndex = flatGallery.findIndex(i => i.id === id);
+      
       updateBiLightboxImage();
       biLightbox.classList.add('active');
       biLightbox.style.display = 'flex';
@@ -519,8 +627,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     modalTitleElem.textContent = item.title || '';
     
     // Safely render content and append document links if any
+    let textHtml = '';
+    if (item.date && !['Kohhran Upa', 'branch-ob', 'branch-committee', 'group-committee', 'sub-committee'].includes(dataType)) {
+      const dateObj = new Date(item.date);
+      if (!isNaN(dateObj)) {
+        const formattedDate = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        textHtml += `
+          <div style="display: inline-flex; align-items: center; gap: 6px; background: var(--color-bg-hover); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: var(--sp-3); font-weight: 500; border: 1px solid var(--color-border);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            ${formattedDate}
+          </div>
+        `;
+      }
+    }
     const escapedContent = (item.content || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    let textHtml = escapedContent;
+    textHtml += escapedContent;
     
     if (item.documentFiles && item.documentFiles.length > 0) {
       textHtml += `
@@ -538,6 +659,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       `;
     }
+
+    const dlImageUrl = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
+    if (dlImageUrl) {
+        let safeTitleForDl = (item.title || 'photo').replace(/'/g, "\\'");
+        if (item.id) safeTitleForDl += `_${item.id}`;
+        
+        textHtml += `
+          <div style="margin-top: 24px;">
+            <button class="btn btn-primary" onclick="window.downloadBiCardImage(this, '${dlImageUrl}', '${safeTitleForDl}', event)" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download Photo
+            </button>
+          </div>
+        `;
+    }
     modalTextElem.innerHTML = textHtml;
     
     if (item.imageUrls && item.imageUrls.length > 1) {
@@ -546,7 +682,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="ob-modal-slider" id="ob-modal-slider">
             ${item.imageUrls.map((url, i) => `
               <div class="ob-modal-slide">
-                <img loading="lazy" src="${formatDriveImageLink(url)}" alt="${item.title || 'Photo'}">
+                <img loading="lazy" src="${convertDriveUrl(url)}" alt="${item.title || 'Photo'}">
               </div>
             `).join('')}
           </div>
@@ -570,9 +706,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       
     } else if (item.imageUrls && item.imageUrls.length === 1) {
-      modalImgContainer.innerHTML = `<img loading="lazy" src="${formatDriveImageLink(item.imageUrls[0])}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrls[0])}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
     } else if (item.imageUrl) {
-      modalImgContainer.innerHTML = `<img loading="lazy" src="${formatDriveImageLink(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
     } else {
       modalImgContainer.innerHTML = '';
     }

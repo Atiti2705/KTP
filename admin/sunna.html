@@ -84,10 +84,10 @@
           </div>
 
           <div class="form-group">
-            <label for="ob-year" class="form-label">Year for Filtering (e.g. 2025)</label>
-            <select id="ob-year" class="form-input"><option value="">-- Use Title --</option></select>
+            <label for="ob-event-date" class="form-label">Date of Event (Optional)</label>
+            <input type="date" id="ob-event-date" class="form-input">
             <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-top: 4px;">
-              If left blank, the Title will be used in the filter dropdown.
+              If left blank, today's date will be used. The year from this date will be used for filtering.
             </div>
           </div>
 
@@ -97,8 +97,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="ob-image">Google Drive Photo Link(s) (Comma separated)</label>
-            <input type="text" class="form-input" id="ob-image">
+            <label class="form-label" for="ob-image">Google Drive Photo Link(s)</label>
+            <textarea class="form-input form-textarea" id="ob-image" style="min-height: 80px; font-family: monospace; font-size: 0.85rem;" placeholder="Paste links here (comma or newline separated)..."></textarea>
             <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-top: 4px;">
               Make sure the photo(s) are set to <strong>"Anyone with the link"</strong> on Google Drive. Separate multiple links with commas.
             </div>
@@ -303,6 +303,7 @@
         document.getElementById('ob-action-type').value = 'add';
         document.getElementById('modal-form-title').textContent = 'Add New Entry';
         document.getElementById('ob-pinned').checked = false;
+        document.getElementById('ob-event-date').value = '';
         
         // Auto-select category if filtered
         if (currentCategoryFilter !== 'All') {
@@ -324,12 +325,14 @@
 
         const category = document.getElementById('ob-category').value;
         const title = document.getElementById('ob-title').value;
-        const year = document.getElementById('ob-year').value;
         const content = document.getElementById('ob-content').value;
         const imageInput = document.getElementById('ob-image').value;
-        const imageUrls = imageInput ? imageInput.split(',').map(s => s.trim()).filter(s => s) : [];
+        const imageUrls = imageInput ? imageInput.split(/[\n,]+/).map(s => s.trim()).filter(s => s) : [];
         const imageUrl = imageUrls.length > 0 ? imageUrls[0] : '';
         const pinnedToHomepage = document.getElementById('ob-pinned').checked;
+        const eventDateInput = document.getElementById('ob-event-date').value;
+        const finalDate = eventDateInput ? new Date(eventDateInput).toISOString() : new Date().toISOString();
+        const year = new Date(finalDate).getFullYear().toString();
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
@@ -348,7 +351,7 @@
               imageUrls,
               pinnedToHomepage,
               orderIndex: 999,
-              date: new Date().toISOString()
+              date: finalDate
             };
             await AdminData.add(targetCollection, newItem);
             AdminToast.show('Entry saved successfully!', 'success');
@@ -360,7 +363,8 @@
               content,
               imageUrl,
               imageUrls,
-              pinnedToHomepage
+              pinnedToHomepage,
+              date: finalDate
             };
             await AdminData.update(targetCollection, editId, updatedFields);
             AdminToast.show('Entry updated successfully!', 'success');
@@ -406,10 +410,10 @@
 
       document.getElementById('ob-category').value = item.category || '';
       document.getElementById('ob-title').value = item.title || '';
-      document.getElementById('ob-year').value = item.year || '';
       document.getElementById('ob-content').value = item.content || '';
-      document.getElementById('ob-image').value = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls.join(', ') : (item.imageUrl || '');
+      document.getElementById('ob-image').value = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls.join('\n') : (item.imageUrl || '');
       document.getElementById('ob-pinned').checked = !!item.pinnedToHomepage;
+      document.getElementById('ob-event-date').value = item.date ? item.date.split('T')[0] : '';
 
       ModalSystem.open('ob-form-modal');
     };

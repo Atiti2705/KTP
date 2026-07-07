@@ -74,6 +74,9 @@ const ThemeManager = {
     const dropdown = document.getElementById('theme-dropdown');
     if (!btn || !dropdown) return;
 
+    if (btn.dataset.bound === 'true') return;
+    btn.dataset.bound = 'true';
+
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       dropdown.classList.toggle('active');

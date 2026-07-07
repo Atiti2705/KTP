@@ -826,25 +826,7 @@
        COUNTER ANIMATION
        ================================================ */
     function animateCounters() {
-      const io = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          const el = entry.target;
-          if (el.dataset.animated) return;
-          el.dataset.animated = 'true';
-          const target = parseInt(el.getAttribute('data-target'), 10);
-          if (isNaN(target)) return;
-          let cur = 0;
-          const step = Math.max(1, Math.floor(target / 60));
-          const timer = setInterval(() => {
-            cur = Math.min(cur + step, target);
-            el.textContent = cur;
-            if (cur >= target) clearInterval(timer);
-          }, 20);
-          io.unobserve(el);
-        });
-      }, { threshold: 0.3 });
-      document.querySelectorAll('[data-target]').forEach(el => io.observe(el));
+      // Animation removed by user request
     }
 
     /* ================================================

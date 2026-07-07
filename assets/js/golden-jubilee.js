@@ -8,14 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  function formatDriveImageLink(url) {
-    if (!url) return '';
-    const match = url.trim().match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
-    if (match && match[1]) {
-      return `https://lh3.googleusercontent.com/d/${match[1]}`;
-    }
-    return url.trim();
-  }
+
 
   // Inject Toolbar (Search & Filter) above the grid
   const toolbarHtml = `
@@ -118,7 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
           
           const imgHtml = thumb 
-             ? `<img loading="lazy" src="${formatDriveImageLink(thumb)}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8; filter: brightness(0.9);">` 
+             ? `<img loading="lazy" src="${convertDriveUrl(thumb)}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8; filter: brightness(0.9);">` 
              : `<div style="font-size: 3.5rem; text-align: center; color: var(--brand-sky);">📁</div>`;
              
           return `
@@ -140,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         html += itemsToRender.map(item => {
           const primaryImage = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
           const imgHtml = primaryImage 
-            ? `<img loading="lazy" src="${formatDriveImageLink(primaryImage)}" alt="${item.title || 'Photo'}">` 
+            ? `<img loading="lazy" src="${convertDriveUrl(primaryImage)}" alt="${item.title || 'Photo'}">` 
             : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: var(--fs-xs);">No Image</div>`;
           
           const titleHtml = item.title ? `<h3 class="ob-title">${item.title}</h3>` : '';
@@ -217,8 +210,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (images.length === 0) return '';
         
         return images.map(img => `
-          <div class="masonry-item gallery-item selectable-item photo-card" data-id="${item.id}" style="position: relative;" data-url="${formatDriveImageLink(img)}">
-            <img src="${formatDriveImageLink(img)}" alt="${(item.title || 'Photo').replace(/"/g, '&quot;')}" class="gallery-image" loading="lazy">
+          <div class="masonry-item gallery-item selectable-item photo-card" data-id="${item.id}" style="position: relative;" data-url="${convertDriveUrl(img)}">
+            <img src="${convertDriveUrl(img)}" alt="${(item.title || 'Photo').replace(/"/g, '&quot;')}" class="gallery-image" loading="lazy">
             ${item.title ? `
             <div class="gallery-overlay">
               <h3 style="color: white; font-size: var(--fs-md); font-weight: var(--fw-medium); margin: 0; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">${item.title}</h3>
@@ -276,7 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         return images.map(img => {
           const imgHtml = img 
-            ? `<img loading="lazy" src="${formatDriveImageLink(img)}" alt="${item.title || 'Photo'}">` 
+            ? `<img loading="lazy" src="${convertDriveUrl(img)}" alt="${item.title || 'Photo'}">` 
             : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: var(--fs-xs);">No Image</div>`;
           
           const titleHtml = item.title ? `<h3 class="ob-title">${item.title}</h3>` : '';
@@ -284,7 +277,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           const contentHtml = item.content ? `<div class="ob-content">${item.content}</div>` : '';
 
           return `
-            <div class="ob-card selectable-item photo-card" data-id="${item.id}" data-url="${img ? formatDriveImageLink(img) : ''}">
+            <div class="ob-card selectable-item photo-card" data-id="${item.id}" data-url="${img ? convertDriveUrl(img) : ''}">
               <div class="ob-img-container">${imgHtml}</div>
               <div class="ob-info">
                 ${titleHtml}
@@ -676,6 +669,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         <button id="gj-lightbox-prev" class="lightbox-nav-btn" aria-label="Previous" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❮</button>
         <button id="gj-lightbox-next" class="lightbox-nav-btn" aria-label="Next" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❯</button>
         <img loading="lazy" src="" alt="" id="gj-lightbox-image" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
+        <div style="position: absolute; bottom: 30px; left: 20px; right: 20px; text-align: center; color: white; z-index: 20; pointer-events: auto;">
+          <button id="gj-lightbox-download-btn" class="btn btn-primary" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: var(--fs-sm); padding: 10px 24px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download Photo
+          </button>
+        </div>
       </div>
     </div>
   `;
@@ -684,6 +683,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const gjPhotoLightbox = document.getElementById('gj-photo-lightbox');
   const gjLightboxImage = document.getElementById('gj-lightbox-image');
   const gjLightboxDownload = document.getElementById('gj-lightbox-download');
+  const gjLightboxDownloadBtn = document.getElementById('gj-lightbox-download-btn');
   
   let currentLightboxItems = [];
   let currentLightboxIndex = 0;
@@ -707,7 +707,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const item = currentLightboxItems[currentLightboxIndex];
     const primaryImage = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
-    const finalUrl = primaryImage ? formatDriveImageLink(primaryImage) : '';
+    const finalUrl = primaryImage ? convertDriveUrl(primaryImage) : '';
     
     if (gjLightboxImage) {
       gjLightboxImage.style.opacity = '0';
@@ -722,12 +722,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const match = primaryImage.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
       if (match) fileId = match[1];
     }
-    
-    if (fileId) {
-      gjLightboxDownload.href = `https://lh3.googleusercontent.com/d/${fileId}`;
-    } else {
-      gjLightboxDownload.href = primaryImage || '#';
-    }
+    if (gjLightboxDownload) gjLightboxDownload.href = finalUrl || '#';
   }
 
   function openGjLightbox(id, clickedUrl) {
@@ -747,7 +742,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     
     if (clickedUrl) {
-      currentLightboxIndex = currentLightboxItems.findIndex(i => formatDriveImageLink(i.imageUrl) === clickedUrl || i.imageUrl === clickedUrl);
+      currentLightboxIndex = currentLightboxItems.findIndex(i => convertDriveUrl(i.imageUrl) === clickedUrl || i.imageUrl === clickedUrl);
     } else {
       currentLightboxIndex = currentLightboxItems.findIndex(i => String(i.id) === String(id));
     }
@@ -800,15 +795,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
   }
 
-  if (gjLightboxDownload) {
-    gjLightboxDownload.addEventListener('click', async (e) => {
+  const downloadHandlerGj = async (e) => {
       e.stopPropagation();
       e.preventDefault();
-      const url = gjLightboxDownload.href;
+      let url = gjLightboxDownload.href;
       if (!url || url === '#') return;
+      if (url.includes('lh3.googleusercontent.com') && !url.includes('=s0')) {
+        url += '=s0';
+      }
       
-      const prevHtml = gjLightboxDownload.innerHTML;
-      gjLightboxDownload.innerHTML = '<span style="font-size: 14px;">⏳</span>';
+      const targetBtn = e.currentTarget;
+      const prevHtml = targetBtn.innerHTML;
+      targetBtn.innerHTML = '<span style="font-size: 14px;">⏳ Downloading...</span>';
       
       try {
         const response = await fetch(url, { mode: 'cors' });
@@ -816,7 +814,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = blobUrl;
-        a.download = 'photo.jpg';
+        let titleStr = 'photo';
+        if (currentLightboxItems && currentLightboxItems[currentLightboxIndex]) {
+            const curItem = currentLightboxItems[currentLightboxIndex];
+            titleStr = curItem.title || 'photo';
+            if (curItem.id) titleStr += `_${curItem.id}`;
+        }
+        let safeTitle = titleStr.replace(/[^a-zA-Z0-9_-]/g, '_');
+        a.download = `${safeTitle}.jpg`;
+        
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -824,9 +830,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       } catch {
         window.open(url, '_blank');
       }
-      gjLightboxDownload.innerHTML = prevHtml;
-    });
-  }
+      targetBtn.innerHTML = prevHtml;
+  };
+
+  if (gjLightboxDownload) gjLightboxDownload.addEventListener('click', downloadHandlerGj);
+  if (gjLightboxDownloadBtn) gjLightboxDownloadBtn.addEventListener('click', downloadHandlerGj);
 
 
   const detailModal = document.getElementById('ob-detail-modal');
@@ -962,7 +970,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="ob-modal-slider" id="ob-modal-slider">
             ${item.imageUrls.map((url, i) => `
               <div class="ob-modal-slide" style="cursor: zoom-in;" title="Click to view fullscreen">
-                <img loading="lazy" src="${formatDriveImageLink(url)}" alt="${item.title || 'Photo'}">
+                <img loading="lazy" src="${convertDriveUrl(url)}" alt="${item.title || 'Photo'}">
               </div>
             `).join('')}
           </div>
@@ -986,9 +994,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       
     } else if (item.imageUrls && item.imageUrls.length === 1) {
-      modalImgContainer.innerHTML = `<img loading="lazy" src="${formatDriveImageLink(item.imageUrls[0])}" class="ob-modal-image" alt="${item.title || 'Photo'}" style="cursor: zoom-in;" title="Click to view fullscreen">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrls[0])}" class="ob-modal-image" alt="${item.title || 'Photo'}" style="cursor: zoom-in;" title="Click to view fullscreen">`;
     } else if (item.imageUrl) {
-      modalImgContainer.innerHTML = `<img loading="lazy" src="${formatDriveImageLink(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}" style="cursor: zoom-in;" title="Click to view fullscreen">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}" style="cursor: zoom-in;" title="Click to view fullscreen">`;
     } else {
       modalImgContainer.innerHTML = '';
     }

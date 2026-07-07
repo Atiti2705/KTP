@@ -509,7 +509,11 @@ function updateLightboxContent() {
     modalImage.style.transition = 'opacity 0.2s';
   }
   if (modalDownload) {
-    modalDownload.href = photo.imageUrl;
+    let dlUrl = photo.imageUrl;
+    if (dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
+      dlUrl += '=s0';
+    }
+    modalDownload.href = dlUrl;
     modalDownload.setAttribute('download', `${photo.title || 'photo'}.jpg`);
   }
   
@@ -595,8 +599,12 @@ function setupBulkDownload() {
       
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+        let dlUrl = file.url;
+        if (dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
+          dlUrl += '=s0';
+        }
         try {
-          const response = await fetch(file.url, { mode: 'cors' });
+          const response = await fetch(dlUrl, { mode: 'cors' });
           if (!response.ok) throw new Error('Network response was not ok');
           const blob = await response.blob();
           const blobUrl = URL.createObjectURL(blob);
@@ -610,8 +618,8 @@ function setupBulkDownload() {
           // Small delay between downloads to prevent browser blocking
           if (i < files.length - 1) await new Promise(r => setTimeout(r, 500));
         } catch (err) {
-          console.error("Failed to download file:", file.url, err);
-          window.open(file.url, '_blank');
+          console.error("Failed to download file:", dlUrl, err);
+          window.open(dlUrl, '_blank');
         }
       }
       
