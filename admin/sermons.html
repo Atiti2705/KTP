@@ -8,10 +8,10 @@
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/variables.css?v=152">
-  <link rel="stylesheet" href="../assets/css/base.css?v=152">
-  <link rel="stylesheet" href="../assets/css/components.css?v=152">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=152">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=155">
+  <link rel="stylesheet" href="../assets/css/base.css?v=155">
+  <link rel="stylesheet" href="../assets/css/components.css?v=155">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=155">
 </head>
 
 <body>
@@ -103,8 +103,8 @@
             </div>
 
             <div class="form-group">
-              <label for="sermon-speaker" class="form-label">Speaker</label>
-              <input type="text" id="sermon-speaker" class="form-input" required>
+              <label for="sermon-speaker" class="form-label">Speaker (Optional)</label>
+              <input type="text" id="sermon-speaker" class="form-input">
             </div>
           </div>
 
@@ -128,14 +128,14 @@
             </div>
 
             <div class="form-group">
-              <label for="sermon-scripture" class="form-label">Scripture Reading</label>
-              <input type="text" id="sermon-scripture" class="form-input" required>
+              <label for="sermon-scripture" class="form-label">Scripture Reading (Optional)</label>
+              <input type="text" id="sermon-scripture" class="form-input">
             </div>
           </div>
 
           <div class="form-group">
-            <label for="sermon-desc" class="form-label">Sermon Outline / Description</label>
-            <textarea id="sermon-desc" class="form-input form-textarea" required></textarea>
+            <label for="sermon-desc" class="form-label">Sermon Outline / Description (Optional)</label>
+            <textarea id="sermon-desc" class="form-input form-textarea"></textarea>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
@@ -259,21 +259,21 @@
 
   <!-- Scripts -->
   <!-- SortableJS for drag-and-drop -->
-  <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=152"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=155"></script>
   <!-- Firebase SDK Compat -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=152"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=152"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=152"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=155"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=155"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=155"></script>
 
   <!-- App Configuration & Services -->
-  <script defer src="../assets/js/firebase-config.js?v=152"></script>
-  <script defer src="../assets/js/theme.js?v=152"></script>
-  <script defer src="../assets/js/data.js?v=152"></script>
-  <script defer src="../assets/js/auth.js?v=152"></script>
-  <script defer src="../assets/js/db-service.js?v=152"></script>
-  <script defer src="../assets/js/components.js?v=152"></script>
-  <script defer src="../assets/js/search.js?v=152"></script>
-  <script defer src="../assets/js/admin.js?v=152"></script>
+  <script defer src="../assets/js/firebase-config.js?v=155"></script>
+  <script defer src="../assets/js/theme.js?v=155"></script>
+  <script defer src="../assets/js/data.js?v=155"></script>
+  <script defer src="../assets/js/auth.js?v=155"></script>
+  <script defer src="../assets/js/db-service.js?v=155"></script>
+  <script defer src="../assets/js/components.js?v=155"></script>
+  <script defer src="../assets/js/search.js?v=155"></script>
+  <script defer src="../assets/js/admin.js?v=155"></script>
 
   <script>
     let currentSearch = '';

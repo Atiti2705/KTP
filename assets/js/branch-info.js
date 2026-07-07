@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 150);
     biLightboxImage.style.transition = 'opacity 0.2s ease-in-out';
     
-    if (dataType === 'Kohhran Upa') {
+    if (['Kohhran Upa', 'branch-ob', 'branch-committee', 'group-committee', 'sub-committee'].includes(dataType)) {
       biLightboxTitle.style.display = 'none';
       biLightboxText.style.display = 'none';
     } else {

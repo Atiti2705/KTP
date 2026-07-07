@@ -1036,10 +1036,11 @@ class SelectionManager {
       this.toggleSelection(item);
       this.lastSelectedIndex = index;
     } else {
-      // Plain click: clear and select just this one
+      // Plain click: open preview
       this.clearSelection();
-      this.addToSelection(item);
-      this.lastSelectedIndex = index;
+      if (this.previewCallback) {
+        this.previewCallback(id);
+      }
     }
   }
 

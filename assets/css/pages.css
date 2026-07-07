@@ -1045,71 +1045,37 @@
    ======================== */
 .modern-doc-card {
   position: relative;
-  padding: 16px 20px;
-  background: var(--color-bg-card);
-  border-radius: var(--radius-xl);
+  padding: 16px;
+  background: transparent;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  gap: 8px;
+  transition: all 0.2s ease;
   cursor: pointer;
   z-index: 1;
 }
 
-.modern-doc-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(180deg, var(--brand-sky), var(--brand-gold));
-  opacity: 0;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  transform: scaleY(0);
-  transform-origin: top;
-}
-
 .modern-doc-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  background: var(--color-bg-hover);
   border-color: rgba(135, 206, 235, 0.3);
-  background: linear-gradient(to right, var(--color-bg-card), rgba(135, 206, 235, 0.03));
-}
-
-.modern-doc-card:hover::before {
-  opacity: 1;
-  transform: scaleY(1);
 }
 
 .modern-doc-header {
   display: flex;
   align-items: center;
-  gap: var(--sp-3);
-  margin-bottom: -4px;
+  margin-bottom: 2px;
 }
 
 .modern-doc-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background: rgba(135, 206, 235, 0.12);
   color: var(--brand-sky);
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.65rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  border-radius: 100px;
-  transition: all 0.3s ease;
-}
-
-.modern-doc-card:hover .modern-doc-badge {
-  background: var(--brand-sky);
-  color: #fff;
+  letter-spacing: 1.2px;
 }
 
 .modern-doc-content {
@@ -1117,16 +1083,16 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: 6px;
 }
 
 .modern-doc-title {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   line-height: 1.4;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--color-text);
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

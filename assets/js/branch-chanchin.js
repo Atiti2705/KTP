@@ -200,7 +200,30 @@ function setupPreviewModal() {
           </div>
         </div>
         <div class="modal-body" style="flex: 1; overflow-y: auto; padding: var(--sp-5);">
-          <div id="modal-branch-chanchin-content" style="line-height: 1.7; font-size: 1.1rem; color: var(--color-text); word-wrap: break-word; text-align: justify; font-family: 'Times New Roman', Times, Arial, serif;"></div>
+          <style>
+            .branch-notes-content {
+              white-space: pre-wrap;
+              -moz-tab-size: 4;
+              -o-tab-size: 4;
+              tab-size: 4;
+              -moz-tab-size: 45px;
+              -o-tab-size: 45px;
+              tab-size: 45px;
+              line-height: 1.7;
+              font-size: 1.1rem;
+              color: var(--color-text);
+              word-wrap: break-word;
+              text-align: justify;
+              font-family: 'Lora', 'Times New Roman', Times, serif;
+            }
+            @media (max-width: 768px) {
+              .branch-notes-content {
+                font-size: 1rem;
+                text-align: justify;
+              }
+            }
+          </style>
+          <div id="modal-branch-chanchin-content" class="branch-notes-content"></div>
         </div>
       </div>
     </div>

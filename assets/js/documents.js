@@ -51,7 +51,18 @@ function renderCategoryChips() {
   const container = document.getElementById('category-chips');
   if (!container) return;
 
-  container.innerHTML = DocumentCategories.map(cat => `
+  const sortedCategories = [...DocumentCategories].sort((a, b) => {
+    if (a === 'All') return -1;
+    if (b === 'All') return 1;
+    const numA = Number(a.trim());
+    const numB = Number(b.trim());
+    if (!isNaN(numA) && !isNaN(numB) && a.trim() !== '' && b.trim() !== '') {
+      return numB - numA;
+    }
+    return 0;
+  });
+
+  container.innerHTML = sortedCategories.map(cat => `
     <button class="filter-chip ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
       ${cat}
     </button>
@@ -120,10 +131,15 @@ function renderSubCategoryChips() {
   };
 
   const uniqueSubCats = Array.from(subcats).sort((a, b) => {
+    const numA = Number(a.trim());
+    const numB = Number(b.trim());
+    if (!isNaN(numA) && !isNaN(numB) && a.trim() !== '' && b.trim() !== '') {
+      return numB - numA;
+    }
     const idxA = getMonthIndex(a);
     const idxB = getMonthIndex(b);
     if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-    return a.localeCompare(b);
+    return b.localeCompare(a);
   });
 
   if (uniqueSubCats.length === 0) {

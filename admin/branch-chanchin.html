@@ -8,10 +8,10 @@
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/variables.css?v=152">
-  <link rel="stylesheet" href="../assets/css/base.css?v=152">
-  <link rel="stylesheet" href="../assets/css/components.css?v=152">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=152">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=155">
+  <link rel="stylesheet" href="../assets/css/base.css?v=155">
+  <link rel="stylesheet" href="../assets/css/components.css?v=155">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=155">
   <!-- Quill Rich Text Editor -->
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>
@@ -141,16 +141,36 @@
           <div class="form-group" style="display: flex; flex-direction: column; flex-grow: 1;">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--sp-2);">
               <label class="form-label" style="margin-bottom: 0;">Branch Chanchin Notes Content</label>
-              <button type="button" class="btn btn-sm btn-outline" id="btn-fix-mizo-text" title="Fix legacy Mizo characters (converts \ to ṭ)" style="padding: 4px 8px; font-size: 12px;">✨ Fix Legacy Text ( \ to ṭ )</button>
+              <div>
+                <button type="button" class="btn btn-sm btn-outline" id="btn-toggle-mobile-preview" title="Toggle mobile preview width" style="padding: 4px 8px; font-size: 12px; margin-right: 4px;">📱 Mobile View</button>
+                <button type="button" class="btn btn-sm btn-outline" id="btn-fix-mizo-text" title="Fix legacy Mizo characters (converts \ to ṭ)" style="padding: 4px 8px; font-size: 12px;">✨ Fix Legacy Text ( \ to ṭ )</button>
+              </div>
             </div>
             <style>
               #editor-container .ql-editor {
-                font-family: 'Times New Roman', Times, Arial, serif;
+                font-family: 'Lora', 'Times New Roman', Times, serif;
                 font-size: 1.1rem;
                 line-height: 1.7;
+                -moz-tab-size: 45px;
+                -o-tab-size: 45px;
+                tab-size: 45px;
+              }
+              .mobile-preview-mode #editor-container {
+                max-width: 375px;
+                margin: 0 auto;
+                border: 2px solid var(--color-border) !important;
+                border-top: none !important;
+                border-radius: 0 0 var(--radius-md) var(--radius-md) !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+              }
+              .mobile-preview-mode .ql-toolbar {
+                max-width: 375px;
+                margin: 0 auto;
+                border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+                border: 2px solid var(--color-border) !important;
               }
             </style>
-            <div id="editor-container" style="height: 300px; background: var(--color-bg-primary); border-radius: 0 0 var(--radius-md) var(--radius-md);"></div>
+            <div id="editor-container" style="height: 450px; background: var(--color-bg-primary); border-radius: 0 0 var(--radius-md) var(--radius-md);"></div>
           </div>
         </div>
         <div class="modal-footer">
@@ -216,21 +236,21 @@
   <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
   <!-- SortableJS for drag-and-drop -->
-  <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=152"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=155"></script>
   <!-- Firebase SDK Compat -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=152"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=152"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=152"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=155"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=155"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=155"></script>
 
   <!-- App Configuration & Services -->
-  <script defer src="../assets/js/firebase-config.js?v=152"></script>
-  <script defer src="../assets/js/theme.js?v=152"></script>
-  <script defer src="../assets/js/data.js?v=152"></script>
-  <script defer src="../assets/js/auth.js?v=152"></script>
-  <script defer src="../assets/js/db-service.js?v=152"></script>
-  <script defer src="../assets/js/components.js?v=152"></script>
-  <script defer src="../assets/js/search.js?v=152"></script>
-  <script defer src="../assets/js/admin.js?v=152"></script>
+  <script defer src="../assets/js/firebase-config.js?v=155"></script>
+  <script defer src="../assets/js/theme.js?v=155"></script>
+  <script defer src="../assets/js/data.js?v=155"></script>
+  <script defer src="../assets/js/auth.js?v=155"></script>
+  <script defer src="../assets/js/db-service.js?v=155"></script>
+  <script defer src="../assets/js/components.js?v=155"></script>
+  <script defer src="../assets/js/search.js?v=155"></script>
+  <script defer src="../assets/js/admin.js?v=155"></script>
 
   <script>
     let currentSearch = '';
@@ -473,6 +493,22 @@
           ]
         }
       });
+
+      // Mobile Preview Toggle
+      const btnMobilePreview = document.getElementById('btn-toggle-mobile-preview');
+      if (btnMobilePreview) {
+        btnMobilePreview.addEventListener('click', () => {
+          const formBody = document.querySelector('.modal-body');
+          formBody.classList.toggle('mobile-preview-mode');
+          if (formBody.classList.contains('mobile-preview-mode')) {
+            btnMobilePreview.innerHTML = '💻 PC View';
+            if (window.quillEditor) window.quillEditor.focus();
+          } else {
+            btnMobilePreview.innerHTML = '📱 Mobile View';
+            if (window.quillEditor) window.quillEditor.focus();
+          }
+        });
+      }
 
       // Fix legacy Mizo text
       document.getElementById('btn-fix-mizo-text').addEventListener('click', () => {
