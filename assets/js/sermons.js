@@ -176,9 +176,9 @@ function renderSermons() {
     }
     
     let fileId = '';
-    const downloadUrl = sermon.fileUrl;
+    const downloadUrl = sermon.downloadUrl || sermon.fileUrl;
     if (downloadUrl && downloadUrl !== '#') {
-      const fileIdMatch = downloadUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      const fileIdMatch = downloadUrl.match(/\/(?:file\/d\/|d\/|uc\?id=|open\?id=)([a-zA-Z0-9_-]+)/);
       if (fileIdMatch && fileIdMatch[1]) {
         fileId = fileIdMatch[1];
       } else {
@@ -200,7 +200,7 @@ function renderSermons() {
     }
     
     return `
-    <div class="horizontal-doc-card selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${safeTitle}.${String(sermon.fileType||'PDF').toLowerCase()}">
+    <div class="horizontal-doc-card selectable-item" data-id="${sermon.id}" data-url="${downloadUrl && downloadUrl !== '#' ? downloadUrl : ''}" data-name="${safeTitle}.${String(sermon.fileType||'PDF').toLowerCase()}">
       <div class="horizontal-doc-image">
         ${thumbHtml}
       </div>
