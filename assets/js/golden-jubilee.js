@@ -727,12 +727,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         <button id="gj-lightbox-prev" class="lightbox-nav-btn" aria-label="Previous" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❮</button>
         <button id="gj-lightbox-next" class="lightbox-nav-btn" aria-label="Next" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-size: 20px; transition: background 0.2s;">❯</button>
         <img loading="lazy" src="" alt="" id="gj-lightbox-image" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
-        <div style="position: absolute; bottom: 30px; left: 20px; right: 20px; text-align: center; color: white; z-index: 20; pointer-events: auto;">
-          <button id="gj-lightbox-download-btn" class="btn btn-primary" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: var(--fs-sm); padding: 10px 24px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Download Photo
-          </button>
-        </div>
       </div>
     </div>
   `;
@@ -741,7 +735,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const gjPhotoLightbox = document.getElementById('gj-photo-lightbox');
   const gjLightboxImage = document.getElementById('gj-lightbox-image');
   const gjLightboxDownload = document.getElementById('gj-lightbox-download');
-  const gjLightboxDownloadBtn = document.getElementById('gj-lightbox-download-btn');
   
   let currentLightboxItems = [];
   let currentLightboxIndex = 0;
@@ -892,7 +885,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   if (gjLightboxDownload) gjLightboxDownload.addEventListener('click', downloadHandlerGj);
-  if (gjLightboxDownloadBtn) gjLightboxDownloadBtn.addEventListener('click', downloadHandlerGj);
 
 
   const detailModal = document.getElementById('ob-detail-modal');
