@@ -161,59 +161,19 @@ function renderBranchChanchin() {
 
   listContainer.innerHTML = paginationData.items.map(branchChanchin => {
     const safeTitle = (branchChanchin.title || '').replace(/<[^>]*>?/gm, '').trim();
-    
-    // Format date nicely if available
-    let dateStr = '';
-    if (branchChanchin.date) {
-      try {
-        const d = new Date(branchChanchin.date);
-        if (!isNaN(d)) {
-          dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-          if (typeof timeAgo === 'function') dateStr = timeAgo(branchChanchin.date);
-        }
-      } catch (e) {}
-    }
-    
-    let fileId = '';
-    const downloadUrl = branchChanchin.fileUrl;
-    if (downloadUrl && downloadUrl !== '#') {
-      const fileIdMatch = downloadUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-      if (fileIdMatch && fileIdMatch[1]) {
-        fileId = fileIdMatch[1];
-      } else {
-        const idMatch = downloadUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-        if (idMatch && idMatch[1]) fileId = idMatch[1];
-      }
-    }
-    
-    let fileType = String(branchChanchin.fileType || 'PDF').toUpperCase();
-    let thumbHtml = `
-      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-        <span style="font-size:0.65rem; font-weight:bold; color:var(--brand-sky); background:rgba(14,165,233,0.15); padding:2px 6px; border-radius:4px; letter-spacing:0.5px;">${fileType}</span>
-      </div>
-    `;
-    
-    if (fileId) {
-      thumbHtml = `<img loading="lazy" src="https://drive.google.com/thumbnail?id=${fileId}&sz=w200-h200" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
-    }
-    
     return `
     <div class="modern-doc-card selectable-item" data-id="${branchChanchin.id}" data-url="${branchChanchin.fileUrl && branchChanchin.fileUrl !== '#' ? branchChanchin.fileUrl : ''}" data-name="${safeTitle}.${String(branchChanchin.fileType||'PDF').toLowerCase()}">
-      <div class="modern-doc-image">
-        ${thumbHtml}
+      ${branchChanchin.topic ? `
+      <div class="modern-doc-header">
+        <span class="modern-doc-badge">${branchChanchin.topic}</span>
       </div>
+      ` : ''}
       <div class="modern-doc-content">
-        ${branchChanchin.topic ? `
-        <div class="modern-doc-header">
-          <span class="modern-doc-badge">${branchChanchin.topic}</span>
-        </div>
-        ` : ''}
         <h3 class="modern-doc-title" title="${safeTitle}">${safeTitle}</h3>
         ${branchChanchin.description ? `<div class="modern-doc-desc">${branchChanchin.description.replace(/<[^>]*>?/gm, '').trim()}</div>` : ''}
         <div class="modern-doc-meta">
           ${branchChanchin.speaker ? `<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${branchChanchin.speaker}</span>` : ''}
-          ${dateStr ? `<span><span class="dot">●</span> ${dateStr}</span>` : ''}
+          ${branchChanchin.scripture ? `<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> ${branchChanchin.scripture}</span>` : ''}
         </div>
       </div>
     </div>
