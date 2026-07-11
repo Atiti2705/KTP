@@ -175,10 +175,27 @@ function renderSermons() {
       } catch (e) {}
     }
     
+    let fileId = '';
+    const downloadUrl = sermon.fileUrl;
+    if (downloadUrl && downloadUrl !== '#') {
+      const fileIdMatch = downloadUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        fileId = fileIdMatch[1];
+      } else {
+        const idMatch = downloadUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (idMatch && idMatch[1]) fileId = idMatch[1];
+      }
+    }
+    
+    let thumbHtml = '📖';
+    if (fileId) {
+      thumbHtml = `<img loading="lazy" src="https://drive.google.com/thumbnail?id=${fileId}&sz=w200-h200" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+    }
+    
     return `
     <div class="modern-doc-card selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${safeTitle}.${String(sermon.fileType||'PDF').toLowerCase()}">
       <div class="modern-doc-image">
-        📖
+        ${thumbHtml}
       </div>
       <div class="modern-doc-content">
         ${sermon.topic ? `
