@@ -137,18 +137,12 @@
             <input type="date" id="photo-date" class="form-input" required>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Image Source</label>
-            <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
-              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="photo-source" value="upload" checked style="width: 16px; height: 16px;">
-                Upload Image File
-              </label>
-              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="photo-source" value="url" style="width: 16px; height: 16px;">
-                External Link (Google Drive / others)
-              </label>
-            </div>
+          <div class="form-group" id="photo-url-container" style="margin-bottom: var(--sp-2);">
+            <label for="photo-url" class="form-label">Image Link URL</label>
+            <input type="url" id="photo-url" class="form-input" required>
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
+              Supports Google Drive share links, Dropbox, or any direct image URL.
+            </small>
           </div>
 
           <div class="form-group checkbox-group" style="margin-bottom: var(--sp-2);">
@@ -156,22 +150,6 @@
               <input type="checkbox" id="photo-pinned" style="width: 16px; height: 16px;">
               📌 Pin to Homepage Gallery
             </label>
-          </div>
-
-          <div class="form-group" id="photo-upload-container">
-            <label for="photo-file" class="form-label">Upload Image File</label>
-            <input type="file" id="photo-file" class="form-input" accept="image/*">
-            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Select an image from your device. It will be compressed locally.
-            </small>
-          </div>
-
-          <div class="form-group" id="photo-url-container" style="display: none; margin-bottom: 0;">
-            <label for="photo-url" class="form-label">Image Link URL</label>
-            <input type="url" id="photo-url" class="form-input">
-            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Supports Google Drive share links, Dropbox, or any direct image URL.
-            </small>
           </div>
         </div>
         <div class="modal-footer">
@@ -585,27 +563,6 @@
         if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-new-cat').click(); }
       });
 
-      // Toggle image source
-      const photoSourceRadios = document.getElementsByName('photo-source');
-      const uploadContainer = document.getElementById('photo-upload-container');
-      const urlContainer = document.getElementById('photo-url-container');
-      
-      const togglePhotoSource = (source) => {
-        if (source === 'upload') {
-          uploadContainer.style.display = 'block';
-          urlContainer.style.display = 'none';
-          document.getElementById('photo-url').required = false;
-        } else {
-          uploadContainer.style.display = 'none';
-          urlContainer.style.display = 'block';
-          document.getElementById('photo-url').required = true;
-        }
-      };
-
-      photoSourceRadios.forEach(radio => {
-        radio.addEventListener('change', (e) => togglePhotoSource(e.target.value));
-      });
-
       // Search
       document.getElementById('admin-search-input').addEventListener('input', (e) => {
         currentSearch = e.target.value;
@@ -768,51 +725,10 @@
         document.getElementById('modal-form-title').textContent = 'Add New Photo';
         document.getElementById('photo-pinned').checked = false;
         document.getElementById('photo-date').value = new Date().toISOString().split('T')[0];
-        document.querySelector('input[name="photo-source"][value="upload"]').checked = true;
-        togglePhotoSource('upload');
         ModalSystem.open('photo-form-modal');
       });
 
-      // Image helper to read file as data URL and compress it via canvas
-      function readAndCompressImage(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-              const canvas = document.createElement('canvas');
-              let width = img.width;
-              let height = img.height;
-              const max_size = 1024; // Max dimension
 
-              if (width > height) {
-                if (width > max_size) {
-                  height *= max_size / width;
-                  width = max_size;
-                }
-              } else {
-                if (height > max_size) {
-                  width *= max_size / height;
-                  height = max_size;
-                }
-              }
-
-              canvas.width = width;
-              canvas.height = height;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0, width, height);
-
-              // Compress to JPEG (0.7 quality)
-              const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-              resolve(dataUrl);
-            };
-            img.onerror = reject;
-            img.src = e.target.result;
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      }
 
       // Close modal actions
       const closeModal = () => ModalSystem.close('photo-form-modal');
@@ -833,8 +749,6 @@
         const date = document.getElementById('photo-date').value;
         const pinnedToHomepage = document.getElementById('photo-pinned').checked;
         
-        const source = document.querySelector('input[name="photo-source"]:checked').value;
-        const fileInput = document.getElementById('photo-file');
         const urlInput = document.getElementById('photo-url');
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -847,48 +761,38 @@
           let imageUrlsToSave = [];
           let isFolderImport = false;
 
-          if (source === 'upload') {
-            if (fileInput && fileInput.files && fileInput.files[0]) {
-              imageUrlsToSave.push(await readAndCompressImage(fileInput.files[0]));
-            } else if (actionType === 'add') {
-              // Generate an SVG placeholder using a random seed based on date
-              const seed = Math.floor(Math.random() * 50);
-              imageUrlsToSave.push(generatePhotoPlaceholder(seed, 800, 600));
+          const urlVal = urlInput.value.trim();
+          const folderIdMatch = urlVal.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+          
+          if (folderIdMatch && folderIdMatch[1] && actionType === 'add') {
+            // Extract all photos from Google Drive folder via API
+            isFolderImport = true;
+            submitBtn.innerHTML = '⌛ Importing Folder...';
+            const folderId = folderIdMatch[1];
+            
+            if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
+              throw new Error("Google Drive API key is missing in firebase-config.js!");
+            }
+
+            const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&includeItemsFromAllDrives=true&supportsAllDrives=true&pageSize=1000&fields=files(id,name)&key=${googleDriveApiKey}`;
+            
+            const res = await fetch(apiEndpoint);
+            if (!res.ok) {
+              const errData = await res.json().catch(() => ({}));
+              console.error("Drive API Error:", errData);
+              throw new Error("Failed to fetch folder. Is the API key correct and the folder shared as 'Anyone with the link'?");
+            }
+            const data = await res.json();
+            if (data.files && data.files.length > 0) {
+              data.files.forEach(file => {
+                imageUrlsToSave.push(`https://lh3.googleusercontent.com/d/${file.id}`);
+              });
+            } else {
+              throw new Error("No images found in this Google Drive folder!");
             }
           } else {
-            const urlVal = urlInput.value.trim();
-            const folderIdMatch = urlVal.match(/\/folders\/([a-zA-Z0-9_-]+)/);
-            
-            if (folderIdMatch && folderIdMatch[1] && actionType === 'add') {
-              // Extract all photos from Google Drive folder via API
-              isFolderImport = true;
-              submitBtn.innerHTML = '⌛ Importing Folder...';
-              const folderId = folderIdMatch[1];
-              
-              if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
-                throw new Error("Google Drive API key is missing in firebase-config.js!");
-              }
-
-              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&includeItemsFromAllDrives=true&supportsAllDrives=true&pageSize=1000&fields=files(id,name)&key=${googleDriveApiKey}`;
-              
-              const res = await fetch(apiEndpoint);
-              if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                console.error("Drive API Error:", errData);
-                throw new Error("Failed to fetch folder. Is the API key correct and the folder shared as 'Anyone with the link'?");
-              }
-              const data = await res.json();
-              if (data.files && data.files.length > 0) {
-                data.files.forEach(file => {
-                  imageUrlsToSave.push(`https://lh3.googleusercontent.com/d/${file.id}`);
-                });
-              } else {
-                throw new Error("No images found in this Google Drive folder!");
-              }
-            } else {
-              // It's a standard URL, or we are editing an existing entry
-              imageUrlsToSave.push(convertDriveUrl(urlVal));
-            }
+            // It's a standard URL, or we are editing an existing entry
+            imageUrlsToSave.push(convertDriveUrl(urlVal));
           }
 
           if (actionType === 'add') {
@@ -941,8 +845,6 @@
         }
       });
 
-      // Expose toggle internally for edit modal
-      window._togglePhotoSource = togglePhotoSource;
     }
 
     function updateBulkDeleteUI() {
@@ -984,17 +886,8 @@
       document.getElementById('photo-date').value = photo.date;
       document.getElementById('photo-pinned').checked = !!photo.pinnedToHomepage;
 
-      const isExternal = photo.imageUrl && !photo.imageUrl.startsWith('data:');
-      if (isExternal) {
-        document.querySelector('input[name="photo-source"][value="url"]').checked = true;
-        document.getElementById('photo-url').value = photo.imageUrl;
-        if (window._togglePhotoSource) window._togglePhotoSource('url');
-      } else {
-        document.querySelector('input[name="photo-source"][value="upload"]').checked = true;
-        document.getElementById('photo-url').value = '';
-        if (window._togglePhotoSource) window._togglePhotoSource('upload');
-      }
-
+      document.getElementById('photo-url').value = photo.imageUrl || '';
+      
       ModalSystem.open('photo-form-modal');
     };
 

@@ -545,7 +545,11 @@ function updateLightboxContent() {
     modalImage.style.transition = 'opacity 0.2s';
   }
   if (modalDownload) {
-    modalDownload.href = photo.imageUrl;
+    let dlUrl = photo.imageUrl;
+    if (dlUrl && dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
+      dlUrl = dlUrl.split('=')[0] + '=s0';
+    }
+    modalDownload.href = dlUrl;
     modalDownload.setAttribute('download', `${photo.title || 'photo'}.jpg`);
   }
 

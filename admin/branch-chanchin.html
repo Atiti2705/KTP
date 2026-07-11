@@ -44,17 +44,10 @@
       <!-- Search & Filters -->
       <div class="data-table-wrapper" style="margin-bottom: var(--sp-4); padding: var(--sp-4);">
         <div
-          style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: space-between;">
+          style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; justify-content: flex-start;">
           <div class="search-container" style="max-width: 350px;">
             <span class="search-icon">🔍</span>
             <input type="text" id="admin-search-input" class="search-input">
-          </div>
-          <div>
-            <select id="admin-filter-category" class="filter-select"
-              style="padding-top: var(--sp-2); padding-bottom: var(--sp-2);">
-              <option value="All">All Topics</option>
-              <!-- Populated via JS -->
-            </select>
           </div>
         </div>
       </div>
@@ -69,7 +62,6 @@
                 <th style="width: 40px; text-align: center;" title="Drag to reorder">↕️</th>
                 <th>Title</th>
                 <th>Speaker</th>
-                <th>Topic</th>
                 <th>Scripture</th>
                 <th>Date</th>
                 <th>Featured</th>
@@ -103,23 +95,7 @@
             <input type="text" id="branch-chanchin-title" class="form-input" required>
           </div>
 
-            <div class="form-group">
-              <label for="branch-chanchin-topic" class="form-label">Topic / Category</label>
-              <div class="category-field-row">
-                <select id="branch-chanchin-topic" class="form-input form-select" required style="flex:1;">
-                  <!-- Populated via JS -->
-                </select>
-                <button type="button" class="btn-edit-cats" id="btn-toggle-cat-editor">✏️ Edit</button>
-              </div>
-              <div class="category-editor" id="branch-chanchin-cat-editor">
-                <span class="category-editor-label">Add, remove, or rename categories:</span>
-                <div class="category-chips-editor" id="branch-chanchin-cat-chips"></div>
-                <div class="cat-add-row">
-                  <input type="text" id="branch-chanchin-new-cat-input">
-                  <button type="button" id="btn-add-new-cat">➕ Add</button>
-                </div>
-              </div>
-            </div>
+
 
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
@@ -142,6 +118,7 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--sp-2);">
               <label class="form-label" style="margin-bottom: 0;">Branch Chanchin Notes Content</label>
               <div>
+                <button type="button" class="btn btn-sm btn-outline" id="btn-toggle-fullscreen" title="Toggle fullscreen editor" style="padding: 4px 8px; font-size: 12px; margin-right: 4px;">🔲 Fullscreen</button>
                 <button type="button" class="btn btn-sm btn-outline" id="btn-toggle-mobile-preview" title="Toggle mobile preview width" style="padding: 4px 8px; font-size: 12px; margin-right: 4px;">📱 Mobile View</button>
                 <button type="button" class="btn btn-sm btn-outline" id="btn-fix-mizo-text" title="Fix legacy Mizo characters (converts \ to ṭ)" style="padding: 4px 8px; font-size: 12px;">✨ Fix Legacy Text ( \ to ṭ )</button>
               </div>
@@ -168,6 +145,32 @@
                 margin: 0 auto;
                 border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
                 border: 2px solid var(--color-border) !important;
+              }
+              
+              /* Fullscreen Editor Mode */
+              .fullscreen-mode .modal {
+                width: 100vw !important;
+                max-width: 100vw !important;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+                display: flex;
+                flex-direction: column;
+              }
+              .fullscreen-mode .modal-body {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+              }
+              .fullscreen-mode .form-group:last-child {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+              }
+              .fullscreen-mode #editor-container {
+                flex: 1;
+                height: auto !important;
               }
             </style>
             <div id="editor-container" style="height: 450px; background: var(--color-bg-primary); border-radius: 0 0 var(--radius-md) var(--radius-md);"></div>
@@ -388,10 +391,7 @@
         const q = currentSearch.toLowerCase();
         filtered = filtered.filter(s => s.title.toLowerCase().includes(q) || s.speaker.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
       }
-      if (currentCategoryFilter !== 'All') {
-        filtered = filtered.filter(s => s.topic === currentCategoryFilter);
-      }
-
+      // Topic filter removed
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
@@ -411,7 +411,6 @@
           <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
           <td style="font-weight: var(--fw-semibold);">${branchChanchin.title}</td>
           <td>🎙️ ${branchChanchin.speaker}</td>
-          <td><span class="badge badge-gold">${branchChanchin.topic}</span></td>
           <td style="font-family: monospace; font-size:12px;">${branchChanchin.scripture}</td>
           <td>📅 ${formatDate(branchChanchin.date)}</td>
           <td>${branchChanchin.featured ? '⭐ Yes' : 'No'}</td>
@@ -466,18 +465,7 @@
     }
 
     function setupEvents() {
-      // Category editor toggle
-      document.getElementById('btn-toggle-cat-editor').addEventListener('click', () => {
-        document.getElementById('branch-chanchin-cat-editor').classList.toggle('open');
-      });
-      document.getElementById('btn-add-new-cat').addEventListener('click', () => {
-        const input = document.getElementById('branch-chanchin-new-cat-input');
-        addCategoryAndSave(input.value);
-        input.value = '';
-      });
-      document.getElementById('branch-chanchin-new-cat-input').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-new-cat').click(); }
-      });
+
 
       // Initialize Quill Editor
       window.quillEditor = new Quill('#editor-container', {
@@ -485,11 +473,17 @@
         placeholder: 'Type your Branch Chanchin updates here...',
         modules: {
           toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
+            [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
             ['bold', 'italic', 'underline', 'strike'],
-            [{ 'align': [] }],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'script': 'sub'}, { 'script': 'super' }],
+            ['blockquote'],
             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'clean']
+            [{ 'indent': '-1'}, { 'indent': '+1' }],
+            [{ 'align': [] }],
+            ['link', 'image', 'video'],
+            ['clean']
           ]
         }
       });
@@ -505,6 +499,22 @@
             if (window.quillEditor) window.quillEditor.focus();
           } else {
             btnMobilePreview.innerHTML = '📱 Mobile View';
+            if (window.quillEditor) window.quillEditor.focus();
+          }
+        });
+      }
+
+      // Fullscreen Editor Toggle
+      const btnFullscreen = document.getElementById('btn-toggle-fullscreen');
+      if (btnFullscreen) {
+        btnFullscreen.addEventListener('click', () => {
+          const modalBackdrop = document.getElementById('branch-chanchin-form-modal');
+          modalBackdrop.classList.toggle('fullscreen-mode');
+          if (modalBackdrop.classList.contains('fullscreen-mode')) {
+            btnFullscreen.innerHTML = '🔲 Exit Fullscreen';
+            if (window.quillEditor) window.quillEditor.focus();
+          } else {
+            btnFullscreen.innerHTML = '🔲 Fullscreen';
             if (window.quillEditor) window.quillEditor.focus();
           }
         });
@@ -530,11 +540,7 @@
         renderBranchChanchinTable();
       });
 
-      // Category filter dropdown
-      document.getElementById('admin-filter-category').addEventListener('change', (e) => {
-        currentCategoryFilter = e.target.value;
-        renderBranchChanchinTable();
-      });
+
 
       // Bulk Delete Selection Logic
       const selectAllCb = document.getElementById('select-all-checkbox');
@@ -683,7 +689,6 @@
         const branchChanchinId = document.getElementById('branch-chanchin-edit-id').value;
 
         const title = document.getElementById('branch-chanchin-title').value.trim();
-        const topic = document.getElementById('branch-chanchin-topic').value;
         const speaker = ''; // Kept for backwards compatibility if needed
         const scripture = ''; // Kept for backwards compatibility if needed
         
@@ -703,7 +708,7 @@
           submitBtn.innerHTML = '⌛ Saving...';
 
           const srmObj = {
-            title, speaker, topic, scripture, description, fileType, fileSize, date, featured,
+            title, speaker, scripture, description, fileType, fileSize, date, featured,
             downloadUrl: '#'
           };
 
@@ -762,8 +767,6 @@
       document.getElementById('modal-form-title').textContent = 'Edit Branch Chanchin Notes';
 
       document.getElementById('branch-chanchin-title').value = branchChanchin.title || '';
-      document.getElementById('branch-chanchin-topic').value = branchChanchin.topic || '';
-      
       if (window.quillEditor) {
         window.quillEditor.root.innerHTML = branchChanchin.description || '';
       }

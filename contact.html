@@ -523,7 +523,7 @@
           </div>
           
           <div class="directory-person" style="margin-top: 1rem;">
-            <span class="dp-role">Secretary</span>
+            <span class="dp-role">${(item.name || '').toLowerCase().includes('literature') ? 'Editor' : 'Secretary'}</span>
             <span class="dp-name">${item.secretaryName || '-'}</span>
             ${item.secretaryContact ? `<a href="tel:${item.secretaryContact}" class="dp-contact">📞 ${item.secretaryContact}</a>` : ''}
           </div>

@@ -21,18 +21,6 @@
   <link rel="stylesheet" href="assets/css/pages.css?v=155">
   
   <style>
-    .counselling-hero {
-      background: linear-gradient(135deg, var(--brand-sky) 0%, var(--brand-blue) 100%);
-      color: white;
-      text-align: center;
-      padding: var(--sp-8) var(--sp-4);
-      margin-bottom: var(--sp-6);
-      border-radius: 0 0 2rem 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .counselling-hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: var(--sp-2); }
-    .counselling-hero p { font-size: clamp(1rem, 2vw, 1.25rem); opacity: 0.9; max-width: 600px; margin: 0 auto; }
     
     .counselling-layout {
       display: grid;
@@ -117,7 +105,7 @@
       border-color: var(--brand-sky);
     }
     .c-submit-btn {
-      background: var(--brand-blue); 
+      background: var(--brand-sky-dark); 
       color: white;
       border: none;
       padding: 12px 30px;
@@ -137,10 +125,6 @@
   <header class="site-header" id="site-header"></header>
 
   <main class="main-content">
-    <section class="counselling-hero">
-      <h1>Anonymous Counselling</h1>
-      <p>Ask a question or share a concern completely anonymously. Our leaders are here to help and guide you.</p>
-    </section>
     
     <div class="container">
       
@@ -164,9 +148,9 @@
         <div class="reveal">
           <h2 class="c-header">Submit Question</h2>
           <form id="counselling-form">
-            <input type="text" id="c-name" class="c-form-input">
-            <input type="email" id="c-email" class="c-form-input">
-            <textarea id="c-question" class="c-form-input" rows="8" required style="resize: vertical;"></textarea>
+            <input type="text" id="c-name" class="c-form-input" placeholder="Your Name (Optional)">
+            <input type="email" id="c-email" class="c-form-input" placeholder="Your Email (Optional)">
+            <textarea id="c-question" class="c-form-input" rows="8" required style="resize: vertical;" placeholder="Type your question or concern here..."></textarea>
             
             <button type="submit" class="c-submit-btn" id="c-submit-btn">
               Submit

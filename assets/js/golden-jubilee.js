@@ -773,7 +773,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       const match = primaryImage.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
       if (match) fileId = match[1];
     }
-    if (gjLightboxDownload) gjLightboxDownload.href = finalUrl || '#';
+    if (gjLightboxDownload) {
+      let dlUrl = finalUrl;
+      if (dlUrl && dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
+        dlUrl = dlUrl.split('=')[0] + '=s0';
+      }
+      gjLightboxDownload.href = dlUrl || '#';
+    }
   }
 
   function openGjLightbox(id, clickedUrl) {

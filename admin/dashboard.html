@@ -83,6 +83,16 @@
           <div class="stat-value" id="count-lyrics">0</div>
           <a href="lyrics.html" style="font-size: var(--fs-xs); color: var(--brand-sky); text-decoration: none; font-weight: var(--fw-medium);">Manage Lyrics →</a>
         </div>
+
+        <!-- Branch Chanchin Stat -->
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-label">Branch Chanchin</span>
+            <div class="stat-card-icon" style="color: #8b5cf6; background: rgba(139, 92, 246, 0.1);">📰</div>
+          </div>
+          <div class="stat-value" id="count-branch-chanchin">0</div>
+          <a href="branch-chanchin.html" style="font-size: var(--fs-xs); color: #8b5cf6; text-decoration: none; font-weight: var(--fw-medium);">Manage Notes →</a>
+        </div>
       </div>
 
       <!-- System Health Section -->
@@ -173,6 +183,7 @@
       const sermons = AdminData.get('sermons') || [];
       const announcements = AdminData.get('announcements') || [];
       const lyrics = AdminData.get('lyrics') || [];
+      const branchChanchin = AdminData.get('branch-chanchin') || [];
 
       // 2. Set stats values
       document.getElementById('count-photos').textContent = photos.length;
@@ -180,18 +191,20 @@
       document.getElementById('count-sermons').textContent = sermons.length;
       document.getElementById('count-announcements').textContent = announcements.length;
       document.getElementById('count-lyrics').textContent = lyrics.length;
+      document.getElementById('count-branch-chanchin').textContent = branchChanchin.length;
 
       // 3. Assemble recent activities
       const allActivities = [
-        ...photos.map(p => ({ ...p, type: 'Photo', displayCategory: p.category, manageUrl: 'photos.html' })),
-        ...docs.map(d => ({ ...d, type: 'Document', displayCategory: d.category, manageUrl: 'documents.html' })),
-        ...sermons.map(s => ({ ...s, type: 'Sermon', displayCategory: s.speaker, manageUrl: 'sermons.html' })),
-        ...lyrics.map(l => ({ ...l, type: 'Lyric', displayCategory: l.category, manageUrl: 'lyrics.html' })),
-        ...announcements.map(a => ({ ...a, type: 'Announcement', displayCategory: a.priority.toUpperCase(), manageUrl: 'announcements.html' }))
+        ...photos.map(p => ({ ...p, type: 'Photo', displayCategory: p.category || 'General', manageUrl: 'photos.html' })),
+        ...docs.map(d => ({ ...d, type: 'Document', displayCategory: d.category || 'Doc', manageUrl: 'documents.html' })),
+        ...sermons.map(s => ({ ...s, type: 'Sermon', displayCategory: s.speaker || 'Unknown', manageUrl: 'sermons.html' })),
+        ...lyrics.map(l => ({ ...l, type: 'Lyric', displayCategory: l.category || 'Song', manageUrl: 'lyrics.html' })),
+        ...announcements.map(a => ({ ...a, type: 'Announcement', displayCategory: (a.priority || 'NORMAL').toUpperCase(), manageUrl: 'announcements.html' })),
+        ...branchChanchin.map(b => ({ ...b, type: 'Branch Chanchin', displayCategory: 'Notes', manageUrl: 'branch-chanchin.html' }))
       ];
 
       // 4. System Health Calculations
-      const totalRecords = photos.length + docs.length + sermons.length + announcements.length + lyrics.length;
+      const totalRecords = photos.length + docs.length + sermons.length + announcements.length + lyrics.length + branchChanchin.length;
       document.getElementById('health-total-records').textContent = totalRecords;
 
       let totalSizeMB = 0;
@@ -241,13 +254,14 @@
         else if (act.type === 'Document') typeBadge = '<span class="badge badge-gold">📄 Document</span>';
         else if (act.type === 'Sermon') typeBadge = '<span class="badge badge-red">📖 Sermon</span>';
         else if (act.type === 'Lyric') typeBadge = '<span class="badge" style="background:#0ea5e9;color:#fff;">🎵 Lyric</span>';
+        else if (act.type === 'Branch Chanchin') typeBadge = '<span class="badge" style="background:#8b5cf6;color:#fff;">📰 Branch Chanchin</span>';
         else typeBadge = '<span class="badge" style="background:#22c55e;color:#fff;">📢 Announcement</span>';
 
         return `
           <tr>
             <td>${typeBadge}</td>
             <td style="font-weight: var(--fw-medium); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-              ${act.title}
+              ${act.title || 'Untitled'}
             </td>
             <td><span style="font-size: var(--fs-xs); color: var(--color-text-secondary);">${act.displayCategory}</span></td>
             <td>📅 ${formatDate(act.date)}</td>

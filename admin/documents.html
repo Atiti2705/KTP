@@ -98,7 +98,7 @@
         <input type="hidden" id="doc-edit-id" value="">
 
         <div class="modal-body">
-          <div class="form-group">
+          <div class="form-group" id="group-doc-title">
             <label for="doc-title" class="form-label">Document Title</label>
             <input type="text" id="doc-title" class="form-input" required>
           </div>
@@ -133,33 +133,11 @@
             <input type="date" id="doc-date" class="form-input" required>
           </div>
 
-          <div class="form-group" id="group-doc-source">
-            <label class="form-label">Document Source</label>
-            <div style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-2);">
-              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="doc-source" value="upload" checked style="width: 16px; height: 16px;">
-                Upload File (Mock)
-              </label>
-              <label style="display: flex; align-items: center; gap: var(--sp-1); cursor: pointer; font-size: var(--fs-sm);">
-                <input type="radio" name="doc-source" value="url" style="width: 16px; height: 16px;">
-                External Link (Google Drive / others)
-              </label>
-            </div>
-          </div>
-
-          <div class="form-group" id="doc-upload-container">
-            <label for="doc-file" class="form-label">Upload File (Mock)</label>
-            <input type="file" id="doc-file" class="form-input">
-            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Firebase Storage upload placeholder. File downloads will be simulated in demo mode.
-            </small>
-          </div>
-
-          <div class="form-group" id="doc-url-container" style="display: none; margin-bottom: 0;">
+          <div class="form-group" id="doc-url-container" style="margin-bottom: var(--sp-2);">
             <label for="doc-url" class="form-label">Document Link URL</label>
-            <input type="url" id="doc-url" class="form-input">
+            <input type="url" id="doc-url" class="form-input" required>
             <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">
-              Paste link to Google Drive, Dropbox, or any public document URL.
+              Supports Google Drive share links, Dropbox, or any direct document URL.
             </small>
           </div>
         </div>
@@ -269,12 +247,41 @@
         document.getElementById('group-doc-category').style.display = 'none';
         document.getElementById('group-doc-subcategory').style.display = 'none';
         document.getElementById('group-doc-date').style.display = 'none';
-        document.getElementById('group-doc-source').style.display = 'none';
         document.getElementById('th-category').style.display = 'none';
         document.getElementById('th-date').style.display = 'none';
         
         // Ensure inputs are not required
         document.getElementById('doc-date').required = false;
+      }
+
+      // Hide title for Mipui Aw (titles are pulled from Google Drive folder)
+      if (targetCollection === 'mipuiaw') {
+        document.getElementById('group-doc-title').style.display = 'none';
+        document.getElementById('doc-title').required = false;
+
+        // Change Sub-Category to a Month Select
+        const subcatGroup = document.getElementById('group-doc-subcategory');
+        if (subcatGroup) {
+          subcatGroup.innerHTML = `
+            <label for="doc-subcategory" class="form-label">Month</label>
+            <select id="doc-subcategory" class="form-input form-select">
+              <option value="">-- Select Month --</option>
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+            </select>
+            <small style="color: var(--color-text-tertiary); display: block; margin-top: var(--sp-1);">The selected month will act as a subcategory filter.</small>
+          `;
+        }
       }
 
 
@@ -576,26 +583,7 @@
         if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-new-cat').click(); }
       });
 
-      // Toggle source
-      const docSourceRadios = document.getElementsByName('doc-source');
-      const uploadContainer = document.getElementById('doc-upload-container');
-      const urlContainer = document.getElementById('doc-url-container');
-      
-      const toggleDocSource = (source) => {
-        if (source === 'upload') {
-          uploadContainer.style.display = 'block';
-          urlContainer.style.display = 'none';
-          document.getElementById('doc-url').required = false;
-        } else {
-          uploadContainer.style.display = 'none';
-          urlContainer.style.display = 'block';
-          document.getElementById('doc-url').required = true;
-        }
-      };
 
-      docSourceRadios.forEach(radio => {
-        radio.addEventListener('change', (e) => toggleDocSource(e.target.value));
-      });
 
       // Search
       document.getElementById('admin-search-input').addEventListener('input', (e) => {
@@ -743,18 +731,10 @@
         document.getElementById('doc-action-type').value = 'add';
         document.getElementById('modal-form-title').textContent = 'Add New Document';
         document.getElementById('doc-date').value = new Date().toISOString().split('T')[0];
-        document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
-        toggleDocSource('upload');
         
         if (pageTitle !== 'Documents') {
           const catSelect = document.getElementById('doc-category');
           if(catSelect) catSelect.value = pageTitle;
-        }
-        
-        // Default to URL for Bulletins and Souvenirs
-        if (targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
-          document.querySelector('input[name="doc-source"][value="url"]').checked = true;
-          toggleDocSource('url');
         }
         
         ModalSystem.open('doc-form-modal');
@@ -787,22 +767,9 @@
            }
         }
         
-        if (document.querySelector('input[name="doc-source"]:checked').value === 'upload') {
-          const fileInput = document.getElementById('doc-file');
-          if (fileInput && fileInput.files && fileInput.files.length > 0) {
-            const file = fileInput.files[0];
-            const ext = file.name.split('.').pop().toUpperCase();
-            if (['PDF', 'DOCX', 'DOC', 'XLSX', 'PPTX', 'TXT', 'ZIP'].includes(ext)) {
-              fileType = ext;
-            }
-            const mb = file.size / (1024 * 1024);
-            fileSize = mb >= 1 ? `${mb.toFixed(1)} MB` : `${(file.size / 1024).toFixed(0)} KB`;
-          }
-        }
         const date = document.getElementById('doc-date').value;
         const featured = false;
 
-        const source = document.querySelector('input[name="doc-source"]:checked').value;
         const urlInput = document.getElementById('doc-url');
 
         const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -815,64 +782,57 @@
           let isFolderImport = false;
           let docsToSave = [];
 
-          if (source === 'url') {
-            const urlVal = urlInput.value.trim();
-            const folderIdMatch = urlVal.match(/(?:\/folders\/|\/drive\/folders\/)([a-zA-Z0-9_-]+)/);
+          const urlVal = urlInput.value.trim();
+          const folderIdMatch = urlVal.match(/(?:\/folders\/|\/drive\/folders\/)([a-zA-Z0-9_-]+)/);
 
-            if (folderIdMatch && folderIdMatch[1] && actionType === 'add') {
-              isFolderImport = true;
-              submitBtn.innerHTML = '⌛ Importing Folder...';
-              const folderId = folderIdMatch[1];
-              
-              if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
-                throw new Error("Google Drive API key is missing in firebase-config.js!");
-              }
+          if (folderIdMatch && folderIdMatch[1] && actionType === 'add') {
+            isFolderImport = true;
+            submitBtn.innerHTML = '⌛ Importing Folder...';
+            const folderId = folderIdMatch[1];
+            
+            if (typeof googleDriveApiKey === 'undefined' || !googleDriveApiKey) {
+              throw new Error("Google Drive API key is missing in firebase-config.js!");
+            }
 
-              const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType!='application/vnd.google-apps.folder'&includeItemsFromAllDrives=true&supportsAllDrives=true&pageSize=1000&fields=files(id,name,size,mimeType)&key=${googleDriveApiKey}`;
-              
-              const res = await fetch(apiEndpoint);
-              if (!res.ok) {
-                throw new Error("Failed to fetch folder from Google Drive. Ensure the folder is public ('Anyone with the link').");
-              }
-              const data = await res.json();
-              if (data.files && data.files.length > 0) {
-                data.files.forEach(file => {
-                  let fType = 'PDF';
-                  if (file.mimeType.includes('wordprocessingml') || file.mimeType.includes('msword')) fType = 'DOCX';
-                  
-                  let fSizeStr = 'Unknown';
-                  if (file.size) {
-                    const mb = parseInt(file.size) / (1024 * 1024);
-                    fSizeStr = mb >= 1 ? `${mb.toFixed(1)} MB` : `${(parseInt(file.size) / 1024).toFixed(0)} KB`;
-                  }
-                  
-                  let cleanTitle = file.name.replace(/\.[^/.]+$/, "");
-                  
-                  docsToSave.push({
-                    title: cleanTitle,
-                    category,
-                    subcategory,
-                    description,
-                    fileType: fType,
-                    fileSize: fSizeStr,
-                    date,
-                    featured,
-                    downloadUrl: convertDriveUrl(`https://drive.google.com/file/d/${file.id}/view`, 'file')
-                  });
+            const apiEndpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType!='application/vnd.google-apps.folder'&includeItemsFromAllDrives=true&supportsAllDrives=true&pageSize=1000&fields=files(id,name,size,mimeType)&key=${googleDriveApiKey}`;
+            
+            const res = await fetch(apiEndpoint);
+            if (!res.ok) {
+              throw new Error("Failed to fetch folder from Google Drive. Ensure the folder is public ('Anyone with the link').");
+            }
+            const data = await res.json();
+            if (data.files && data.files.length > 0) {
+              data.files.forEach(file => {
+                let fType = 'PDF';
+                if (file.mimeType.includes('wordprocessingml') || file.mimeType.includes('msword')) fType = 'DOCX';
+                
+                let fSizeStr = 'Unknown';
+                if (file.size) {
+                  const mb = parseInt(file.size) / (1024 * 1024);
+                  fSizeStr = mb >= 1 ? `${mb.toFixed(1)} MB` : `${(parseInt(file.size) / 1024).toFixed(0)} KB`;
+                }
+                
+                let cleanTitle = file.name.replace(/\.[^/.]+$/, "");
+                
+                docsToSave.push({
+                  title: cleanTitle,
+                  category,
+                  subcategory,
+                  description,
+                  fileType: fType,
+                  fileSize: fSizeStr,
+                  date,
+                  featured,
+                  downloadUrl: convertDriveUrl(`https://drive.google.com/file/d/${file.id}/view`, 'file')
                 });
-              } else {
-                throw new Error("No files found in this Google Drive folder!");
-              }
-            } else {
-              docsToSave.push({
-                title, category, subcategory, description, fileType, fileSize, date, featured,
-                downloadUrl: convertDriveUrl(urlVal, 'file')
               });
+            } else {
+              throw new Error("No files found in this Google Drive folder!");
             }
           } else {
             docsToSave.push({
               title, category, subcategory, description, fileType, fileSize, date, featured,
-              downloadUrl: '#'
+              downloadUrl: convertDriveUrl(urlVal, 'file')
             });
           }
 
@@ -896,11 +856,7 @@
               date,
               featured
             };
-            if (source === 'url') {
-              updatedFields.downloadUrl = docsToSave[0].downloadUrl;
-            } else {
-              updatedFields.downloadUrl = '#';
-            }
+            updatedFields.downloadUrl = docsToSave[0].downloadUrl;
             await AdminData.update(targetCollection, docId, updatedFields);
             AdminToast.show('Document updated!', 'success');
           }
@@ -916,8 +872,6 @@
         }
       });
 
-      // Expose toggle internally for edit modal
-      window._toggleDocSource = toggleDocSource;
     }
 
     function updateBulkDeleteUI() {
@@ -956,20 +910,9 @@
       document.getElementById('doc-title').value = doc.title;
       document.getElementById('doc-category').value = doc.category;
       document.getElementById('doc-subcategory').value = doc.subcategory || '';
-      document.getElementById('doc-type').value = doc.fileType;
-      document.getElementById('doc-size').value = doc.fileSize;
       document.getElementById('doc-date').value = doc.date;
 
-      const isExternal = doc.downloadUrl && doc.downloadUrl !== '#';
-      if (isExternal || targetCollection === 'bulletins' || targetCollection === 'souvenirs') {
-        document.querySelector('input[name="doc-source"][value="url"]').checked = true;
-        document.getElementById('doc-url').value = doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '';
-        if (window._toggleDocSource) window._toggleDocSource('url');
-      } else {
-        document.querySelector('input[name="doc-source"][value="upload"]').checked = true;
-        document.getElementById('doc-url').value = '';
-        if (window._toggleDocSource) window._toggleDocSource('upload');
-      }
+      document.getElementById('doc-url').value = doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '';
 
       ModalSystem.open('doc-form-modal');
     };

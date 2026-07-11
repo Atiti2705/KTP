@@ -214,91 +214,105 @@
       // Render immediately with local/cached data
       renderHomepage();
 
-      // Load dynamic databases in parallel
-      try {
-        const [newsData, lawmpuinaData, sunnaData, photoData, docData, sermonData, settings, aboutData, statsData] = await Promise.all([
-          DbService.get('news').catch(() => null),
-          DbService.get('lawmpuina').catch(() => null),
-          DbService.get('sunna').catch(() => null),
-          DbService.get('photos').catch(() => null),
-          DbService.get('documents').catch(() => null),
-          DbService.get('sermons').catch(() => null),
-          DbService.get('settings').catch(() => null),
-          DbService.get('about').catch(() => null),
-          DbService.get('statistics').catch(() => null)
-        ]);
-
-        let needsRerender = false;
-
+      // Load dynamic databases independently to prevent slow queries from blocking fast queries
+      
+      // 1. Announcements (News, Lawmpuina, Sunna)
+      Promise.all([
+        DbService.get('news').catch(() => null),
+        DbService.get('lawmpuina').catch(() => null),
+        DbService.get('sunna').catch(() => null)
+      ]).then(([newsData, lawmpuinaData, sunnaData]) => {
         if ((newsData && Array.isArray(newsData)) || 
             (lawmpuinaData && Array.isArray(lawmpuinaData)) || 
             (sunnaData && Array.isArray(sunnaData))) {
-          
           const combinedPinned = [
             ...(newsData || []).filter(item => item.pinnedToHomepage).map(item => ({...item, isNews: true})),
             ...(lawmpuinaData || []).filter(item => item.pinnedToHomepage).map(item => ({...item, isLawmpuina: true})),
             ...(sunnaData || []).filter(item => item.pinnedToHomepage).map(item => ({...item, isSunna: true}))
           ];
-
           const newString = JSON.stringify(combinedPinned);
           if (newString !== localStorage.getItem('db_announcements')) {
             Announcements.length = 0;
             Announcements.push(...combinedPinned);
             localStorage.setItem('db_announcements', newString);
-            needsRerender = true;
+            renderAnnouncements();
+            if (typeof setupScrollReveal === 'function') setTimeout(setupScrollReveal, 100);
           }
         }
-        
+      });
+
+      // 2. Photos
+      DbService.get('photos').then(photoData => {
         if (photoData && Array.isArray(photoData)) {
           const newString = JSON.stringify(photoData);
           if (newString !== localStorage.getItem('db_photos')) {
             Photos.length = 0;
             Photos.push(...photoData);
             localStorage.setItem('db_photos', newString);
-            needsRerender = true;
+            renderFeaturedPhotos();
+            if (typeof setupScrollReveal === 'function') setTimeout(setupScrollReveal, 100);
           }
         }
-        
+      }).catch(() => null);
+      
+      // 3. Documents
+      DbService.get('documents').then(docData => {
         if (docData && Array.isArray(docData)) {
           const newString = JSON.stringify(docData);
           if (newString !== localStorage.getItem('db_documents')) {
             Documents.length = 0;
             Documents.push(...docData);
             localStorage.setItem('db_documents', newString);
-            needsRerender = true;
+            renderFeaturedDocs();
+            if (typeof setupScrollReveal === 'function') setTimeout(setupScrollReveal, 100);
           }
         }
-        
+      }).catch(() => null);
+
+      // 4. Sermons
+      DbService.get('sermons').then(sermonData => {
         if (sermonData && Array.isArray(sermonData)) {
           const newString = JSON.stringify(sermonData);
           if (newString !== localStorage.getItem('db_sermons')) {
             Sermons.length = 0;
             Sermons.push(...sermonData);
             localStorage.setItem('db_sermons', newString);
-            needsRerender = true;
+            renderFeaturedSermons();
+            if (typeof setupScrollReveal === 'function') setTimeout(setupScrollReveal, 100);
           }
         }
-        
+      }).catch(() => null);
+
+      // 5. About
+      DbService.get('about').then(aboutData => {
         if (aboutData && Array.isArray(aboutData)) {
           const newString = JSON.stringify(aboutData);
           if (newString !== localStorage.getItem('db_about')) {
             About.length = 0;
             About.push(...aboutData);
             localStorage.setItem('db_about', newString);
-            needsRerender = true;
+            renderAbout();
+            if (typeof setupScrollReveal === 'function') setTimeout(setupScrollReveal, 100);
           }
         }
-        
+      }).catch(() => null);
+
+      // 6. Statistics
+      DbService.get('statistics').then(statsData => {
         if (statsData && Array.isArray(statsData)) {
           const newString = JSON.stringify(statsData);
           if (newString !== localStorage.getItem('db_statistics')) {
             Statistics.length = 0;
             Statistics.push(...statsData);
             localStorage.setItem('db_statistics', newString);
-            needsRerender = true;
+            renderStatistics();
+            if (typeof setupScrollReveal === 'function') setTimeout(setupScrollReveal, 100);
           }
         }
+      }).catch(() => null);
 
+      // 7. Settings
+      DbService.get('settings').then(settings => {
         if (settings) {
           const newString = JSON.stringify(settings);
           if (newString !== localStorage.getItem('db_settings')) {
@@ -306,22 +320,17 @@
             if (settings.churchInfo) Object.assign(ChurchInfo, settings.churchInfo);
             if (settings.socialMedia) Object.assign(SocialMedia, settings.socialMedia);
             
-            // Do not destroy the header/menu if the user is currently interacting with it
             const navMobile = document.getElementById('nav-mobile');
             if (!navMobile || !navMobile.classList.contains('open')) {
               renderHeader('home');
               renderFooter();
             }
-            needsRerender = true;
+            // Also re-render elements relying on settings
+            renderFeaturedVideo();
+            renderSocialGrid();
           }
         }
-
-        if (needsRerender) {
-          renderHomepage();
-        }
-      } catch (err) {
-        console.error("Error loading home page database...", err);
-      }
+      }).catch(() => null);
     });
 
     function renderHomepage() {
@@ -594,7 +603,7 @@
         const lineClamp = formattedUrl ? 2 : 6;
 
         return `
-        <${tag} ${href} class="announcement-card reveal" style="${clickableStyle} display: flex; flex-direction: column; background: var(--color-bg-card); overflow: hidden;">
+        <${tag} ${href} class="announcement-card reveal" style="${clickableStyle} display: flex; flex-direction: column; background: var(--color-bg-elevated); overflow: hidden;">
           ${imageHtml}
           <div style="padding: var(--sp-3); flex: 1; display: flex; flex-direction: column; justify-content: center;">
             <div class="announcement-date" style="color: var(--brand-sky); font-size: var(--fs-xs); margin-bottom: var(--sp-1); display: flex; align-items: center; flex-wrap: nowrap; gap: 6px;">

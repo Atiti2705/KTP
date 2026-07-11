@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Robust cross-origin image download to bypass Android Drive app intent
   async function forceImageDownload(url, filename, fallbackBtn) {
-    if (url.includes('lh3.googleusercontent.com') && !url.includes('/d/') && !url.includes('=s0')) {
+    if (url.includes('lh3.googleusercontent.com') && !url.includes('=s0')) {
       url = url.split('=')[0] + '=s0';
     }
     
@@ -520,7 +520,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         docsContainer.innerHTML = '';
       }
     }    
-    biLightboxDownload.href = finalUrl || '#';
+    let dlUrl = finalUrl;
+    if (dlUrl && dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
+      dlUrl = dlUrl.split('=')[0] + '=s0';
+    }
+    biLightboxDownload.href = dlUrl || '#';
   }
 
   function closeBiLightbox(fromHistory = false) {
@@ -774,6 +778,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (cachedFiltered.length > 0) {
           baseItems = cachedFiltered;
           baseItems.sort((a, b) => {
+            if (a.pinnedToHomepage && !b.pinnedToHomepage) return -1;
+            if (!a.pinnedToHomepage && b.pinnedToHomepage) return 1;
+            if (a.date && b.date) return new Date(b.date) - new Date(a.date);
             const yearA = a.year || a.title || '';
             const yearB = b.year || b.title || '';
             return yearB.localeCompare(yearA);
@@ -799,8 +806,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Filter by the current page's data-type
       baseItems = items.filter(item => item.category === dataType);
   
-      // Sort items by year descending
+      // Sort items: pinned first, then by date descending, fallback to year/title
       baseItems.sort((a, b) => {
+        if (a.pinnedToHomepage && !b.pinnedToHomepage) return -1;
+        if (!a.pinnedToHomepage && b.pinnedToHomepage) return 1;
+        if (a.date && b.date) return new Date(b.date) - new Date(a.date);
         const yearA = a.year || a.title || '';
         const yearB = b.year || b.title || '';
         return yearB.localeCompare(yearA);
