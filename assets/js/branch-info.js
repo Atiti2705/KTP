@@ -35,16 +35,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   const yearSelect = document.getElementById('ob-year-filter');
 
   let baseItems = [];
+  let dataLoaded = false;
 
   function renderGrid(itemsToRender) {
     if (itemsToRender.length === 0) {
-      container.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-secondary); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--color-border);">
-          <div style="font-size: 3rem; margin-bottom: var(--sp-3);">📸</div>
-          <h3>No Records Found</h3>
-          <p>No matching records found.</p>
-        </div>
-      `;
+      if (!dataLoaded) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-tertiary);">
+            <div class="loading-spinner" style="margin: 0 auto var(--sp-3) auto;"></div>
+            Loading records...
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-secondary); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--color-border);">
+            <div style="font-size: 3rem; margin-bottom: var(--sp-3);">📸</div>
+            <h3>No Records Found</h3>
+            <p>No matching records found.</p>
+          </div>
+        `;
+      }
       return;
     }
 
@@ -755,27 +765,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     const collectionName = container.getAttribute('data-collection') || 'branch-info';
     
-    // Check localStorage cache first for immediate render
+    // Check localStorage cache first for immediate render (only if cache has matching items)
     try {
       const cached = localStorage.getItem('db_' + collectionName);
       if (cached) {
         const items = JSON.parse(cached) || [];
-        baseItems = items.filter(item => item.category === dataType);
-        baseItems.sort((a, b) => {
-          const yearA = a.year || a.title || '';
-          const yearB = b.year || b.title || '';
-          return yearB.localeCompare(yearA);
-        });
-        const uniqueYears = [...new Set(baseItems.map(item => item.year || item.title).filter(val => val))];
-        uniqueYears.sort((a, b) => b.localeCompare(a));
-        yearSelect.innerHTML = '<option value="all">All Years</option>';
-        uniqueYears.forEach(year => {
-          const option = document.createElement('option');
-          option.value = year;
-          option.textContent = year;
-          yearSelect.appendChild(option);
-        });
-        applyFilters();
+        const cachedFiltered = items.filter(item => item.category === dataType);
+        if (cachedFiltered.length > 0) {
+          baseItems = cachedFiltered;
+          baseItems.sort((a, b) => {
+            const yearA = a.year || a.title || '';
+            const yearB = b.year || b.title || '';
+            return yearB.localeCompare(yearA);
+          });
+          const uniqueYears = [...new Set(baseItems.map(item => item.year || item.title).filter(val => val))];
+          uniqueYears.sort((a, b) => b.localeCompare(a));
+          yearSelect.innerHTML = '<option value="all">All Years</option>';
+          uniqueYears.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+          });
+          dataLoaded = true;
+          applyFilters();
+        }
       }
     } catch(e) {}
 
@@ -804,9 +818,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         yearSelect.appendChild(option);
       });
   
-      // Initial render
+      // Mark data as loaded and render
+      dataLoaded = true;
       applyFilters();
-    }).catch(error => console.error(`Error loading ${collectionName} for ${dataType}:`, error));
+    }).catch(error => {
+      console.error(`Error loading ${collectionName} for ${dataType}:`, error);
+      dataLoaded = true;
+      applyFilters();
+    });
 
     // Event listeners
     searchInput.addEventListener('input', applyFilters);
