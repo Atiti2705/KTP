@@ -1045,21 +1045,44 @@
    ======================== */
 .modern-doc-card {
   position: relative;
-  padding: 16px;
-  background: transparent;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
+  padding: var(--sp-6);
+  background: linear-gradient(145deg, var(--color-bg-card), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: all 0.2s ease;
+  gap: var(--sp-4);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
   z-index: 1;
+  overflow: hidden;
+}
+
+.modern-doc-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.04), transparent);
+  transform: skewX(-20deg);
+  transition: all 0.7s ease;
+  pointer-events: none;
+}
+
+.modern-doc-card:hover::before {
+  left: 150%;
 }
 
 .modern-doc-card:hover {
-  background: var(--color-bg-hover);
-  border-color: rgba(135, 206, 235, 0.3);
+  background: linear-gradient(145deg, var(--color-bg-hover), rgba(255, 255, 255, 0.05));
+  border-color: rgba(135, 206, 235, 0.4);
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.2), 0 0 20px rgba(135, 206, 235, 0.15);
+  transform: translateY(-4px) scale(1.01);
+  z-index: 2;
 }
 
 .modern-doc-header {
@@ -1088,11 +1111,12 @@
 
 .modern-doc-title {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   line-height: 1.4;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
-  transition: color 0.2s ease;
+  letter-spacing: -0.01em;
+  transition: all 0.3s ease;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1100,7 +1124,9 @@
 }
 
 .modern-doc-card:hover .modern-doc-title {
-  color: var(--brand-sky);
+  background: linear-gradient(135deg, #ffffff, var(--brand-sky));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Force strip massive inline styles if they sneak in */
@@ -1117,7 +1143,10 @@
   gap: var(--sp-4);
   font-size: 0.85rem;
   color: var(--color-text-tertiary);
-  margin-top: 4px;
+  font-weight: 500;
+  margin-top: auto;
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--color-border);
 }
 
 .modern-doc-meta span {
@@ -1309,4 +1338,98 @@
     grid-template-columns: repeat(4, 1fr);
     gap: var(--sp-4);
   }
+}
+
+/* ========================  
+   MODERN DOC CARD (Sermons & Articles)  
+   ======================== */  
+.sermons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--sp-6);
+  margin-top: var(--sp-4);
+}
+.modern-doc-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  position: relative;
+  overflow: hidden;
+}
+.modern-doc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--brand-primary);
+}
+.modern-doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sp-2);
+}
+.modern-doc-badge {
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.modern-doc-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.modern-doc-title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  margin: 0;
+}
+.modern-doc-desc {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.modern-doc-meta {
+  margin-top: auto;
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  font-size: var(--fs-sm);
+  color: var(--color-text-tertiary);
+}
+.modern-doc-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.modern-doc-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--brand-primary);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.modern-doc-card:hover::before {
+  opacity: 1;
 }
