@@ -852,7 +852,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       let url = gjLightboxDownload.href;
       if (!url || url === '#') return;
       if (url.includes('lh3.googleusercontent.com') && !url.includes('=s0')) {
-        url += '=s0';
+        url = url.split('=')[0] + '=s0';
       }
       
       const targetBtn = e.currentTarget;

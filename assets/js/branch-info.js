@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Robust cross-origin image download to bypass Android Drive app intent
   async function forceImageDownload(url, filename, fallbackBtn) {
     if (url.includes('lh3.googleusercontent.com') && !url.includes('/d/') && !url.includes('=s0')) {
-      url += '=s0';
+      url = url.split('=')[0] + '=s0';
     }
     
     const fallbackToDocs = () => {

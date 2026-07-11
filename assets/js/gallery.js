@@ -523,7 +523,7 @@ function updateLightboxContent() {
   if (modalDownload) {
     let dlUrl = photo.imageUrl;
     if (dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
-      dlUrl += '=s0';
+      dlUrl = dlUrl.split('=')[0] + '=s0';
     }
     modalDownload.href = dlUrl;
     modalDownload.setAttribute('download', `${photo.title || 'photo'}.jpg`);
@@ -613,7 +613,7 @@ function setupBulkDownload() {
         const file = files[i];
         let dlUrl = file.url;
         if (dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
-          dlUrl += '=s0';
+          dlUrl = dlUrl.split('=')[0] + '=s0';
         }
         try {
           const response = await fetch(dlUrl, { mode: 'cors' });

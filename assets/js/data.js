@@ -945,7 +945,7 @@ function convertDriveUrl(url, type = 'image') {
 
   if (fileId) {
     if (type === 'image') {
-      return `https://lh3.googleusercontent.com/d/${fileId}`;
+      return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
     } else {
       // For docs/sermons/PDFs/audio, standard web preview is best for viewing/downloading.
       return `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
