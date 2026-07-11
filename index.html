@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KṬP Saikhamakawn — Kristian Ṭhalai Pawl</title>
   <meta name="description"
-    content="KṬP Saikhamakawn — Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam. Established 1975. A modern church community in Saikhamakawn, Mizoram.">
+    content="KṬP Saikhamakawn — Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam. Established 1975. A church community in Saikhamakawn, Mizoram.">
   <meta name="keywords" content="KTP, Kristian Thalai Pawl, Saikhamakawn, Mizoram, church, Christian, Mizo">
   <meta name="google-site-verification" content="jtY9WQfZJXgzxYhd2B27yhK2Ys8-gTYc-Kz90Hr0DIU" />
 
@@ -17,8 +17,14 @@
   <meta property="og:type" content="website">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="assets/images/logo.png">
-  <link rel="apple-touch-icon" href="assets/images/logo.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/logo.png">
+  <link rel="apple-touch-icon" href="/assets/images/logo.png">
+  <meta name="theme-color" content="#38bdf8">
+
+  <!-- Preload critical hero assets for instant loading -->
+  <link rel="preload" href="assets/images/hero-bg.jpeg" as="image">
+  <link rel="preload" href="assets/images/logo.png" as="image">
 
   <!-- Preconnect for Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -229,7 +235,7 @@
             (sunnaData && Array.isArray(sunnaData))) {
           
           const combinedPinned = [
-            ...(newsData || []).filter(item => item.pinnedToHomepage),
+            ...(newsData || []).filter(item => item.pinnedToHomepage).map(item => ({...item, isNews: true})),
             ...(lawmpuinaData || []).filter(item => item.pinnedToHomepage).map(item => ({...item, isLawmpuina: true})),
             ...(sunnaData || []).filter(item => item.pinnedToHomepage).map(item => ({...item, isSunna: true}))
           ];
@@ -569,43 +575,39 @@
           formattedUrl = ann.imageUrl;
           const match = formattedUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
           if (match && match[1]) {
-            formattedUrl = `https://lh3.googleusercontent.com/d/${match[1]}`;
+            formattedUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w600`;
           }
         }
 
+        let imageHtml = '';
         if (formattedUrl) {
-          return `
-          <${tag} ${href} class="announcement-card reveal" style="${clickableStyle} display: flex; flex-direction: column; background: var(--color-bg-card); overflow: hidden;">
+          imageHtml = `
             <div style="height: 140px; position: relative; overflow: hidden; border-bottom: 1px solid var(--color-border-light); background: #000;">
               <div style="position: absolute; inset: -20px; background-image: url('${formattedUrl}'); background-size: cover; background-position: center; filter: blur(15px); opacity: 0.5;"></div>
               <div style="position: absolute; inset: 0; background-image: url('${formattedUrl}'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
             </div>
-            <div style="padding: var(--sp-3); flex: 1; display: flex; flex-direction: column; justify-content: center;">
-              <div class="announcement-date" style="color: var(--brand-sky); font-size: var(--fs-xs); margin-bottom: var(--sp-1);">
-                📌 ${formatDate(ann.date)}
-                ${ann.isLawmpuina ? '<span class="badge badge-primary" style="margin-left: 8px; font-size: 0.65rem;">Lawmpuina</span>' : ''}
-                ${ann.isSunna ? '<span class="badge badge-secondary" style="margin-left: 8px; font-size: 0.65rem;">Sunna</span>' : ''}
-              </div>
-              <h3 class="announcement-title" style="font-size: var(--fs-md); margin-bottom: var(--sp-1); color: var(--color-text); line-height: 1.3;">${ann.title || ''}</h3>
-              <p class="announcement-text" style="color: var(--color-text-secondary); font-size: var(--fs-sm); -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0;">${ann.content || ''}</p>
-            </div>
-          </${tag}>
           `;
+        } else {
+          imageHtml = '';
         }
 
-        const bgStyle = `background: linear-gradient(135deg, var(--brand-sky), var(--brand-blue));`;
+        const lineClamp = formattedUrl ? 2 : 6;
 
         return `
-        <${tag} ${href} class="announcement-card reveal poster-card" style="${clickableStyle} ${bgStyle}">
-          <div class="poster-overlay">
-            <div class="announcement-date" style="color: rgba(255,255,255,0.8);">
-              📌 ${formatDate(ann.date)}
-              ${ann.isLawmpuina ? '<span class="badge badge-primary" style="margin-left: 8px; font-size: 0.65rem; background: rgba(255,255,255,0.2); border: none; color: white;">Lawmpuina</span>' : ''}
-              ${ann.isSunna ? '<span class="badge badge-secondary" style="margin-left: 8px; font-size: 0.65rem; background: rgba(255,255,255,0.2); border: none; color: white;">Sunna</span>' : ''}
+        <${tag} ${href} class="announcement-card reveal" style="${clickableStyle} display: flex; flex-direction: column; background: var(--color-bg-card); overflow: hidden;">
+          ${imageHtml}
+          <div style="padding: var(--sp-3); flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            <div class="announcement-date" style="color: var(--brand-sky); font-size: var(--fs-xs); margin-bottom: var(--sp-1); display: flex; align-items: center; flex-wrap: nowrap; gap: 6px;">
+              <span style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                <span style="line-height: 1; transform: translateY(-1px);">📌</span>
+                <span>${formatDate(ann.date)}</span>
+              </span>
+              ${ann.isNews ? '<span class="badge badge-gold" style="font-size: 0.6rem; padding: 2px 6px; white-space: nowrap; flex-shrink: 0;">Branch Thuchhuak</span>' : ''}
+              ${ann.isLawmpuina ? '<span class="badge badge-primary" style="font-size: 0.6rem; padding: 2px 6px; white-space: nowrap; flex-shrink: 0;">Lawmpuina</span>' : ''}
+              ${ann.isSunna ? '<span class="badge badge-secondary" style="font-size: 0.6rem; padding: 2px 6px; white-space: nowrap; flex-shrink: 0;">Sunna</span>' : ''}
             </div>
-            <h3 class="announcement-title" style="color: #fff; margin-top: var(--sp-1); text-shadow: 0 1px 3px rgba(0,0,0,0.5);">${ann.title}</h3>
-            <p class="announcement-text" style="color: rgba(255,255,255,0.9); -webkit-line-clamp: 2; margin-top: var(--sp-1);">${ann.content}</p>
-            ${ann.featured ? '<span class="badge badge-featured" style="margin-top:var(--sp-2); background:var(--brand-gold); color:var(--color-bg); font-size: 0.7rem;">⭐ Featured</span>' : ''}
+            <h3 class="announcement-title" style="font-size: var(--fs-md); margin-bottom: var(--sp-1); color: var(--color-text); line-height: 1.3;">${ann.title || ''}</h3>
+            <p class="announcement-text" style="color: var(--color-text-secondary); font-size: var(--fs-sm); -webkit-line-clamp: ${lineClamp}; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0; white-space: pre-line;">${ann.content || ''}</p>
           </div>
         </${tag}>
         `;
@@ -701,7 +703,7 @@
           </div>
           <div class="doc-card-actions" style="margin-top:var(--sp-3);">
             <button class="btn btn-outline btn-sm" onclick="Toast.show('Preview coming soon!', 'info')">👁 Read</button>
-            <button class="btn btn-primary btn-sm" onclick="${sermon.downloadUrl && sermon.downloadUrl !== '#' ? `window.open('${sermon.downloadUrl}', '_blank')` : `Toast.show('Download started (Simulated)!', 'success')`}">⬇ Download</button>
+            <button class="btn btn-primary btn-sm" onclick="${sermon.downloadUrl && sermon.downloadUrl !== '#' ? `window.forceDownload('${sermon.downloadUrl}')` : `Toast.show('Download started (Simulated)!', 'success')`}">⬇ Download</button>
           </div>
         </div>
       `).join('');
