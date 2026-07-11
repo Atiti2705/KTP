@@ -296,8 +296,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         const images = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls : (item.imageUrl ? [item.imageUrl] : ['']);
         
         return images.map(img => {
+          const hasTextContent = item.year || item.content;
+          
+          if (!hasTextContent && img) {
+            // Render as a gallery photo card
+            return `
+              <div class="photo-card selectable-item" data-id="${item.id}" style="position: relative;" data-url="${convertDriveUrl(img)}">
+                <img src="${convertDriveUrl(img)}" alt="${(item.title || 'Photo').replace(/\"/g, '&quot;')}" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-md);" loading="lazy">
+                ${item.title ? `
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: var(--sp-4) var(--sp-3) var(--sp-3); border-bottom-left-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md);">
+                  <h3 style="color: white; font-size: var(--fs-sm); font-weight: var(--fw-medium); margin: 0; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">${item.title}</h3>
+                </div>` : ''}
+              </div>
+            `;
+          }
+
+          // Render as a standard ob-card
           const imgHtml = img 
-            ? `<img loading="lazy" src="${convertDriveUrl(img)}" alt="${item.title || 'Photo'}">` 
+            ? `<img loading="lazy" src="${convertDriveUrl(img)}" alt="${(item.title || 'Photo').replace(/\"/g, '&quot;')}">` 
             : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: var(--fs-xs);">No Image</div>`;
           
           const titleHtml = item.title ? `<h3 class="ob-title">${item.title}</h3>` : '';
