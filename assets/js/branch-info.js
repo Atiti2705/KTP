@@ -50,9 +50,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     container.innerHTML = itemsToRender.map(item => {
       const primaryImage = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
-      const imgHtml = primaryImage 
-        ? `<img loading="lazy" src="${convertDriveUrl(primaryImage)}" alt="${item.title || 'Photo'}" loading="lazy">` 
-        : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: var(--fs-xs);">No Image Provided</div>`;
       
       let photoCountBadge = '';
       if (item.imageUrls && item.imageUrls.length > 1) {
@@ -63,6 +60,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         `;
       }
+
+      const imgWrapperHtml = primaryImage
+        ? `<div class="ob-image-wrapper" style="position: relative;">
+             <img loading="lazy" src="${convertDriveUrl(primaryImage)}" alt="${item.title || 'Photo'}" loading="lazy">
+             ${photoCountBadge}
+           </div>`
+        : '';
       
       const titleHtml = item.title ? `<h3 class="ob-title">${item.title}</h3>` : '';
       let dateHtml = '';
@@ -72,8 +76,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           const formattedDate = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
           dateHtml = `
             <div style="display: inline-flex; align-items: center; gap: 6px; background: var(--color-bg-hover); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: var(--sp-2); font-weight: 500; align-self: flex-start; border: 1px solid var(--color-border);">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-              ${formattedDate}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7; transform: translateY(-1px); flex-shrink: 0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span style="line-height: 1;">${formattedDate}</span>
             </div>
           `;
         }
@@ -82,10 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       return `
         <div class="ob-card" data-id="${item.id}">
-          <div class="ob-image-wrapper" style="position: relative;">
-            ${imgHtml}
-            ${photoCountBadge}
-          </div>
+          ${imgWrapperHtml}
           <div class="ob-content-wrapper">
             ${titleHtml}
             ${dateHtml}
@@ -311,6 +312,74 @@ document.addEventListener('DOMContentLoaded', async () => {
   `;
   document.head.insertAdjacentHTML('beforeend', modalStyles);
 
+  // Robust cross-origin image download to bypass Android Drive app intent
+  async function forceImageDownload(url, filename, fallbackBtn) {
+    if (url.includes('lh3.googleusercontent.com') && !url.includes('/d/') && !url.includes('=s0')) {
+      url += '=s0';
+    }
+    
+    const fallbackToDocs = () => {
+      const driveIdMatch = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
+      if (driveIdMatch && driveIdMatch[1]) {
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          window.forceDownload(`https://drive.google.com/uc?export=download&id=${driveIdMatch[1]}`);
+          if (window.Toast) Toast.show('Downloading...', 'success');
+      } else {
+          window.forceDownload(url);
+          if (window.Toast) Toast.show('Unable to auto-download. Please long-press the image to save.', 'info');
+      }
+      if (fallbackBtn) {
+        fallbackBtn.innerHTML = fallbackBtn.dataset.originalText;
+        fallbackBtn.disabled = false;
+      }
+    };
+
+    try {
+        const response = await fetch(url, { mode: 'cors' });
+        if (!response.ok) throw new Error('fetch failed');
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+        if (fallbackBtn) {
+          fallbackBtn.innerHTML = fallbackBtn.dataset.originalText;
+          fallbackBtn.disabled = false;
+        }
+    } catch (e) {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob((blob) => {
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl);
+                if (fallbackBtn) {
+                  fallbackBtn.innerHTML = fallbackBtn.dataset.originalText;
+                  fallbackBtn.disabled = false;
+                }
+            }, 'image/jpeg', 0.95);
+        };
+        img.onerror = fallbackToDocs;
+        img.src = url;
+    }
+  }
+
   // Global download handler for card buttons
   window.downloadBiCardImage = async function(btn, imgUrl, titleStr, e) {
     if (e) {
@@ -319,37 +388,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (!imgUrl) return;
 
-    let url = convertDriveUrl(imgUrl);
-    if (url.includes('lh3.googleusercontent.com') && !url.includes('=s0')) {
-      url += '=s0';
-    }
-
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<span style="font-size: 14px;">⏳ Downloading...</span>';
+    btn.dataset.originalText = btn.innerHTML;
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>';
     btn.disabled = true;
 
-    try {
-      const response = await fetch(url, { mode: 'cors' });
-      if (!response.ok) throw new Error('Network response was not ok');
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      
-      let safeTitle = (titleStr || 'photo').replace(/[^a-zA-Z0-9_-]/g, '_');
-      a.download = `${safeTitle}.jpg`;
-      
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      console.error('Download failed', err);
-      window.open(url, '_blank');
-    }
-    
-    btn.innerHTML = originalText;
-    btn.disabled = false;
+    let url = convertDriveUrl(imgUrl);
+    let safeTitle = (titleStr || 'photo').replace(/[^a-zA-Z0-9_-]/g, '_') + '.jpg';
+    forceImageDownload(url, safeTitle, btn);
   };
 
   // Add Modal HTML
@@ -456,7 +501,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (docsContainer) {
       if (item.documentFiles && item.documentFiles.length > 0) {
         docsContainer.innerHTML = item.documentFiles.map(doc => `
-          <a href="#" onclick="window.open('${doc.url}', '_blank'); event.preventDefault(); event.stopPropagation(); return false;" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.5); border-radius: var(--radius-full); text-decoration: none; color: white; backdrop-filter: blur(4px); font-size: var(--fs-sm); transition: background 0.2s; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 99999; position: relative;">
+          <a href="#" onclick="window.forceDownload('${doc.url}'); event.preventDefault(); event.stopPropagation(); return false;" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.5); border-radius: var(--radius-full); text-decoration: none; color: white; backdrop-filter: blur(4px); font-size: var(--fs-sm); transition: background 0.2s; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 99999; position: relative;">
             <span>📄</span>
             <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500;">${doc.name}</span>
           </a>
@@ -471,7 +516,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   function closeBiLightbox(fromHistory = false) {
     biLightbox.classList.remove('active');
     biLightbox.style.display = 'none';
-    document.body.style.overflow = '';
+    if (!detailModal.classList.contains('active')) {
+      document.body.style.overflow = '';
+    }
     biLightboxImage.src = '';
     if (!fromHistory && history.state && history.state.modalId === 'bi-lightbox') {
       history.back();
@@ -499,39 +546,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       e.preventDefault();
       let url = biLightboxDownload.href;
       if (!url || url === '#') return;
-      if (url.includes('lh3.googleusercontent.com') && !url.includes('=s0')) {
-        url += '=s0';
-      }
       
       const targetBtn = e.currentTarget;
-      const prevHtml = targetBtn.innerHTML;
-      targetBtn.innerHTML = '<span style="font-size: 14px;">⏳ Downloading...</span>';
+      targetBtn.dataset.originalText = targetBtn.innerHTML;
+      targetBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>';
       
-      try {
-        const response = await fetch(url, { mode: 'cors' });
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        
-        let titleStr = 'photo';
-        if (currentLightboxItems && currentLightboxItems[currentLightboxIndex]) {
-            const curItem = currentLightboxItems[currentLightboxIndex];
-            titleStr = curItem.title || 'photo';
-            if (curItem.id) titleStr += `_${curItem.id}`;
-        }
-        let safeTitle = titleStr.replace(/[^a-zA-Z0-9_-]/g, '_');
-        a.download = `${safeTitle}.jpg`;
-        
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
-      } catch {
-        window.open(url, '_blank');
+      let titleStr = 'photo';
+      if (currentLightboxItems && currentLightboxItems[currentLightboxIndex]) {
+          const curItem = currentLightboxItems[currentLightboxIndex];
+          titleStr = curItem.title || 'photo';
+          if (curItem.id) titleStr += `_${curItem.id}`;
       }
+      let safeTitle = titleStr.replace(/[^a-zA-Z0-9_-]/g, '_') + '.jpg';
       
-      targetBtn.innerHTML = prevHtml;
+      forceImageDownload(url, safeTitle, targetBtn);
   };
 
   if (biLightboxDownload) biLightboxDownload.addEventListener('click', downloadHandler);
@@ -569,10 +597,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   window.addEventListener('popstate', (e) => {
-    if (detailModal.classList.contains('active')) {
-      closeModal(true);
-    } else if (biLightbox.style.display === 'flex') {
+    if (biLightbox.style.display === 'flex') {
       closeBiLightbox(true);
+    } else if (detailModal.classList.contains('active')) {
+      closeModal(true);
     }
   });
 
@@ -593,9 +621,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const item = baseItems.find(i => i.id === id);
     if (!item) return;
 
-    const isPhotoOnlyModal = ['Kohhran Upa', 'branch-ob', 'branch-committee', 'group-committee', 'sub-committee', 'lawmpuina', 'sunna', 'news'].includes(dataType);
+    const isPhotoOnlyModal = ['Kohhran Upa', 'branch-ob', 'branch-committee', 'group-committee', 'sub-committee', 'lawmpuina', 'sunna'].includes(dataType);
 
-    if (isPhotoOnlyModal) {
+    // For news/similar: if the clicked item has no image, skip lightbox and show detail modal instead
+    const hasImage = (item.imageUrls && item.imageUrls.length > 0) || item.imageUrl;
+
+    if (isPhotoOnlyModal && hasImage) {
       let flatGallery = [];
       baseItems.forEach(bItem => {
         if (bItem.imageUrls && bItem.imageUrls.length > 0) {
@@ -607,8 +638,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
           });
         } else if (bItem.imageUrl) {
-          flatGallery.push(bItem);
-        } else {
           flatGallery.push(bItem);
         }
       });
@@ -634,8 +663,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const formattedDate = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
         textHtml += `
           <div style="display: inline-flex; align-items: center; gap: 6px; background: var(--color-bg-hover); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: var(--sp-3); font-weight: 500; border: 1px solid var(--color-border);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            ${formattedDate}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7; transform: translateY(-1px); flex-shrink: 0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span style="line-height: 1;">${formattedDate}</span>
           </div>
         `;
       }
@@ -660,20 +689,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       `;
     }
 
-    const dlImageUrl = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
-    if (dlImageUrl) {
-        let safeTitleForDl = (item.title || 'photo').replace(/'/g, "\\'");
-        if (item.id) safeTitleForDl += `_${item.id}`;
-        
-        textHtml += `
-          <div style="margin-top: 24px;">
-            <button class="btn btn-primary" onclick="window.downloadBiCardImage(this, '${dlImageUrl}', '${safeTitleForDl}', event)" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              Download Photo
-            </button>
-          </div>
-        `;
-    }
     modalTextElem.innerHTML = textHtml;
     
     if (item.imageUrls && item.imageUrls.length > 1) {
@@ -712,6 +727,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       modalImgContainer.innerHTML = '';
     }
+
+    const modalImages = modalImgContainer.querySelectorAll('img');
+    modalImages.forEach((img, idx) => {
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        let images = item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls : (item.imageUrl ? [item.imageUrl] : []);
+        currentLightboxItems = images.map(url => ({
+          ...item,
+          imageUrl: url,
+          imageUrls: []
+        }));
+        currentLightboxIndex = idx;
+        updateBiLightboxImage();
+        biLightbox.classList.add('active');
+        biLightbox.style.display = 'flex';
+        history.pushState({ modalId: 'bi-lightbox' }, '', '#lightbox');
+      });
+    });
     
     detailModal.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -720,42 +754,65 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     const collectionName = container.getAttribute('data-collection') || 'branch-info';
-    const items = await DbService.get(collectionName) || [];
     
-    // Filter by the current page's data-type
-    baseItems = items.filter(item => item.category === dataType);
+    // Check localStorage cache first for immediate render
+    try {
+      const cached = localStorage.getItem('db_' + collectionName);
+      if (cached) {
+        const items = JSON.parse(cached) || [];
+        baseItems = items.filter(item => item.category === dataType);
+        baseItems.sort((a, b) => {
+          const yearA = a.year || a.title || '';
+          const yearB = b.year || b.title || '';
+          return yearB.localeCompare(yearA);
+        });
+        const uniqueYears = [...new Set(baseItems.map(item => item.year || item.title).filter(val => val))];
+        uniqueYears.sort((a, b) => b.localeCompare(a));
+        yearSelect.innerHTML = '<option value="all">All Years</option>';
+        uniqueYears.forEach(year => {
+          const option = document.createElement('option');
+          option.value = year;
+          option.textContent = year;
+          yearSelect.appendChild(option);
+        });
+        applyFilters();
+      }
+    } catch(e) {}
 
-    // Sort items by year descending
-    baseItems.sort((a, b) => {
-      const yearA = a.year || a.title || '';
-      const yearB = b.year || b.title || '';
-      return yearB.localeCompare(yearA);
-    });
-
-    // Populate Year Filter dynamically based on available years (fallback to title)
-    const uniqueYears = [...new Set(baseItems.map(item => item.year || item.title).filter(val => val))];
-    uniqueYears.sort((a, b) => b.localeCompare(a)); // Sort newest (highest year) first
-    
-    uniqueYears.forEach(year => {
-      const option = document.createElement('option');
-      option.value = year;
-      option.textContent = year;
-      yearSelect.appendChild(option);
-    });
-
-    // Initial render
-    applyFilters();
+    // Fetch data asynchronously
+    DbService.get(collectionName).then(items => {
+      items = items || [];
+      // Filter by the current page's data-type
+      baseItems = items.filter(item => item.category === dataType);
+  
+      // Sort items by year descending
+      baseItems.sort((a, b) => {
+        const yearA = a.year || a.title || '';
+        const yearB = b.year || b.title || '';
+        return yearB.localeCompare(yearA);
+      });
+  
+      // Populate Year Filter dynamically based on available years (fallback to title)
+      const uniqueYears = [...new Set(baseItems.map(item => item.year || item.title).filter(val => val))];
+      uniqueYears.sort((a, b) => b.localeCompare(a)); // Sort newest (highest year) first
+      
+      yearSelect.innerHTML = '<option value="all">All Years</option>';
+      uniqueYears.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+      });
+  
+      // Initial render
+      applyFilters();
+    }).catch(error => console.error(`Error loading ${collectionName} for ${dataType}:`, error));
 
     // Event listeners
     searchInput.addEventListener('input', applyFilters);
     yearSelect.addEventListener('change', applyFilters);
     
   } catch (error) {
-    console.error(`Error loading ${collectionName} for ${dataType}:`, error);
-    container.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--brand-red); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--brand-red);">
-        <p>⚠️ Failed to load records. Please try again later.</p>
-      </div>
-    `;
+    console.error(`Error configuring branch-info page:`, error);
   }
 });
