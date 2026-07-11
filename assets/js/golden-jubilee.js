@@ -221,25 +221,38 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const currentFolderObj = folders.find(f => (f.name || '').trim() === (currentCategory || '').trim()) || { style: 'default' };
     const folderStyle = currentFolderObj.style;
+    let effectiveStyle = folderStyle;
+    
+    // Auto-detect if a default folder is actually just a photo gallery
+    if (effectiveStyle === 'default' && itemsToRender.length > 0) {
+      const isAllPhotos = itemsToRender.every(item => {
+        const hasImage = item.imageUrl || (item.imageUrls && item.imageUrls.length > 0);
+        const hasContentOrDocs = item.content || (item.documentFiles && item.documentFiles.length > 0);
+        return hasImage && !hasContentOrDocs;
+      });
+      if (isAllPhotos) {
+        effectiveStyle = 'gallery';
+      }
+    }
 
     // Reset container classes based on style
     container.className = 'reveal revealed';
-    if (folderStyle === 'gallery') {
+    if (effectiveStyle === 'gallery') {
       container.classList.add('masonry-grid');
-    } else if (folderStyle === 'list') {
+    } else if (effectiveStyle === 'list') {
       container.classList.add('doc-list-grid');
     } else {
       container.classList.add('ob-grid');
     }
 
-    if (folderStyle === 'gallery') {
+    if (effectiveStyle === 'gallery') {
       container.innerHTML = itemsToRender.map(item => {
         const images = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls : (item.imageUrl ? [item.imageUrl] : []);
         if (images.length === 0) return '';
         
         return images.map(img => `
           <div class="masonry-item gallery-item selectable-item photo-card" data-id="${item.id}" style="position: relative;" data-url="${convertDriveUrl(img)}">
-            <img src="${convertDriveUrl(img)}" alt="${(item.title || 'Photo').replace(/"/g, '&quot;')}" class="gallery-image" loading="lazy">
+            <img src="${convertDriveUrl(img)}" alt="${(item.title || 'Photo').replace(/\"/g, '&quot;')}" class="gallery-image" loading="lazy">
             ${item.title ? `
             <div class="gallery-overlay">
               <h3 style="color: white; font-size: var(--fs-md); font-weight: var(--fw-medium); margin: 0; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">${item.title}</h3>
@@ -247,7 +260,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         `).join('');
       }).join('');
-    } else if (folderStyle === 'list') {
+    } else if (effectiveStyle === 'list') {
       container.classList.add('gdrive-grid');
       container.innerHTML = itemsToRender.map(item => {
         const docFiles = (item.documentFiles && item.documentFiles.length > 0) ? item.documentFiles : [];
