@@ -200,19 +200,19 @@ function renderSermons() {
     }
     
     return `
-    <div class="modern-doc-card selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${safeTitle}.${String(sermon.fileType||'PDF').toLowerCase()}">
-      <div class="modern-doc-image">
+    <div class="horizontal-doc-card selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${safeTitle}.${String(sermon.fileType||'PDF').toLowerCase()}">
+      <div class="horizontal-doc-image">
         ${thumbHtml}
       </div>
-      <div class="modern-doc-content">
+      <div class="horizontal-doc-content">
         ${sermon.topic ? `
-        <div class="modern-doc-header">
-          <span class="modern-doc-badge">${sermon.topic}</span>
+        <div class="horizontal-doc-header">
+          <span class="horizontal-doc-badge">${sermon.topic}</span>
         </div>
         ` : ''}
-        <h3 class="modern-doc-title" title="${safeTitle}">${safeTitle}</h3>
-        ${sermon.description ? `<div class="modern-doc-desc">${sermon.description.replace(/<[^>]*>?/gm, '').trim()}</div>` : ''}
-        <div class="modern-doc-meta">
+        <h3 class="horizontal-doc-title" title="${safeTitle}">${safeTitle}</h3>
+        ${sermon.description ? `<div class="horizontal-doc-desc">${sermon.description.replace(/<[^>]*>?/gm, '').trim()}</div>` : ''}
+        <div class="horizontal-doc-meta">
           ${sermon.speaker ? `<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${sermon.speaker}</span>` : ''}
           ${dateStr ? `<span><span class="dot">●</span> ${dateStr}</span>` : ''}
         </div>
