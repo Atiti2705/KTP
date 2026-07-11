@@ -187,7 +187,14 @@ function renderSermons() {
       }
     }
     
-    let thumbHtml = '📖';
+    let fileType = String(sermon.fileType || 'PDF').toUpperCase();
+    let thumbHtml = `
+      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <span style="font-size:0.65rem; font-weight:bold; color:var(--brand-sky); background:rgba(14,165,233,0.15); padding:2px 6px; border-radius:4px; letter-spacing:0.5px;">${fileType}</span>
+      </div>
+    `;
+    
     if (fileId) {
       thumbHtml = `<img loading="lazy" src="https://drive.google.com/thumbnail?id=${fileId}&sz=w200-h200" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
     }
