@@ -161,19 +161,36 @@ function renderSermons() {
 
   listContainer.innerHTML = paginationData.items.map(sermon => {
     const safeTitle = (sermon.title || '').replace(/<[^>]*>?/gm, '').trim();
+    
+    // Format date nicely if available
+    let dateStr = '';
+    if (sermon.date) {
+      try {
+        const d = new Date(sermon.date);
+        if (!isNaN(d)) {
+          // Use standard short format or timeAgo if available
+          dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+          if (typeof timeAgo === 'function') dateStr = timeAgo(sermon.date); // fallback
+        }
+      } catch (e) {}
+    }
+    
     return `
     <div class="modern-doc-card selectable-item" data-id="${sermon.id}" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${safeTitle}.${String(sermon.fileType||'PDF').toLowerCase()}">
-      ${sermon.topic ? `
-      <div class="modern-doc-header">
-        <span class="modern-doc-badge">${sermon.topic}</span>
+      <div class="modern-doc-image">
+        📖
       </div>
-      ` : ''}
       <div class="modern-doc-content">
+        ${sermon.topic ? `
+        <div class="modern-doc-header">
+          <span class="modern-doc-badge">${sermon.topic}</span>
+        </div>
+        ` : ''}
         <h3 class="modern-doc-title" title="${safeTitle}">${safeTitle}</h3>
         ${sermon.description ? `<div class="modern-doc-desc">${sermon.description.replace(/<[^>]*>?/gm, '').trim()}</div>` : ''}
         <div class="modern-doc-meta">
           ${sermon.speaker ? `<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${sermon.speaker}</span>` : ''}
-          ${sermon.scripture ? `<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> ${sermon.scripture}</span>` : ''}
+          ${dateStr ? `<span><span class="dot">●</span> ${dateStr}</span>` : ''}
         </div>
       </div>
     </div>
