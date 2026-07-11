@@ -575,7 +575,7 @@
           formattedUrl = ann.imageUrl;
           const match = formattedUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]+)/);
           if (match && match[1]) {
-            formattedUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w600`;
+            formattedUrl = `https://lh3.googleusercontent.com/d/${match[1]}=w600`;
           }
         }
 
