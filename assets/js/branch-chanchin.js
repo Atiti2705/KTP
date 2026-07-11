@@ -163,7 +163,7 @@ function renderBranchChanchin() {
     const safeTitle = (branchChanchin.title || '').replace(/<[^>]*>?/gm, '').trim();
     return `
     <div class="modern-doc-card selectable-item" data-id="${branchChanchin.id}" data-url="${branchChanchin.fileUrl && branchChanchin.fileUrl !== '#' ? branchChanchin.fileUrl : ''}" data-name="${safeTitle}.${String(branchChanchin.fileType||'PDF').toLowerCase()}">
-      ${branchChanchin.topic ? `
+      ${branchChanchin.topic && branchChanchin.topic.toUpperCase() !== 'GENERAL' ? `
       <div class="modern-doc-header">
         <span class="modern-doc-badge">${branchChanchin.topic}</span>
       </div>
