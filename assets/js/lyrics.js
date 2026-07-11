@@ -13,6 +13,8 @@ let currentPage = 1;
 const itemsPerPage = 1000;
 const Lyrics = [];
 
+let dataLoaded = false;
+
 document.addEventListener('DOMContentLoaded', async () => {
   renderAlphabetChips();
   setupSearchAndSort();
@@ -29,6 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch (error) {
     console.error("Error loading lyrics database:", error);
+  } finally {
+    dataLoaded = true;
   }
 
   renderLyrics();
@@ -168,13 +172,22 @@ function renderLyrics() {
 
   // 5. Render items
   if (paginationData.items.length === 0) {
-    listContainer.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1; width: 100%;">
-        <div class="empty-state-icon">🎵</div>
-        <h3>No Lyrics Found</h3>
-        <p>Try adjusting your search or alphabet filter.</p>
-      </div>
-    `;
+    if (!dataLoaded) {
+      listContainer.innerHTML = `
+        <div style="grid-column: 1 / -1; width: 100%; text-align: center; padding: var(--sp-8); color: var(--color-text-tertiary);">
+          <div class="loading-spinner" style="margin: 0 auto var(--sp-3) auto;"></div>
+          Loading records...
+        </div>
+      `;
+    } else {
+      listContainer.innerHTML = `
+        <div class="empty-state" style="grid-column: 1 / -1; width: 100%;">
+          <div class="empty-state-icon">🎵</div>
+          <h3>No Lyrics Found</h3>
+          <p>Try adjusting your search or alphabet filter.</p>
+        </div>
+      `;
+    }
     if (paginationContainer) paginationContainer.innerHTML = '';
     return;
   }

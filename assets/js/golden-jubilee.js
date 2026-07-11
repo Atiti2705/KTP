@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let baseItems = [];
   let currentCategory = 'All';
+  let dataLoaded = false;
 
   btnBackFolders.addEventListener('click', () => {
     currentCategory = 'All';
@@ -75,12 +76,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       container.className = 'ob-grid reveal revealed';
       
       if (folders.length === 0) {
-        container.innerHTML = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-secondary); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--color-border);">
-            <div style="font-size: 3rem; margin-bottom: var(--sp-3);">📁</div>
-            <h3>No Folders Found</h3>
-          </div>
-        `;
+        if (!dataLoaded) {
+          container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-tertiary);">
+              <div class="loading-spinner" style="margin: 0 auto var(--sp-3) auto;"></div>
+              Loading records...
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-secondary); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--color-border);">
+              <div style="font-size: 3rem; margin-bottom: var(--sp-3);">📁</div>
+              <h3>No Folders Found</h3>
+            </div>
+          `;
+        }
         return;
       }
       
@@ -154,12 +164,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       
       if (!html) {
-        html = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-secondary); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--color-border);">
-            <div style="font-size: 3rem; margin-bottom: var(--sp-3);">🔍</div>
-            <h3>No Items Match Search</h3>
-          </div>
-        `;
+        if (!dataLoaded) {
+          html = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-tertiary);">
+              <div class="loading-spinner" style="margin: 0 auto var(--sp-3) auto;"></div>
+              Loading records...
+            </div>
+          `;
+        } else {
+          html = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-secondary); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--color-border);">
+              <div style="font-size: 3rem; margin-bottom: var(--sp-3);">🔍</div>
+              <h3>No Items Match Search</h3>
+            </div>
+          `;
+        }
       }
       
       container.innerHTML = html;
@@ -181,13 +200,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (itemsToRender.length === 0) {
-      container.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-secondary); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--color-border);">
-          <div style="font-size: 3rem; margin-bottom: var(--sp-3);">📭</div>
-          <h3>Folder is Empty</h3>
-          <p>No matching records found.</p>
-        </div>
-      `;
+      if (!dataLoaded) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-tertiary);">
+            <div class="loading-spinner" style="margin: 0 auto var(--sp-3) auto;"></div>
+            Loading records...
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: var(--sp-8); color: var(--color-text-secondary); background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--color-border);">
+            <div style="font-size: 3rem; margin-bottom: var(--sp-3);">📭</div>
+            <h3>Folder is Empty</h3>
+            <p>No matching records found.</p>
+          </div>
+        `;
+      }
       return;
     }
 
@@ -1043,6 +1071,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Initial render
+    dataLoaded = true;
     applyFilters();
 
     // Event listeners
