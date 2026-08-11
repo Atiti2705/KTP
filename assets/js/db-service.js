@@ -81,7 +81,9 @@ const DbService = {
         item.date = item.date || new Date().toISOString().split('T')[0];
 
         const docRef = await FirebaseConfig.db.collection(collection).add(item);
-        return { id: docRef.id, ...item };
+        const newItem = { id: docRef.id, ...item };
+        this.addLocal(collection, newItem);
+        return newItem;
       } catch (error) {
         console.error(`Firebase error adding to ${collection}:`, error);
         throw error; // Throw so caller handles it
@@ -99,6 +101,7 @@ const DbService = {
       try {
         updatedFields.updatedAt = new Date().toISOString();
         await FirebaseConfig.db.collection(collection).doc(id).update(updatedFields);
+        this.updateLocal(collection, id, updatedFields);
         return true;
       } catch (error) {
         console.error(`Firebase error updating ${collection}/${id}:`, error);
@@ -116,6 +119,7 @@ const DbService = {
     if (FirebaseConfig.isConfigured && FirebaseConfig.db) {
       try {
         await FirebaseConfig.db.collection(collection).doc(id).delete();
+        this.deleteLocal(collection, id);
         return true;
       } catch (error) {
         console.error(`Firebase error deleting ${collection}/${id}:`, error);
