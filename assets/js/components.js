@@ -133,6 +133,23 @@ function renderHeader(activePage = '') {
       <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span> Gallery
     </a>
     <div class="nav-mobile-group">
+      <button class="nav-mobile-link nav-mobile-group-trigger ${['news','lawmpuina','sunna'].includes(activePage) ? 'active' : ''}" id="mobile-news-trigger">
+        <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg></span> News
+        <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="nav-mobile-subnav" id="mobile-news-subnav" style="display:none;">
+        <a href="news.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'news' ? 'active' : ''}">
+          Branch Thuchhuak
+        </a>
+        <a href="lawmpuina.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'lawmpuina' ? 'active' : ''}">
+          Lawmpuina
+        </a>
+        <a href="sunna.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'sunna' ? 'active' : ''}">
+          Sunna
+        </a>
+      </div>
+    </div>
+    <div class="nav-mobile-group">
       <button class="nav-mobile-link nav-mobile-group-trigger ${['branch-chanchin','branch-ob','branch-committee','group-committee','sub-committee','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-chanchin-trigger">
         <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></span> Branch
         <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -181,23 +198,7 @@ function renderHeader(activePage = '') {
         </a>
       </div>
     </div>
-    <div class="nav-mobile-group">
-      <button class="nav-mobile-link nav-mobile-group-trigger ${['news','lawmpuina','sunna'].includes(activePage) ? 'active' : ''}" id="mobile-news-trigger">
-        <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg></span> News
-        <svg class="nav-mobile-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </button>
-      <div class="nav-mobile-subnav" id="mobile-news-subnav" style="display:none;">
-        <a href="news.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'news' ? 'active' : ''}">
-          Branch Thuchhuak
-        </a>
-        <a href="lawmpuina.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'lawmpuina' ? 'active' : ''}">
-          Lawmpuina
-        </a>
-        <a href="sunna.html" class="nav-mobile-link nav-mobile-sublink ${activePage === 'sunna' ? 'active' : ''}">
-          Sunna
-        </a>
-      </div>
-    </div>
+
     <div class="nav-mobile-group">
       <button class="nav-mobile-link nav-mobile-group-trigger ${['kohhran-chanchin','kohhran-upa','golden-jubilee'].includes(activePage) ? 'active' : ''}" id="mobile-history-trigger">
         <span class="nav-icon" style="display:inline-flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg></span> Kohhran
@@ -996,7 +997,7 @@ class SelectionManager {
   }
 
   handleClick(e, item) {
-    const isTouch = e.pointerType === 'touch' || e.pointerType === ''; // '' sometimes happens on mobile tap
+    const isTouch = this.lastPointerType === 'touch' || e.pointerType === 'touch' || e.pointerType === ''; // Use stored pointerType since click events don't have it
     const items = Array.from(this.container.querySelectorAll(this.itemSelector));
     const index = items.indexOf(item);
 
@@ -1271,3 +1272,32 @@ class TouchZoomHandler {
 }
 
 window.TouchZoomHandler = TouchZoomHandler;
+
+// ========================
+// GLOBAL FORCE DOWNLOAD HELPER
+// ========================
+window.forceDownload = async function(url, filename = 'download') {
+  if (!url || url === '#' || url.endsWith('#')) return;
+  try {
+    let dlUrl = url;
+    if (dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
+      dlUrl = dlUrl.split('=')[0] + '=s0';
+    }
+    const response = await fetch(dlUrl, { mode: 'cors' });
+    if (!response.ok) throw new Error('Fetch failed');
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename || 'download';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+    if (window.Toast) Toast.show('Download completed!', 'success');
+  } catch (err) {
+    console.error("forceDownload fetch failed, opening fallback in new window:", err);
+    window.open(url, '_blank');
+  }
+};
+

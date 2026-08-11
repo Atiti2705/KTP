@@ -333,10 +333,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (driveIdMatch && driveIdMatch[1]) {
           const iframe = document.createElement('iframe');
           iframe.style.display = 'none';
-          window.forceDownload(`https://drive.google.com/uc?export=download&id=${driveIdMatch[1]}`);
+          window.forceDownload(`https://drive.google.com/uc?export=download&id=${driveIdMatch[1]}`, filename);
           if (window.Toast) Toast.show('Downloading...', 'success');
       } else {
-          window.forceDownload(url);
+          window.forceDownload(url, filename);
           if (window.Toast) Toast.show('Unable to auto-download. Please long-press the image to save.', 'info');
       }
       if (fallbackBtn) {
@@ -473,7 +473,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const item = currentLightboxItems[currentLightboxIndex];
     const primaryImage = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : item.imageUrl;
-    const finalUrl = primaryImage ? convertDriveUrl(primaryImage) : '';
+    const finalUrl = primaryImage ? convertDriveUrl(primaryImage, 'image', 'w1600') : '';
     
     biLightboxImage.style.opacity = '0';
     setTimeout(() => {
@@ -511,7 +511,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (docsContainer) {
       if (item.documentFiles && item.documentFiles.length > 0) {
         docsContainer.innerHTML = item.documentFiles.map(doc => `
-          <a href="#" onclick="window.forceDownload('${doc.url}'); event.preventDefault(); event.stopPropagation(); return false;" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.5); border-radius: var(--radius-full); text-decoration: none; color: white; backdrop-filter: blur(4px); font-size: var(--fs-sm); transition: background 0.2s; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 99999; position: relative;">
+          <a href="#" onclick="window.forceDownload('${doc.url}', '${doc.name || 'document'}'); event.preventDefault(); event.stopPropagation(); return false;" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.5); border-radius: var(--radius-full); text-decoration: none; color: white; backdrop-filter: blur(4px); font-size: var(--fs-sm); transition: background 0.2s; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 99999; position: relative;">
             <span>📄</span>
             <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500;">${doc.name}</span>
           </a>
@@ -524,7 +524,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (dlUrl && dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
       dlUrl = dlUrl.split('=')[0] + '=s0';
     }
-    biLightboxDownload.href = dlUrl || '#';
+    biLightboxDownload.href = '#';
+    
+    biLightboxDownload.onclick = async (e) => {
+      if (!dlUrl) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (biLightboxDownload.dataset.downloading === 'true') return;
+      
+      biLightboxDownload.dataset.downloading = 'true';
+      const originalHtml = biLightboxDownload.innerHTML;
+      biLightboxDownload.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>';
+      
+      try {
+        await window.forceDownload(dlUrl, `${item.title || 'photo'}.jpg`);
+      } finally {
+        biLightboxDownload.innerHTML = originalHtml;
+        biLightboxDownload.dataset.downloading = 'false';
+      }
+    };
   }
 
   function closeBiLightbox(fromHistory = false) {
@@ -711,7 +729,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="ob-modal-slider" id="ob-modal-slider">
             ${item.imageUrls.map((url, i) => `
               <div class="ob-modal-slide">
-                <img loading="lazy" src="${convertDriveUrl(url)}" alt="${item.title || 'Photo'}">
+                <img loading="lazy" src="${convertDriveUrl(url, 'image', 'w1600')}" alt="${item.title || 'Photo'}">
               </div>
             `).join('')}
           </div>
@@ -735,9 +753,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       
     } else if (item.imageUrls && item.imageUrls.length === 1) {
-      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrls[0])}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrls[0], 'image', 'w1600')}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
     } else if (item.imageUrl) {
-      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrl, 'image', 'w1600')}" class="ob-modal-image" alt="${item.title || 'Photo'}">`;
     } else {
       modalImgContainer.innerHTML = '';
     }
@@ -780,13 +798,41 @@ document.addEventListener('DOMContentLoaded', async () => {
           baseItems.sort((a, b) => {
             if (a.pinnedToHomepage && !b.pinnedToHomepage) return -1;
             if (!a.pinnedToHomepage && b.pinnedToHomepage) return 1;
-            if (a.date && b.date) return new Date(b.date) - new Date(a.date);
-            const yearA = a.year || a.title || '';
-            const yearB = b.year || b.title || '';
-            return yearB.localeCompare(yearA);
+            
+            const forceYearSort = ['branch-ob', 'branch-committee'].includes(dataType);
+            if (forceYearSort) {
+              const yearA = String(a.year || a.title || '');
+              const yearB = String(b.year || b.title || '');
+              const yearCompare = yearB.localeCompare(yearA, undefined, {numeric: true});
+              if (yearCompare !== 0) return yearCompare;
+            }
+
+            const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : null;
+            const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : null;
+            if (aIdx !== null && bIdx !== null && aIdx !== bIdx) {
+              return aIdx - bIdx;
+            }
+            
+            const skipDateSort = ['Kohhran Upa', 'group-committee', 'sub-committee'].includes(dataType);
+            if (!skipDateSort) {
+              const timeA = new Date(a.date || a.createdAt || 0).getTime();
+              const timeB = new Date(b.date || b.createdAt || 0).getTime();
+              if (timeA !== timeB) return timeB - timeA;
+            }
+            
+            const yearA = String(a.year || a.title || '');
+            const yearB = String(b.year || b.title || '');
+            if (dataType === 'Kohhran Upa') {
+              return yearA.localeCompare(yearB, undefined, {numeric: true});
+            }
+            return yearB.localeCompare(yearA, undefined, {numeric: true});
           });
-          const uniqueYears = [...new Set(baseItems.map(item => item.year || item.title).filter(val => val))];
-          uniqueYears.sort((a, b) => b.localeCompare(a));
+          const uniqueYears = [...new Set(baseItems.map(item => String(item.year || item.title)).filter(val => val !== 'undefined' && val !== ''))];
+          if (dataType === 'Kohhran Upa') {
+            uniqueYears.sort((a, b) => a.localeCompare(b, undefined, {numeric: true}));
+          } else {
+            uniqueYears.sort((a, b) => b.localeCompare(a, undefined, {numeric: true}));
+          }
           yearSelect.innerHTML = '<option value="all">All Years</option>';
           uniqueYears.forEach(year => {
             const option = document.createElement('option');
@@ -806,19 +852,47 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Filter by the current page's data-type
       baseItems = items.filter(item => item.category === dataType);
   
-      // Sort items: pinned first, then by date descending, fallback to year/title
+      // Sort items: pinned first, forceYearSort second, custom orderIndex third, then date descending
       baseItems.sort((a, b) => {
         if (a.pinnedToHomepage && !b.pinnedToHomepage) return -1;
         if (!a.pinnedToHomepage && b.pinnedToHomepage) return 1;
-        if (a.date && b.date) return new Date(b.date) - new Date(a.date);
-        const yearA = a.year || a.title || '';
-        const yearB = b.year || b.title || '';
-        return yearB.localeCompare(yearA);
+        
+        const forceYearSort = ['branch-ob', 'branch-committee'].includes(dataType);
+        if (forceYearSort) {
+          const yearA = String(a.year || a.title || '');
+          const yearB = String(b.year || b.title || '');
+          const yearCompare = yearB.localeCompare(yearA, undefined, {numeric: true});
+          if (yearCompare !== 0) return yearCompare;
+        }
+
+        const aIdx = typeof a.orderIndex === 'number' ? a.orderIndex : null;
+        const bIdx = typeof b.orderIndex === 'number' ? b.orderIndex : null;
+        if (aIdx !== null && bIdx !== null && aIdx !== bIdx) {
+          return aIdx - bIdx;
+        }
+        
+        const skipDateSort = ['Kohhran Upa', 'group-committee', 'sub-committee'].includes(dataType);
+        if (!skipDateSort) {
+          const timeA = new Date(a.date || a.createdAt || 0).getTime();
+          const timeB = new Date(b.date || b.createdAt || 0).getTime();
+          if (timeA !== timeB) return timeB - timeA;
+        }
+        
+        const yearA = String(a.year || a.title || '');
+        const yearB = String(b.year || b.title || '');
+        if (dataType === 'Kohhran Upa') {
+          return yearA.localeCompare(yearB, undefined, {numeric: true});
+        }
+        return yearB.localeCompare(yearA, undefined, {numeric: true});
       });
   
       // Populate Year Filter dynamically based on available years (fallback to title)
-      const uniqueYears = [...new Set(baseItems.map(item => item.year || item.title).filter(val => val))];
-      uniqueYears.sort((a, b) => b.localeCompare(a)); // Sort newest (highest year) first
+      const uniqueYears = [...new Set(baseItems.map(item => String(item.year || item.title)).filter(val => val !== 'undefined' && val !== ''))];
+      if (dataType === 'Kohhran Upa') {
+        uniqueYears.sort((a, b) => a.localeCompare(b, undefined, {numeric: true})); // Sort oldest first
+      } else {
+        uniqueYears.sort((a, b) => b.localeCompare(a, undefined, {numeric: true})); // Sort newest (highest year) first
+      }
       
       yearSelect.innerHTML = '<option value="all">All Years</option>';
       uniqueYears.forEach(year => {

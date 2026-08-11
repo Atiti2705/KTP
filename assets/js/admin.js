@@ -6,15 +6,16 @@
 
 const AdminAuth = {
   check() {
-    const isLoginPage = window.location.pathname.endsWith('admin/') || window.location.pathname.endsWith('admin/index.html');
+    const cleanPath = window.location.pathname.replace(/\/$/, '');
+    const isLoginPage = cleanPath.endsWith('/admin') || cleanPath.endsWith('/admin/index') || cleanPath.endsWith('/admin/index.html');
 
     // Fast local check to prevent screen flash
     const loggedIn = localStorage.getItem('ktp_admin_logged_in');
     if (!loggedIn && !isLoginPage) {
-      window.location.href = 'index.html'; // Redirect to login page
+      window.location.href = '/admin/index.html'; // Redirect to admin login page
       return;
     } else if (loggedIn && isLoginPage) {
-      window.location.href = 'dashboard.html'; // Redirect to dashboard if already logged in
+      window.location.href = '/admin/dashboard.html'; // Redirect to dashboard if already logged in
       return;
     }
 
@@ -22,16 +23,17 @@ const AdminAuth = {
     if (FirebaseConfig.isConfigured && FirebaseConfig.auth) {
       // Listen to live auth changes to handle token expiration or unauthorized users
       AuthService.onAuthStateChanged((user) => {
-        const currentIsLoginPage = window.location.pathname.endsWith('admin/') || window.location.pathname.endsWith('admin/index.html');
+        const curPath = window.location.pathname.replace(/\/$/, '');
+        const currentIsLoginPage = curPath.endsWith('/admin') || curPath.endsWith('/admin/index') || curPath.endsWith('/admin/index.html');
         if (!user || user.role !== 'admin') {
           if (!currentIsLoginPage) {
             localStorage.removeItem('ktp_admin_logged_in');
             localStorage.removeItem('ktp_admin_user');
-            window.location.href = 'index.html';
+            window.location.href = '/admin/index.html';
           }
         } else {
           if (currentIsLoginPage) {
-            window.location.href = 'dashboard.html';
+            window.location.href = '/admin/dashboard.html';
           }
         }
       });
@@ -456,7 +458,8 @@ AdminAuth.check();
 // COMMON ADMIN LAYOUT RENDERER
 // ========================
 document.addEventListener('DOMContentLoaded', () => {
-  const isLoginPage = window.location.pathname.endsWith('admin/') || window.location.pathname.endsWith('admin/index.html');
+  const cleanPath = window.location.pathname.replace(/\/$/, '');
+  const isLoginPage = cleanPath.endsWith('/admin') || cleanPath.endsWith('/admin/index') || cleanPath.endsWith('/admin/index.html');
   if (isLoginPage) {
     setupLoginPage();
     return;
@@ -539,7 +542,7 @@ function setupLoginPage() {
         }
 
         if (success) {
-          window.location.href = 'dashboard.html';
+          window.location.href = '/admin/dashboard.html';
         }
       } catch (err) {
         submitBtn.disabled = false;
@@ -568,7 +571,7 @@ function setupLoginPage() {
         try {
           const success = await AdminAuth.loginWithGoogle();
           if (success) {
-            window.location.href = 'dashboard.html';
+            window.location.href = '/admin/dashboard.html';
           }
         } catch (err) {
           googleBtn.disabled = false;
@@ -628,10 +631,43 @@ function renderSidebar() {
       </div>
     </div>
     <div class="sidebar-nav">
-      <div class="sidebar-label">Navigation</div>
+      <div class="sidebar-label">Overview</div>
       <a href="dashboard.html" class="sidebar-link ${activePage === 'dashboard' ? 'active' : ''}">
         <span class="link-icon">📊</span> Dashboard
       </a>
+      <a href="photos.html" class="sidebar-link ${activePage === 'photos' ? 'active' : ''}">
+        <span class="link-icon">📸</span> Gallery
+      </a>
+
+      <div class="sidebar-label" style="margin-top: 14px;">Branch</div>
+      <a href="branch-chanchin.html" class="sidebar-link ${activePage === 'branch-chanchin' ? 'active' : ''}">
+        <span class="link-icon">✍️</span> Branch Chanchin
+      </a>
+      <a href="branch-info.html" class="sidebar-link ${activePage === 'branch-info' ? 'active' : ''}">
+        <span class="link-icon">👨‍💼</span> Branch Info & Committees
+      </a>
+      <a href="golden-jubilee.html?type=branch" class="sidebar-link ${activePage === 'golden-jubilee' && window.location.search.includes('type=branch') ? 'active' : ''}">
+        <span class="link-icon">🌟</span> Branch Golden Jubilee
+      </a>
+
+      <div class="sidebar-label" style="margin-top: 14px;">Documents</div>
+      <a href="documents.html?collection=mipuiaw&title=Mipui%20Aw" class="sidebar-link ${activePage === 'mipuiaw' ? 'active' : ''}">
+        <span class="link-icon">📄</span> Mipui Aw
+      </a>
+      <a href="sermons.html" class="sidebar-link ${activePage === 'sermons' ? 'active' : ''}">
+        <span class="link-icon">📖</span> Articles & Sermons
+      </a>
+      <a href="documents.html?collection=bulletins&title=Bulletin" class="sidebar-link ${activePage === 'bulletin' ? 'active' : ''}">
+        <span class="link-icon">📰</span> Bulletin
+      </a>
+      <a href="documents.html?collection=souvenirs&title=Souvenir" class="sidebar-link ${activePage === 'souvenir' ? 'active' : ''}">
+        <span class="link-icon">📘</span> Souvenir
+      </a>
+      <a href="lyrics.html" class="sidebar-link ${activePage === 'lyrics' ? 'active' : ''}">
+        <span class="link-icon">🎵</span> Hla Lyrics
+      </a>
+
+      <div class="sidebar-label" style="margin-top: 14px;">News</div>
       <a href="news.html" class="sidebar-link ${activePage === 'news' ? 'active' : ''}">
         <span class="link-icon">📰</span> Branch Thuchhuak
       </a>
@@ -641,65 +677,39 @@ function renderSidebar() {
       <a href="sunna.html" class="sidebar-link ${activePage === 'sunna' ? 'active' : ''}">
         <span class="link-icon">🕯️</span> Sunna
       </a>
+      <a href="announcements.html" class="sidebar-link ${activePage === 'announcements' ? 'active' : ''}">
+        <span class="link-icon">📢</span> Announcements
+      </a>
+
+      <div class="sidebar-label" style="margin-top: 14px;">Kohhran</div>
       <a href="kohhran-chanchin.html" class="sidebar-link ${activePage === 'kohhran-chanchin' ? 'active' : ''}">
         <span class="link-icon">📜</span> Kohhran Chanchin
       </a>
       <a href="kohhran-upa.html" class="sidebar-link ${activePage === 'kohhran-upa' ? 'active' : ''}">
         <span class="link-icon">👨🏽‍🦳</span> Kohhran Upa
       </a>
-      <a href="branch-chanchin.html" class="sidebar-link ${activePage === 'branch-chanchin' ? 'active' : ''}">
-        <span class="link-icon">✍️</span> Branch Chanchin
-      </a>
-      <a href="golden-jubilee.html?type=branch" class="sidebar-link ${activePage === 'golden-jubilee' && window.location.search.includes('type=branch') ? 'active' : ''}">
-        <span class="link-icon">🌟</span> Branch Golden Jubilee
-      </a>
       <a href="golden-jubilee.html?type=kohhran" class="sidebar-link ${activePage === 'golden-jubilee' && window.location.search.includes('type=kohhran') ? 'active' : ''}">
         <span class="link-icon">🌟</span> Kohhran Golden Jubilee
       </a>
-      <a href="photos.html" class="sidebar-link ${activePage === 'photos' ? 'active' : ''}">
-        <span class="link-icon">📸</span> Gallery
-      </a>
-      <a href="documents.html?collection=mipuiaw&title=Mipui%20Aw" class="sidebar-link ${activePage === 'mipuiaw' ? 'active' : ''}">
-        <span class="link-icon">📄</span> Mipui Aw
-      </a>
-      <a href="documents.html?collection=bulletins&title=Bulletin" class="sidebar-link ${activePage === 'bulletin' ? 'active' : ''}">
-        <span class="link-icon">📰</span> Bulletin
-      </a>
-      <a href="documents.html?collection=souvenirs&title=Souvenir" class="sidebar-link ${activePage === 'souvenir' ? 'active' : ''}">
-        <span class="link-icon">📘</span> Souvenir
-      </a>
-      <a href="sermons.html" class="sidebar-link ${activePage === 'sermons' ? 'active' : ''}">
-        <span class="link-icon">📖</span> Articles & Sermons
-      </a>
-      <a href="lyrics.html" class="sidebar-link ${activePage === 'lyrics' ? 'active' : ''}">
-        <span class="link-icon">🎵</span> Hla Lyrics
-      </a>
-      <a href="announcements.html" class="sidebar-link ${activePage === 'announcements' ? 'active' : ''}">
-        <span class="link-icon">📢</span> Announcements
-      </a>
 
+      <div class="sidebar-label" style="margin-top: 14px;">About & Counselling</div>
+      <a href="statistics.html" class="sidebar-link ${activePage === 'statistics' ? 'active' : ''}">
+        <span class="link-icon">📈</span> Statistics
+      </a>
+      <a href="contact-info.html" class="sidebar-link ${activePage === 'contact-info' ? 'active' : ''}">
+        <span class="link-icon">📞</span> Contact Directory
+      </a>
       <a href="counselling.html" class="sidebar-link ${activePage === 'counselling' ? 'active' : ''}">
         <span class="link-icon">💬</span> Counselling Q&A
       </a>
-      <a href="statistics.html" class="sidebar-link ${activePage === 'statistics' ? 'active' : ''}">
-        <span class="link-icon">📊</span> Statistics
-      </a>
-      <a href="branch-info.html" class="sidebar-link ${activePage === 'branch-info' ? 'active' : ''}">
-        <span class="link-icon">👨‍💼</span> Branch Info & Committees
-      </a>
-      <div class="sidebar-divider"></div>
-      <a href="contact-info.html" class="sidebar-link ${activePage === 'contact-info' ? 'active' : ''}">
-        <span class="link-icon">📞</span> Contact Info Directory
-      </a>
+
+      <div class="sidebar-label" style="margin-top: 14px;">Settings & Actions</div>
       <a href="messages.html" class="sidebar-link ${activePage === 'messages' ? 'active' : ''}">
         <span class="link-icon">📥</span> Inbox Messages
       </a>
-      <div class="sidebar-divider"></div>
       <a href="settings.html" class="sidebar-link ${activePage === 'settings' ? 'active' : ''}">
         <span class="link-icon">⚙️</span> Site Settings
       </a>
-      
-      <div class="sidebar-label" style="margin-top: 15px;">Actions</div>
       <a href="#" class="sidebar-link" id="btn-sync-cloud">
         <span class="link-icon">🔄</span> Sync from Cloud
       </a>
@@ -731,42 +741,15 @@ function renderSidebar() {
   if (syncBtn) {
     syncBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      
-      const confirmSync = confirm("This will fetch the latest data from the cloud and overwrite your local browser cache for the current page. Proceed?");
-      if (!confirmSync) return;
-      
-      syncBtn.style.pointerEvents = 'none';
-      syncBtn.style.opacity = '0.5';
-      syncBtn.innerHTML = '<span class="link-icon">⏳</span> Syncing...';
-      
       try {
-        let currentTarget = undefined;
-        try {
-          if (typeof targetCollection !== 'undefined') currentTarget = targetCollection;
-        } catch(e) {}
-        
-        if (currentTarget) {
-          // Sync just this page's collection
-          await AdminData.forceSync(currentTarget);
-          AdminToast.show('Data successfully synced from cloud!', 'success');
-          setTimeout(() => location.reload(), 1000);
-        } else {
-          // If on dashboard or page without targetCollection, sync everything
-          const collections = [
-            'photos', 'documents', 'mipuiaw', 'bulletins', 'souvenirs', 
-            'sermons', 'announcements', 'lyrics', 'Kohhran Chanchin', 
-            'Kohhran Upa', 'Golden Jubilee', 'Kohhran Golden Jubilee', 
-            'branch-info', 'statistics', 'settings', 'news', 'lawmpuina', 
-            'sunna', 'counselling', 'messages', 'branch-chanchin'
-          ];
-          for (const col of collections) {
-            await AdminData.forceSync(col);
-          }
-          AdminToast.show('All collections synced from cloud!', 'success');
-          setTimeout(() => location.reload(), 1500);
-        }
+        syncBtn.style.pointerEvents = 'none';
+        syncBtn.style.opacity = '0.7';
+        syncBtn.innerHTML = '<span class="link-icon">⏳</span> Syncing...';
+        await AdminData.syncFirestore();
+        AdminToast.show('Database synced with Cloud Firestore successfully!', 'success');
+        setTimeout(() => window.location.reload(), 1000);
       } catch (err) {
-        console.error(err);
+        console.error("Sync error:", err);
         AdminToast.show('Failed to sync from cloud', 'error');
         syncBtn.style.pointerEvents = 'auto';
         syncBtn.style.opacity = '1';
@@ -779,9 +762,9 @@ function renderSidebar() {
 function setupSidebarToggle() {
   const toggleBtn = document.getElementById('sidebar-toggle');
   const sidebar = document.getElementById('admin-sidebar');
+  const main = document.querySelector('.admin-main');
 
   if (toggleBtn && sidebar) {
-    // Create overlay if it doesn't exist
     let overlay = document.querySelector('.admin-overlay');
     if (!overlay) {
       overlay = document.createElement('div');
@@ -789,18 +772,34 @@ function setupSidebarToggle() {
       document.body.appendChild(overlay);
     }
 
-    const openSidebar = () => {
-      sidebar.classList.add('open');
-      overlay.classList.add('active');
+    const toggleSidebar = () => {
+      const isMobile = window.innerWidth < 1024;
+      if (isMobile) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+      } else {
+        sidebar.classList.toggle('closed');
+        if (main) main.classList.toggle('expanded');
+        try {
+          localStorage.setItem('admin_sidebar_closed', sidebar.classList.contains('closed'));
+        } catch (e) {}
+      }
     };
 
-    const closeSidebar = () => {
+    toggleBtn.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', () => {
       sidebar.classList.remove('open');
       overlay.classList.remove('active');
-    };
+    });
 
-    toggleBtn.addEventListener('click', openSidebar);
-    overlay.addEventListener('click', closeSidebar);
+    // Restore desktop sidebar state preference
+    if (window.innerWidth >= 1024) {
+      const isClosed = localStorage.getItem('admin_sidebar_closed') === 'true';
+      if (isClosed) {
+        sidebar.classList.add('closed');
+        if (main) main.classList.add('expanded');
+      }
+    }
   }
 }
 

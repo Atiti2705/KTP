@@ -27,6 +27,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupSearchAndSort();
   setupPreviewModal();
 
+  // 1. Instant render from localStorage cache
+  try {
+    const cached = localStorage.getItem('db_sermons');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        Sermons.length = 0;
+        Sermons.push(...parsed.map(s => {
+          if (s.downloadUrl) s.downloadUrl = convertDriveUrl(s.downloadUrl, 'file');
+          return s;
+        }));
+        dataLoaded = true;
+        renderSermons();
+      }
+    }
+  } catch (e) {}
+
+  // 2. Fetch fresh data from Firestore asynchronously
   try {
     const data = await DbService.get('sermons');
     if (data && Array.isArray(data)) {
@@ -35,6 +53,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (s.downloadUrl) s.downloadUrl = convertDriveUrl(s.downloadUrl, 'file');
         return s;
       }));
+      try {
+        localStorage.setItem('db_sermons', JSON.stringify(data));
+      } catch (e) {}
     }
   } catch (error) {
     console.error("Error loading sermons database:", error);

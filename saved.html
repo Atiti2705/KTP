@@ -10,7 +10,7 @@
   <!-- Open Graph -->
   <meta property="og:title" content="Saved Items — KṬP Saikhamakawn">
   <meta property="og:description" content="View and manage your saved lyrics, sermons, documents, and gallery.">
-  <meta property="og:image" content="assets/images/logo.png">
+  <meta property="og:image" content="https://saikhamakawnktp.org/assets/images/logo.png">
   <meta property="og:type" content="website">
 
   <!-- Favicon -->
@@ -22,13 +22,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=155">
-  <link rel="stylesheet" href="assets/css/base.css?v=155">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=155">
-  <link rel="stylesheet" href="assets/css/animations.css?v=155">
-  <link rel="stylesheet" href="assets/css/components.css?v=155">
-  <link rel="stylesheet" href="assets/css/layout.css?v=155">
-  <link rel="stylesheet" href="assets/css/pages.css?v=155">
+  <link rel="stylesheet" href="assets/css/variables.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/base.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/animations.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/components.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/layout.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/pages.css?v=1785271586">
 </head>
 <body>
   <!-- Header -->
@@ -37,12 +37,7 @@
   <!-- Main Content -->
   <main class="main-content">
     
-    <!-- Page Header -->
-    <section class="page-title-section mizo-pattern-subtle">
-      <div class="container">
-        <h1 style="margin-top: var(--sp-4); margin-bottom: var(--sp-6);">🔖 Saved Items</h1>
-      </div>
-    </section>
+    <!-- Page Header Removed -->
 
     <!-- Content Area -->
     <section class="section-sm">
@@ -59,16 +54,16 @@
         <!-- Saved Content Area (Visible when logged in) -->
         <div id="saved-content-wrapper" style="display: none;">
           
-          <!-- Category Tabs -->
-          <div style="margin-bottom: var(--sp-6);">
-            <p style="font-size: var(--fs-xs); color: var(--color-text-tertiary); font-weight: var(--fw-semibold); margin-bottom: var(--sp-2); text-transform: uppercase; letter-spacing: 0.5px;">Filter By Type</p>
-            <div class="filter-bar no-scrollbar" id="saved-tabs" style="overflow-x: auto; padding-bottom: var(--sp-1); display: flex; gap: var(--sp-2);">
-              <button class="filter-chip active" data-tab="all">All Items</button>
-              <button class="filter-chip" data-tab="lyrics">🎵 Lyrics</button>
-              <button class="filter-chip" data-tab="sermons">📖 Sermons</button>
-              <button class="filter-chip" data-tab="mipui-aw">📄 Mipui Aw</button>
-              <button class="filter-chip" data-tab="photos">📸 Gallery</button>
-            </div>
+          <!-- Category Filter -->
+          <div style="margin-bottom: var(--sp-6); display: flex; align-items: center; justify-content: space-between;">
+            <p style="font-size: var(--fs-lg); font-weight: var(--fw-bold); margin: 0;">Saved Items</p>
+            <select class="filter-select" id="saved-tabs-select" style="min-width: 150px;">
+              <option value="all">All Items</option>
+              <option value="lyrics">🎵 Lyrics</option>
+              <option value="sermons">📖 Sermons</option>
+              <option value="mipui-aw">📄 Mipui Aw, Bulletins & Souvenirs</option>
+              <option value="photos">📸 Gallery</option>
+            </select>
           </div>
 
           <!-- Selection Toolbar for Bulk Download -->
@@ -127,25 +122,26 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=155"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=1785271586"></script>
 
   <!-- JSZip & FileSaver for Bulk Downloads -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=155"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=155"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=1785271586"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=1785271586"></script>
 
   <!-- App Configuration & Services -->
-  <script defer src="assets/js/firebase-config.js?v=155"></script>
-  <script defer src="assets/js/theme.js?v=155"></script>
-  <script defer src="assets/js/data.js?v=155"></script>
-  <script defer src="assets/js/auth.js?v=155"></script>
-  <script defer src="assets/js/save-service.js?v=155"></script>
-  <script defer src="assets/js/db-service.js?v=155"></script>
-  <script defer src="assets/js/components.js?v=155"></script>
-  <script defer src="assets/js/search.js?v=155"></script>
-  <script defer src="assets/js/saved.js?v=155"></script>
-  <script defer src="assets/js/app.js?v=155"></script>
+  <script defer src="assets/js/firebase-config.js?v=1785271586"></script>
+  <script defer src="assets/js/theme.js?v=1785271586"></script>
+  <script defer src="assets/js/data.js?v=1785271586"></script>
+  <script defer src="assets/js/auth.js?v=1785271586"></script>
+  <script defer src="assets/js/save-service.js?v=1785271586"></script>
+  <script defer src="assets/js/db-service.js?v=1785271586"></script>
+  <script defer src="assets/js/components.js?v=1785271586"></script>
+  <script defer src="assets/js/search.js?v=1785271586"></script>
+  <script defer src="assets/js/saved.js?v=1785271586"></script>
+  <script defer src="assets/js/app.js?v=1785271586"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('saved');

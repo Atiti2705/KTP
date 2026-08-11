@@ -78,32 +78,47 @@ async function loadSavedData() {
 
   try {
     // Fetch all collections in parallel
-    const [lyrics, sermons, documents, photos] = await Promise.all([
+    const [lyrics, sermons, documents, photos, bulletins, souvenirs, mipuiaws] = await Promise.all([
       DbService.get('lyrics').catch(e => []),
       DbService.get('sermons').catch(e => []),
       DbService.get('documents').catch(e => []),
-      DbService.get('photos').catch(e => [])
+      DbService.get('photos').catch(e => []),
+      DbService.get('bulletins').catch(e => []),
+      DbService.get('souvenirs').catch(e => []),
+      DbService.get('mipuiaw').catch(e => [])
     ]);
+
+    // Merge document-like collections into one array to ensure we find the items
+    const allDocs = [
+      ...(Array.isArray(documents) ? documents : []),
+      ...(Array.isArray(bulletins) ? bulletins : []),
+      ...(Array.isArray(souvenirs) ? souvenirs : []),
+      ...(Array.isArray(mipuiaws) ? mipuiaws : [])
+    ];
+
+    const safeSermons = Array.isArray(sermons) ? sermons : [];
+    const safeLyrics = Array.isArray(lyrics) ? lyrics : [];
+    const safePhotos = Array.isArray(photos) ? photos : [];
 
     // Map and filter items based on saved list
     const lyricIds = allSavedItems.filter(item => item.collection === 'lyrics').map(item => item.id);
     const sermonIds = allSavedItems.filter(item => item.collection === 'sermons').map(item => item.id);
-    const docIds = allSavedItems.filter(item => item.collection === 'mipui-aw').map(item => item.id);
+    const docIds = allSavedItems.filter(item => ['mipui-aw', 'mipuiaw', 'documents', 'bulletins', 'souvenirs'].includes(item.collection)).map(item => item.id);
     const photoIds = allSavedItems.filter(item => item.collection === 'photos').map(item => item.id);
 
-    fetchedLyrics = lyrics.filter(item => lyricIds.includes(item.id)).map(item => {
+    fetchedLyrics = safeLyrics.filter(item => lyricIds.includes(String(item.id))).map(item => {
       if (item.downloadUrl) item.downloadUrl = convertDriveUrl(item.downloadUrl, 'file');
       return item;
     });
 
-    fetchedSermons = sermons.filter(item => sermonIds.includes(item.id));
+    fetchedSermons = safeSermons.filter(item => sermonIds.includes(String(item.id)));
 
-    fetchedDocuments = documents.filter(item => docIds.includes(item.id)).map(item => {
+    fetchedDocuments = allDocs.filter(item => docIds.includes(String(item.id))).map(item => {
       if (item.downloadUrl) item.downloadUrl = convertDriveUrl(item.downloadUrl, 'file');
       return item;
     });
 
-    fetchedPhotos = photos.filter(item => photoIds.includes(item.id)).map(item => {
+    fetchedPhotos = safePhotos.filter(item => photoIds.includes(String(item.id))).map(item => {
       if (item.imageUrl) item.imageUrl = convertDriveUrl(item.imageUrl);
       if (item.downloadUrl) item.downloadUrl = convertDriveUrl(item.downloadUrl);
       return item;
@@ -154,11 +169,11 @@ function renderSavedItems() {
         <div class="doc-card selectable-item" data-id="${doc.id}" data-type="lyrics" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${escapeHTML(doc.title)}.${(doc.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center; padding: 10px 14px; min-height: auto; gap: 12px; display: flex;">
           <div class="file-icon" style="font-size: 1.1rem; width: 34px; height: 34px; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky); display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">🎵</div>
           <div class="doc-card-content" style="flex: 1; min-width: 0;">
-            <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500;">${escapeHTML(doc.title)} <small style="color: var(--color-text-tertiary); font-size: 0.75rem; margin-left: 6px;">(Lyric)</small></h3>
+            <div style="display: flex; align-items: baseline; gap: 6px; min-width: 0;">
+              <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;">${escapeHTML(doc.title)}</h3>
+              <small style="color: var(--color-text-tertiary); font-size: 0.75rem; flex-shrink: 0;">(Lyric)</small>
+            </div>
           </div>
-          <button class="save-btn" onclick="handleSavedPageRemove(event, 'lyrics', '${doc.id}')" title="Remove from Saved" style="background: none; border: none; cursor: pointer; padding: 4px; color: var(--brand-sky); transition: transform 0.2s; display: flex; align-items: center; justify-content: center;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-          </button>
         </div>
       `;
     });
@@ -172,11 +187,11 @@ function renderSavedItems() {
         <div class="doc-card selectable-item" data-id="${sermon.id}" data-type="sermons" data-url="${sermon.fileUrl && sermon.fileUrl !== '#' ? sermon.fileUrl : ''}" data-name="${sermon.title}.${(sermon.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center; padding: 10px 14px; min-height: auto; gap: 12px; display: flex;">
           <div class="file-icon" style="font-size: 1.1rem; width: 34px; height: 34px; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky); display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">📖</div>
           <div class="doc-card-content" style="flex: 1; min-width: 0;">
-            <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${sermon.title} <small style="color: var(--color-text-tertiary); font-size: 0.75rem; margin-left: 6px;">(Sermon)</small></h3>
+            <div style="display: flex; align-items: baseline; gap: 6px; min-width: 0;">
+              <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;">${sermon.title}</h3>
+              <small style="color: var(--color-text-tertiary); font-size: 0.75rem; flex-shrink: 0;">(Sermon)</small>
+            </div>
           </div>
-          <button class="save-btn" onclick="handleSavedPageRemove(event, 'sermons', '${sermon.id}')" title="Remove from Saved" style="background: none; border: none; cursor: pointer; padding: 4px; color: var(--brand-sky); transition: transform 0.2s; display: flex; align-items: center; justify-content: center;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-          </button>
         </div>
       `;
     });
@@ -190,11 +205,11 @@ function renderSavedItems() {
         <div class="doc-card selectable-item" data-id="${doc.id}" data-type="mipui-aw" data-url="${doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : ''}" data-name="${doc.title}.${(doc.fileType||'PDF').toLowerCase()}" style="position: relative; align-items: center; padding: 10px 14px; min-height: auto; gap: 12px; display: flex;">
           <div class="file-icon" style="font-size: 1.1rem; width: 34px; height: 34px; background: rgba(135, 206, 235, 0.15); color: var(--brand-sky); display: flex; align-items: center; justify-content: center; border-radius: 8px; flex-shrink: 0;">📄</div>
           <div class="doc-card-content" style="flex: 1; min-width: 0;">
-            <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${doc.title} <small style="color: var(--color-text-tertiary); font-size: 0.75rem; margin-left: 6px;">(Mipui Aw)</small></h3>
+            <div style="display: flex; align-items: baseline; gap: 6px; min-width: 0;">
+              <h3 class="doc-card-title" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.3; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;">${doc.title}</h3>
+              <small style="color: var(--color-text-tertiary); font-size: 0.75rem; flex-shrink: 0;">(${escapeHTML(doc.category || 'Document')})</small>
+            </div>
           </div>
-          <button class="save-btn" onclick="handleSavedPageRemove(event, 'mipui-aw', '${doc.id}')" title="Remove from Saved" style="background: none; border: none; cursor: pointer; padding: 4px; color: var(--brand-sky); transition: transform 0.2s; display: flex; align-items: center; justify-content: center;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-          </button>
         </div>
       `;
     });
@@ -243,9 +258,6 @@ function renderSavedItems() {
         photosGrid.innerHTML += `
           <div class="masonry-item gallery-item selectable-item" data-id="${photo.id}" data-url="${photo.imageUrl}" data-name="${photo.title || 'photo'}.jpg" style="position: relative;">
             <img loading="lazy" src="${photo.imageUrl}" alt="${photo.title}" class="gallery-image" loading="lazy" style="width:100%; border-radius: var(--radius-lg); display:block; object-fit:cover;">
-            <button class="save-btn" onclick="handleSavedPageRemove(event, 'photos', '${photo.id}')" title="Remove from Saved" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); border: none; cursor: pointer; padding: 6px; border-radius: 50%; color: var(--brand-sky); display: flex; align-items: center; justify-content: center; z-index: 5; transition: transform 0.2s, background 0.2s;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-            </button>
           </div>
         `;
       }
@@ -294,16 +306,12 @@ window.handleSavedPageRemove = async function(event, collection, id) {
 
 // Setup tabs
 function setupTabs() {
-  const tabsContainer = document.getElementById('saved-tabs');
-  if (!tabsContainer) return;
+  const tabsSelect = document.getElementById('saved-tabs-select');
+  if (!tabsSelect) return;
 
-  tabsContainer.querySelectorAll('.filter-chip').forEach(btn => {
-    btn.onclick = () => {
-      tabsContainer.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentTab = btn.dataset.tab;
-      renderSavedItems();
-    };
+  tabsSelect.addEventListener('change', (e) => {
+    currentTab = e.target.value;
+    renderSavedItems();
   });
 }
 
@@ -469,30 +477,8 @@ function setupPhotoModal() {
   if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(-1); });
   if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(1); });
 
-  // Download Button
-  const dlBtn = document.getElementById('modal-download');
-  if (dlBtn) {
-    dlBtn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      const url = dlBtn.href;
-      const filename = dlBtn.getAttribute('download') || 'photo.jpg';
-      try {
-        const response = await fetch(url, { mode: 'cors' });
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
-      } catch {
-        window.open(url, '_blank');
-      }
-    });
-  }
+  // Download Button is handled dynamically in updateLightboxContent to prevent duplicate downloads
+
 
   // Keyboard Navigation
   document.addEventListener('keydown', (e) => {
@@ -506,10 +492,11 @@ function setupPhotoModal() {
 
   // Swipe and Zoom Navigation (Google Drive Style)
   const modalImg = document.getElementById('modal-image');
-  if (modalImg && !window.savedTouchZoomHandler) {
+  const photoModalEl = document.getElementById('photo-modal');
+  if (modalImg && photoModalEl && !window.savedTouchZoomHandler) {
     window.savedTouchZoomHandler = new TouchZoomHandler(
       modalImg, 
-      modal, 
+      photoModalEl, 
       () => navigateLightbox(1), // Swipe left -> next
       () => navigateLightbox(-1) // Swipe right -> prev
     );
@@ -539,7 +526,11 @@ function updateLightboxContent() {
   if (modalImage) {
     modalImage.style.opacity = '0';
     setTimeout(() => {
-      modalImage.src = photo.imageUrl;
+      let highResUrl = photo.imageUrl;
+      if (highResUrl.includes('lh3.googleusercontent.com')) {
+        highResUrl = highResUrl.split('=')[0] + '=w1600';
+      }
+      modalImage.src = highResUrl;
       modalImage.onload = () => modalImage.style.opacity = '1';
     }, 150);
     modalImage.style.transition = 'opacity 0.2s';
@@ -549,8 +540,12 @@ function updateLightboxContent() {
     if (dlUrl && dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
       dlUrl = dlUrl.split('=')[0] + '=s0';
     }
-    modalDownload.href = dlUrl;
-    modalDownload.setAttribute('download', `${photo.title || 'photo'}.jpg`);
+    modalDownload.href = '#';
+    modalDownload.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.forceDownload(dlUrl, `${photo.title || 'photo'}.jpg`);
+    };
   }
 
   if (saveBtn) {

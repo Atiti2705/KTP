@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     searchInput.value = '';
     history.pushState({ view: 'folders' }, '', window.location.pathname);
     applyFilters();
+    window.scrollTo({ top: Math.max(0, container.offsetTop - 100), behavior: 'smooth' });
   });
 
   function renderGrid(itemsToRender) {
@@ -190,6 +191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               searchInput.value = ''; // clear search when entering folder
               history.pushState({ view: 'folder', category: folderName }, '', '#folder=' + encodeURIComponent(folderName));
               applyFilters();
+              window.scrollTo({ top: Math.max(0, container.offsetTop - 100), behavior: 'smooth' });
           });
       });
       return;
@@ -778,7 +780,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (dlUrl && dlUrl.includes('lh3.googleusercontent.com') && !dlUrl.includes('=s0')) {
         dlUrl = dlUrl.split('=')[0] + '=s0';
       }
-      gjLightboxDownload.href = dlUrl || '#';
+      gjLightboxDownload.href = '#';
+      gjLightboxDownload.onclick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        let titleStr = 'photo';
+        if (currentLightboxItems && currentLightboxItems[currentLightboxIndex]) {
+            const curItem = currentLightboxItems[currentLightboxIndex];
+            titleStr = curItem.title || 'photo';
+            if (curItem.id) titleStr += `_${curItem.id}`;
+        }
+        let safeTitle = titleStr.replace(/[^a-zA-Z0-9_-]/g, '_');
+        window.forceDownload(dlUrl, `${safeTitle}.jpg`);
+      };
     }
   }
 
@@ -852,45 +866,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
   }
 
-  const downloadHandlerGj = async (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      let url = gjLightboxDownload.href;
-      if (!url || url === '#') return;
-      if (url.includes('lh3.googleusercontent.com') && !url.includes('=s0')) {
-        url = url.split('=')[0] + '=s0';
-      }
-      
-      const targetBtn = e.currentTarget;
-      const prevHtml = targetBtn.innerHTML;
-      targetBtn.innerHTML = '<span style="font-size: 14px;">⏳ Downloading...</span>';
-      
-      try {
-        const response = await fetch(url, { mode: 'cors' });
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        let titleStr = 'photo';
-        if (currentLightboxItems && currentLightboxItems[currentLightboxIndex]) {
-            const curItem = currentLightboxItems[currentLightboxIndex];
-            titleStr = curItem.title || 'photo';
-            if (curItem.id) titleStr += `_${curItem.id}`;
-        }
-        let safeTitle = titleStr.replace(/[^a-zA-Z0-9_-]/g, '_');
-        a.download = `${safeTitle}.jpg`;
-        
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
-      } catch {
-        window.open(url, '_blank');
-      }
-      targetBtn.innerHTML = prevHtml;
-  };
+  // Download handler is set dynamically in updateLightboxImage to prevent duplicate downloads
 
-  if (gjLightboxDownload) gjLightboxDownload.addEventListener('click', downloadHandlerGj);
 
 
   const detailModal = document.getElementById('ob-detail-modal');
@@ -1026,7 +1003,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="ob-modal-slider" id="ob-modal-slider">
             ${item.imageUrls.map((url, i) => `
               <div class="ob-modal-slide" style="cursor: zoom-in;" title="Click to view fullscreen">
-                <img loading="lazy" src="${convertDriveUrl(url)}" alt="${item.title || 'Photo'}">
+                <img loading="lazy" src="${convertDriveUrl(url, 'image', 'w1600')}" alt="${item.title || 'Photo'}">
               </div>
             `).join('')}
           </div>
@@ -1050,9 +1027,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       
     } else if (item.imageUrls && item.imageUrls.length === 1) {
-      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrls[0])}" class="ob-modal-image" alt="${item.title || 'Photo'}" style="cursor: zoom-in;" title="Click to view fullscreen">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrls[0], 'image', 'w1600')}" class="ob-modal-image" alt="${item.title || 'Photo'}" style="cursor: zoom-in;" title="Click to view fullscreen">`;
     } else if (item.imageUrl) {
-      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrl)}" class="ob-modal-image" alt="${item.title || 'Photo'}" style="cursor: zoom-in;" title="Click to view fullscreen">`;
+      modalImgContainer.innerHTML = `<img loading="lazy" src="${convertDriveUrl(item.imageUrl, 'image', 'w1600')}" class="ob-modal-image" alt="${item.title || 'Photo'}" style="cursor: zoom-in;" title="Click to view fullscreen">`;
     } else {
       modalImgContainer.innerHTML = '';
     }
@@ -1081,7 +1058,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (metaTitle) metaTitle.content = `${defaultCategoryName} — KṬP Saikhamakawn`;
     const metaOgDesc = document.querySelector('meta[property="og:description"]');
     if (metaOgDesc) metaOgDesc.content = defaultCategoryName;
-    // Fetch data and settings concurrently
+    // 1. Instant render from localStorage cache
+    try {
+      const cached = localStorage.getItem('db_' + collectionName);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          baseItems = parsed;
+          baseItems.sort((a, b) => {
+            if (a.date && b.date) return new Date(b.date) - new Date(a.date);
+            const yearA = a.year || a.title || '';
+            const yearB = b.year || b.title || '';
+            return yearB.localeCompare(yearA);
+          });
+          dataLoaded = true;
+          applyFilters();
+        }
+      }
+    } catch (e) {}
+
+    // 2. Fetch data and settings concurrently asynchronously
     const [fetchedItems, settings] = await Promise.all([
       DbService.get(collectionName),
       DbService.get('settings')
@@ -1089,6 +1085,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     baseItems = fetchedItems || [];
     window.appSettings = settings || {};
+    try {
+      if (fetchedItems && Array.isArray(fetchedItems)) {
+        localStorage.setItem('db_' + collectionName, JSON.stringify(fetchedItems));
+      }
+    } catch (e) {}
     
     // Sort items by date descending, fallback to year or title
     baseItems.sort((a, b) => {

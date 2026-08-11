@@ -918,7 +918,7 @@ function formatDateLong(dateStr) {
 })();
 
 // Helper to convert Google Drive URLs to working direct links
-function convertDriveUrl(url, type = 'image') {
+function convertDriveUrl(url, type = 'image', size = 'w600') {
   if (!url) return '';
   let fileId = '';
   // If already an embedded folder, do not convert
@@ -931,13 +931,20 @@ function convertDriveUrl(url, type = 'image') {
   if (fileIdMatch && fileIdMatch[1]) {
     fileId = fileIdMatch[1];
   } else {
-    // Pattern 2: id=FILE_ID
-    const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (idParamMatch && idParamMatch[1] && (url.includes('drive.google.com') || url.includes('docs.google.com'))) {
-      fileId = idParamMatch[1];
+    // Pattern 2: lh3.googleusercontent.com/d/FILE_ID (already-converted URLs stored in DB)
+    const lh3Match = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
+    if (lh3Match && lh3Match[1]) {
+      fileId = lh3Match[1];
+    } else {
+      // Pattern 3: id=FILE_ID
+      const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (idParamMatch && idParamMatch[1] && (url.includes('drive.google.com') || url.includes('docs.google.com'))) {
+        fileId = idParamMatch[1];
+      }
     }
   }
-  // Pattern 3: Folders
+
+  // Pattern 4: Folders
   const folderIdMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
   if (folderIdMatch && folderIdMatch[1]) {
     return `https://drive.google.com/embeddedfolderview?id=${folderIdMatch[1]}#grid`;
@@ -945,13 +952,12 @@ function convertDriveUrl(url, type = 'image') {
 
   if (fileId) {
     if (type === 'image') {
-      return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
+      // lh3.googleusercontent.com works for publicly shared Drive files without auth
+      // size parameter (e.g. w600 or w1600) controls image resolution
+      return `https://lh3.googleusercontent.com/d/${fileId}=${size}`;
     } else {
-      // For docs/sermons/PDFs/audio, standard web preview is best for viewing/downloading.
       return `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
     }
   }
   return url;
 }
-
-

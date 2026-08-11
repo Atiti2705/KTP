@@ -30,7 +30,7 @@ const DbService = {
         // Query Firestore with a 10-second timeout fallback for mobile networks
         const snapshot = await this._withTimeout(
           FirebaseConfig.db.collection(collection).get(),
-          10000,
+          6000,
           `Firestore read timeout for ${collection}`
         );
         const items = [];

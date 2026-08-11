@@ -7,10 +7,10 @@
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/variables.css?v=155">
-  <link rel="stylesheet" href="../assets/css/base.css?v=155">
-  <link rel="stylesheet" href="../assets/css/components.css?v=155">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=155">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=1785271586">
+  <link rel="stylesheet" href="../assets/css/base.css?v=1785271586">
+  <link rel="stylesheet" href="../assets/css/components.css?v=1785271586">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=1785271586">
 </head>
 <body>
 
@@ -27,9 +27,27 @@
           <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
           <div>
             <h1 class="admin-page-title">Dashboard Overview</h1>
-            <p class="admin-page-desc">Overview of content and activities at KṬP Saikhamakawn</p>
+            <p class="admin-page-desc">Control center & overview for KṬP Saikhamakawn</p>
           </div>
         </div>
+      </div>
+
+      <!-- Quick Action Shortcuts Bar -->
+      <div class="quick-action-bar">
+        <span style="font-size: var(--fs-xs); font-weight: var(--fw-bold); color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px;">⚡ Quick Actions:</span>
+        <a href="photos.html" class="quick-action-btn primary">📸 Add Photo</a>
+        <a href="announcements.html" class="quick-action-btn">📢 Add Notice</a>
+        <a href="sermons.html" class="quick-action-btn">📖 Add Sermon</a>
+        <a href="documents.html?collection=mipuiaw&title=Mipui%20Aw" class="quick-action-btn">📄 Add Document</a>
+        <a href="branch-chanchin.html" class="quick-action-btn">✍️ Add Note</a>
+        <a href="lyrics.html" class="quick-action-btn">🎵 Add Lyric</a>
+        <a href="news.html" class="quick-action-btn">📰 Add News</a>
+      </div>
+
+      <!-- Section Header: Content Overview -->
+      <div class="data-table-header" style="margin-bottom: var(--sp-3); border-bottom: 1px solid var(--color-border-light);">
+        <h2 style="font-size: var(--fs-lg); font-weight: var(--fw-semibold); margin: 0;">📊 Content Overview</h2>
+        <span style="font-size: var(--fs-xs); color: var(--color-text-secondary);">Summary of active content items</span>
       </div>
 
       <!-- Stats Grid -->
@@ -125,7 +143,7 @@
             <div class="stat-card-icon" style="color: var(--color-success); background: rgba(34,197,94,0.15);">🟢</div>
           </div>
           <div class="stat-value" style="font-size: 1.5rem;">Connected</div>
-          <a href="https://console.firebase.google.com/project/ktp-skk/overview" target="_blank" style="font-size: var(--fs-xs); color: var(--color-success); text-decoration: none; font-weight: var(--fw-medium); display: inline-block; margin-top: var(--sp-2);">View Live Firebase Console ↗</a>
+          <a href="https://console.firebase.google.com/project/saikhamakawnktp-67519/overview" target="_blank" style="font-size: var(--fs-xs); color: var(--color-success); text-decoration: none; font-weight: var(--fw-medium); display: inline-block; margin-top: var(--sp-2);">View Live Firebase Console ↗</a>
         </div>
       </div>
 
@@ -154,27 +172,66 @@
         </div>
       </div>
 
+      <!-- Pinned Items Section -->
+      <div class="data-table-wrapper" style="margin-top: var(--sp-6);">
+        <div class="data-table-header" style="border-bottom: 1px solid var(--color-border-light);">
+          <h2 style="font-size: var(--fs-lg); font-weight: var(--fw-semibold);">📌 Pinned to Homepage</h2>
+          <span style="font-size: var(--fs-xs); color: var(--color-text-secondary);">Items currently visible on the homepage</span>
+        </div>
+        
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Item Type</th>
+                <th>Title / Name</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="pinned-items-list">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </main>
   </div>
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=155"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=1785271586"></script>
 
   <!-- App Configuration & Services -->
-  <script defer src="../assets/js/firebase-config.js?v=155"></script>
-  <script defer src="../assets/js/theme.js?v=155"></script>
-  <script defer src="../assets/js/data.js?v=155"></script>
-  <script defer src="../assets/js/auth.js?v=155"></script>
-  <script defer src="../assets/js/db-service.js?v=155"></script>
-  <script defer src="../assets/js/admin.js?v=155"></script>
+  <script defer src="../assets/js/firebase-config.js?v=1785271586"></script>
+  <script defer src="../assets/js/theme.js?v=1785271586"></script>
+  <script defer src="../assets/js/data.js?v=1785271586"></script>
+  <script defer src="../assets/js/auth.js?v=1785271586"></script>
+  <script defer src="../assets/js/db-service.js?v=1785271586"></script>
+  <script defer src="../assets/js/admin.js?v=1785271586"></script>
   
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       loadDashboardStats();
     });
+
+    async function unpinItem(targetCollection, id) {
+      if (!confirm("Are you sure you want to unpin this item from the homepage?")) return;
+      try {
+        await AdminData.update(targetCollection, id, { pinnedToHomepage: false });
+        if (typeof AdminToast !== 'undefined') {
+          AdminToast.show('Item unpinned from homepage!', 'success');
+        }
+        loadDashboardStats();
+      } catch (err) {
+        console.error("Error unpinning item:", err);
+        alert("Failed to unpin item.");
+      }
+    }
 
     function loadDashboardStats() {
       // 1. Read lists from LocalStorage
@@ -184,6 +241,12 @@
       const announcements = AdminData.get('announcements') || [];
       const lyrics = AdminData.get('lyrics') || [];
       const branchChanchin = AdminData.get('branch-chanchin') || [];
+      const news = AdminData.get('news') || [];
+      const lawmpuina = AdminData.get('lawmpuina') || [];
+      const sunna = AdminData.get('sunna') || [];
+      const kohhranChanchin = AdminData.get('kohhran-chanchin') || [];
+      const kohhranUpa = AdminData.get('kohhran-upa') || [];
+      const goldenJubilee = AdminData.get('golden-jubilee') || [];
 
       // 2. Set stats values
       document.getElementById('count-photos').textContent = photos.length;
@@ -245,32 +308,82 @@
             </td>
           </tr>
         `;
-        return;
+      } else {
+        container.innerHTML = topRecent.map(act => {
+          let typeBadge = '';
+          if (act.type === 'Photo') typeBadge = '<span class="badge badge-primary">📸 Photo</span>';
+          else if (act.type === 'Document') typeBadge = '<span class="badge badge-gold">📄 Document</span>';
+          else if (act.type === 'Sermon') typeBadge = '<span class="badge badge-red">📖 Sermon</span>';
+          else if (act.type === 'Lyric') typeBadge = '<span class="badge" style="background:#0ea5e9;color:#fff;">🎵 Lyric</span>';
+          else if (act.type === 'Branch Chanchin') typeBadge = '<span class="badge" style="background:#8b5cf6;color:#fff;">📰 Branch Chanchin</span>';
+          else typeBadge = '<span class="badge" style="background:#22c55e;color:#fff;">📢 Announcement</span>';
+
+          return `
+            <tr>
+              <td>${typeBadge}</td>
+              <td style="font-weight: var(--fw-medium); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                ${act.title || 'Untitled'}
+              </td>
+              <td><span style="font-size: var(--fs-xs); color: var(--color-text-secondary);">${act.displayCategory}</span></td>
+              <td>📅 ${formatDate(act.date)}</td>
+              <td>
+                <a href="${act.manageUrl}" class="btn btn-outline btn-sm" style="padding: 4px 8px;">✏️ Manage</a>
+              </td>
+            </tr>
+          `;
+        }).join('');
       }
 
-      container.innerHTML = topRecent.map(act => {
-        let typeBadge = '';
-        if (act.type === 'Photo') typeBadge = '<span class="badge badge-primary">📸 Photo</span>';
-        else if (act.type === 'Document') typeBadge = '<span class="badge badge-gold">📄 Document</span>';
-        else if (act.type === 'Sermon') typeBadge = '<span class="badge badge-red">📖 Sermon</span>';
-        else if (act.type === 'Lyric') typeBadge = '<span class="badge" style="background:#0ea5e9;color:#fff;">🎵 Lyric</span>';
-        else if (act.type === 'Branch Chanchin') typeBadge = '<span class="badge" style="background:#8b5cf6;color:#fff;">📰 Branch Chanchin</span>';
-        else typeBadge = '<span class="badge" style="background:#22c55e;color:#fff;">📢 Announcement</span>';
+      // 5. Pinned Items (supports all collections)
+      const pinnedItems = [
+        ...photos.filter(p => p.pinnedToHomepage).map(p => ({ ...p, targetCol: 'photos', type: 'Photo', manageUrl: 'photos.html' })),
+        ...news.filter(n => n.pinnedToHomepage).map(n => ({ ...n, targetCol: 'news', type: 'News', manageUrl: 'news.html' })),
+        ...lawmpuina.filter(l => l.pinnedToHomepage).map(l => ({ ...l, targetCol: 'lawmpuina', type: 'Lawmpuina', manageUrl: 'lawmpuina.html' })),
+        ...sunna.filter(s => s.pinnedToHomepage).map(s => ({ ...s, targetCol: 'sunna', type: 'Sunna', manageUrl: 'sunna.html' })),
+        ...kohhranChanchin.filter(k => k.pinnedToHomepage).map(k => ({ ...k, targetCol: 'kohhran-chanchin', type: 'Kohhran Chanchin', manageUrl: 'kohhran-chanchin.html' })),
+        ...kohhranUpa.filter(u => u.pinnedToHomepage).map(u => ({ ...u, targetCol: 'kohhran-upa', type: 'Kohhran Upa', manageUrl: 'kohhran-upa.html' })),
+        ...goldenJubilee.filter(g => g.pinnedToHomepage).map(g => ({ ...g, targetCol: 'golden-jubilee', type: 'Golden Jubilee', manageUrl: 'golden-jubilee.html' }))
+      ];
 
-        return `
+      // Sort by date newest first
+      pinnedItems.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+      const pinnedContainer = document.getElementById('pinned-items-list');
+
+      if (pinnedItems.length === 0) {
+        pinnedContainer.innerHTML = `
           <tr>
-            <td>${typeBadge}</td>
-            <td style="font-weight: var(--fw-medium); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-              ${act.title || 'Untitled'}
-            </td>
-            <td><span style="font-size: var(--fs-xs); color: var(--color-text-secondary);">${act.displayCategory}</span></td>
-            <td>📅 ${formatDate(act.date)}</td>
-            <td>
-              <a href="${act.manageUrl}" class="btn btn-outline btn-sm" style="padding: 4px 8px;">✏️ Manage</a>
+            <td colspan="4" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+              No items pinned to homepage.
             </td>
           </tr>
         `;
-      }).join('');
+      } else {
+        pinnedContainer.innerHTML = pinnedItems.map(item => {
+          let typeBadge = '';
+          if (item.type === 'Photo') typeBadge = '<span class="badge badge-primary">📸 Photo</span>';
+          else if (item.type === 'News') typeBadge = '<span class="badge badge-secondary">📰 News</span>';
+          else if (item.type === 'Lawmpuina') typeBadge = '<span class="badge badge-gold">🎉 Lawmpuina</span>';
+          else if (item.type === 'Sunna') typeBadge = '<span class="badge" style="background:#475569;color:#fff;">🕊️ Sunna</span>';
+          else typeBadge = `<span class="badge badge-secondary">${item.type}</span>`;
+
+          return `
+            <tr>
+              <td>${typeBadge}</td>
+              <td style="font-weight: var(--fw-medium); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                ${item.title || item.name || 'Untitled'}
+              </td>
+              <td>📅 ${formatDate(item.date)}</td>
+              <td>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <button onclick="unpinItem('${item.targetCol}', '${item.id}')" class="btn btn-outline btn-sm" style="padding: 3px 8px; color: var(--color-error); border-color: rgba(239,68,68,0.3);" title="Unpin from Homepage">📌 Unpin</button>
+                  <a href="${item.manageUrl}" class="btn btn-outline btn-sm" style="padding: 3px 8px;">✏️ Manage</a>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
   </script>
 </body>

@@ -51,20 +51,39 @@ const SearchEngine = {
   },
 
   /**
-   * Helper to extract date from title if it matches DD.MM.YYYY or DD.MM.YY, otherwise fallback to item.date
+   * Helper to extract date from title/description/fields (handles DD.MM.YY, DD.MM.YYYY, DD/MM/YY, etc.)
    */
   _getDate(item) {
-    if (item.title) {
-      const dateMatch = item.title.match(/(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);
-      if (dateMatch) {
-        const day = parseInt(dateMatch[1], 10);
-        const month = parseInt(dateMatch[2], 10) - 1;
-        let year = parseInt(dateMatch[3], 10);
-        if (dateMatch[3].length === 2) year += 2000;
-        return new Date(year, month, day);
+    if (!item) return 0;
+
+    // 1. If item.date exists and is a valid timestamp or date string, prioritize it
+    if (item.date) {
+      const parsed = new Date(item.date).getTime();
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+
+    // 2. If item.createdAt exists and is a valid timestamp/date
+    if (item.createdAt) {
+      const parsed = new Date(item.createdAt).getTime();
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+
+    // 3. Fallback: extract DD.MM.YYYY or DD.MM.YY from title/description/fileName using word boundaries
+    const targetStr = `${item.title || ''} ${item.fileName || ''} ${item.description || ''}`;
+    const dateMatch = targetStr.match(/\b(\d{1,2})[\.\/\-\s](\d{1,2})[\.\/\-\s](\d{2,4})\b/);
+    if (dateMatch) {
+      const day = parseInt(dateMatch[1], 10);
+      const month = parseInt(dateMatch[2], 10) - 1;
+      let year = parseInt(dateMatch[3], 10);
+      if (dateMatch[3].length === 2) {
+        year += 2000;
+      }
+      if (month >= 0 && month < 12 && day >= 1 && day <= 31 && year >= 1900 && year <= 2100) {
+        return new Date(year, month, day).getTime();
       }
     }
-    return new Date(item.date);
+
+    return 0;
   },
 
   /**

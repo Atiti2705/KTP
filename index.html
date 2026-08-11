@@ -8,12 +8,14 @@
   <meta name="description"
     content="KṬP Saikhamakawn — Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam. Established 1975. A church community in Saikhamakawn, Mizoram.">
   <meta name="keywords" content="KTP, Kristian Thalai Pawl, Saikhamakawn, Mizoram, church, Christian, Mizo">
+  <link rel="canonical" href="https://saikhamakawnktp.org/" />
+  <meta name="google-site-verification" content="U-KILgL-dnG_Yminnw7J6VImeO-iqhM8VLymELHHhdY" />
   <meta name="google-site-verification" content="jtY9WQfZJXgzxYhd2B27yhK2Ys8-gTYc-Kz90Hr0DIU" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="KṬP Saikhamakawn — Kristian Ṭhalai Pawl">
   <meta property="og:description" content="Kristian Ṭhalai Pawl, Rawngbawl Tura Chhandam. Established 1975.">
-  <meta property="og:image" content="assets/images/logo.png">
+  <meta property="og:image" content="https://saikhamakawnktp.org/assets/images/logo.png">
   <meta property="og:type" content="website">
 
   <!-- Favicon -->
@@ -34,14 +36,19 @@
   <link rel="preconnect" href="https://firebasestorage.googleapis.com">
   <link rel="preconnect" href="https://firestore.googleapis.com">
 
+  <!-- DNS prefetch for lazy-loaded third-party resources -->
+  <link rel="dns-prefetch" href="https://www.youtube.com">
+  <link rel="dns-prefetch" href="https://www.googleapis.com">
+  <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
+
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=155">
-  <link rel="stylesheet" href="assets/css/base.css?v=155">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=155">
-  <link rel="stylesheet" href="assets/css/animations.css?v=155">
-  <link rel="stylesheet" href="assets/css/components.css?v=155">
-  <link rel="stylesheet" href="assets/css/layout.css?v=155">
-  <link rel="stylesheet" href="assets/css/pages.css?v=155">
+  <link rel="stylesheet" href="assets/css/variables.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/base.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/animations.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/components.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/layout.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/pages.css?v=1785271586">
 </head>
 
 <body>
@@ -191,20 +198,21 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=155"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=1785271586"></script>
 
   <!-- App Configuration & Services -->
-  <script defer src="assets/js/firebase-config.js?v=155"></script>
-  <script defer src="assets/js/theme.js?v=155"></script>
-  <script defer src="assets/js/data.js?v=155"></script>
-  <script defer src="assets/js/auth.js?v=155"></script>
-  <script defer src="assets/js/db-service.js?v=155"></script>
-  <script defer src="assets/js/save-service.js?v=155"></script>
-  <script defer src="assets/js/components.js?v=155"></script>
-  <script defer src="assets/js/search.js?v=155"></script>
-  <script defer src="assets/js/app.js?v=155"></script>
+  <script defer src="assets/js/firebase-config.js?v=1785271586"></script>
+  <script defer src="assets/js/theme.js?v=1785271586"></script>
+  <script defer src="assets/js/data.js?v=1785271586"></script>
+  <script defer src="assets/js/auth.js?v=1785271586"></script>
+  <script defer src="assets/js/db-service.js?v=1785271586"></script>
+  <script defer src="assets/js/save-service.js?v=1785271586"></script>
+  <script defer src="assets/js/components.js?v=1785271586"></script>
+  <script defer src="assets/js/search.js?v=1785271586"></script>
+  <script defer src="assets/js/app.js?v=1785271586"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // Render static header and footer immediately for fast visual load
@@ -400,21 +408,56 @@
         }
 
         if (videoId) {
-          embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0`;
+          embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1`;
         }
 
         const videoContainer = document.createElement('div');
         videoContainer.className = 'video-container';
-        videoContainer.style.cssText = 'position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); background: #000;';
-        
-        const iframe = document.createElement('iframe');
-        iframe.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;';
-        iframe.src = embedUrl;
-        iframe.title = 'YouTube video player';
-        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-        iframe.allowFullscreen = true;
-        
-        videoContainer.appendChild(iframe);
+        videoContainer.style.cssText = 'position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); background: #000; cursor: pointer;';
+
+        if (videoId) {
+          // Lazy-load facade: show thumbnail, load iframe only on click
+          const thumbUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+            videoContainer.innerHTML = `
+              <img src="${thumbUrl}" alt="Video thumbnail" loading="lazy"
+                style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg);transition:transform 0.3s ease;">
+              <div class="yt-play-btn" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:48px;background:#FF0000;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:all 0.25s cubic-bezier(0,0,0.2,1);pointer-events:none;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white" style="margin-left: 2px;"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            `;
+            videoContainer.onmouseenter = () => {
+              const btn = videoContainer.querySelector('.yt-play-btn');
+              const img = videoContainer.querySelector('img');
+              if (btn) { btn.style.background = '#212121'; btn.style.transform = 'translate(-50%,-50%) scale(1.12)'; }
+              if (img) { img.style.transform = 'scale(1.03)'; }
+            };
+            videoContainer.onmouseleave = () => {
+              const btn = videoContainer.querySelector('.yt-play-btn');
+              const img = videoContainer.querySelector('img');
+              if (btn) { btn.style.background = '#FF0000'; btn.style.transform = 'translate(-50%,-50%) scale(1)'; }
+              if (img) { img.style.transform = 'scale(1)'; }
+            };
+          videoContainer.addEventListener('click', () => {
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
+            iframe.src = embedUrl;
+            iframe.title = 'YouTube video player';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.allowFullscreen = true;
+            videoContainer.innerHTML = '';
+            videoContainer.appendChild(iframe);
+          }, { once: true });
+        } else {
+          // Non-YouTube embed (e.g. playlist): load directly
+          const iframe = document.createElement('iframe');
+          iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
+          iframe.src = embedUrl;
+          iframe.title = 'YouTube video player';
+          iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+          iframe.allowFullscreen = true;
+          videoContainer.appendChild(iframe);
+        }
+
         grid.appendChild(videoContainer);
       });
     }
@@ -657,7 +700,7 @@
         }
         
         return `
-          <a href="photos.html" class="reveal" style="cursor: pointer; text-decoration: none; color: inherit; display: flex; flex-direction: column; background: var(--color-bg-card); overflow: hidden; box-shadow: var(--card-shadow); transition: transform 0.2s; border-radius: var(--radius-lg); border: 1px solid var(--color-border-light);">
+          <a href="photos.html?id=${encodeURIComponent(photo.id)}" class="reveal" style="cursor: pointer; text-decoration: none; color: inherit; display: flex; flex-direction: column; background: var(--color-bg-card); overflow: hidden; box-shadow: var(--card-shadow); transition: transform 0.2s; border-radius: var(--radius-lg); border: 1px solid var(--color-border-light);">
             <div style="width: 100%; aspect-ratio: 1/1; overflow: hidden; background: var(--color-surface);">
               <img src="${formattedUrl}" alt="${photo.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; object-position: center 15%; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
             </div>
@@ -712,7 +755,7 @@
           </div>
           <div class="doc-card-actions" style="margin-top:var(--sp-3);">
             <button class="btn btn-outline btn-sm" onclick="Toast.show('Preview coming soon!', 'info')">👁 Read</button>
-            <button class="btn btn-primary btn-sm" onclick="${sermon.downloadUrl && sermon.downloadUrl !== '#' ? `window.forceDownload('${sermon.downloadUrl}')` : `Toast.show('Download started (Simulated)!', 'success')`}">⬇ Download</button>
+            <button class="btn btn-primary btn-sm" onclick="${sermon.downloadUrl && sermon.downloadUrl !== '#' ? `window.forceDownload('${sermon.downloadUrl}', '${(sermon.title || 'sermon').replace(/'/g, "\\'")}.pdf')` : `Toast.show('Download started (Simulated)!', 'success')`}">⬇ Download</button>
           </div>
         </div>
       `).join('');

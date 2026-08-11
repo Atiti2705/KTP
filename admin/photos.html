@@ -8,10 +8,10 @@
   <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../assets/css/variables.css?v=155">
-  <link rel="stylesheet" href="../assets/css/base.css?v=155">
-  <link rel="stylesheet" href="../assets/css/components.css?v=155">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=155">
+  <link rel="stylesheet" href="../assets/css/variables.css?v=1785271586">
+  <link rel="stylesheet" href="../assets/css/base.css?v=1785271586">
+  <link rel="stylesheet" href="../assets/css/components.css?v=1785271586">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=1785271586">
 </head>
 
 <body>
@@ -64,8 +64,21 @@
         </div>
       </div>
 
+      <!-- Album Header -->
+      <div id="admin-album-header" style="display: none; margin-bottom: var(--sp-4);">
+        <button id="btn-back-to-albums" class="btn btn-outline btn-sm" style="margin-bottom: var(--sp-3); border-radius: var(--radius-full);">
+          ⬅ Back to Albums
+        </button>
+        <h2 id="admin-album-title" style="font-size: var(--fs-xl); font-weight: var(--fw-bold); margin: 0; color: var(--brand-sky);"></h2>
+      </div>
+
+      <!-- Album Grid -->
+      <div id="admin-album-grid" class="masonry-grid" style="margin-bottom: var(--sp-4);">
+        <!-- Populated via JS -->
+      </div>
+
       <!-- Data Table -->
-      <div class="data-table-wrapper">
+      <div id="admin-photo-table-container" class="data-table-wrapper" style="display: none;">
         <div class="data-table">
           <table>
             <thead>
@@ -151,6 +164,13 @@
               📌 Pin to Homepage Gallery
             </label>
           </div>
+
+          <div class="form-group checkbox-group" style="margin-bottom: var(--sp-2);">
+            <label style="display: flex; align-items: center; gap: var(--sp-2); cursor: pointer;">
+              <input type="checkbox" id="photo-album-cover" style="width: 16px; height: 16px;">
+              🌁 Set as Album Cover
+            </label>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
@@ -220,27 +240,29 @@
 
   <!-- Scripts -->
   <!-- SortableJS for drag-and-drop -->
-  <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=155"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js?v=1785271586"></script>
   <!-- Firebase SDK Compat -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=155"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=1785271586"></script>
 
   <!-- App Configuration & Services -->
-  <script defer src="../assets/js/firebase-config.js?v=155"></script>
-  <script defer src="../assets/js/theme.js?v=155"></script>
-  <script defer src="../assets/js/data.js?v=155"></script>
-  <script defer src="../assets/js/auth.js?v=155"></script>
-  <script defer src="../assets/js/db-service.js?v=155"></script>
-  <script defer src="../assets/js/components.js?v=155"></script>
-  <script defer src="../assets/js/search.js?v=155"></script>
-  <script defer src="../assets/js/admin.js?v=155"></script>
+  <script defer src="../assets/js/firebase-config.js?v=1785271586"></script>
+  <script defer src="../assets/js/theme.js?v=1785271586"></script>
+  <script defer src="../assets/js/data.js?v=1785271586"></script>
+  <script defer src="../assets/js/auth.js?v=1785271586"></script>
+  <script defer src="../assets/js/db-service.js?v=1785271586"></script>
+  <script defer src="../assets/js/components.js?v=1785271586"></script>
+  <script defer src="../assets/js/search.js?v=1785271586"></script>
+  <script defer src="../assets/js/admin.js?v=1785271586"></script>
 
   <script>
     let currentSearch = '';
-    let currentCategoryFilter = 'All';
     let currentYearFilter = 'All';
+    let currentCategoryFilter = 'All';
     let currentSubCategoryFilter = 'All';
+    let activeAdminAlbumKey = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       // Toast notification system helper
@@ -422,11 +444,35 @@
       AdminData.save('settings', settings);
     }
 
+    window.openAdminAlbum = function(albumKey) {
+      activeAdminAlbumKey = albumKey;
+      renderPhotosTable();
+    };
+
+    document.getElementById('btn-back-to-albums').addEventListener('click', () => {
+      if (activeAdminAlbumKey && activeAdminAlbumKey.includes('::')) {
+        activeAdminAlbumKey = activeAdminAlbumKey.split('::')[0];
+      } else {
+        activeAdminAlbumKey = null;
+      }
+      // Reset select-all and checkboxes when going back
+      const selectAllCb = document.getElementById('select-all-checkbox');
+      if (selectAllCb) selectAllCb.checked = false;
+      document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = false);
+      updateBulkDeleteUI();
+      renderPhotosTable();
+    });
+
     function renderPhotosTable() {
       const tbody = document.getElementById('photos-table-body');
+      const tableContainer = document.getElementById('admin-photo-table-container');
+      const albumGrid = document.getElementById('admin-album-grid');
+      const albumHeader = document.getElementById('admin-album-header');
+      const albumTitleDisplay = document.getElementById('admin-album-title');
+
       if (!tbody) return;
 
-      const photos = AdminData.get('photos');
+      const photos = AdminData.get('photos') || [];
 
       // Filter photos by search, year, category, and sub-category
       let filtered = photos;
@@ -444,23 +490,148 @@
         filtered = filtered.filter(p => p.subcategory === currentSubCategoryFilter);
       }
 
-      if (filtered.length === 0) {
+      if (activeAdminAlbumKey === null) {
+        // === LEVEL 1: CATEGORY ALBUMS ===
+        tableContainer.style.display = 'none';
+        albumHeader.style.display = 'none';
+        albumGrid.style.display = 'grid';
+        
+        const albumsMap = new Map();
+        filtered.forEach(photo => {
+          const cat = photo.category || 'General';
+          if (!albumsMap.has(cat)) albumsMap.set(cat, { key: cat, title: cat, photos: [], coverPhoto: null });
+          const album = albumsMap.get(cat);
+          album.photos.push(photo);
+          if (photo.isAlbumCover && (!photo.subcategory || photo.subcategory === '')) album.coverPhoto = photo;
+          else if (photo.isAlbumCover && !album.coverPhoto) album.coverPhoto = photo;
+        });
+        
+        const albums = Array.from(albumsMap.values());
+        albums.forEach(album => {
+          album.photos.sort((a,b) => new Date(b.date||0) - new Date(a.date||0));
+          if (!album.coverPhoto && album.photos.length > 0) album.coverPhoto = album.photos[0];
+        });
+        albums.sort((a,b) => new Date(b.photos[0]?.date||0) - new Date(a.photos[0]?.date||0));
+        
+        if (albums.length === 0) {
+          albumGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:var(--sp-6); color:var(--color-text-secondary);">No albums found matching filters.</div>`;
+        } else {
+          albumGrid.innerHTML = albums.map(album => {
+            let imgSrc = '../assets/images/logo.png';
+            if (album.coverPhoto && album.coverPhoto.imageUrl) {
+               imgSrc = convertDriveUrl(album.coverPhoto.imageUrl);
+               if (!imgSrc.includes('embeddedfolderview')) imgSrc = imgSrc.replace(/=w\d+/, '=w400');
+               else imgSrc = '../assets/images/logo.png';
+            }
+            return `
+              <div class="masonry-item album-card" onclick="openAdminAlbum('${album.key}')" style="aspect-ratio: 1/1; cursor:pointer; position:relative; overflow:hidden; border-radius:var(--radius-lg); background:var(--color-surface); border:1px solid var(--color-border); box-shadow:var(--shadow-sm); transition:transform 0.2s;">
+                <div style="position:absolute; inset:0; background:var(--color-bg-hover);">
+                  <img loading="lazy" src="${imgSrc}" style="width:100%; height:100%; object-fit:cover;">
+                  <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%);"></div>
+                  <div style="position:absolute; bottom:0; left:0; width:100%; padding:var(--sp-3); display:flex; flex-direction:column; justify-content:flex-end;">
+                    <h3 style="color:#fff; margin:0 0 4px 0; font-size:var(--fs-md); font-weight:var(--fw-bold); text-shadow:0 2px 4px rgba(0,0,0,0.8);">${album.title}</h3>
+                    <p style="color:rgba(255,255,255,0.9); margin:0; font-size:var(--fs-xs); text-shadow:0 1px 2px rgba(0,0,0,0.8);">🗂️ ${album.photos.length} Photo${album.photos.length!==1?'s':''}</p>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } else if (!activeAdminAlbumKey.includes('::')) {
+        // === LEVEL 2: INSIDE CATEGORY (Subcategories Grid + Loose Photos Table) ===
+        tableContainer.style.display = 'block';
+        albumHeader.style.display = 'block';
+        albumGrid.style.display = 'grid';
+
+        const cat = activeAdminAlbumKey;
+        albumTitleDisplay.textContent = cat;
+        
+        filtered = filtered.filter(p => (p.category || 'General') === cat);
+        
+        const subcatsMap = new Map();
+        const loosePhotos = [];
+        
+        filtered.forEach(photo => {
+          if (photo.subcategory && photo.subcategory.trim() !== '') {
+            const sub = photo.subcategory.trim();
+            const key = `${cat}::${sub}`;
+            if (!subcatsMap.has(key)) subcatsMap.set(key, { key: key, title: sub, photos: [], coverPhoto: null });
+            const album = subcatsMap.get(key);
+            album.photos.push(photo);
+            if (photo.isAlbumCover) album.coverPhoto = photo;
+          } else {
+            loosePhotos.push(photo);
+          }
+        });
+        
+        const subAlbums = Array.from(subcatsMap.values());
+        subAlbums.forEach(album => {
+          album.photos.sort((a,b) => new Date(b.date||0) - new Date(a.date||0));
+          if (!album.coverPhoto && album.photos.length > 0) album.coverPhoto = album.photos[0];
+        });
+        subAlbums.sort((a,b) => new Date(b.photos[0]?.date||0) - new Date(a.photos[0]?.date||0));
+        
+        if (subAlbums.length === 0) {
+          albumGrid.style.display = 'none';
+        } else {
+          albumGrid.innerHTML = subAlbums.map(album => {
+            let imgSrc = '../assets/images/logo.png';
+            if (album.coverPhoto && album.coverPhoto.imageUrl) {
+               imgSrc = convertDriveUrl(album.coverPhoto.imageUrl);
+               if (!imgSrc.includes('embeddedfolderview')) imgSrc = imgSrc.replace(/=w\d+/, '=w400');
+               else imgSrc = '../assets/images/logo.png';
+            }
+            return `
+              <div class="masonry-item album-card" onclick="openAdminAlbum('${album.key}')" style="aspect-ratio: 1/1; cursor:pointer; position:relative; overflow:hidden; border-radius:var(--radius-lg); background:var(--color-surface); border:1px solid var(--color-border); box-shadow:var(--shadow-sm); transition:transform 0.2s;">
+                <div style="position:absolute; inset:0; background:var(--color-bg-hover);">
+                  <img loading="lazy" src="${imgSrc}" style="width:100%; height:100%; object-fit:cover;">
+                  <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%);"></div>
+                  <div style="position:absolute; bottom:0; left:0; width:100%; padding:var(--sp-3); display:flex; flex-direction:column; justify-content:flex-end;">
+                    <h3 style="color:#fff; margin:0 0 4px 0; font-size:var(--fs-md); font-weight:var(--fw-bold); text-shadow:0 2px 4px rgba(0,0,0,0.8);">${album.title}</h3>
+                    <p style="color:rgba(255,255,255,0.9); margin:0; font-size:var(--fs-xs); text-shadow:0 1px 2px rgba(0,0,0,0.8);">🗂️ ${album.photos.length} Photo${album.photos.length!==1?'s':''}</p>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+        
+        renderTableRows(loosePhotos, tbody);
+
+      } else {
+        // === LEVEL 3: INSIDE SUBCATEGORY (Photos Table Only) ===
+        tableContainer.style.display = 'block';
+        albumHeader.style.display = 'block';
+        albumGrid.style.display = 'none';
+        
+        const [cat, sub] = activeAdminAlbumKey.split('::');
+        albumTitleDisplay.textContent = `${cat} - ${sub}`;
+        
+        filtered = filtered.filter(p => (p.category || 'General') === cat && p.subcategory === sub);
+        
+        renderTableRows(filtered, tbody);
+      }
+    }
+
+    function renderTableRows(photosArray, tbody) {
+      if (photosArray.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
-              No photos found matching filters.
+            <td colspan="8" style="text-align: center; color: var(--color-text-secondary); padding: var(--sp-6);">
+              No photos found in this view.
             </td>
           </tr>
         `;
         return;
       }
 
-      tbody.innerHTML = filtered.map(photo => {
-        const url = convertDriveUrl(photo.imageUrl);
+      tbody.innerHTML = photosArray.map(photo => {
+        const url = convertDriveUrl(photo.imageUrl, 'image', 'w100');
+        const previewUrl = convertDriveUrl(photo.imageUrl); // For clicking the link
         const isFolder = url && url.includes('embeddedfolderview');
         const mediaTag = isFolder 
           ? `<div style="width: 50px; height: 38px; display: flex; align-items: center; justify-content: center; background: var(--color-surface-hover); border-radius: var(--radius-md); border: 1px solid var(--color-border); font-size: 16px;" title="Google Drive Folder">📁</div>`
-          : `<img src="${url}" alt="${photo.title}" style="width: 50px; height: 38px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-border);">`;
+          : `<img loading="lazy" src="${url}" alt="${photo.title}" style="width: 50px; height: 38px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-border);">`;
         
         return `
         <tr data-id="${photo.id}">
@@ -469,12 +640,12 @@
           </td>
           <td style="text-align: center; cursor: grab; font-size: 20px; color: var(--color-text-tertiary);" class="drag-handle" title="Drag to reorder">☰</td>
           <td>
-            <a href="${url}" target="_blank" style="text-decoration: none; display: block;" title="Preview File">
+            <a href="${previewUrl}" target="_blank" style="text-decoration: none; display: block;" title="Preview File">
               ${mediaTag}
             </a>
           </td>
           <td style="font-weight: var(--fw-semibold);">
-            <a href="${url}" target="_blank" style="text-decoration: none; color: inherit;" title="Preview File">
+            <a href="${previewUrl}" target="_blank" style="text-decoration: none; color: inherit;" title="Preview File">
               ${photo.title}
             </a>
             ${photo.pinnedToHomepage ? '<span class="badge badge-secondary" style="font-size:0.6rem; margin-left:4px;">📌 Pinned</span>' : ''}
@@ -492,11 +663,9 @@
       `;
       }).join('');
 
-      // Attach event listeners to new row checkboxes
       document.querySelectorAll('.row-checkbox').forEach(cb => {
         cb.addEventListener('change', updateBulkDeleteUI);
       });
-      // Reset select-all state when table re-renders
       const selectAllCb = document.getElementById('select-all-checkbox');
       if (selectAllCb) selectAllCb.checked = false;
       updateBulkDeleteUI();
@@ -724,6 +893,7 @@
         document.getElementById('photo-action-type').value = 'add';
         document.getElementById('modal-form-title').textContent = 'Add New Photo';
         document.getElementById('photo-pinned').checked = false;
+        document.getElementById('photo-album-cover').checked = false;
         document.getElementById('photo-date').value = new Date().toISOString().split('T')[0];
         ModalSystem.open('photo-form-modal');
       });
@@ -748,6 +918,7 @@
         const description = '';
         const date = document.getElementById('photo-date').value;
         const pinnedToHomepage = document.getElementById('photo-pinned').checked;
+        const isAlbumCover = document.getElementById('photo-album-cover').checked;
         
         const urlInput = document.getElementById('photo-url');
 
@@ -807,6 +978,7 @@
                 description,
                 date,
                 pinnedToHomepage,
+                isAlbumCover,
                 imageUrl: imgUrl,
                 downloadUrl: imgUrl
               };
@@ -824,7 +996,8 @@
               subcategory,
               description,
               date,
-              pinnedToHomepage
+              pinnedToHomepage,
+              isAlbumCover
             };
             if (imageUrlsToSave.length > 0 && imageUrlsToSave[0]) {
               updatedFields.imageUrl = imageUrlsToSave[0];
@@ -885,6 +1058,7 @@
       document.getElementById('photo-subcategory').value = photo.subcategory || '';
       document.getElementById('photo-date').value = photo.date;
       document.getElementById('photo-pinned').checked = !!photo.pinnedToHomepage;
+      document.getElementById('photo-album-cover').checked = !!photo.isAlbumCover;
 
       document.getElementById('photo-url').value = photo.imageUrl || '';
       

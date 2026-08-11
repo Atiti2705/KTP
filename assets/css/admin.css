@@ -831,3 +831,130 @@
   background: var(--brand-sky-dark);
   color: #fff;
 }
+
+/* ============================================
+   ADMIN DASHBOARD QUICK ACTIONS & ENHANCEMENTS
+   ============================================ */
+.quick-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--sp-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-light);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.quick-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border-color: var(--brand-sky);
+  color: var(--brand-sky);
+}
+
+.quick-action-btn.primary {
+  background: var(--brand-sky);
+  color: #0f172a;
+  border: none;
+}
+
+.quick-action-btn.primary:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================
+   COLLAPSIBLE SIDEBAR ACCORDIONS & HAMBURGER
+   ============================================ */
+.sidebar-group-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  margin-top: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.sidebar-group-header:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-group-header .chevron {
+  font-size: 9px;
+  transition: transform 0.25s ease;
+  opacity: 0.6;
+}
+
+.sidebar-group.open .sidebar-group-header .chevron {
+  transform: rotate(180deg);
+}
+
+.sidebar-group-body {
+  display: none;
+  padding-left: 4px;
+  margin-top: 2px;
+}
+
+.sidebar-group.open .sidebar-group-body {
+  display: block;
+}
+
+/* Enable Hamburger Toggle on all Screen Sizes */
+.sidebar-toggle {
+  display: flex !important;
+}
+
+@media (min-width: 1024px) {
+  .admin-sidebar {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .admin-sidebar.closed {
+    transform: translateX(-100%);
+  }
+  .admin-main {
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .admin-main.expanded {
+    margin-left: 0;
+  }
+}
+

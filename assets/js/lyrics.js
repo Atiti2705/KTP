@@ -20,6 +20,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupSearchAndSort();
   setupPreviewModal();
 
+  // Instant render from localStorage cache
+  try {
+    const cached = localStorage.getItem('db_lyrics');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        Lyrics.length = 0;
+        Lyrics.push(...parsed);
+        renderLyrics();
+      }
+    }
+  } catch (e) {}
+
   try {
     const data = await DbService.get('lyrics');
     if (data && Array.isArray(data)) {
@@ -36,7 +49,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   renderLyrics();
+
+  // Check URL params for deep linking (SEO & Sharing)
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetSong = urlParams.get('song') || urlParams.get('title') || urlParams.get('id');
+  if (targetSong) {
+    const cleanTarget = targetSong.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const found = Lyrics.find(d => {
+      if (d.id === targetSong) return true;
+      const cleanTitle = (d.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      return cleanTitle.includes(cleanTarget) || cleanTarget.includes(cleanTitle);
+    });
+    if (found) {
+      setTimeout(() => openPreviewModal(found.id), 300);
+    }
+  }
 });
+
+function createSongSlug(title) {
+  if (!title) return '';
+  return title.toString()
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
 // ========================
 // RENDER ALPHABET CHIPS
@@ -245,11 +283,16 @@ function setupPreviewModal() {
   div.innerHTML = modalMarkup;
   document.body.appendChild(div.firstElementChild);
 
+  const originalTitle = document.title;
   const closeBtn = document.getElementById('close-doc-modal');
   const closeAction = () => {
     const iframe = document.getElementById('modal-doc-iframe');
     if (iframe) iframe.src = '';
     ModalSystem.close('doc-modal');
+    document.title = originalTitle;
+    try {
+      history.pushState(null, '', window.location.pathname);
+    } catch(e) {}
   };
 
   if (closeBtn) closeBtn.addEventListener('click', closeAction);
@@ -264,6 +307,16 @@ function openPreviewModal(docId) {
   const modalIframe = document.getElementById('modal-doc-iframe');
 
   if (modalTitle) modalTitle.textContent = doc.title;
+
+  // Update Page Title and URL for Google SEO & Direct Link Sharing
+  if (doc.title) {
+    document.title = `${doc.title} Lyrics — KṬP Saikhamakawn`;
+    try {
+      const slug = createSongSlug(doc.title);
+      const newUrl = `${window.location.pathname}?song=${encodeURIComponent(slug)}`;
+      history.pushState({ docId: doc.id }, '', newUrl);
+    } catch(e) {}
+  }
 
   let fileId = '';
   if (doc.downloadUrl && doc.downloadUrl !== '#') {

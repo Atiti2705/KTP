@@ -10,7 +10,7 @@
   <!-- Open Graph -->
   <meta property="og:title" content="Photos Gallery — KṬP Saikhamakawn">
   <meta property="og:description" content="Browse through the photo gallery of KṬP Saikhamakawn church activities.">
-  <meta property="og:image" content="assets/images/logo.png">
+  <meta property="og:image" content="https://saikhamakawnktp.org/assets/images/logo.png">
   <meta property="og:type" content="website">
 
   <!-- Favicon -->
@@ -22,13 +22,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/variables.css?v=155">
-  <link rel="stylesheet" href="assets/css/base.css?v=155">
-  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=155">
-  <link rel="stylesheet" href="assets/css/animations.css?v=155">
-  <link rel="stylesheet" href="assets/css/components.css?v=155">
-  <link rel="stylesheet" href="assets/css/layout.css?v=155">
-  <link rel="stylesheet" href="assets/css/pages.css?v=155">
+  <link rel="stylesheet" href="assets/css/variables.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/base.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/mizo-patterns.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/animations.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/components.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/layout.css?v=1785271586">
+  <link rel="stylesheet" href="assets/css/pages.css?v=1785271586">
 </head>
 <body>
   <!-- Header -->
@@ -49,27 +49,7 @@
       <div class="container">
         <div style="display: flex; flex-direction: column; gap: var(--sp-3); margin-bottom: var(--sp-5);">
 
-          <!-- Filters Row: Year, Category, Sub-category -->
-          <div style="display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center;">
 
-            <!-- Year Filter -->
-            <div id="year-filter-row" style="display: flex; align-items: center; gap: var(--sp-2); flex: 1; min-width: 130px;">
-              <label for="year-select" style="font-size: var(--fs-sm); color: var(--color-text-secondary); font-weight: var(--fw-medium); white-space: nowrap;">Year:</label>
-              <div id="year-filter-wrap" style="flex: 1;"></div>
-            </div>
-
-            <!-- Category Filter -->
-            <div id="category-filter-row" style="display: flex; align-items: center; gap: var(--sp-2); flex: 1; min-width: 150px;">
-              <label for="category-select" style="font-size: var(--fs-sm); color: var(--color-text-secondary); font-weight: var(--fw-medium); white-space: nowrap;">Category:</label>
-              <div id="category-chips" style="flex: 1;"></div>
-            </div>
-
-            <!-- Sub-category Filter -->
-            <div id="subcategory-chips" style="display: none; align-items: center; gap: var(--sp-2); flex: 1; min-width: 150px;">
-              <label style="font-size: var(--fs-sm); color: var(--color-text-secondary); font-weight: var(--fw-medium); white-space: nowrap;">Sub-category:</label>
-            </div>
-
-          </div>
 
           <!-- Selection Toolbar for Bulk Download -->
           <div id="selection-toolbar" class="floating-selection-toolbar" style="display: none;">
@@ -107,6 +87,14 @@
 
         </div>
 
+        <!-- Album Header (Hidden by default) -->
+        <div id="album-header-section" style="display: none; margin-bottom: var(--sp-4);">
+          <button id="btn-back-to-albums" class="btn btn-outline btn-sm" style="margin-bottom: var(--sp-3); border-radius: var(--radius-full);">
+            ⬅ Back to Albums
+          </button>
+          <h2 id="album-title-display" style="font-size: var(--fs-xl); font-weight: var(--fw-bold); margin: 0; color: var(--brand-sky);"></h2>
+        </div>
+
         <!-- Masonry Grid -->
         <div class="masonry-grid" id="gallery-grid">
           <!-- Populated by JS -->
@@ -129,25 +117,26 @@
 
   <!-- Scripts -->
   <!-- Firebase SDK Compat -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=155"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=155"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js?v=1785271586"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js?v=1785271586"></script>
 
   <!-- JSZip & FileSaver for Bulk Downloads -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=155"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=155"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js?v=1785271586"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js?v=1785271586"></script>
 
   <!-- App Configuration & Services -->
-  <script defer src="assets/js/firebase-config.js?v=155"></script>
-  <script defer src="assets/js/theme.js?v=155"></script>
-  <script defer src="assets/js/data.js?v=155"></script>
-  <script defer src="assets/js/auth.js?v=155"></script>
-  <script defer src="assets/js/db-service.js?v=155"></script>
-  <script defer src="assets/js/save-service.js?v=155"></script>
-  <script defer src="assets/js/components.js?v=155"></script>
-  <script defer src="assets/js/search.js?v=155"></script>
-  <script defer src="assets/js/gallery.js?v=155"></script>
-  <script defer src="assets/js/app.js?v=155"></script>
+  <script defer src="assets/js/firebase-config.js?v=1785271586"></script>
+  <script defer src="assets/js/theme.js?v=1785271586"></script>
+  <script defer src="assets/js/data.js?v=1785271586"></script>
+  <script defer src="assets/js/auth.js?v=1785271586"></script>
+  <script defer src="assets/js/db-service.js?v=1785271586"></script>
+  <script defer src="assets/js/save-service.js?v=1785271586"></script>
+  <script defer src="assets/js/components.js?v=1785271586"></script>
+  <script defer src="assets/js/search.js?v=1785271586"></script>
+  <script defer src="assets/js/gallery.js?v=1785271586"></script>
+  <script defer src="assets/js/app.js?v=1785271586"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('photos');

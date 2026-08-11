@@ -29,6 +29,7 @@ const googleDriveApiKey = customSettings?.apiKeys?.googleDriveApiKey || "AIzaSyD
 
 let db = null;
 let auth = null;
+let analytics = null;
 let firebaseApp = null;
 let isFirebaseConfigured = false;
 
@@ -36,6 +37,9 @@ let isFirebaseConfigured = false;
 if (typeof firebase !== 'undefined' && firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY_HERE" && !firebaseConfig.apiKey.includes("YOUR_")) {
   try {
     firebaseApp = firebase.initializeApp(firebaseConfig);
+    if (typeof firebase.analytics === 'function') {
+      analytics = firebase.analytics();
+    }
     db = firebase.firestore();
     auth = firebase.auth();
     isFirebaseConfigured = true;

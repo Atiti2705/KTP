@@ -28,8 +28,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupSearchAndSort();
   setupPreviewModal();
 
+  const targetCollection = window.TARGET_COLLECTION || 'documents';
+
+  // 1. Instant render from localStorage cache
   try {
-    const targetCollection = window.TARGET_COLLECTION || 'documents';
+    const cached = localStorage.getItem('db_' + targetCollection);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        Documents.length = 0;
+        Documents.push(...parsed.map(d => {
+          if (d.downloadUrl) d.downloadUrl = convertDriveUrl(d.downloadUrl, 'file');
+          return d;
+        }));
+        dataLoaded = true;
+        populateYearDropdown();
+        renderDocuments();
+      }
+    }
+  } catch (e) {}
+
+  // 2. Fetch fresh data from Firestore asynchronously
+  try {
     const data = await DbService.get(targetCollection);
     if (data && Array.isArray(data)) {
       Documents.length = 0;
@@ -37,6 +57,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (d.downloadUrl) d.downloadUrl = convertDriveUrl(d.downloadUrl, 'file');
         return d;
       }));
+      try {
+        localStorage.setItem('db_' + targetCollection, JSON.stringify(data));
+      } catch (e) {}
     }
   } catch (error) {
     console.error("Error loading documents database:", error);

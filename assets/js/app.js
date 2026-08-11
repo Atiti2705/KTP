@@ -6,7 +6,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Global reCAPTCHA gateway
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  if (!isLocalhost && sessionStorage.getItem('human_verified') !== 'true') {
+  if (false && !isLocalhost && sessionStorage.getItem('human_verified') !== 'true') {
     const script = document.createElement('script');
     script.src = "https://www.google.com/recaptcha/api.js";
     script.async = true;
