@@ -61,6 +61,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       return cleanTitle.includes(cleanTarget) || cleanTarget.includes(cleanTitle);
     });
     if (found) {
+      document.title = `${found.title} — Mizo Hla Lyrics | KṬP Saikhamakawn`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc && found.lyrics) {
+        metaDesc.setAttribute('content', `${found.title} Mizo Hla Lyrics: ${found.lyrics.substring(0, 150).replace(/[\r\n]+/g, ' ')}...`);
+      }
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.setAttribute('content', `${found.title} — Mizo Hla Lyrics`);
       setTimeout(() => openPreviewModal(found.id), 300);
     }
   }
